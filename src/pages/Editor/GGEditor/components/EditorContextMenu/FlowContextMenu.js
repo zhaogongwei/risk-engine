@@ -9,7 +9,7 @@ const FlowContextMenu = () => {
     <ContextMenu className={styles.contextMenu}>
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
-        <SetMenuItem command="copy" text="设置规则" />
+        <SetMenuItem command="copy" text="编辑" />
         <MenuItem command="delete" />
       </NodeMenu>
       <EdgeMenu>

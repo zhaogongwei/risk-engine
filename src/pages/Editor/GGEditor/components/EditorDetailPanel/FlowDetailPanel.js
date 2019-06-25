@@ -1,8 +1,10 @@
 import React from 'react';
 import { Card } from 'antd';
 import { NodePanel, EdgePanel, GroupPanel, MultiPanel, CanvasPanel, DetailPanel } from 'gg-editor';
+import { connect } from 'dva'
 import DetailForm from './DetailForm';
 import styles from './index.less';
+
 
 const FlowDetailPanel = () => {
   return (

@@ -40,6 +40,9 @@ export default {
   'menu.account.logout': '退出登录',
   'menu.editor': '图形编辑器',
   'menu.editor.flow': '流程编辑器',
+  'menu.editor.setrule': '设置规则',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  'menu.riskManage': '风险管理',
+  'menu.riskManage.varclass': '变量分类',
 };

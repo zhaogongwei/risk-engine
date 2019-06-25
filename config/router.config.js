@@ -24,8 +24,8 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis', authority: ['admin', 'user'] },
-      {
+      { path: '/', redirect: '/riskManage/varclass', /*authority: ['admin', 'user']*/ },
+      /*{
         path: '/dashboard',
         name: 'dashboard',
         icon: 'dashboard',
@@ -46,9 +46,9 @@ export default [
             component: './Dashboard/Workplace',
           },
         ],
-      },
+      },*/
       // forms
-      {
+      /*{
         path: '/form',
         icon: 'form',
         name: 'form',
@@ -92,9 +92,9 @@ export default [
             component: './Forms/AdvancedForm',
           },
         ],
-      },
+      },*/
       // list
-      {
+      /*{
         path: '/list',
         icon: 'table',
         name: 'list',
@@ -141,8 +141,8 @@ export default [
             ],
           },
         ],
-      },
-      {
+      },*/
+      /*{
         path: '/profile',
         name: 'profile',
         icon: 'profile',
@@ -165,8 +165,8 @@ export default [
             component: './Profile/AdvancedProfile',
           },
         ],
-      },
-      {
+      },*/
+     /* {
         name: 'result',
         icon: 'check-circle-o',
         path: '/result',
@@ -179,7 +179,7 @@ export default [
           },
           { path: '/result/fail', name: 'fail', component: './Result/Error' },
         ],
-      },
+      },*/
       {
         name: 'exception',
         icon: 'warning',
@@ -209,7 +209,7 @@ export default [
           },
         ],
       },
-      {
+      /*{
         name: 'account',
         icon: 'user',
         path: '/account',
@@ -265,7 +265,7 @@ export default [
             ],
           },
         ],
-      },
+      },*/
       //  editor
       {
         name: 'editor',
@@ -279,7 +279,7 @@ export default [
           },
           {
             path: '/editor/flow/setRule',
-            name: '设置规则',
+            name: 'setrule',
             component: './Editor/GGEditor/SetRule',
           },
           {
@@ -292,7 +292,25 @@ export default [
             name: 'koni',
             component: './Editor/GGEditor/Koni',
           },
+          {
+            path: '/editor/koniss',
+            name: 'koni',
+            component: './Editor/GGEditor/Koni',
+          },
         ],
+      },
+      //风险管理
+      {
+        name:'riskManage',
+        icon: 'highlight',
+        path: '/riskManage',
+        routes:[
+          {
+            path: '/riskManage/varclass',
+            name: 'varclass',
+            component: './RiskManage/VarClass',
+          },
+        ]
       },
       {
         component: '404',

@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Card, Form, Input, Select, Button } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import upperFirst from 'lodash/upperFirst';
+import { connect } from 'dva'
 import router from 'umi/router';
 
 const { Item } = Form;
@@ -15,12 +16,42 @@ const inlineFormItemLayout = {
     sm: { span: 16 },
   },
 };
+@connect(({ editorFlow }) => ({
+  editorFlow,
+}))
 
 class DetailForm extends React.Component {
   get item() {
     const { propsAPI } = this.props;
 
     return propsAPI.getSelected()[0];
+  }
+
+  componentDidMount(){
+    const { form, propsAPI } = this.props;
+    const { read ,save,executeCommand} = propsAPI;
+    console.log(propsAPI)
+    console.log('重新渲染','componentDidMount')
+    if(this.props.editorFlow.status){
+      read(this.props.editorFlow.editorData)
+      this.props.dispatch({
+        type:'editorFlow/change',
+        payload:false
+      })
+    }
+
+  }
+
+  componentWillMount(){
+    console.log('重新渲染','componentWillMount')
+  }
+
+  componentWillUpdate(){
+    console.log('重新渲染','componentWillUpdate')
+  }
+
+  componentDidUpdate(){
+    console.log('重新渲染','componentDidUpdate')
   }
 
   handleSubmit = e => {
@@ -67,24 +98,62 @@ class DetailForm extends React.Component {
   setRule = () => {
     const { label, jump } = this.item.getModel();
     const { form, propsAPI } = this.props;
-    const { getSelected, executeCommand, update } = propsAPI;
-    router.push('/editor/flow/setRule?id=' + jump)
+    const { getSelected, executeCommand, update,save } = propsAPI;
+
+    console.log(propsAPI)
+    console.log(this.item)
+    const data = save();
+    console.log(data,'data')
+    const id = getSelected()[0].id
+    const selectedItem = getSelected()[0].getModel()
+    this.props.dispatch({
+      type:'editorFlow/fetchNotices',
+      payload:data
+    })
+    this.props.dispatch({
+      type:'editorFlow/saveId',
+      payload:id
+    })
+    this.props.dispatch({
+      type:'editorFlow/saveItem',
+      payload:selectedItem
+    })
+    this.props.dispatch({
+      type:'editorFlow/change',
+      payload:true
+    })
+    console.log(selectedItem,'666')
+    router.push(`/editor/flow/setRule?id=${  jump}`)
+  }
+
+  readData = ()=>{
+    const { form, propsAPI } = this.props;
+    const { read,find} = propsAPI;
+    // find(this.props.editorFlow.selectId)['isSelected']=true;
+    read(this.props.editorFlow.editorData);
+
+    console.log(find(this.props.editorFlow.selectId))
   }
 
   renderNodeDetail = () => {
     const { form } = this.props;
-    const { label, jump } = this.item.getModel();
+    const { label, jump,title } = this.item.getModel();
 
     return (
       <Fragment>
         <Item label="Label" {...inlineFormItemLayout}>
-        {form.getFieldDecorator('label', {
-          initialValue: label,
+          {form.getFieldDecorator('label', {
+          initialValue: label
         })(<Input onBlur={this.handleSubmit} />)}
-      </Item>
+        </Item>
         <Item label="rule" {...inlineFormItemLayout}>
           {form.getFieldDecorator('rule', {
-            initialValue: jump,
+            initialValue: jump
+          })(<Input onBlur={this.handleSubmit} />)}
+        </Item>
+        <Item label="title" {...inlineFormItemLayout}>
+          {form.getFieldDecorator('title', {
+            initialValue: title
           })(<Input onBlur={this.handleSubmit} />)}
         </Item>
         <Button onClick={this.setRule}>设置规则</Button>
@@ -131,7 +200,6 @@ class DetailForm extends React.Component {
     if (!this.item) {
       return null;
     }
-
     return (
       <Card type="inner" size="small" title={upperFirst(type)} bordered={false}>
         <Form onSubmit={this.handleSubmit}>

@@ -11,6 +11,13 @@ class SetRule extends PureComponent {
 
     return propsAPI.getSelected()[0];
   }
+
+  componentDidMount() {
+    const { propsAPI } = this.props;
+
+    console.log(propsAPI);
+  }
+
   submitData = () => {
     const { form, propsAPI } = this.props;
     const { getSelected, executeCommand, update } = propsAPI;
@@ -19,11 +26,12 @@ class SetRule extends PureComponent {
         if (err) {
           return;
         }
-
-        console.log(item, values)
+        router.push('/editor/flow')
+        console.log( values)
       });
     }, 0);
   }
+
   render() {
     const { form } = this.props;
     return (

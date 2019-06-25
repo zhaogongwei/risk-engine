@@ -1,4 +1,3 @@
-@import '~antd/lib/style/themes/default.less';
 
 html,
 body,
@@ -33,20 +32,39 @@ ul,
 ol {
   list-style: none;
 }
-
-@media (max-width: @screen-xs) {
+:global {
+  .ant-spin-container {
+    overflow: visible !important;
+  }
+  .ant-layout{
+    background-color: #fff !important;
+  }
+  .ant-advanced-search-form .ant-btn {
+    height: auto !important;
+    padding: 4px 20px !important;
+  }
+  th.operation,
+  td.operation {
+    text-align: center !important;
+  }
+  .ant-card-grid {
+    padding: 15px !important;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .ant-pagination {
+    z-index: 9999;
+    float: right;
+    margin-top: 20px !important;
+  }
   .ant-table {
-    width: 100%;
-    overflow-x: auto;
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
-        white-space: pre;
-        > span {
-          display: block;
-        }
-      }
+    font-size: 12px !important;
+    th{
+      text-align: center !important;
+    }
+    td{
+      text-align: center !important;
     }
   }
 }

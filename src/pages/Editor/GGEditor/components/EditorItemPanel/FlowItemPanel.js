@@ -10,9 +10,13 @@ const FlowItemPanel = () => {
         <Item
           type="node"
           size="72*72"
+          shape="flow-bird"
           model={{
-            color: 'red',
-            label: '复杂节点',
+            label: '',
+            jump: '2',
+            src:"https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg",
+            style:[100,16],
+            title:'云雀'
           }}
           src="https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg"
         />
@@ -23,6 +27,7 @@ const FlowItemPanel = () => {
           model={{
             color: '#FA8C16',
             label: '起始节点',
+            title:'高风险规则触发数',
             jump: '1'
           }}
           src="https://gw.alipayobjects.com/zos/rmsportal/ZnPxbVjKYADMYxkTQXRi.svg"
