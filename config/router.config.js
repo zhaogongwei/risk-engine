@@ -305,11 +305,23 @@ export default [
         icon: 'highlight',
         path: '/riskManage',
         routes:[
+          //变量分类
           {
             path: '/riskManage/varclass',
             name: 'varclass',
             component: './RiskManage/VarClass',
           },
+          {
+            path: '/riskManage/varlist',
+            name: 'varlist',
+            component: './RiskManage/VarList',
+          },
+          {
+            path: '/riskManage/varlist/editPage',
+            name: 'varedit',
+            component: './RiskManage/VarList/EditVar',
+            hideInMenu:true
+          }
         ]
       },
       {

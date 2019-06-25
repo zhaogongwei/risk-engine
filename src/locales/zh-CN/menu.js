@@ -45,4 +45,6 @@ export default {
   'menu.editor.koni': '拓扑编辑器',
   'menu.riskManage': '风险管理',
   'menu.riskManage.varclass': '变量分类',
+  'menu.riskManage.varlist': '变量列表',
+  'menu.riskManage.varlist.varedit': '变量编辑',
 };

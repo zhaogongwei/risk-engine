@@ -8,7 +8,7 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from './FilterIpts.less'
+import styles from '../FilterIpts.less'
 import { connect } from 'dva'
 const FormItem = Form.Item
 const RadioGroup = Radio.Group;

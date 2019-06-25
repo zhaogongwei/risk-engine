@@ -5,7 +5,7 @@ import {
   Input,
   Button,
   Select,
-  Form,
+  Form
 } from 'antd';
 import styles from '../FilterIpts.less'
 import { connect } from 'dva'
@@ -41,7 +41,7 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'child')
+    this.props.child(this)
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -55,19 +55,16 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="状态" {...formItemConfig}>
-              {getFieldDecorator('status',{
+            <FormItem label="变量名" {...formItemConfig}>
+              {getFieldDecorator('assetsTypeName',{
                 initialValue:''
               })(
-                  <Select allowClear={true}>
-                    <Option value={1}>启用</Option>
-                    <Option value={2}>禁用</Option>
-                  </Select>
+                <Input />
               )}
             </FormItem>
           </Col>
-          <Col xxl={3} md={4}>
-            <FormItem>
+          <Col xxl={4} md={6}>
+            <FormItem label="变量分类" {...formItemConfig}>
               {getFieldDecorator('status',{
                 initialValue:''
               })(
@@ -75,6 +72,27 @@ export default class FilterIpts extends Component {
                   <Option value={1}>启用</Option>
                   <Option value={2}>禁用</Option>
                 </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col xxl={3} md={4}>
+            <FormItem label="" >
+              {getFieldDecorator('status',{
+                initialValue:''
+              })(
+                <Select allowClear={true}>
+                  <Option value={1}>启用</Option>
+                  <Option value={2}>禁用</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col xxl={4} md={6}>
+            <FormItem label="变量代码" {...formItemConfig}>
+              {getFieldDecorator('assetsTypeCode',{
+                initialValue:''
+              })(
+                <Input />
               )}
             </FormItem>
           </Col>
