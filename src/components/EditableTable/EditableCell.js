@@ -105,20 +105,19 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(dataIndex, {
+                    {getFieldDecorator(`dataIndex${Math.random()}`, {
                       rules: [{
                         required: !isRequired ? true : false,
                         message: `请填写正确的格式.`,
                         pattern:pattern?pattern:'',
                         max:max?max:''
                       }],
-                      initialValue: record[dataIndex],
+                      initialValue: record[dataIndex]?record[dataIndex]:'',
                     })(
                       <Input
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
-                        onBlur={(e)=>this.checkInput(e.target.value, this.props.record, dataIndex)}
                       />
                     )}
                   </FormItem>

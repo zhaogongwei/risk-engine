@@ -53,10 +53,10 @@ export default class FilterIpts extends Component {
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  type="flex" align="middle">
+        <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="变量名" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
+            <FormItem label="策略类型" {...formItemConfig}>
+              {getFieldDecorator('policyType',{
                 initialValue:''
               })(
                 <Input />
@@ -64,32 +64,17 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="变量分类" {...formItemConfig}>
-              {getFieldDecorator('status',{
+            <FormItem label="策略名称" {...formItemConfig}>
+              {getFieldDecorator('policyName',{
                 initialValue:''
               })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={3} md={4}>
-            <FormItem label="" >
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
+                <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="变量代码" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
+            <FormItem label="策略代码" >
+              {getFieldDecorator('policyCode',{
                 initialValue:''
               })(
                 <Input />

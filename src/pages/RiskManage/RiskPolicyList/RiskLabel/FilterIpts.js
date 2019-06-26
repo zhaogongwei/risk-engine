@@ -7,7 +7,7 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
+import styles from '../../FilterIpts.less'
 import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -41,7 +41,7 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'child')
+    this.props.child(this)
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -53,9 +53,9 @@ export default class FilterIpts extends Component {
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  type="flex" align="middle">
+        <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="变量名" {...formItemConfig}>
+            <FormItem label="标签名称" {...formItemConfig}>
               {getFieldDecorator('assetsTypeName',{
                 initialValue:''
               })(
@@ -64,19 +64,7 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="变量分类" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={3} md={4}>
-            <FormItem label="" >
+            <FormItem label="资产来源" {...formItemConfig}>
               {getFieldDecorator('status',{
                 initialValue:''
               })(
@@ -88,11 +76,26 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="变量代码" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
+            <FormItem label="资产类型" >
+              {getFieldDecorator('status',{
                 initialValue:''
               })(
-                <Input />
+                <Select allowClear={true}>
+                  <Option value={1}>启用</Option>
+                  <Option value={2}>禁用</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col xxl={4} md={6}>
+            <FormItem label="还款类型" >
+              {getFieldDecorator('status',{
+                initialValue:''
+              })(
+                <Select allowClear={true}>
+                  <Option value={1}>启用</Option>
+                  <Option value={2}>禁用</Option>
+                </Select>
               )}
             </FormItem>
           </Col>

@@ -46,5 +46,9 @@ export default {
   'menu.riskManage': '风险管理',
   'menu.riskManage.varclass': '变量分类',
   'menu.riskManage.varlist': '变量列表',
-  'menu.riskManage.varlist.varedit': '变量编辑',
+  'menu.riskManage.varedit': '变量编辑',
+  'menu.riskManage.policylist': '风控策略列表',
+  'menu.riskManage.policylist.list': '策略列表',
+  'menu.riskManage.policylist.edit': '风控策略编辑',
+  'menu.riskManage.policylist.risklabel': '风控标签',
 };

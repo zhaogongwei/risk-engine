@@ -16,6 +16,7 @@ import { connect } from 'dva'
 import FilterIpts from './FilterIpts';
 import AddForm from './addForm';
 import { findInArr,exportJudgment } from '@/utils/utils'
+import router from 'umi/router';
 const menu = (
   <Menu>
     <Menu.Item>
@@ -160,7 +161,9 @@ export default class VarClass extends PureComponent {
     const columns = [
       { title: '序号', dataIndex: 'number', key: 'number',width:'24%' },
       { title: '分类名称', dataIndex: 'name', key: 'name', width:'19%'},
-      { title: '变量数量', dataIndex: 'amount', key: 'amount', width:'36%'},
+      { title: '变量数量', dataIndex: 'amount', key: 'amount', width:'36%',
+        render:(record)=>(<a onClick={()=>router.push('/riskManage/varlist')}>{record}</a>),
+      },
       {
         title: '操作',
         key: 'action',

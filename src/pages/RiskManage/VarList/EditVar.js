@@ -12,38 +12,41 @@ import {
 import router from 'umi/router';
 import styles from '../FilterIpts.less'
 import EditableTable from '@/components/EditableTable'
+import { addListKey,deepCopy } from '@/utils/utils'
 import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 const { TextArea } = Input;
 @connect(
-  ({venture}) => ({venture})
+  ({varList}) => ({varList})
 )
 @Form.create()
 export default class EditVar extends PureComponent {
   constructor(props) {
     super(props);
     this.columns=
-      [{
-        title: '序号',
-        dataIndex: 'key',
-        key:'key',
-      },
+      [
+        {
+          title: '序号',
+          dataIndex: 'key',
+          key:'key',
+        },
         {
           title: '枚举值',
-          dataIndex: 'financingNumber',
+          dataIndex: 'menuVal',
           editable: true,
           max:20,
           nonRequired: true,
-          key:'financingNumber'
-        },{
-        title: '枚举值展示',
-        dataIndex: 'mechanismName',
-        key:'mechanismName',
-        max:200,
-        nonRequired: true,
-        editable: true,
-      },
+          key:'menuVal'
+        },
+        {
+          title: '枚举值展示',
+          dataIndex: 'showMenu',
+          key:'showMenu',
+          max:200,
+          nonRequired: true,
+          editable: true,
+        },
         {
           title: '操作',
           render: (record) =>
@@ -108,37 +111,29 @@ export default class EditVar extends PureComponent {
     return formQueryData;
   }
   handleAdd = () => {
-    const { count, dataSource } = this.props.venture;
+    const { count, dataSource } = this.props.varList;
     //   要添加表格的对象
     const newData = {
-      key: count,
-      financingNumber:``,
-      mechanismName:``,
-      financingTime:``,
-      financingAccountTime:``,
-      financingAmount:``,
-      stockChange:``,
-      remark:``,
+      menuVal:``,
+      showMenu:``,
     };
     //   调用models中的方法改变dataSource渲染页面
     this.props.dispatch({
-      type: 'venture/addDataSource',
+      type: 'varList/addData',
       payload: {
-        dataSource: [...dataSource, newData],
-        count:count + 1,
+        dataSource:addListKey(deepCopy([...dataSource, newData])),
       }
     })
   }
   //   删除表格
   handleDelete = (key) => {
-    const {dataSource,count} = this.props.venture;
+    const {dataSource,count} = this.props.varList;
     //   调用models的方法去删除dataSource中的数据
-    const newDataSource = dataSource.filter(item => item.key !== key)
+    const newData = dataSource.filter(item => item.key !== key)
     this.props.dispatch({
-      type: 'venture/changeDataSource',
+      type: 'varList/delData',
       payload: {
-        dataSource: newDataSource,
-        count:newDataSource.length === 0?1:newDataSource[newDataSource.length-1].key+1,
+        dataSource: addListKey(deepCopy(newData)),
       }
     })
   }
@@ -156,18 +151,19 @@ export default class EditVar extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    const {state}= {...this.props.location}
     return (
-      <PageTableTitle title={'编辑变量'} renderBtn={this.renderTitleBtn}>
+      <PageTableTitle title={state.type ===1?'添加变量':'编辑变量'} renderBtn={this.renderTitleBtn}>
         <Form
           className="ant-advanced-search-form"
         >
           <Row className={styles.btmMargin}  type="flex" align="middle">
             <Col xxl={4} md={6}>
               <FormItem label="变量分类" {...formItemConfig}>
-                {getFieldDecorator('status',{
+                {getFieldDecorator('oneclass',{
                   initialValue:'',
                   rules:[
-                    {required:true}
+                    {required:true,message:'请选择一级分类',}
                   ]
                 })(
                   <Select allowClear={true}>
@@ -179,7 +175,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={3} md={4}>
               <FormItem label="" >
-                {getFieldDecorator('status',{
+                {getFieldDecorator('twoclass',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -194,10 +190,10 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量名" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
+                {getFieldDecorator('varname',{
                   initialValue:'',
                   rules:[
-                    {required:true}
+                    {required:true,}
                   ]
                 })(
                   <Input />
@@ -206,7 +202,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量代码" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeCode',{
+                {getFieldDecorator('varcode',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -218,7 +214,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量类型" {...formItemConfig}>
-                {getFieldDecorator('status',{
+                {getFieldDecorator('vartype',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -254,7 +250,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="长度" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
+                {getFieldDecorator('varlength',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -266,7 +262,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="最小值" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeCode',{
+                {getFieldDecorator('varmin',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -278,7 +274,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="最大值" {...formItemConfig}>
-                {getFieldDecorator('status',{
+                {getFieldDecorator('varmax',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -297,7 +293,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={8} md={12}>
               <EditableTable
-                list={[]}
+                list={this.props.varList}
                 columns={this.columns}
                 handleAdd={this.handleAdd}
                 handleDelete={this.handleDelete}

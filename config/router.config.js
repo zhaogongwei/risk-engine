@@ -311,17 +311,49 @@ export default [
             name: 'varclass',
             component: './RiskManage/VarClass',
           },
+          //变量列表
           {
             path: '/riskManage/varlist',
             name: 'varlist',
             component: './RiskManage/VarList',
           },
+          //变量添加、编辑
           {
             path: '/riskManage/varlist/editPage',
             name: 'varedit',
             component: './RiskManage/VarList/EditVar',
             hideInMenu:true
-          }
+          },
+          //风控策略列表
+          {
+            path: '/riskManage/riskpolicylist',
+            name: 'policylist',
+            routes:[
+              {
+                path: '/riskManage/riskpolicylist',
+                redirect:'/riskManage/riskpolicylist/list'
+              },
+              //风控策略列表
+              {
+                path: '/riskManage/riskpolicylist/list',
+                name: 'list',
+                component: './RiskManage/RiskPolicyList',
+              },
+              //风控策略列表添加、编辑
+              {
+                path: '/riskManage/riskpolicylist/list/edit',
+                name: 'edit',
+                component: './RiskManage/RiskPolicyList/PolicyEdit',
+                hideInMenu:true
+              },
+              //风控标签
+              {
+                path: '/riskManage/riskpolicylist/risklabel',
+                name: 'risklabel',
+                component: './RiskManage/RiskPolicyList/RiskLabel',
+              }
+            ]
+          },
         ]
       },
       {

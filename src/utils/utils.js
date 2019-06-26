@@ -103,7 +103,29 @@ function getRenderArr(routes) {
   }
   return renderArr;
 }
+// 为表格数据增加序号key
+export function addListKey(arr = [], current = 1, pageSize = 20) {
+  if (Array.isArray(arr)) {
+    arr.map((item, index) => item['key'] = index + 1 + (current - 1) * pageSize)
+  }
+  return arr
+}
 
+//深度拷贝
+export function deepCopy (obj){
+  // 只拷贝对象
+  if (typeof obj !== 'object') return;
+  // 根据obj的类型判断是新建一个数组还是一个对象
+  var newObj = obj instanceof Array ? [] : {};
+  for (var key in obj) {
+    // 遍历obj,并且判断是obj的属性才拷贝
+    if (obj.hasOwnProperty(key)) {
+      // 判断属性值的类型，如果是对象递归调用深拷贝
+      newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+    }
+  }
+  return newObj;
+}
 /**
  * Get router routing configuration
  * { path:{name,...param}}=>Array<{name,path ...param}>
