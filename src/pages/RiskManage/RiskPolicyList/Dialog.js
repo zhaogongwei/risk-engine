@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import {addListKey,deepCopy } from '@/utils/utils'
 const FormItem = Form.Item
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
@@ -24,53 +25,71 @@ const plainOptions = [
     name:'年龄',
     type:'数字',
     value:'年龄',
+    length:4,
+    code:'age',
     id:1
   },
   {
     name:'借款人及其配偶和联系',
     type:'字符',
     value:'借款人与配偶联系',
+    length:4,
+    code:'age',
     id:2
   },
   {
     name:'评分卡得分',
     type:'数字',
     value:'通过评分模型得出的得龄',
+    length:4,
+    code:'age',
     id:3
   },
   {
     name:'拒绝原因编码',
     type:'字符',
     value:'拒绝原因编码合集',
+    length:4,
+    code:'age',
     id:4
   },
   {
     name:'性别',
     type:'字符',
     value:'---',
+    length:4,
+    code:'age',
     id:5
   },
   {
     name:'姓名',
     type:'数字',
     value:'---',
+    length:4,
+    code:'age',
     id:6
   },
   {
     name:'高风险规则触发数',
     type:'数字',
     value:'---',
+    length:4,
+    code:'age',
     id:7
   },
   {
     name:'银行卡认证',
     type:'数字',
     value:'---',
+    length:4,
+    code:'age',
     id:8
   },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
-@connect()
+@connect(({policyList})=>({
+  policyList
+}))
 
 @Form.create()
 
@@ -83,12 +102,11 @@ export default class DeployDialog extends Component {
       checkedList: [],
       indeterminate: true,
       checkAll: false,
-      singleChecked:false
+      singleChecked:false,
+      pageSize:10,
+      currentPage:1,
+      current:1,
     }
-  }
-  //显示弹窗
-  showModal = ()=>{
-
   }
   //展示页码
   showTotal = (total, range) => {
@@ -126,53 +144,19 @@ export default class DeployDialog extends Component {
   }
   //点击确定
   handleOk = ()=>{
-    if(!this.props.type){
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-            const formData = this.getFormValue()
-            this.props.dispatch({
-              type: 'assetDeploy/riskDeploy',
-              payload: {
-                ...formData,
-                id:this.props.id
-              },
-              callback:()=>{
-                this.setState({visible:false},()=>{
-                  this.props.onChange(this.state.visible)
-                })
-                this.props.changeDefault()
-                this.props.callback()
-                this.reset()
-              }
-            })
-        }
+    this.setState({visible:false},()=>{
+      this.props.onChange(false)
+      this.props.dispatch({
+        type: 'policyList/saveTableList',
+        payload: addListKey(deepCopy([...this.props.policyList.tableList,...this.state.checkedList]))
       })
-    }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-          if(!err){
-              const formData = this.getFormValue()
-              this.props.dispatch({
-                type: 'assetDeploy/riskAdd',
-                payload: {
-                  ...formData
-                },
-                callback:()=>{
-                  this.setState({visible:false},()=>{
-                    this.props.onChange(this.state.visible);
-                  })
-                  this.props.changeDefault()
-                  this.props.callback()
-                  this.reset()
-                }
-              })
-          }
-      })
-    }
+      this.props.pagination(10,1,addListKey(deepCopy([...this.props.policyList.tableList,...this.state.checkedList])))
+    })
   }
   //点击取消
   handleCancel =()=>{
     this.setState({visible:false},()=>{
-      this.props.onChange(this.state.visible)
+        this.props.onChange(false)
     })
 
   }
@@ -202,6 +186,7 @@ export default class DeployDialog extends Component {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
+    console.log(this.props)
     return (
       <Modal
         title={'选择变量'}

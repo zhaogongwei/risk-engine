@@ -16,13 +16,12 @@ import { routerRedux } from 'dva/router';
 import Dialog from './Dialog';
 import router from 'umi/router';
 // 验证权限的组件
-import { findInArr,exportJudgment } from '@/utils/utils'
+import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ policyList, loading }) => ({
+  policyList,
 }))
 @Form.create()
 export default class PolicyEdit extends PureComponent {
@@ -35,33 +34,21 @@ export default class PolicyEdit extends PureComponent {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'assetsTypeName',
-        key:'assetsTypeName'
+        dataIndex: 'name',
+        key:'name'
       },{
         title: '变量代码',
-        dataIndex: 'assetsTypeCode',
-        key:'assetsTypeCode'
+        dataIndex: 'code',
+        key:'code'
       },{
         title: '长度',
-        key:'status',
-        render:(record)=>{
-          if(record.status === 1){
-            return <span>启用</span>
-          }
-          if(record.status === 2){
-            return <span>禁用</span>
-          }
-        }
+        key:'length',
+        dataIndex:'length'
       },
         {
           title: '类型',
-          dataIndex: 'assetsTypeCodea',
-          key:'assetsTypeCodea'
-        },
-        {
-          title: '添加时间',
-          dataIndex: 'assetsTypeCodeb',
-          key:'assetsTypeCodeb'
+          dataIndex: 'type',
+          key:'type'
         }
         ],
       checkedData: [],
@@ -77,7 +64,6 @@ export default class PolicyEdit extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -85,7 +71,7 @@ export default class PolicyEdit extends PureComponent {
       current:current,
       currentPage:current
     })
-    this.change(current)
+    this.pagination(10,current,this.props.policyList.tableList)
   }
   onSelectChange = (selectedRowKeys) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -177,6 +163,20 @@ export default class PolicyEdit extends PureComponent {
   reset = () => {
     this.props.form.resetFields()
   }
+  //前端分页
+  pagination=(pageSize=10,currentPage=1,array=[])=>{
+    //起始位置
+    this.setState({
+      current:currentPage
+    })
+    var offset = (currentPage-1)*pageSize
+    var list =[]
+    array.length>10?list = array.slice(offset,offset+pageSize):list = array
+    this.props.dispatch({
+      type: 'policyList/savePageList',
+      payload:list
+    })
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -243,29 +243,35 @@ export default class PolicyEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-        <Row style={{marginBottom:20}} gutter={16} type="flex" align="middle">
-          <Col><span>*</span>输入变量</Col>
-          <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
-          <Col><Button type="primary" >删除</Button></Col>
-        </Row>
-        <Table
-          bordered
-          pagination={false}
-          rowSelection={rowSelection}
-          columns={this.state.columns}
-          dataSource={[]}
-          loading={this.props.loading}
-        />
-        <Row>
-          <Pagination
-            style={{ marginBottom: "50px" }}
-            showQuickJumper
-            defaultCurrent={1}
-            current={this.state.current}
-            total={100}
-            onChange={this.onChange}
-            showTotal={(total, range) => this.showTotal(total, range)}
-          />
+        <Row  gutter={16} type="flex" align="top">
+          <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,content:'*'}}></span>输入变量 :</Col>
+          <Col span={15}>
+            <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
+              <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
+              <Col><Button type="primary" >删除</Button></Col>
+            </Row>
+            <Row >
+              <Table
+                bordered
+                pagination={false}
+                rowSelection={rowSelection}
+                columns={this.state.columns}
+                dataSource={this.props.policyList.pageList}
+                loading={this.props.loading}
+              />
+            </Row>
+            <Row>
+              <Pagination
+                style={{ marginBottom: "50px" }}
+                showQuickJumper
+                defaultCurrent={1}
+                current={this.state.current}
+                total={this.props.policyList.tableList.length}
+                onChange={this.onChange}
+                showTotal={(total, range) => this.showTotal(total, range)}
+              />
+            </Row>
+          </Col>
         </Row>
         <Row gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
@@ -307,6 +313,7 @@ export default class PolicyEdit extends PureComponent {
           showState={this.state.modalStatus}
           onChange={this.handleChildChange}
           childDeploy={this.getSubDeploy}
+          pagination={this.pagination}
         />
       </PageTableTitle>
     )
