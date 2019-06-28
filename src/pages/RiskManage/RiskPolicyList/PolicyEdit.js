@@ -9,6 +9,7 @@ import {
   Col,
   Input,
   Select,
+  message,
   Form
 } from 'antd';
 import { connect } from 'dva'
@@ -107,14 +108,6 @@ export default class PolicyEdit extends PureComponent {
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //新增
-  btnAdd=()=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      type:true
-    })
-  }
   //点击配置弹窗
   clickDialog=(record)=>{
     this.childDeploy.reset()
@@ -171,14 +164,37 @@ export default class PolicyEdit extends PureComponent {
     })
     var offset = (currentPage-1)*pageSize
     var list =[]
-    array.length>10?list = array.slice(offset,offset+pageSize):list = array
-    this.props.dispatch({
+   array.length>10?list = array.slice(offset,offset+pageSize):list = array
+   this.props.dispatch({
       type: 'policyList/savePageList',
       payload:list
     })
   }
+  //删除表格数据
+  deleteList=()=>{
+    const {selectedRowKeys} = this.state;
+    const {tableList} = this.props.policyList;
+    console.log(tableList,selectedRowKeys)
+    let list = []
+    if(!selectedRowKeys.length){
+      message.error('删除失败,请勾选要删除的项目!');
+    }else{
+      for(var key of selectedRowKeys){
+        tableList.forEach((item,index)=>{
+          if(item['key']===key){
+            tableList.splice(index,1)
+          }
+        })
+      }
+    }
+    this.pagination(10,1,addListKey(tableList));
+    this.setState({
+      selectedRowKeys:[]
+    })
+  }
   render() {
     const { getFieldDecorator } = this.props.form
+    const {state}=this.props.location
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -189,7 +205,7 @@ export default class PolicyEdit extends PureComponent {
       onChange: this.onSelectChange,
     };
     return (
-      <PageTableTitle title={'新增/编辑策略'}>
+      <PageTableTitle title={state.type===1?'新增策略':'编辑策略'}>
         <Form
           className="ant-advanced-search-form"
         >
@@ -248,7 +264,7 @@ export default class PolicyEdit extends PureComponent {
           <Col span={15}>
             <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
               <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
-              <Col><Button type="primary" >删除</Button></Col>
+              <Col><Button type="primary" onClick={this.deleteList}>删除</Button></Col>
             </Row>
             <Row >
               <Table

@@ -85,6 +85,22 @@ const plainOptions = [
     code:'age',
     id:8
   },
+  {
+    name:'身份证号',
+    type:'字符',
+    value:'---',
+    length:4,
+    code:'age',
+    id:9
+  },
+  {
+    name:'审核结果',
+    type:'数字',
+    value:'---',
+    length:4,
+    code:'age',
+    id:10
+  },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
 @connect(({policyList})=>({

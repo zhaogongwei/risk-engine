@@ -99,7 +99,7 @@ export default class VarList extends PureComponent {
             >
               <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
             </Popconfirm>
-            <span>应用策略</span>
+            <span onClick={()=>{this.goPolicyList()}}>应用策略</span>
           </div>
         )
       }],
@@ -207,7 +207,12 @@ export default class VarList extends PureComponent {
       pathname:'/riskManage/varlist/editPage',
       state:obj
     })
-
+  }
+  //去风控策略列表
+  goPolicyList = ()=>{
+    router.push({
+      pathname:'/riskManage/riskpolicylist/list',
+    })
   }
   render() {
     return (

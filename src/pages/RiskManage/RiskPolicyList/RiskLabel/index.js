@@ -4,8 +4,12 @@ import {
   Button,
   Table,
   Pagination,
+  Popconfirm,
+  message,
+  Modal,
   Icon
 } from 'antd';
+import LabelEdit from './LabelEdit';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 // 验证权限的组件
@@ -26,73 +30,89 @@ export default class RiskLabel extends PureComponent {
         key:'key'
       },{
         title: '标签名称',
-        dataIndex: 'assetsTypeName',
-        key:'assetsTypeName'
+        dataIndex: 'labelName',
+        key:'labelName'
       },{
         title: '资产来源',
-        dataIndex: 'assetsTypeCode',
-        key:'assetsTypeCode'
+        dataIndex: 'assetSource',
+        key:'assetSource'
       },{
         title: '资产类型',
-        key:'status',
-        render:(record)=>{
-          if(record.status === 1){
-            return <span>启用</span>
-          }
-          if(record.status === 2){
-            return <span>禁用</span>
-          }
-        }
+        key:'assetType',
+        dataIndex:'assetType'
       },
         {
           title: '还款类型',
-          dataIndex: 'assetsTypeCode1',
-          key:'assetsTypeCode1'
+          dataIndex: 'repayType',
+          key:'repayType'
         },
         {
           title: '借款期限',
-          dataIndex: 'assetsTypeCode2',
-          key:'assetsTypeCode2'
+          dataIndex: 'loanDate',
+          key:'loanDate'
         },
         {
           title: '创建时间',
-          dataIndex: 'assetsTypeCode3',
-          key:'assetsTypeCode3'
+          dataIndex: 'createTime',
+          key:'createTime'
         },
         {
           title: '更新时间',
-          dataIndex: 'assetsTypeCode4',
-          key:'assetsTypeCode4'
+          dataIndex: 'updateTime',
+          key:'updateTime'
         },
         {
           title: '负责人',
-          dataIndex: 'assetsTypeCode5',
-          key:'assetsTypeCode5'
+          dataIndex: 'responser',
+          key:'responser'
         },
         {
           title: '状态',
-          dataIndex: 'assetsTypeCode6',
-          key:'assetsTypeCode6'
+          dataIndex: 'status',
+          key:'status'
         },
       {
         title: '操作',
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span>编辑</span>
-            <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
+            <span onClick={()=>this.openLabelEdit(2)}>编辑</span>
+            <Popconfirm
+              title="是否确认禁用该策略？"
+              onConfirm={this.confirm}
+              onCancel={this.cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
+            </Popconfirm>
           </div>
         )
       }],
+      data:[
+        {
+          key:1,
+          labelName:'壹钱包房抵贷',
+          assetSource:'壹钱包',
+          assetType:'房贷',
+          repayType:'等额本息',
+          loanDate:'12、18、24(月)',
+          createTime:'2018-06-06',
+          updateTime:'2018-06-06',
+          responser:'王大大',
+          status:'启用',
+        }
+      ],
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:true,
+      type:1,//1：新增，2：编辑
       pageSize:10,
       currentPage:1,
       current:1,
       id:'',
-      status:1
+      status:1,
+      visible:false
     };
   }
   componentDidMount() {
@@ -125,24 +145,21 @@ export default class RiskLabel extends PureComponent {
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
-  getSubData = (ref) => {
-    this.child = ref;
-  }
-  //   获取子组件数据的方法
-  getSubDeploy = (ref) => {
-    this.childDeploy = ref;
+  getSubKey=(ref,key)=>{
+    this[key] = ref;
   }
   //展示页码
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //新增
-  btnAdd=()=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      type:true
-    })
+  confirm=(e)=>{
+    console.log(e);
+    message.success('Click on Yes');
+  }
+
+  cancel=(e) =>{
+    console.log(e);
+    message.error('Click on No');
   }
   //点击配置弹窗
   clickDialog=(record)=>{
@@ -176,7 +193,7 @@ export default class RiskLabel extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={this.goAddPage}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.openLabelEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -184,15 +201,32 @@ export default class RiskLabel extends PureComponent {
   goAddPage = ()=>{
     this.props.dispatch(routerRedux.push({pathname:'/details/RiskManagement/PolicyList/RiskLabel'}))
   }
+  //点击取消
+  handleCancel =()=>{
+    this.setState({visible:false},()=>{
+    })
+  }
+  //点击确定
+  handleOk =()=>{
+    this.setState({visible:false},()=>{
+    })
+  }
+  openLabelEdit=(type)=>{
+    this.setState({
+      visible:true,
+      type:type
+    },()=>{
+    })
+  }
   render() {
     return (
      <PageTableTitle title={'风控标签'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts child={this.getSubData} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered
           pagination={false}
           columns={this.state.columns}
-          dataSource={this.props.assetDeploy.riskList}
+          dataSource={this.state.data}
           loading={this.props.loading}
         />
         <Pagination
@@ -200,10 +234,19 @@ export default class RiskLabel extends PureComponent {
           showQuickJumper
           defaultCurrent={1}
           current={this.state.current}
-          total={this.props.assetDeploy.page.totalNum}
+          total={20}
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
         />
+       <Modal
+         width={750}
+         title={this.state.type===1?'新增标签':'编辑标签'}
+         visible={this.state.visible}
+         onOk={this.handleOk}
+         onCancel={this.handleCancel}
+       >
+         <LabelEdit/>
+       </Modal>
       </PageTableTitle>
     )
   }

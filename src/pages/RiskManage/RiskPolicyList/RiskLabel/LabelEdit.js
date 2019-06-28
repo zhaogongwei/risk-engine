@@ -1,5 +1,4 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from 'components/PageTitle/PageTableTitle'
 import {
   Button,
   Table,
@@ -192,7 +191,7 @@ export default class LabelEdit extends PureComponent {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{span:6},
-      wrapperCol:{span:14},
+      wrapperCol:{span:16},
     }
     const {selectedRowKeys } = this.state;
     const rowSelection = {
@@ -200,12 +199,11 @@ export default class LabelEdit extends PureComponent {
       onChange: this.onSelectChange,
     };
     return (
-      <PageTableTitle title={'新增/编辑标签'}>
         <Form
           className="ant-advanced-search-form"
         >
-          <Row style={{marginBottom:10}} type="flex" align="middle" >
-            <Col xxl={8} md={8}>
+          <Row style={{marginBottom:10}} gutter={24} type="flex" align="middle">
+            <Col xxl={20} md={12}>
               <FormItem label="标签名称" {...formItemConfig}>
                 {getFieldDecorator('status',{
                   initialValue:'',
@@ -216,8 +214,8 @@ export default class LabelEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-          <Row style={{marginBottom:10}} type="flex" align="middle" offset={4}>
-            <Col xxl={8} md={8}>
+          <Row style={{marginBottom:10}} type="flex" align="middle">
+            <Col xxl={20} md={12}>
               <FormItem label="资产来源" {...formItemConfig}>
                 {getFieldDecorator('assetsTypeName',{
                   initialValue:'',
@@ -231,8 +229,8 @@ export default class LabelEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-          <Row style={{marginBottom:10}} type="flex" align="middle" >
-            <Col xxl={8} md={8}>
+          <Row style={{marginBottom:10}} type="flex" align="middle">
+            <Col xxl={20} md={12}>
               <FormItem label="资产类型" {...formItemConfig}>
                 {getFieldDecorator('assetsTypeName',{
                   initialValue:'',
@@ -247,7 +245,7 @@ export default class LabelEdit extends PureComponent {
             </Col>
           </Row>
           <Row style={{marginBottom:10}} type="flex" align="middle">
-            <Col xxl={8} md={8}>
+            <Col xxl={20} md={12}>
               <FormItem label="还款方式" {...formItemConfig}>
                 {getFieldDecorator('assetsTypeName',{
                   initialValue:'',
@@ -261,9 +259,9 @@ export default class LabelEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-          <Row style={{marginBottom:10}} type="flex" align="middle" offset={2}>
-            <Col xxl={8} md={8}>
-              <FormItem label="借款期限" labelCol={{span:6}} wrapperCol={{span:3}}>
+          <Row style={{marginBottom:10}} gutter={8} type="flex" align="middle">
+            <Col xxl={7}>
+              <FormItem label="借款期限" labelCol={{span:18}} wrapperCol={{span:4}}>
                 {getFieldDecorator('borrowDate1',{
                   initialValue:'',
                   rules:[{required:true}]
@@ -272,7 +270,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2} style={{marginLeft:10}}>
               <FormItem>
                 {getFieldDecorator('borrowDate2',{
                   initialValue:'',
@@ -282,7 +280,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2}>
               <FormItem>
                 {getFieldDecorator('borrowDate3',{
                   initialValue:'',
@@ -292,7 +290,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2}>
               <FormItem >
                 {getFieldDecorator('borrowDate4',{
                   initialValue:'',
@@ -302,7 +300,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2}>
               <FormItem >
                 {getFieldDecorator('borrowDate5',{
                   initialValue:'',
@@ -312,7 +310,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2}>
               <FormItem>
                 {getFieldDecorator('borrowDate6',{
                   initialValue:'',
@@ -322,7 +320,7 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col xxl={1} md={2} pull={5}>
+            <Col xxl={2} md={2}>
               <FormItem>
                 {getFieldDecorator('borrowDate7',{
                   initialValue:'',
@@ -332,8 +330,8 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
-            <Col span={6} pull={3}>
-              <FormItem  wrapperCol={{span:12}}>
+            <Col span={4}>
+              <FormItem  wrapperCol={{span:10}}>
                 {getFieldDecorator('name',{
                   initialValue:'',
                 })(
@@ -345,8 +343,8 @@ export default class LabelEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-          <Row style={{marginBottom:10}} type="flex" align="middle" offset={4}>
-            <Col xxl={8} md={8}>
+          <Row style={{marginBottom:10}} type="flex" align="middle">
+            <Col xxl={20} md={12}>
               <FormItem label="状态" {...formItemConfig}>
                 {getFieldDecorator('assetsTypeName',{
                   initialValue:'',
@@ -360,16 +358,7 @@ export default class LabelEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-          <Row type="flex" align="middle" gutter={16}>
-            <Col offset={3}>
-              <Button type="primary" onClick={this.formSubmit}>保存并提交</Button>
-            </Col>
-            <Col>
-              <Button>返回</Button>
-            </Col>
-          </Row>
         </Form>
-      </PageTableTitle>
     )
   }
 }

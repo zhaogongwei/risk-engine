@@ -71,7 +71,7 @@ export default class PolicyList extends PureComponent {
               <span style={{paddingLeft:10,paddingRight:10}}>禁用</span>
             </Popconfirm>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>标签</span>
-            <span style={{paddingLeft:10,paddingRight:10}}>编辑</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
             <span>策略流</span>
           </div>
         )
@@ -91,7 +91,7 @@ export default class PolicyList extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:true,
+      type:1,//1:新增，2：编辑
       pageSize:10,
       currentPage:1,
       current:1,
@@ -146,8 +146,13 @@ export default class PolicyList extends PureComponent {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
   //去编辑页面
-  goEditPage=()=>{
-    router.push('/riskManage/riskpolicylist/list/edit')
+  goEditPage=(type)=>{
+    router.push({
+      pathname:'/riskManage/riskpolicylist/list/edit',
+      state:{
+        type:type
+      }
+    })
   }
   //  刷新页面
   reload = () => {
@@ -163,7 +168,7 @@ export default class PolicyList extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={this.goEditPage}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goEditPage(1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -173,7 +178,9 @@ export default class PolicyList extends PureComponent {
   }
   //跳转风控标签页面
   goLabel = () =>{
-    this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/PolicyList/RiskLabel'}))
+    router.push({
+      pathname:'/riskManage/riskpolicylist/risklabel',
+    })
   }
   render() {
     return (

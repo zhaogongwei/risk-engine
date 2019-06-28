@@ -41,7 +41,7 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.child(this)
+    this.props.getSubKey(this,'child')
   }
   render() {
     const { getFieldDecorator } = this.props.form
