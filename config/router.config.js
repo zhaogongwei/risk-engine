@@ -354,6 +354,30 @@ export default [
               }
             ]
           },
+          //风控报告模板
+          {
+            path: '/riskManage/riskrptem',
+            name: 'riskrptem',
+            routes:[
+              //列表
+              {
+                path:'/riskManage/riskrptem',
+                redirect:'/riskManage/riskrptem/list',
+              },
+              {
+                path:'/riskManage/riskrptem/list',
+                name:'list',
+                component:'./RiskManage/RiskRptTem',
+              },
+              //新增、编辑
+              {
+                path:'/riskManage/riskrptem/list/edit',
+                name:'edit',
+                component:'./RiskManage/RiskRptTem/TempEdit',
+                hideInMenu:true
+              }
+            ]
+          },
         ]
       },
       {

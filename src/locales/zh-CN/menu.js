@@ -51,4 +51,7 @@ export default {
   'menu.riskManage.policylist.list': '策略列表',
   'menu.riskManage.policylist.edit': '风控策略编辑',
   'menu.riskManage.policylist.risklabel': '风控标签',
+  'menu.riskManage.riskrptem': '风控报告模板',
+  'menu.riskManage.riskrptem.list': '报告列表',
+  'menu.riskManage.riskrptem.edit': '风控报告模板编辑',
 };
