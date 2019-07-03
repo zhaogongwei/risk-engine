@@ -24,50 +24,52 @@ class FlowPage extends React.Component {
   }
 
   submitData = () => {
-    console.log(this.myRef.graph.find(this.props.editorFlow.selectId))
+    console.log(this.myRef.graph.save())
+    console.log(this.props.editorFlow.selectId)
      // this.myRef.graph.find(this.props.editorFlow.selectId)['model']['fill']="#ffd591"
     // const item = this.myRef.graph.find(this.props.editorFlow.selectId)
   }
 
   componentDidMount(){
+    console.log(this.props.editorFlow, 'editorFlow')
     // console.log(G6)
     // console.log(this.myRefs)
-    const data = {
-      nodes: [{
-        type: 'node',
-        size: '80*70',
-        shape: 'card',
-        color: '#fff',
-        label: '云雀',
-        x: 55,
-        y: 55,
-        id: 'ea1184e8',
-        index: 0,
-        src:'https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg'
-      }, {
-        type: 'node',
-        size: '70*70',
-        shape: 'flow-circle',
-        color: '#FA8C16',
-        label: '结束节点',
-        x: 55,
-        y: 255,
-        id: '481fbb1a',
-        index: 2,
-      }],
-      edges: [{
-        source: 'ea1184e8',
-        sourceAnchor: 2,
-        target: '481fbb1a',
-        targetAnchor: 0,
-        id: '7989ac70',
-        index: 1,
-      }],
-    };
+    // const data = {
+    //   nodes: [{
+    //     type: 'node',
+    //     size: '80*70',
+    //     color: '#fff',
+    //     label: '云雀',
+    //     x: 55,
+    //     y: 55,
+    //     id: 'ea1184e8',
+    //     index: 0,
+    //     src:'https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg'
+    //   }, {
+    //     type: 'node',
+    //     size: '70*70',
+    //     shape: 'flow-circle',
+    //     color: '#FA8C16',
+    //     label: '结束节点',
+    //     x: 55,
+    //     y: 255,
+    //     id: '481fbb1a',
+    //     index: 2,
+    //   }],
+    //   edges: [{
+    //     source: 'ea1184e8',
+    //     sourceAnchor: 2,
+    //     target: '481fbb1a',
+    //     targetAnchor: 0,
+    //     id: '7989ac70',
+    //     index: 1,
+    //   }],
+    // };
   }
 
   render () {
-    console.log(this.props, 'props')
+    const { selectId, selectItem, editorData } = this.props.editorFlow
+    console.log(editorData,'=================>editorData')
     return (
       <PageHeaderWrapper>
         <GGEditor className={styles.editor} ref={node => (this.myRefs = node)}>
@@ -81,7 +83,7 @@ class FlowPage extends React.Component {
               <FlowItemPanel />
             </Col>
             <Col span={16} className={styles.editorContent}>
-              <Flow ref={node =>(this.myRef = node)} className={styles.flow} data={this.props.editorFlow.editorData} onClick={(e)=>{console.log(e)}} />
+              <Flow ref={node =>(this.myRef = node)} className={styles.flow} data={editorData} onClick={(e)=>{console.log(e)}} />
             </Col>
             <Col span={4} className={styles.editorSidebar}>
               <FlowDetailPanel />
@@ -89,7 +91,7 @@ class FlowPage extends React.Component {
             </Col>
           </Row>
           <FlowBird />
-          <FlowContextMenu />
+          <FlowContextMenu selectId={selectId} selectItem={selectItem} />
         </GGEditor>
         <Button type="primary" onClick={this.submitData}>提交</Button>
       </PageHeaderWrapper>

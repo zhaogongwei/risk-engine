@@ -30,8 +30,7 @@ class DetailForm extends React.Component {
   componentDidMount(){
     const { form, propsAPI } = this.props;
     const { read ,save,executeCommand} = propsAPI;
-    console.log(propsAPI)
-    console.log('重新渲染','componentDidMount')
+    // this.setRule()
     if(this.props.editorFlow.status){
       read(this.props.editorFlow.editorData)
       this.props.dispatch({
@@ -101,7 +100,7 @@ class DetailForm extends React.Component {
     const { getSelected, executeCommand, update,save } = propsAPI;
 
     console.log(propsAPI)
-    console.log(this.item)
+    console.log(this.item, 'sss')
     const data = save();
     console.log(data,'data')
     const id = getSelected()[0].id
@@ -123,7 +122,7 @@ class DetailForm extends React.Component {
       payload:true
     })
     console.log(selectedItem,'666')
-    router.push(`/editor/flow/setRule?id=${  jump}`)
+    // router.push(`/editor/flow/setRule?id=${  jump}`)
   }
 
   readData = ()=>{
@@ -146,17 +145,17 @@ class DetailForm extends React.Component {
           initialValue: label
         })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        <Item label="rule" {...inlineFormItemLayout}>
+        {/* <Item label="rule" {...inlineFormItemLayout}>
           {form.getFieldDecorator('rule', {
             initialValue: jump
           })(<Input onBlur={this.handleSubmit} />)}
-        </Item>
-        <Item label="title" {...inlineFormItemLayout}>
+        </Item> */}
+        {/* <Item label="title" {...inlineFormItemLayout}>
           {form.getFieldDecorator('title', {
             initialValue: title
           })(<Input onBlur={this.handleSubmit} />)}
-        </Item>
-        <Button onClick={this.setRule}>设置规则</Button>
+        </Item> */}
+        {/* <Button onClick={this.setRule}>设置规则</Button> */}
       </Fragment>
     );
   };

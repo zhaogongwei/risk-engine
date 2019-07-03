@@ -2,8 +2,16 @@ import React, { PureComponent, Fragment } from 'react';
 import { Input, Button, Form } from 'antd';
 import { withPropsAPI } from 'gg-editor';
 import router from 'umi/router';
+import { connect } from 'dva';
+import { getQueryString } from '@/utils/utils';
 
 const { Item } = Form;
+
+@connect(({
+  editorFlow
+}) => ({
+  editorFlow
+}))
 
 class SetRule extends PureComponent {
   get item() {
@@ -14,22 +22,29 @@ class SetRule extends PureComponent {
 
   componentDidMount() {
     const { propsAPI } = this.props;
-
-    console.log(propsAPI);
+    const { editorData } = this.props.editorFlow;
+    if (!Object.keys(editorData).length > 0) router.push('/editor/flow')
   }
 
   submitData = () => {
     const { form, propsAPI } = this.props;
     const { getSelected, executeCommand, update } = propsAPI;
-    setTimeout(() => {
-      form.validateFieldsAndScroll((err, values) => {
-        if (err) {
-          return;
+    const { editorData } = this.props.editorFlow;
+    form.validateFieldsAndScroll((err, values) => {
+      if (err) {
+        return;
+      }
+      editorData.nodes && editorData.nodes.length && editorData.nodes.map((item, idx) => {
+        if (item.id === getQueryString('id', this.props.location.search)) {
+          item.comfig = values
         }
-        router.push('/editor/flow')
-        console.log( values)
-      });
-    }, 0);
+      })
+      this.props.dispatch({
+        type: 'editorFlow/fetchNotices',
+        payload: editorData
+      })
+      router.push('/editor/flow')
+    });
   }
 
   render() {
