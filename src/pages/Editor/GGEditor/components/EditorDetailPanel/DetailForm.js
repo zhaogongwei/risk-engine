@@ -87,9 +87,8 @@ class DetailForm extends React.Component {
   renderEdgeShapeSelect = () => {
     return (
       <Select onChange={this.handleSubmit}>
-        <Option value="flow-smooth">Smooth</Option>
-        <Option value="flow-polyline">Polyline</Option>
-        <Option value="flow-polyline-round">Polyline Round</Option>
+        <Option value="yes">是</Option>
+        <Option value="no">否</Option>
       </Select>
     );
   };
@@ -136,7 +135,7 @@ class DetailForm extends React.Component {
 
   renderNodeDetail = () => {
     const { form } = this.props;
-    const { label, jump,title } = this.item.getModel();
+    const { label, jump, title } = this.item.getModel();
 
     return (
       <Fragment>
@@ -162,7 +161,7 @@ class DetailForm extends React.Component {
 
   renderEdgeDetail = () => {
     const { form } = this.props;
-    const { label = '', shape = 'flow-smooth' } = this.item.getModel();
+    const { label = '', type } = this.item.getModel();
 
     return (
       <Fragment>
@@ -171,11 +170,11 @@ class DetailForm extends React.Component {
             initialValue: label,
           })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        {/* <Item label="Shape" {...inlineFormItemLayout}>
-          {form.getFieldDecorator('shape', {
-            initialValue: shape,
+        <Item label="type" {...inlineFormItemLayout}>
+          {form.getFieldDecorator('type', {
+            initialValue: type,
           })(this.renderEdgeShapeSelect())}
-        </Item> */}
+        </Item>
       </Fragment>
     );
   };

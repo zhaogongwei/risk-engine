@@ -34,15 +34,15 @@ class SetRule extends PureComponent {
       if (err) {
         return;
       }
-      editorData.nodes && editorData.nodes.length && editorData.nodes.map((item, idx) => {
-        if (item.id === getQueryString('id', this.props.location.search)) {
-          item.comfig = values
-        }
-      })
-      this.props.dispatch({
-        type: 'editorFlow/fetchNotices',
-        payload: editorData
-      })
+      // editorData.nodes && editorData.nodes.length && editorData.nodes.map((item, idx) => {
+      //   if (item.id === getQueryString('id', this.props.location.search)) {
+      //     item.comfig = values
+      //   }
+      // })
+      // this.props.dispatch({
+      //   type: 'editorFlow/fetchNotices',
+      //   payload: editorData
+      // })
       router.push('/editor/flow')
     });
   }
