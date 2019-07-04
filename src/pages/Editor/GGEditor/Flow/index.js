@@ -1,8 +1,11 @@
 import React from 'react';
 import { Row, Col, Button } from 'antd';
 import GGEditor, { Flow,RegisterNode } from 'gg-editor';
+import { withPropsAPI } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '../components/EditorItemPanel/flowBird'
+import AddEdges from '../components/EditorItemPanel/addEdges'
+import FlowWrapper from '../components/EditorItemPanel/flowWrapper'
 import EditorMinimap from '../components/EditorMinimap';
 import { FlowContextMenu } from '../components/EditorContextMenu';
 import { FlowToolbar } from '../components/EditorToolbar';
@@ -32,6 +35,8 @@ class FlowPage extends React.Component {
   componentDidMount(){
     // console.log(G6)
     // console.log(this.myRefs)
+    const { form, propsAPI } = this.props;
+    const { read ,save,executeCommand} = propsAPI;
     const data = {
       nodes: [{
         type: 'node',
@@ -65,6 +70,12 @@ class FlowPage extends React.Component {
       }],
     };
   }
+  undo=()=>{
+    const { form, propsAPI } = this.props;
+    const { read ,save,executeCommand} = propsAPI;
+    console.log(executeCommand)
+    //executeCommand('undo')
+  }
 
   render () {
     console.log(this.props, 'props')
@@ -81,7 +92,7 @@ class FlowPage extends React.Component {
               <FlowItemPanel />
             </Col>
             <Col span={16} className={styles.editorContent}>
-              <Flow ref={node =>(this.myRef = node)} className={styles.flow} data={this.props.editorFlow.editorData} onClick={(e)=>{console.log(e)}} />
+              <FlowWrapper />
             </Col>
             <Col span={4} className={styles.editorSidebar}>
               <FlowDetailPanel />
@@ -89,6 +100,7 @@ class FlowPage extends React.Component {
             </Col>
           </Row>
           <FlowBird />
+          <AddEdges />
           <FlowContextMenu />
         </GGEditor>
         <Button type="primary" onClick={this.submitData}>提交</Button>
@@ -96,4 +108,4 @@ class FlowPage extends React.Component {
     );
   }
 }
-export default FlowPage;
+export default withPropsAPI(FlowPage);

@@ -49,7 +49,7 @@ export default class RiskRepTem extends PureComponent {
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
             <span>编辑</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>查看</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goPreview}>查看</span>
             <span style={{paddingLeft:10,paddingRight:10}}>策略</span>
             <span>资产</span>
           </div>
@@ -140,6 +140,12 @@ export default class RiskRepTem extends PureComponent {
   goEditPage = ()=>{
     router.push({
       pathname:'/riskManage/riskrptem/list/edit',
+    })
+  }
+  //跳转报告预览
+  goPreview = ()=>{
+    router.push({
+      pathname:'/riskManage/riskrptem/list/preview'
     })
   }
   render() {

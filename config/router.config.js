@@ -375,6 +375,13 @@ export default [
                 name:'edit',
                 component:'./RiskManage/RiskRptTem/TempEdit',
                 hideInMenu:true
+              },
+              //报告预览
+              {
+                path:'/riskManage/riskrptem/list/preview',
+                name:'preview',
+                component:'./RiskManage/RiskRptTem/riskReport',
+                hideInMenu:true
               }
             ]
           },

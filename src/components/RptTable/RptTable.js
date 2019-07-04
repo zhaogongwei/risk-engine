@@ -48,6 +48,7 @@ export default class RptTable extends Component {
       wrapperCol:{span:16},
     }
     debugger
+    console.log(this.child)
     const formItem = dataSource.map((item,index)=>
       (
         <div style={{marginBottom:20,paddingTop:20,paddingBottom:20,border:'1px solid #E4E4E4'}} key={index}>
@@ -72,10 +73,10 @@ export default class RptTable extends Component {
               index={index}
               handleDelete={()=>this.props.handleDelete(index)}
               handleAdd={()=>this.props.handleAdd(index)}
-              addVar={()=>this.props.addVar(index)}
+              addVar={()=>this.props.addVar(index,this.child.emptySelect)}
               deleteVar={()=>this.props.deleteVar(index,this.child.state.selectedRowKeys,this.child.emptySelect)}
               getSubKey={this.getSubKey}
-              page={this.props.page}
+              saveSelectVar={this.props.saveSelectVar}
             />
           </Row>
         </div>

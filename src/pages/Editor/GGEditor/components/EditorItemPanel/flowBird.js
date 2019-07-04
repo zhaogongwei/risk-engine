@@ -20,6 +20,7 @@ class FlowBird extends React.Component {
         console.log(this.getStyle(item),'getStyle')
         console.log(this.getSelectedStyle(item),'getSelectedStyle')
         console.log(this.getPath(item),'getPath')
+        console.log(item.getEdges(),'getEdges')
         const size = model.size.split('*')
         const width = size[0];
         const height = size[1];
@@ -92,11 +93,14 @@ class FlowBird extends React.Component {
         ]
         return path
       }, */
-      // 锚点的位置
-      getAnchorPoints() {
-        return  [
-          [0,0]
-        ]
+      afterDraw(item){
+        console.log(item,'afterDraw')
+      },
+      update(item){
+        console.log(item,'update')
+      },
+      afterUpdate(item){
+        console.log(item,'afterUpdate')
       },
     };
 

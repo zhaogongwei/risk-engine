@@ -54,4 +54,5 @@ export default {
   'menu.riskManage.riskrptem': '风控报告模板',
   'menu.riskManage.riskrptem.list': '报告列表',
   'menu.riskManage.riskrptem.edit': '风控报告模板编辑',
+  'menu.riskManage.riskrptem.preview': '风控报告预览',
 };

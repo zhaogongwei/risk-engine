@@ -211,10 +211,11 @@ export default class TempEdit extends Component {
   deleteVar=(key,list,callback)=>{
     console.log(key,list)
     const {reportList}= this.props.riskRptTem;
+    const selectVar= reportList[key]['selectVar'];
     //对应表格的数据
     let checkList = reportList[key]['checkList'];
-    if(list.length>0){
-      for(var i of list){
+    if(selectVar.length>0){
+      for(var i of selectVar){
         checkList.forEach((item,index)=>{
           if(item['key'] ===i){
             checkList.splice(index,1)
@@ -237,6 +238,12 @@ export default class TempEdit extends Component {
     console.log(reportList)
     console.log(key,list)
   }
+  //存储对应table选中的变量
+  saveSelectVar=(index,list)=>{
+    console.log(index,list)
+    const {reportList}= this.props.riskRptTem;
+    reportList[index]['selectVar']=list;
+  }
   saveData=()=>{
     console.log(this.props.riskRptTem)
   }
@@ -257,6 +264,7 @@ export default class TempEdit extends Component {
           handleAdd={this.handleAdd}
           addVar={this.addVar}
           deleteVar={this.deleteVar}
+          saveSelectVar={this.saveSelectVar}
         />
         <Modal
           className={'ant-modal-sm'}

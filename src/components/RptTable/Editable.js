@@ -38,6 +38,7 @@ export default class Editable extends Component {
   }
   componentWillReceiveProps(newProps){
     console.log('newProps',newProps)
+    this.emptySelect()
     this.setState({
       tableList:newProps.dataSource
     })
@@ -47,6 +48,7 @@ export default class Editable extends Component {
   onSelectChange = (selectedRowKeys) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
+    this.props.saveSelectVar(this.props.index,selectedRowKeys)
   }
   //勾选框置空
   emptySelect=()=>{

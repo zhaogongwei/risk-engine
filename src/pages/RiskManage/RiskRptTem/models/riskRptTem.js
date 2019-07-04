@@ -12,6 +12,7 @@ export default {
       {
         title:'',
         checkList:[],
+        selectVar:[],
       }
     ],
     page:{
