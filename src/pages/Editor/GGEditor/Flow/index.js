@@ -3,7 +3,6 @@ import { Row, Col, Button } from 'antd';
 import GGEditor, { Flow,RegisterNode } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '../components/EditorItemPanel/flowBird'
-import AddEdges from '../components/EditorItemPanel/addEdges'
 import FlowWrapper from '../components/EditorItemPanel/flowWrapper'
 import EditorMinimap from '../components/EditorMinimap';
 import { FlowContextMenu } from '../components/EditorContextMenu';
