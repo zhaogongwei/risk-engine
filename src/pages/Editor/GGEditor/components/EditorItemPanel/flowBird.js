@@ -7,7 +7,7 @@ class FlowBird extends React.Component {
       draw(item) {
         const keyShape = this.drawKeyShape(item);
         // draw label
-        this.drawLabel(item);
+        // this.drawLabel(item);
         // this.removeEdge(item);
 
         // draw image
@@ -73,7 +73,7 @@ class FlowBird extends React.Component {
             width: model.style[0],
             height: model.style[1],
             textAlign: 'center',
-            text: model.title,
+            text: model.label,
             fill: '#444'
           }
         });

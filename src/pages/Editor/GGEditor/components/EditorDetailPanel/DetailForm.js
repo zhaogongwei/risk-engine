@@ -30,8 +30,7 @@ class DetailForm extends React.Component {
   componentDidMount(){
     const { form, propsAPI } = this.props;
     const { read ,save,executeCommand} = propsAPI;
-    console.log(propsAPI)
-    console.log('重新渲染','componentDidMount')
+    // this.setRule()
     if(this.props.editorFlow.status){
       read(this.props.editorFlow.editorData)
       this.props.dispatch({
@@ -88,9 +87,8 @@ class DetailForm extends React.Component {
   renderEdgeShapeSelect = () => {
     return (
       <Select onChange={this.handleSubmit}>
-        <Option value="flow-smooth">Smooth</Option>
-        <Option value="flow-polyline">Polyline</Option>
-        <Option value="flow-polyline-round">Polyline Round</Option>
+        <Option value="yes">是</Option>
+        <Option value="no">否</Option>
       </Select>
     );
   };
@@ -101,7 +99,7 @@ class DetailForm extends React.Component {
     const { getSelected, executeCommand, update,save } = propsAPI;
 
     console.log(propsAPI)
-    console.log(this.item)
+    console.log(this.item, 'sss')
     const data = save();
     console.log(data,'data')
     const id = getSelected()[0].id
@@ -123,7 +121,7 @@ class DetailForm extends React.Component {
       payload:true
     })
     console.log(selectedItem,'666')
-    router.push(`/editor/flow/setRule?id=${  jump}`)
+    // router.push(`/editor/flow/setRule?id=${  jump}`)
   }
 
   readData = ()=>{
@@ -137,7 +135,7 @@ class DetailForm extends React.Component {
 
   renderNodeDetail = () => {
     const { form } = this.props;
-    const { label, jump,title } = this.item.getModel();
+    const { label, jump, title } = this.item.getModel();
 
     return (
       <Fragment>
@@ -146,24 +144,24 @@ class DetailForm extends React.Component {
           initialValue: label
         })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        <Item label="rule" {...inlineFormItemLayout}>
+        {/* <Item label="rule" {...inlineFormItemLayout}>
           {form.getFieldDecorator('rule', {
             initialValue: jump
           })(<Input onBlur={this.handleSubmit} />)}
-        </Item>
-        <Item label="title" {...inlineFormItemLayout}>
+        </Item> */}
+        {/* <Item label="title" {...inlineFormItemLayout}>
           {form.getFieldDecorator('title', {
             initialValue: title
           })(<Input onBlur={this.handleSubmit} />)}
-        </Item>
-        <Button onClick={this.setRule}>设置规则</Button>
+        </Item> */}
+        {/* <Button onClick={this.setRule}>设置规则</Button> */}
       </Fragment>
     );
   };
 
   renderEdgeDetail = () => {
     const { form } = this.props;
-    const { label = '', shape = 'flow-smooth' } = this.item.getModel();
+    const { label = '', type } = this.item.getModel();
 
     return (
       <Fragment>
@@ -172,11 +170,11 @@ class DetailForm extends React.Component {
             initialValue: label,
           })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        {/* <Item label="Shape" {...inlineFormItemLayout}>
-          {form.getFieldDecorator('shape', {
-            initialValue: shape,
+        <Item label="type" {...inlineFormItemLayout}>
+          {form.getFieldDecorator('type', {
+            initialValue: type,
           })(this.renderEdgeShapeSelect())}
-        </Item> */}
+        </Item>
       </Fragment>
     );
   };

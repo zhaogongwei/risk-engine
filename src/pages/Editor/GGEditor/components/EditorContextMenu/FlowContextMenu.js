@@ -4,7 +4,8 @@ import MenuItem from './MenuItem';
 import SetMenuItem from './SetMenuItem';
 import styles from './index.less';
 
-const FlowContextMenu = () => {
+const FlowContextMenu = (props) => {
+  console.log(props, 'props')
   return (
     <ContextMenu className={styles.contextMenu}>
       <NodeMenu>

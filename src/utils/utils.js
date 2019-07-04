@@ -111,6 +111,16 @@ export function addListKey(arr = [], current = 1, pageSize = 20) {
   return arr
 }
 
+// 获取url中queryString方法
+export function getQueryString(name, searchUrl) {
+  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+  const r = searchUrl.substr(1).match(reg);
+  if (r != null) {
+    return unescape(r[2]);
+  }
+  return null;
+}
+
 //深度拷贝
 export function deepCopy (obj){
   // 只拷贝对象

@@ -3,6 +3,7 @@ import { Card } from 'antd';
 import { ItemPanel, Item } from 'gg-editor';
 import styles from './index.less';
 
+
 const FlowItemPanel = () => {
   return (
     <ItemPanel className={styles.itemPanel}>
@@ -12,11 +13,10 @@ const FlowItemPanel = () => {
           size="72*72"
           shape="flow-bird"
           model={{
-            label: '',
-            jump: '2',
+            label: '云雀',
+            type: 'yunque',
             src:"https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg",
-            style:[100,16],
-            title:'云雀'
+            style:[100,16]
           }}
           src="https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg"
         />
@@ -27,8 +27,20 @@ const FlowItemPanel = () => {
           model={{
             color: '#FA8C16',
             label: '起始节点',
+            type: 'start',
+            title:'高风险规则触发数'
+          }}
+          src="https://gw.alipayobjects.com/zos/rmsportal/ZnPxbVjKYADMYxkTQXRi.svg"
+        />
+        <Item
+          type="node"
+          size="130*72"
+          shape="flow-circle"
+          model={{
+            color: '#051cf8',
+            label: '自定义节点',
             title:'高风险规则触发数',
-            jump: '1'
+            type: 'end',
           }}
           src="https://gw.alipayobjects.com/zos/rmsportal/ZnPxbVjKYADMYxkTQXRi.svg"
         />

@@ -39,6 +39,7 @@ export default {
 
   reducers: {
     saveEditorData(state, { payload }) {
+      alert('zz王启琛')
       return {
         ...state,
         editorData: payload,
