@@ -31,13 +31,13 @@ class DetailForm extends React.Component {
     const { form, propsAPI } = this.props;
     const { read ,save,executeCommand} = propsAPI;
     // this.setRule()
-    if(this.props.editorFlow.status){
+    /*if(this.props.editorFlow.status){
       read(this.props.editorFlow.editorData)
       this.props.dispatch({
         type:'editorFlow/change',
         payload:false
       })
-    }
+    }*/
 
   }
 

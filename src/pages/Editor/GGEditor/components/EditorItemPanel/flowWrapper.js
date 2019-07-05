@@ -1,8 +1,12 @@
 import React from 'react';
 import { Flow,withPropsAPI } from 'gg-editor';
 import { message,} from 'antd';
+import { connect } from 'dva'
 import styles from './index.less';
-
+@connect(({ editorFlow,global }) => ({
+  editorFlow,
+  global
+}))
 class FlowWrapper extends React.Component{
   constructor (props) {
     super(props)
@@ -21,14 +25,15 @@ class FlowWrapper extends React.Component{
     this.apiAction('undo')
   }
   onChange=(e)=>{
-    const graph = e.item.graph;
+    console.log(e,'e')
+    /*const graph = e.item.graph;
     const group = e.item.group;
     const type = e.item.type;
     console.log(e,'e');
     console.log(graph.getEdges());
-    console.log(graph.getNodes());
+    console.log(graph.getNodes());*/
     //const edges = e.item.getOutEdges();
-    console.log(e.item,'edges')
+   /* console.log(e.item,'edges')
     const node = type === 'edge'?e.item.getSource():''
     const outEdges = node?node.getOutEdges():''
     console.log(node,'node')
@@ -36,11 +41,11 @@ class FlowWrapper extends React.Component{
     if(outEdges.length>2){
       message.error('每个节点最多只能输出两条线!')
       this.handleAddItem()
-    }
+    }*/
   }
   render(){
     return(
-        <Flow ref={node =>(this.myRef = node)} className={styles.flow}  onAfterChange={(e)=>this.onChange(e)}/>
+        <Flow ref={node =>(this.myRef = node)} className={styles.flow}  data={this.props.editorFlow.editorData} onAfterChange={(e)=>this.onChange(e)}/>
     )
   }
 }

@@ -15,6 +15,10 @@ const change = (props) => {
   }
   const data = save();
   props.dispatch({
+    type:'editorFlow/saveEditorData',
+    payload:data
+  })
+  props.dispatch({
     type:'editorFlow/fetchNotices',
     payload:data
   })

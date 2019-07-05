@@ -371,7 +371,14 @@ export default [
                 name: 'complex',
                 component: './RiskManage/RiskPolicyList/PolicyFlowEdit/ComplexRule',
                 hideInMenu:true
-              }
+              },
+              //策略流编辑>评分模型
+              {
+                path: '/riskManage/riskpolicylist/flow/scoreModel',
+                name: 'scoreModel',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit/ScoreModel',
+                hideInMenu:true
+              },
             ]
           },
           //风控报告模板
