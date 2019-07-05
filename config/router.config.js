@@ -351,6 +351,26 @@ export default [
                 path: '/riskManage/riskpolicylist/risklabel',
                 name: 'risklabel',
                 component: './RiskManage/RiskPolicyList/RiskLabel',
+              },
+              //策略流编辑
+              {
+                path: '/riskManage/riskpolicylist/flow/editor',
+                name: 'flow',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit',
+              },
+              //策略流编辑>设置规则
+              {
+                path: '/riskManage/riskpolicylist/flow/setRule',
+                name: 'setRule',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit/Rule',
+                hideInMenu:true
+              },
+              //策略流编辑>复杂规则
+              {
+                path: '/riskManage/riskpolicylist/flow/complex',
+                name: 'complex',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit/ComplexRule',
+                hideInMenu:true
               }
             ]
           },

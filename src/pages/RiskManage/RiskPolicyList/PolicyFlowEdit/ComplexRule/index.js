@@ -216,7 +216,7 @@ export default class AssetTypeDeploy extends PureComponent {
       wrapperCol:{span:16},
     }
     return (
-      <PageTableTitle title={'硬规则'}>
+      <PageTableTitle title={'复杂规则'}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <RuleTable
           bordered

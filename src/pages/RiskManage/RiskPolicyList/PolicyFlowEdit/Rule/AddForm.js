@@ -12,7 +12,7 @@ import {
   Checkbox,
   Pagination
 } from 'antd';
-import styles from '../../../../FilterIpts.less'
+import styles from '../../../FilterIpts.less'
 import { addListKey,deepCopy } from '@/utils/utils'
 import { connect } from 'dva'
 const FormItem = Form.Item
@@ -211,31 +211,8 @@ export default class DeployDialog extends Component {
     })
   }
   //点击确定
-  handleOk = ()=>{
-    this.setState({visible:false},()=>{
-      console.log(this.state.checkedList)
-      if(this.props.type){
-        this.props.dispatch({
-          type: 'rule/ruleListHandle',
-          payload: {
-            ruleList:addListKey(deepCopy([...this.props.rule.ruleList,...this.state.checkedList]))
-          }
-        })
-      }else{
-        console.log(this.state.radioValue)
-        console.log(this.props.rule)
-        const {ruleList} = this.props.rule
-        ruleList.splice(this.props.number-1,1,this.state.radioValue)
-        this.props.dispatch({
-          type: 'rule/ruleListHandle',
-          payload: {
-            ruleList:addListKey(deepCopy(ruleList))
-          }
-        })
-      }
-
-      this.props.onChange(this.state.visible)
-    })
+  submitHandler=()=>{
+      return this.state
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -251,12 +228,6 @@ export default class DeployDialog extends Component {
     }
     return newObj;
   }
-  handleCancel =()=>{
-    this.setState({visible:false},()=>{
-      this.props.onChange(this.state.visible)
-    })
-
-  }
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -269,7 +240,7 @@ export default class DeployDialog extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.childDeploy(this)
+    this.props.getSubKey(this,'addForm')
   }
   componentWillReceiveProps(newProps){
     this.setState({
@@ -284,13 +255,6 @@ export default class DeployDialog extends Component {
       wrapperCol:{span:16},
     }
     return (
-      <Modal
-        title={'选择变量'}
-        visible={visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-        width={1040}
-      >
         <Form
           className="ant-advanced-search-form"
         >
@@ -375,13 +339,16 @@ export default class DeployDialog extends Component {
           <Divider />
           <Row className={styles.btmMargin} type="flex" align="middle" justify="space-between">
             <Col>
-              <Checkbox
-                indeterminate={this.state.indeterminate}
-                onChange={this.onCheckAllChange}
-                checked={this.state.checkAll}
-              >
-                全选
-              </Checkbox>
+              {
+                this.props.type?
+                  <Checkbox
+                    indeterminate={this.state.indeterminate}
+                    onChange={this.onCheckAllChange}
+                    checked={this.state.checkAll}
+                  >
+                    全选
+                  </Checkbox>:null
+              }
             </Col>
             <Col>
               <Pagination
@@ -396,7 +363,6 @@ export default class DeployDialog extends Component {
             </Col>
           </Row>
         </Form>
-      </Modal>
     )
   }
 }
