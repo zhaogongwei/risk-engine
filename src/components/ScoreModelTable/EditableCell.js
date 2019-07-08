@@ -119,7 +119,7 @@ const EditableFormRow = Form.create()(EditableRow);
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
-                        onFocus={(e)=>handleModify()}
+                        onClick={(e)=>handleModify()}
                       />
                     )}
                   </FormItem>

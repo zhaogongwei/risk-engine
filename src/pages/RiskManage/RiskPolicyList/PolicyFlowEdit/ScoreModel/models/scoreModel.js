@@ -94,7 +94,7 @@ export default {
           }
         }
     },
-    delOneData(state, {payload}) {
+    delNumData(state, {payload}) {
       return {
         ...state,
         one:{
@@ -103,7 +103,7 @@ export default {
         }
       };
     },
-    delTwoData(state, {payload}) {
+    delStrData(state, {payload}) {
       return {
         ...state,
         two:{

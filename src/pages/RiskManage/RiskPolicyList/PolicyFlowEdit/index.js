@@ -3,6 +3,7 @@ import { Row, Col, Button } from 'antd';
 import GGEditor, { Flow,RegisterNode } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowBird'
+import FlowCircleExtend from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowCircleExtend'
 import FlowWrapper from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowWrapper'
 import EditorMinimap from '@/pages/Editor/GGEditor/components/EditorMinimap';
 import { FlowContextMenu } from '@/pages/Editor/GGEditor/components/EditorContextMenu';
@@ -27,45 +28,10 @@ class FlowPage extends React.Component {
   submitData = () => {
     console.log(this.myRef.graph.save())
     console.log(this.props.editorFlow.selectId)
-     // this.myRef.graph.find(this.props.editorFlow.selectId)['model']['fill']="#ffd591"
-    // const item = this.myRef.graph.find(this.props.editorFlow.selectId)
   }
 
   componentDidMount(){
     console.log(this.props.editorFlow, 'editorFlow')
-    // console.log(G6)
-    // console.log(this.myRefs)
-    // const data = {
-    //   nodes: [{
-    //     type: 'node',
-    //     size: '80*70',
-    //     color: '#fff',
-    //     label: '云雀',
-    //     x: 55,
-    //     y: 55,
-    //     id: 'ea1184e8',
-    //     index: 0,
-    //     src:'https://gw.alipayobjects.com/zos/rmsportal/XuVpGqBFxXplzvLjJBZB.svg'
-    //   }, {
-    //     type: 'node',
-    //     size: '70*70',
-    //     shape: 'flow-circle',
-    //     color: '#FA8C16',
-    //     label: '结束节点',
-    //     x: 55,
-    //     y: 255,
-    //     id: '481fbb1a',
-    //     index: 2,
-    //   }],
-    //   edges: [{
-    //     source: 'ea1184e8',
-    //     sourceAnchor: 2,
-    //     target: '481fbb1a',
-    //     targetAnchor: 0,
-    //     id: '7989ac70',
-    //     index: 1,
-    //   }],
-    // };
   }
 
   render () {
@@ -88,6 +54,18 @@ class FlowPage extends React.Component {
             </Col>
             <Col span={4} className={styles.editorSidebar}>
               <FlowDetailPanel />
+              <div>
+                <Row type="flex" justify="center" align="middle" gutter={16} style={{marginBottom:10}}>
+                  <Col><Button type="primary">保存</Button></Col>
+                  <Col><Button style={{width:100}}>保存并检查</Button></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" gutter={16}>
+                  <Col><Button type="primary">导入</Button></Col>
+                  <Col><Button style={{width:100}}>返回</Button></Col>
+                </Row>
+              </div>
+              <FlowBird/>
+              <FlowCircleExtend/>
               <EditorMinimap />
             </Col>
           </Row>

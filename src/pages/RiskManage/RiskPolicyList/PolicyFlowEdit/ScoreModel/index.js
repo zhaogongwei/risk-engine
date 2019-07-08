@@ -8,12 +8,13 @@ import {
   Pagination,
   Icon,
   Popconfirm,
-  message
+  message,
+  Modal
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
-import Dialog from './Dialog';
+import AddForm from './AddForm';
 import ScoreModelTable from '@/components/ScoreModelTable'
 import SetRowCol from '@/components/SetRowCol'
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
@@ -50,7 +51,7 @@ export default class ScoreModel extends PureComponent {
           title: '操作',
           key:'action',
           render: (record) => {
-            return <div style={{display:'flex'}}>
+            return <div style={{display:'flex',justifyContent:'center'}}>
                       <Button type="primary" style={{marginRight:20}} onClick={()=>this.handledit(record)}>编辑</Button>
                       <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDeleteLeft(record.key)}  okText="Yes" cancelText="No">
                         <Button type="primary">删除</Button>
@@ -186,6 +187,7 @@ export default class ScoreModel extends PureComponent {
       tableState:false,//右侧表格显示状态
       varType:0,//变量类型 0：字符 1:数字
       varKey:0,//变量key值
+      visible:false
     };
   }
   componentDidMount() {
@@ -218,31 +220,18 @@ export default class ScoreModel extends PureComponent {
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
-  getSubData = (ref) => {
-    this.child = ref;
-  }
-  //   获取子组件数据的方法
-  getSubDeploy = (ref) => {
-    this.childDeploy = ref;
+  getSubKey = (ref,key) => {
+    this[key]=ref
   }
   //展示页码
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //新增
-  btnAdd=()=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      type:true
-    })
-  }
   //点击配置弹窗
   clickDialog=(type,record)=>{
     console.log(type,record)
-    this.childDeploy.reset()
     this.setState({
-      modalStatus:true,
+      visible:true,
       type:type,
       number:record?record['key']:''
     })
@@ -290,7 +279,6 @@ export default class ScoreModel extends PureComponent {
       console.log(option)
       const {count, dataSource} = this.props.scoreModel.two;
       const newData = {
-        key:count,
         term:'',
         val:'',
         score:'',
@@ -301,8 +289,7 @@ export default class ScoreModel extends PureComponent {
       this.props.dispatch({
         type: 'scoreModel/addTwoData',
         payload: {
-          dataSource: [...dataSource, newData],
-          count: count + 1,
+          dataSource: addListKey([...dataSource, newData]),
         }
       })
 
@@ -311,7 +298,6 @@ export default class ScoreModel extends PureComponent {
       const { count, dataSource } = this.props.scoreModel.one;
       //   要添加表格的对象
       const newData = {
-        key:count,
         lowCon:'',
         lowVal:'',
         topCon:'',
@@ -321,8 +307,7 @@ export default class ScoreModel extends PureComponent {
       this.props.dispatch({
         type: 'scoreModel/addDataSource',
         payload: {
-          dataSource: [...dataSource, newData],
-          count: count + 1,
+          dataSource: addListKey([...dataSource, newData]),
         }
       })
       console.log(this.props)
@@ -335,10 +320,9 @@ export default class ScoreModel extends PureComponent {
       const {dataSource,count} = this.props.scoreModel.two
       const newDataSource = dataSource.filter(item => item.key !== key)
       this.props.dispatch({
-        type:'scoreModel/delTwoData',
+        type:'scoreModel/delStrData',
         payload:{
-          dataSource:newDataSource,
-          count:newDataSource.length === 0?1:newDataSource[newDataSource.length-1].key+1
+          dataSource:addListKey(newDataSource),
         }
       })
     }else{
@@ -348,10 +332,9 @@ export default class ScoreModel extends PureComponent {
       const newDataSource = dataSource.filter(item => item.key !== key)
       console.log('newDataSource',newDataSource)
       this.props.dispatch({
-        type: 'scoreModel/delOneData',
+        type: 'scoreModel/delNumData',
         payload: {
-          dataSource: newDataSource,
-          count:newDataSource.length === 0?1:newDataSource[newDataSource.length-1].key+1
+          dataSource: addListKey(newDataSource),
         }
       })
     }
@@ -361,7 +344,7 @@ export default class ScoreModel extends PureComponent {
   handledit=(record)=>{
     console.log(record)
     this.setState({
-      tableState:!this.state.tableState,
+      tableState:true,
       varKey:record.key,
       varType:record.kind == 'num'?1:0
     },()=>{
@@ -373,34 +356,30 @@ export default class ScoreModel extends PureComponent {
       if(detailist&&detailist.length>0){
         if(this.state.varType){
           this.props.dispatch({
-            type: 'scoreModel/delOneData',
+            type: 'scoreModel/delNumData',
             payload: {
-              dataSource: detailist,
-              count:detailist[detailist.length-1].key+1
+              dataSource: addListKey(detailist),
             }
           })
         }else{
           this.props.dispatch({
-            type:'scoreModel/delTwoData',
+            type:'scoreModel/delStrData',
             payload:{
-              dataSource:detailist,
-              count:detailist[detailist.length-1].key+1
+              dataSource:addListKey(detailist),
             }
           })
         }
       }else{
         this.props.dispatch({
-          type: 'scoreModel/delOneData',
+          type: 'scoreModel/delNumData',
           payload: {
             dataSource: [],
-            count:1
           }
         })
         this.props.dispatch({
-          type:'scoreModel/delTwoData',
+          type:'scoreModel/delStrData',
           payload:{
             dataSource:[],
-            count:1
           }
         })
       }
@@ -410,6 +389,7 @@ export default class ScoreModel extends PureComponent {
   handleSave = ()=>{
     const {scoreList,one,two} = this.props.scoreModel
     const {varKey} = this.state
+    //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
     //变量为数字类型
     if(this.state.varType){
       Object.assign(scoreList[varKey-1],{detailist:one.dataSource})
@@ -417,7 +397,42 @@ export default class ScoreModel extends PureComponent {
       //变量为字符类型
       Object.assign(scoreList[varKey-1],{detailist:two.dataSource})
     }
+    message.success('保存成功')
     console.log(this.props.scoreModel)
+  }
+  //弹框按钮取消
+  handleCancel =()=>{
+    this.setState({visible:false})
+  }
+  //弹框按钮确定
+  addFormSubmit=()=>{
+    this.setState({visible:false},()=>{
+      const {checkedList,radioValue }= this.addForm.submitHandler();
+      console.log(this.state.checkedList)
+      if(this.state.type){
+        this.props.dispatch({
+          type: 'scoreModel/scoreListHandle',
+          payload: {
+            scoreList:addListKey(deepCopy([...this.props.scoreModel.scoreList,...checkedList]))
+          }
+        })
+        console.log(this.props.scoreModel)
+      }else{
+        if(Object.keys(radioValue).length){
+          const {scoreList} = this.props.scoreModel
+          scoreList.splice(this.state.number-1,1,radioValue)
+          this.props.dispatch({
+            type: 'scoreModel/scoreListHandle',
+            payload: {
+              scoreList:addListKey(deepCopy(scoreList))
+            }
+          })
+        }
+      }
+    })
+  }
+  save=()=>{
+    console.log(this.props.scoreModel.scoreList)
   }
   render() {
     const { permission } = this.props
@@ -433,7 +448,7 @@ export default class ScoreModel extends PureComponent {
     ]
     return (
       <PageTableTitle title={'评分模型'}>
-        <FilterIpts child={this.getSubData} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Row type="flex" gutter={24} align="top">
           <Col span={12}>
             <ScoreModelTable
@@ -466,19 +481,25 @@ export default class ScoreModel extends PureComponent {
         </Row>
         <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
           <Col>
-            <Button type="primary">保存并提交</Button>
+            <Button type="primary" onClick={this.save}>保存并提交</Button>
           </Col>
           <Col>
-            <Button type="primary">返回</Button>
+            <Button>返回</Button>
           </Col>
         </Row>
-        <Dialog
-          showState={this.state.modalStatus}
-          type={this.state.type}
-          number={this.state.number}
-          onChange={this.handleChildChange}
-          childDeploy={this.getSubDeploy}
-        />
+        <Modal
+          title={'选择变量'}
+          visible={this.state.visible}
+          onOk={this.addFormSubmit}
+          onCancel={this.handleCancel}
+          width={1040}
+        >
+          <AddForm
+            type={this.state.type}
+            number={this.state.number}
+            getSubKey={this.getSubKey}
+          />
+        </Modal>
       </PageTableTitle>
     )
   }

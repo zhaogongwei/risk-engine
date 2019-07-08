@@ -28,31 +28,7 @@ class DetailForm extends React.Component {
   }
 
   componentDidMount(){
-    const { form, propsAPI } = this.props;
-    const { read ,save,executeCommand} = propsAPI;
-    // this.setRule()
-    /*if(this.props.editorFlow.status){
-      read(this.props.editorFlow.editorData)
-      this.props.dispatch({
-        type:'editorFlow/change',
-        payload:false
-      })
-    }*/
-
   }
-
-  componentWillMount(){
-    console.log('重新渲染','componentWillMount')
-  }
-
-  componentWillUpdate(){
-    console.log('重新渲染','componentWillUpdate')
-  }
-
-  componentDidUpdate(){
-    console.log('重新渲染','componentDidUpdate')
-  }
-
   handleSubmit = e => {
     
     if (e && e.preventDefault) {
@@ -141,7 +117,13 @@ class DetailForm extends React.Component {
       <Fragment>
         <Item label="Label" {...inlineFormItemLayout}>
           {form.getFieldDecorator('label', {
-          initialValue: label
+          initialValue: label,
+          rules:[
+            {
+              max:10,
+              message:'最多输入10位!'
+            }
+          ]
         })(<Input onBlur={this.handleSubmit} />)}
         </Item>
         {/* <Item label="rule" {...inlineFormItemLayout}>
@@ -200,6 +182,7 @@ class DetailForm extends React.Component {
     }
     return (
       <Card type="inner" size="small" title={upperFirst(type)} bordered={false}>
+        <p>版本号:1.0</p>
         <Form onSubmit={this.handleSubmit}>
           {type === 'node' && this.renderNodeDetail()}
           {type === 'edge' && this.renderEdgeDetail()}

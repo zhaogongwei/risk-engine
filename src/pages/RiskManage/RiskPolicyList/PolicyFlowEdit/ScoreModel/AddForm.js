@@ -151,7 +151,7 @@ const defaultCheckedList = ['Apple', 'Orange'];
 
 @Form.create()
 
-export default class DeployDialog extends Component {
+export default class AddForm extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -161,7 +161,7 @@ export default class DeployDialog extends Component {
       indeterminate: true,
       checkAll: false,
       singleChecked:false,
-      radioValue:'',
+      radioValue:{},
       type:1,// 0:单选框  1：多选框
     }
   }
@@ -210,30 +210,8 @@ export default class DeployDialog extends Component {
     })
   }
   //点击确定
-  handleOk = ()=>{
-    this.setState({visible:false},()=>{
-      console.log(this.state.checkedList)
-      if(this.props.type){
-        this.props.dispatch({
-          type: 'scoreModel/scoreListHandle',
-          payload: {
-            scoreList:addListKey(deepCopy([...this.props.scoreModel.scoreList,...this.state.checkedList]))
-          }
-        })
-        console.log(this.props.scoreModel)
-      }else{
-        const {scoreList} = this.props.scoreModel
-        scoreList.splice(this.props.number-1,1,this.state.radioValue)
-        this.props.dispatch({
-          type: 'scoreModel/scoreListHandle',
-          payload: {
-            scoreList:addListKey(deepCopy(scoreList))
-          }
-        })
-      }
-
-      this.props.onChange(this.state.visible)
-    })
+  submitHandler = ()=>{
+    return this.state;
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -267,7 +245,7 @@ export default class DeployDialog extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.childDeploy(this)
+    this.props.getSubKey(this,'addForm')
   }
   componentWillReceiveProps(newProps){
     this.setState({
@@ -282,13 +260,6 @@ export default class DeployDialog extends Component {
       wrapperCol:{span:16},
     }
     return (
-      <Modal
-        title={'选择变量'}
-        visible={visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-        width={1040}
-      >
         <Form
           className="ant-advanced-search-form"
         >
@@ -373,13 +344,16 @@ export default class DeployDialog extends Component {
           <Divider />
           <Row className={styles.btmMargin} type="flex" align="middle" justify="space-between">
             <Col>
-              <Checkbox
-                indeterminate={this.state.indeterminate}
-                onChange={this.onCheckAllChange}
-                checked={this.state.checkAll}
-              >
-                全选
-              </Checkbox>
+              {
+                this.props.type?
+                  <Checkbox
+                    indeterminate={this.state.indeterminate}
+                    onChange={this.onCheckAllChange}
+                    checked={this.state.checkAll}
+                  >
+                    全选
+                  </Checkbox>:null
+              }
             </Col>
             <Col>
               <Pagination
@@ -394,7 +368,6 @@ export default class DeployDialog extends Component {
             </Col>
           </Row>
         </Form>
-      </Modal>
     )
   }
 }
