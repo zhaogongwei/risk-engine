@@ -385,6 +385,13 @@ export default [
                 name: 'setVar',
                 component: './RiskManage/RiskPolicyList/PolicyFlowEdit/SetVar',
                 hideInMenu:true
+              },
+              //策略流编辑>决策模型
+              {
+                path: '/riskManage/riskpolicylist/flow/decisModel',
+                name: 'decisModel',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit/DecisModel',
+                hideInMenu:true
               }
             ]
           },
