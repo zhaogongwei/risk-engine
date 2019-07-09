@@ -47,10 +47,6 @@ const change = (props) => {
 
 const SetMenuItem = props => {
   const { command, icon, text } = props;
-  const { getSelected, save } = props.propsAPI;
-  const id = getSelected()[0].id
-  const selectedItem = getSelected()[0].getModel();
-  const type = selectedItem.type;
   return (
     <div className={styles.item} onClick={() => change(props)}>
       <IconFont type={`icon-${icon || command}`} />

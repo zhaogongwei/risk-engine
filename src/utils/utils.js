@@ -74,6 +74,13 @@ export function digitUppercase(n) {
   return nzh.toMoney(n);
 }
 
+// 在一个数组中寻找指定元素的方法，主要用于搜索权限
+export function findInArr(arr, item) {
+  if (!arr || !arr.length) return null
+  const res = arr.find(findItem => (findItem === item))
+  return res
+}
+
 function getRelation(str1, str2) {
   if (str1 === str2) {
     console.warn('Two path are equal!'); // eslint-disable-line

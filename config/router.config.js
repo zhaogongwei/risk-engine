@@ -379,6 +379,13 @@ export default [
                 component: './RiskManage/RiskPolicyList/PolicyFlowEdit/ScoreModel',
                 hideInMenu:true
               },
+              //策略流编辑>设置变量
+              {
+                path: '/riskManage/riskpolicylist/flow/setVar',
+                name: 'setVar',
+                component: './RiskManage/RiskPolicyList/PolicyFlowEdit/SetVar',
+                hideInMenu:true
+              }
             ]
           },
           //风控报告模板

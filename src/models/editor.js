@@ -7,6 +7,7 @@ export default {
     selectId:'',
     selectItem:{},
     status:false,
+    type:'',//节点类型
   },
 
   effects: {
@@ -61,6 +62,12 @@ export default {
       return {
         ...state,
         status:payload
+      }
+    },
+    saveNodeType(state,{payload}){
+      return {
+        ...state,
+        type:payload
       }
     }
   },

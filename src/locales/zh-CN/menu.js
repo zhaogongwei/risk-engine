@@ -55,6 +55,7 @@ export default {
   'menu.riskManage.policylist.setRule': '设置规则',
   'menu.riskManage.policylist.complex': '复杂规则',
   'menu.riskManage.policylist.scoreModel': '评分模型',
+  'menu.riskManage.policylist.setVar': '设置变量',
   'menu.riskManage.riskrptem': '风控报告模板',
   'menu.riskManage.riskrptem.list': '报告列表',
   'menu.riskManage.riskrptem.edit': '风控报告模板编辑',

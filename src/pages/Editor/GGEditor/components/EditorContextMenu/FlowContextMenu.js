@@ -6,11 +6,12 @@ import styles from './index.less';
 
 const FlowContextMenu = (props) => {
   console.log(props, 'props')
+  const {type}=props
   return (
     <ContextMenu className={styles.contextMenu}>
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
-        <SetMenuItem command="copy" text="编辑" />
+        {(type !=='start'&&type !=='end')&&<SetMenuItem command="copy" text="编辑" />}
         <MenuItem command="delete" />
       </NodeMenu>
       <EdgeMenu>

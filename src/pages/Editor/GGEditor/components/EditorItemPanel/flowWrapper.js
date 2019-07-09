@@ -26,6 +26,11 @@ class FlowWrapper extends React.Component{
   }
   onChange=(e)=>{
     console.log(e,'e')
+    const type = e.model.type;
+    this.props.dispatch({
+      type:'editorFlow/saveNodeType',
+      payload:type
+    })
     /*const graph = e.item.graph;
     const group = e.item.group;
     const type = e.item.type;

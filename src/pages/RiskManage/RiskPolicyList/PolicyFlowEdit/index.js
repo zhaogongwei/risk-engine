@@ -3,7 +3,7 @@ import { Row, Col, Button } from 'antd';
 import GGEditor, { Flow,RegisterNode } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowBird'
-import FlowCircleExtend from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowCircleExtend'
+//import FlowCircleExtend from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowCircleExtend'
 import FlowWrapper from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowWrapper'
 import EditorMinimap from '@/pages/Editor/GGEditor/components/EditorMinimap';
 import { FlowContextMenu } from '@/pages/Editor/GGEditor/components/EditorContextMenu';
@@ -31,12 +31,12 @@ class FlowPage extends React.Component {
   }
 
   componentDidMount(){
-    console.log(this.props.editorFlow, 'editorFlow')
   }
 
   render () {
-    const { selectId, selectItem, editorData } = this.props.editorFlow
+    const { selectId, selectItem, editorData,type } = this.props.editorFlow
     console.log(editorData,'=================>editorData')
+    console.log(this.props.editorFlow, 'editorFlow')
     return (
       <PageHeaderWrapper>
         <GGEditor className={styles.editor} ref={node => (this.myRefs = node)}>
@@ -65,12 +65,11 @@ class FlowPage extends React.Component {
                 </Row>
               </div>
               <FlowBird/>
-              <FlowCircleExtend/>
               <EditorMinimap />
             </Col>
           </Row>
           <FlowBird />
-          <FlowContextMenu selectId={selectId} selectItem={selectItem} />
+          <FlowContextMenu selectId={selectId} selectItem={selectItem} type={type}/>
         </GGEditor>
         <Button type="primary" onClick={this.submitData}>提交</Button>
       </PageHeaderWrapper>
