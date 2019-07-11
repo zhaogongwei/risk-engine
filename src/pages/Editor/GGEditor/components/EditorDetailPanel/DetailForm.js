@@ -63,8 +63,8 @@ class DetailForm extends React.Component {
   renderEdgeShapeSelect = () => {
     return (
       <Select onChange={this.handleSubmit}>
-        <Option value="yes">是</Option>
-        <Option value="no">否</Option>
+        <Option value="Y">是</Option>
+        <Option value="N">否</Option>
       </Select>
     );
   };

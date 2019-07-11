@@ -19,7 +19,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class PolicyList extends PureComponent {
+export default class PolicyTestTemp extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,21 +36,9 @@ export default class PolicyList extends PureComponent {
         dataIndex: 'policyName',
         key:'policyName'
       },{
-        title: '策略流版本号',
+        title: '模板名称',
         key:'policyCode',
         dataIndex:'policyCode'
-      },{
-        title: '版本号描述',
-        key:'policyExplain',
-        dataIndex:'policyExplain'
-      },{
-        title: '更新时间',
-        key:'creatTime',
-        dataIndex:'creatTime'
-      },{
-        title: '状态',
-        key:'status',
-        dataIndex:'status'
       },{
         title: '负责人',
         key:'leader',
@@ -61,17 +49,7 @@ export default class PolicyList extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <Popconfirm
-              title="是否确认禁用该策略？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>禁用</span>
-            </Popconfirm>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>测试</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
           </div>
         )
       }],
@@ -183,7 +161,7 @@ export default class PolicyList extends PureComponent {
   }
   render() {
     return (
-     <PageTableTitle title={'风控策略列表'} renderBtn={this.renderTitleBtn}>
+     <PageTableTitle title={'策略流测试模板'} renderBtn={this.renderTitleBtn}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered

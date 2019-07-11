@@ -25,28 +25,30 @@ class FlowWrapper extends React.Component{
     this.apiAction('undo')
   }
   onChange=(e)=>{
-    console.log(e,'e')
-    const type = e.model.type;
-    this.props.dispatch({
-      type:'editorFlow/saveNodeType',
-      payload:type
-    })
-    /*const graph = e.item.graph;
-    const group = e.item.group;
-    const type = e.item.type;
-    console.log(e,'e');
-    console.log(graph.getEdges());
-    console.log(graph.getNodes());*/
-    //const edges = e.item.getOutEdges();
-   /* console.log(e.item,'edges')
-    const node = type === 'edge'?e.item.getSource():''
-    const outEdges = node?node.getOutEdges():''
-    console.log(node,'node')
-    console.log(outEdges,'outEdges')
-    if(outEdges.length>2){
-      message.error('每个节点最多只能输出两条线!')
-      this.handleAddItem()
-    }*/
+    if(e.item && e.model){
+      console.log(e,'e')
+      const Nodetype = e.model.type;
+      this.props.dispatch({
+        type:'editorFlow/saveNodeType',
+        payload:Nodetype
+      })
+      const graph = e.item.graph;
+      const group = e.item.group;
+      const type = e.item.type;
+      console.log(e,'e');
+      console.log(graph.getEdges());
+      console.log(graph.getNodes());
+      //const edges = e.item.getOutEdges();
+      console.log(e.item,'edges')
+      const node = type === 'edge'?e.item.getSource():''
+      const outEdges = node?node.getOutEdges():''
+      console.log(node,'node')
+      console.log(outEdges,'outEdges')
+      if(outEdges.length>2){
+        message.error('每个节点最多只能输出两条线!')
+        this.handleAddItem()
+      }
+    }
   }
   render(){
     return(

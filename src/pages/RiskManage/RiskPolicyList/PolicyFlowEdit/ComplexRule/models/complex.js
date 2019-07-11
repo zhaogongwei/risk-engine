@@ -3,7 +3,7 @@ import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
 
 export default {
-  namespace: 'rule',
+  namespace: 'complex',
 
   state: {
     ruleList:[],

@@ -7,7 +7,7 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
+import styles from '../../../FilterIpts.less'
 import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -16,7 +16,7 @@ const FormItem = Form.Item
 
 @Form.create()
 
-export default class FilterIpts extends Component {
+export default class testTemp extends Component {
   //查询
   formSubmit = async (e) => {
     this.props.changeDefault(1)
@@ -55,6 +55,15 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
+            <FormItem label="策略类型" {...formItemConfig}>
+              {getFieldDecorator('policyType',{
+                initialValue:''
+              })(
+                <Input />
+              )}
+            </FormItem>
+          </Col>
+          <Col xxl={4} md={6}>
             <FormItem label="策略名称" {...formItemConfig}>
               {getFieldDecorator('policyName',{
                 initialValue:''
@@ -64,20 +73,17 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="策略流版本号" {...formItemConfig}>
-              {getFieldDecorator('policyType',{
+            <FormItem label="负责人" {...formItemConfig}>
+              {getFieldDecorator('modelName',{
                 initialValue:''
               })(
-                <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="版本号描述" {...formItemConfig}>
-              {getFieldDecorator('editDesc',{
-                initialValue:''
-              })(
-                <Input />
+                <Select  allowClear={true}  >
+                  <Option value={'month'}>等额本息</Option>
+                  <Option value={'end'}>按月计息,到期还本还息</Option>
+                  <Option value={'endmonth'}>先息后本</Option>
+                  <Option value={'endday'}>按天计息,到期还本还息</Option>
+                  <Option value={'principal'}>等额本金</Option>
+                </Select>
               )}
             </FormItem>
           </Col>

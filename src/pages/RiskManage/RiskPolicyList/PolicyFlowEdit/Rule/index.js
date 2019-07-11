@@ -21,8 +21,8 @@ import { findInArr,exportJudgment,addListKey,deepCopy} from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ assetDeploy, loading,rule}) => ({
-  assetDeploy,
+@connect(({ editorFlow, loading,rule}) => ({
+  editorFlow,
   rule,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
@@ -35,54 +35,59 @@ export default class AssetTypeDeploy extends PureComponent {
         title: '序号',
         dataIndex: 'key',
         key:'key'
-      },{
+      },
+        {
+          dataIndex: 'varId',
+          key:'varId'
+        }
+      ,{
         title: '变量名称',
-        dataIndex: 'name',
-        key:'name',
+        dataIndex: 'variableName',
+        key:'variableName',
         editable:true,
         type:'input',
         isFocus:true
       },{
         title: '变量代码',
-        dataIndex: 'code',
-        key:'code',
+        dataIndex: 'variableCode',
+        key:'variableCode',
       },{
         title: '条件',
-        key:'term',
-        dataIndex:'term',
+        key:'compareCondition',
+        dataIndex:'compareCondition',
         editable:true,
         type:'select',
         value:[
           {
             name:'<=',
-            id:1
+            id:'<='
           },
           {
             name:'<',
-            id:2
+            id:'<'
           },
           {
             name:'=',
-            id:3
+            id:'='
           },
           {
             name:'>=',
-            id:4
+            id:'>='
           },
           {
             name:'>',
-            id:5
+            id:'>'
           },
           {
             name:'!=',
-            id:6
+            id:'!='
           },
         ]
       },
       {
         title: '比较值',
-        key:'compare',
-        dataIndex:'compare',
+        key:'compareValue',
+        dataIndex:'compareValue',
         editable:true,
         type:'more'
       },
@@ -116,7 +121,8 @@ export default class AssetTypeDeploy extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    console.log(this.props.editorFlow.selectId,'selectId')
+    console.log(this.props.editorFlow.editorData,'editorData')
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -175,7 +181,16 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
+    const data = {
+      nodeId:this.props.editorFlow.selectId,
+      ruleCondition:this.child.getFormValue().ruleCondition,
+      resultVarId:this.child.getFormValue().resultVarId,
+      ruleType:'simple',
+      variables:this.props.rule.ruleList,
+    }
+    console.log(this.child.getFormValue())
     console.log(this.props.rule.ruleList)
+    console.log(JSON.stringify(data))
   }
   //弹框按钮取消
   handleCancel =()=>{

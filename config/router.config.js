@@ -346,6 +346,35 @@ export default [
                 component: './RiskManage/RiskPolicyList/PolicyEdit',
                 hideInMenu:true
               },
+              //策略流列表
+              {
+                path: '/riskManage/riskpolicylist/policyFlow',
+                name: 'policyFlow',
+                routes:[
+                  {
+                    path: '/riskManage/riskpolicylist/policyFlow',
+                    redirect:'/riskManage/riskpolicylist/policyFlow/list'
+                  },
+                  //策略流列表
+                  {
+                    path: '/riskManage/riskpolicylist/policyFlow/list',
+                    name: 'list',
+                    component: './RiskManage/RiskPolicyList/PolicyFlowList',
+                  },
+                  //策略测试模板
+                  {
+                    path: '/riskManage/riskpolicylist/policyFlow/test',
+                    name: 'test',
+                    component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp',
+                  },
+                  //新增测试模板
+                  /*{
+                    path: '/riskManage/riskpolicylist/policyFlow/test/edit',
+                    name: 'edit',
+                    component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/AddTestTemp',
+                  },*/
+                ]
+              },
               //风控标签
               {
                 path: '/riskManage/riskpolicylist/risklabel',

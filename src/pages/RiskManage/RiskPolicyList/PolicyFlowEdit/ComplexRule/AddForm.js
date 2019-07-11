@@ -22,25 +22,25 @@ const CheckboxGroup = Checkbox.Group;
 
 const plainOptions = [
   {
-    name:'年龄',
-    type:'数字',
+    variableName:'年龄',
+    variableType:'num',
     value:'年龄',
-    code:'11',
+    variableCode:'age',
     length:1,
     order:1,
-    id:1,
+    varId:3,
     kind:'num'
   },
   {
-    name:'借款人及其配偶和联系',
-    type:'字符',
-    value:'借款人与配偶联系',
-    code:'22',
+    variableName:'注册时间',
+    variableType:'time',
+    value:'注册时间',
+    variableCode:'sign',
     length:1,
     order:1,
-    id:2,
+    varId:2,
     kind:'str',
-    isenum:1,
+    isenum:0,
     option:[
       {
         id:1,
@@ -145,9 +145,9 @@ const plainOptions = [
   },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
-@connect(({scoreModel,rule})=>({
+@connect(({scoreModel,complex})=>({
   scoreModel,
-  rule,
+  complex,
 }))
 
 @Form.create()
@@ -326,9 +326,9 @@ export default class DeployDialog extends Component {
                     plainOptions.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio  value={item}>{item.name}</Radio >
+                          <Radio  value={item}>{item.variableName}</Radio >
                         </Col>
-                        <Col span={8}>{item.type}</Col>
+                        <Col span={8}>{item.variableType}</Col>
                         <Col span={8}>{item.value}</Col>
                       </Row>
                     })

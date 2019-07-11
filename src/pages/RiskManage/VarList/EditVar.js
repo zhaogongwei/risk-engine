@@ -6,6 +6,7 @@ import {
   Button,
   Input,
   Select,
+  Radio,
   Form,
   Popconfirm
 } from 'antd';
@@ -15,6 +16,7 @@ import EditableTable from '@/components/EditableTable'
 import { addListKey,deepCopy } from '@/utils/utils'
 import { connect } from 'dva'
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
 const FormItem = Form.Item
 const { TextArea } = Input;
 @connect(
@@ -33,16 +35,16 @@ export default class EditVar extends PureComponent {
         },
         {
           title: '枚举值',
-          dataIndex: 'menuVal',
+          dataIndex: 'enumValue',
           editable: true,
           max:20,
           nonRequired: true,
-          key:'menuVal'
+          key:'enumValue'
         },
         {
           title: '枚举值展示',
-          dataIndex: 'showMenu',
-          key:'showMenu',
+          dataIndex: 'enumShow',
+          key:'enumShow',
           max:200,
           nonRequired: true,
           editable: true,
@@ -107,15 +109,16 @@ export default class EditVar extends PureComponent {
   }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
+    let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
   handleAdd = () => {
     const { count, dataSource } = this.props.varList;
     //   要添加表格的对象
     const newData = {
-      menuVal:``,
-      showMenu:``,
+      enumValue:``,
+      enumShow:``,
     };
     //   调用models中的方法改变dataSource渲染页面
     this.props.dispatch({
@@ -145,6 +148,10 @@ export default class EditVar extends PureComponent {
   goBack=()=>{
     router.goBack()
   }
+  formSubmit = ()=>{
+    console.log(this.getFormValue())
+    console.log(JSON.stringify(this.getFormValue()))
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -167,30 +174,32 @@ export default class EditVar extends PureComponent {
                   ]
                 })(
                   <Select allowClear={true}>
-                    <Option value={1}>启用</Option>
-                    <Option value={2}>禁用</Option>
+                    <Option value={'反欺诈'}>反欺诈</Option>
+                    <Option value={'信审模块'}>信审模块</Option>
                   </Select>
                 )}
               </FormItem>
             </Col>
             <Col xxl={3} md={4}>
               <FormItem label="" >
-                {getFieldDecorator('twoclass',{
+                {getFieldDecorator('parentId',{
                   initialValue:'',
                   rules:[
                     {required:true}
                   ]
                 })(
                   <Select allowClear={true}>
-                    <Option value={1}>启用</Option>
-                    <Option value={2}>禁用</Option>
+                    <Option value={1}>注册</Option>
+                    <Option value={2}>评分规则</Option>
+                    <Option value={3}>借款人信息</Option>
+                    <Option value={4}>借款人信息</Option>
                   </Select>
                 )}
               </FormItem>
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量名" {...formItemConfig}>
-                {getFieldDecorator('varname',{
+                {getFieldDecorator('variableName',{
                   initialValue:'',
                   rules:[
                     {required:true,}
@@ -202,7 +211,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量代码" {...formItemConfig}>
-                {getFieldDecorator('varcode',{
+                {getFieldDecorator('variableCode',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -214,17 +223,17 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="变量类型" {...formItemConfig}>
-                {getFieldDecorator('vartype',{
+                {getFieldDecorator('variableType',{
                   initialValue:'',
                   rules:[
                     {required:true}
                   ]
                 })(
                   <Select allowClear={true}>
-                    <Option value={1}>数字</Option>
-                    <Option value={2}>字符</Option>
-                    <Option value={3}>日期</Option>
-                    <Option value={4}>时间</Option>
+                    <Option value={'num'}>数字</Option>
+                    <Option value={'character'}>字符</Option>
+                    <Option value={'date'}>日期</Option>
+                    <Option value={'time'}>时间</Option>
                   </Select>
                 )}
               </FormItem>
@@ -233,7 +242,7 @@ export default class EditVar extends PureComponent {
           <Row className={styles.btmMargin}  type="flex" align="middle">
             <Col xxl={4} md={6}>
               <FormItem label="是否枚举" {...formItemConfig}>
-                {getFieldDecorator('isenmu',{
+                {getFieldDecorator('enumFlag',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -250,7 +259,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="长度" {...formItemConfig}>
-                {getFieldDecorator('varlength',{
+                {getFieldDecorator('variableLength',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -262,7 +271,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="最小值" {...formItemConfig}>
-                {getFieldDecorator('varmin',{
+                {getFieldDecorator('minValue',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -274,7 +283,7 @@ export default class EditVar extends PureComponent {
             </Col>
             <Col xxl={4} md={6}>
               <FormItem label="最大值" {...formItemConfig}>
-                {getFieldDecorator('varmax',{
+                {getFieldDecorator('maxValue',{
                   initialValue:'',
                   rules:[
                     {required:true}
@@ -303,7 +312,7 @@ export default class EditVar extends PureComponent {
           <Row className={styles.btmMargin}  type="flex" align="middle">
             <Col xxl={4} md={6}>
               <FormItem label="缺省值" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
+                {getFieldDecorator('defaultValue',{
                   initialValue:''
                 })(
                   <Input />
@@ -314,7 +323,7 @@ export default class EditVar extends PureComponent {
           <Row className={styles.btmMargin}  type="flex" align="top">
             <Col xxl={8} md={12}>
               <FormItem label="变量说明" labelCol={{span:4}} wrapperCol={{span:20}}>
-                {getFieldDecorator('assetsTypeName',{
+                {getFieldDecorator('remark',{
                   initialValue:''
                 })(
                   <TextArea
@@ -322,6 +331,20 @@ export default class EditVar extends PureComponent {
                     placeholder="请输入你的阶段性工作目标"
                     rows={5}
                   />
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row className={styles.btmMargin}  type="flex" align="middle">
+            <Col xxl={4} md={6}>
+              <FormItem label="变量状态" {...formItemConfig}>
+                {getFieldDecorator('status',{
+                  initialValue:''
+                })(
+                  <RadioGroup name="radiogroup">
+                    <Radio value={1}>启用</Radio>
+                    <Radio value={0}>禁用</Radio>
+                  </RadioGroup>
                 )}
               </FormItem>
             </Col>
