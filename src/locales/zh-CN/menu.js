@@ -53,6 +53,7 @@ export default {
   'menu.riskManage.policylist.policyFlow': '策略流列表',
   'menu.riskManage.policylist.policyFlow.list': '策略流列表',
   'menu.riskManage.policylist.policyFlow.test': '策略流测试模板',
+  'menu.riskManage.policylist.policyFlow.edit': '新增测试模板',
   'menu.riskManage.policylist.risklabel': '风控标签',
   'menu.riskManage.policylist.flow': '策略流编辑',
   'menu.riskManage.policylist.setRule': '设置规则',

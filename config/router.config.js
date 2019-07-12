@@ -368,11 +368,11 @@ export default [
                     component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp',
                   },
                   //新增测试模板
-                  /*{
+                  {
                     path: '/riskManage/riskpolicylist/policyFlow/test/edit',
                     name: 'edit',
-                    component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/AddTestTemp',
-                  },*/
+                    component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/AddTestTemp/testTemp',
+                  },
                 ]
               },
               //风控标签

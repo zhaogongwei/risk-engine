@@ -49,7 +49,7 @@ export default class PolicyTestTemp extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goTest}>测试</span>
           </div>
         )
       }],
@@ -153,10 +153,10 @@ export default class PolicyTestTemp extends PureComponent {
   goAddPage = ()=>{
     this.props.dispatch(routerRedux.push({pathname:'/info/RiskManagement/PolicyList'}))
   }
-  //跳转风控标签页面
-  goLabel = () =>{
+  //跳转到测试
+  goTest = () =>{
     router.push({
-      pathname:'/riskManage/riskpolicylist/risklabel',
+      pathname:'/riskManage/riskpolicylist/policyFlow/test/edit',
     })
   }
   render() {

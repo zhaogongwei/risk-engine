@@ -19,8 +19,8 @@ import ScoreModelTable from '@/components/ScoreModelTable'
 import SetRowCol from '@/components/SetRowCol'
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 
-@connect(({ assetDeploy,scoreModel, loading }) => ({
-  assetDeploy,
+@connect(({ editorFlow,scoreModel, loading }) => ({
+  editorFlow,
   scoreModel,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
@@ -35,17 +35,17 @@ export default class ScoreModel extends PureComponent {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'name',
-        key:'name',
+        dataIndex: 'variableName',
+        key:'variableName',
         editable: true,
       },{
         title: '代码',
-        dataIndex: 'code',
-        key:'code'
+        dataIndex: 'variableCode',
+        key:'variableCode'
       },{
         title: '类型',
-        key:'type',
-        dataIndex:'type'
+        key:'variableType',
+        dataIndex:'variableType'
       },
         {
           title: '操作',
@@ -67,9 +67,9 @@ export default class ScoreModel extends PureComponent {
         },
         {
           title: '下限条件',
-          dataIndex: 'lowCon',
+          dataIndex: 'lowerCondition',
           editable:true,
-          key:'lowCon',
+          key:'lowerCondition',
           type:'select',
           value:[
             {
@@ -87,15 +87,15 @@ export default class ScoreModel extends PureComponent {
           ]
         },{
           title: '下限值',
-          dataIndex: 'lowVal',
+          dataIndex: 'lowerValue',
           editable:true,
-          key:'lowVal',
+          key:'lowerValue',
           type:'input'
         },{
           title: '上限条件',
-          dataIndex: 'topCon',
+          dataIndex: 'highCondition',
           editable:true,
-          key:'topCon',
+          key:'highCondition',
           type:'select',
           value:[
             {
@@ -113,9 +113,16 @@ export default class ScoreModel extends PureComponent {
           ]
         },{
           title: '上限值',
-          dataIndex: 'topVal',
+          dataIndex: 'highValue',
           editable:true,
-          key:'topVal',
+          key:'highValue',
+          type:'input'
+        },
+        {
+          title: '评分',
+          dataIndex: 'score',
+          editable:true,
+          key:'score',
           type:'input'
         },
         {
@@ -136,26 +143,26 @@ export default class ScoreModel extends PureComponent {
         },
         {
           title: '条件',
-          dataIndex: 'term',
+          dataIndex: 'highCondition',
           editable:true,
           type:'select',
-          key:'term',
+          key:'highCondition',
           value:[
             {
               name:'==',
-              id:11
+              id:'=='
             },
             {
               name:'!=',
-              id:22
+              id:'!='
             }
           ]
         },
         {
           title: '值',
-          dataIndex: 'val',
+          dataIndex: 'highValue',
           editable:true,
-          key:'val',
+          key:'highValue',
         },
         {
           title: '评分',
@@ -298,10 +305,11 @@ export default class ScoreModel extends PureComponent {
       const { count, dataSource } = this.props.scoreModel.one;
       //   要添加表格的对象
       const newData = {
-        lowCon:'',
-        lowVal:'',
-        topCon:'',
-        topVal:'',
+        lowerCondition:'',
+        lowerValue:'',
+        highCondition:'',
+        highValue:'',
+        score:'',
       };
       //   调用models中的方法改变dataSource渲染页面
       this.props.dispatch({
@@ -392,10 +400,10 @@ export default class ScoreModel extends PureComponent {
     //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
     //变量为数字类型
     if(this.state.varType){
-      Object.assign(scoreList[varKey-1],{detailist:one.dataSource})
+      Object.assign(scoreList[varKey-1],{variableInfoList:one.dataSource})
     }else{
       //变量为字符类型
-      Object.assign(scoreList[varKey-1],{detailist:two.dataSource})
+      Object.assign(scoreList[varKey-1],{variableInfoList:two.dataSource})
     }
     message.success('保存成功')
     console.log(this.props.scoreModel)
@@ -432,7 +440,15 @@ export default class ScoreModel extends PureComponent {
     })
   }
   save=()=>{
+    const data = {
+      nodeId:this.props.editorFlow.selectId,
+      ruleCondition:this.child.getFormValue().ruleCondition,
+      resultVarId:this.child.getFormValue().resultVarId,
+      ruleType:'score',
+      variables:this.props.scoreModel.scoreList,
+    }
     console.log(this.props.scoreModel.scoreList)
+    console.log(JSON.stringify(data))
   }
   render() {
     const { permission } = this.props
