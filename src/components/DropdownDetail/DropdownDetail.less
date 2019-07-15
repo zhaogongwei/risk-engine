@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  width: auto;
+}
+:global {
+  .ulInit {
+    position: absolute;
+    top: -20px;
+    height: 41px;
+    margin: 0;
+    padding: 0;
+    // width: 100%;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 4px;
+    &.showDetail {
+      z-index: 999;
+      height: auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    // &.showDetail li {
+    //   padding-right: 25px;
+    // }
+    li {
+      min-width: 70px;
+      height: 43px;
+      margin: 0;
+      padding: 0;
+      padding-right: 15px;
+      padding-left: 10px;
+      color: #0067D3;
+      line-height: 43px;
+      white-space:nowrap;
+      text-align: right;
+      word-break:keep-all;
+      list-style: none;
+      cursor: pointer;
+
+      &:hover {
+        color: #fff;
+        background-color: #00A5CE;
+      }
+      &:not(:first-child) {
+        color: #333;
+      }
+      &:not(:first-child):hover {
+        color: #fff;
+        background-color: #00A5CD;
+      };
+    }
+  }
+};

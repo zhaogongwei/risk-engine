@@ -299,6 +299,194 @@ export default [
           },
         ],
       },
+      //变量管理
+      {
+        name:'varManage',
+        icon:'highlight',
+        path:'/varManage',
+        routes:[
+          //变量分类
+          {
+            path: '/varManage/varclass',
+            name: 'varclass',
+            component: './VarManage/VarClass',
+          },
+          //变量列表
+          {
+            path: '/varManage/varlist',
+            name: 'varlist',
+            component: './VarManage/VarList',
+          },
+          //变量添加、编辑
+          {
+            path: '/varManage/varlist/editPage',
+            name: 'varedit',
+            component: './VarManage/VarList/EditVar',
+            hideInMenu:true
+          },
+        ]
+      },
+      //策略管理
+      {
+        name:'policyManage',
+        icon:'highlight',
+        path:'/policyManage',
+        routes:[
+          //风控策略列表
+          {
+            name: 'policylist',
+            path:'/policyManage/riskpolicylist',
+            routes:[
+              {
+                path: '/policyManage/riskpolicylist',
+                redirect:'/policyManage/riskpolicylist/list'
+              },
+              //风控策略列表
+              {
+                path: '/policyManage/riskpolicylist/list',
+                name: 'list',
+                component: './PolicyManage/RiskPolicyList',
+              },
+              //风控策略列表添加、编辑
+              {
+                path: '/policyManage/riskpolicylist/list/edit',
+                name: 'edit',
+                component: './PolicyManage/RiskPolicyList/PolicyEdit',
+                hideInMenu:true
+              },
+              //风控标签
+              {
+                path: '/policyManage/riskpolicylist/risklabel',
+                name: 'risklabel',
+                component: './PolicyManage/RiskPolicyList/RiskLabel',
+              },
+              //策略流列表
+              {
+                path: '/policyManage/riskpolicylist/policyFlow',
+                name: 'policyFlow',
+                routes:[
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow',
+                    redirect:'/policyManage/riskpolicylist/policyFlow/list'
+                  },
+                  //策略流列表
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/list',
+                    name: 'list',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList',
+                  },
+                  //策略测试模板
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/test',
+                    name: 'test',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp',
+                  },
+                  //新增测试模板
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/test/add',
+                    name: 'add',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/AddTestTemp/testTemp',
+                    hideInMenu:true,
+                  },
+                  //策略流编辑>策略流
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit',
+                    name: 'policyFlowEdit',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit',
+                  },
+                  //策略流编辑>设置规则
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/setRule',
+                    name: 'setRule',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/Rule',
+                    hideInMenu:true,
+                  },
+                  //策略流编辑>复杂规则
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/complex',
+                    name: 'complex',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/ComplexRule',
+                    hideInMenu:true,
+                  },
+                  //策略流编辑>评分卡
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/scoreModel',
+                    name: 'scoreModel',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/ScoreModel',
+                    hideInMenu:true,
+                  },
+                  //策略流编辑>决策模型
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/decModel',
+                    name: 'decModel',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/DecisModel',
+                    hideInMenu:true,
+                  },
+                  //策略流编辑>设置变量
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/setVar',
+                    name: 'setVar',
+                    component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/SetVar',
+                    hideInMenu:true,
+                  },
+                ]
+              },
+            ]
+          }
+        ]
+      },
+      //风控报告
+      {
+        name:'riskReport',
+        icon: 'highlight',
+        path: '/riskReport',
+        routes:[
+          {
+            path:'/riskReport/reportList',
+            redirect:'/riskReport/reportList/list',
+          },
+          //风控报告列表
+          {
+            path:'/riskReport/reportList/list',
+            name:'reportList',
+            component:'./RiskReport/ReportList'
+          },
+          //风控报告模板
+          {
+            path:'/riskReport/reportList/mould',
+            name:'mould',
+            component:'./RiskReport/ReportTemp'
+          },
+          {
+            //风控报告模板>新增/编辑
+            path:'/riskReport/reportList/mould/edit',
+            name:'edit',
+            component:'./RiskReport/ReportTemp/TempEdit',
+            hideInMenu:true
+          },
+          {
+            //风控报告模板>报告预览
+            path:'/riskReport/reportList/mould/preview',
+            name:'preview',
+            component:'./RiskReport/ReportTemp/TempView',
+            hideInMenu:true
+          }
+        ]
+      },
+      //系统设置
+      {
+        name:'systemSet',
+        icon: 'highlight',
+        path: '/systemSet',
+        routes:[
+          {
+            //角色管理
+            path:'/systemSet/roleManage',
+            name:'roleManage',
+            component:'./SystemSet/RoleManage'
+          }
+        ]
+      },
       //风险管理
       {
         name:'riskManage',
@@ -372,6 +560,7 @@ export default [
                     path: '/riskManage/riskpolicylist/policyFlow/test/edit',
                     name: 'edit',
                     component: './RiskManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/AddTestTemp/testTemp',
+                    hideInMenu:true,
                   },
                 ]
               },
