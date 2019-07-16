@@ -484,7 +484,26 @@ export default [
             path:'/systemSet/roleManage',
             name:'roleManage',
             component:'./SystemSet/RoleManage'
-          }
+          },
+          {
+            //账号管理
+            path:'/systemSet/accountManage',
+            name:'accountManage',
+            component:'./SystemSet/AccountManage'
+          },
+          //策略权限
+          {
+            path:'/systemSet/accountManage/policyPower',
+            name:'policyPower',
+            component:'./SystemSet/AccountManage/PolicyPower',
+            hideInMenu:true
+          },
+          //操作日志
+          {
+            path:'/systemSet/actionLog',
+            name:'actionLog',
+            component:'./SystemSet/ActionLog',
+          },
         ]
       },
       //风险管理

@@ -7,10 +7,10 @@ import {
   Popconfirm,
   Modal,
   message,
-  Icon
+  Icon,
+  Row,
+  Col,
 } from 'antd';
-import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
-import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
@@ -33,54 +33,65 @@ export default class VarList extends PureComponent {
         key:'key'
       },
       {
-        title: '角色名称',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        title: '策略类型',
+        dataIndex: 'policyType',
+        key:'policyType'
       },
       {
-        title: '角色说明',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        title: '策略名称',
+        dataIndex: 'policyName',
+        key:'policyName'
       },
       {
-        title: '角色状态',
-        key:'varname',
-        dataIndex:'varname'
+        title: '策略代码',
+        key:'policyCode',
+        dataIndex:'policyCode'
       },
+      {
+        title: '当前负责人',
+        key:'leader',
+        dataIndex:'leader'
+      },
+        {
+          title: '授权状态',
+          key:'status',
+          dataIndex:'status',
+          render:(record)=>record?'已授权':'未授权'
+        },
       {
         title: '操作',
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>{this.empower(1,record)}}>授权</span>
-            <span style={{marginLeft:10,marginRight:10}} onClick={()=>this.addEdit(2,record)}>修改</span>
-            <Popconfirm
-              title="您确定要删除该角色吗？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
+            <span style={{marginRight:10}}>{record.status?'取消授权':'授权'}</span>
           </div>
         )
       }],
       data:[
         {
           key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-        }
+          policyType:'主策略',
+          policyName:'信贷最牛策略',
+          policyCode:'best',
+          leader:'王大大',
+          status:1,
+        },
+        {
+          key:2,
+          policyType:'主策略',
+          policyName:'信贷最牛策略',
+          policyCode:'best',
+          leader:'王大大',
+          status:0,
+        },
+        {
+          key:3,
+          policyType:'主策略',
+          policyName:'信贷最牛策略',
+          policyCode:'best',
+          leader:'王大大',
+          status:0,
+        },
       ],
       checkedData: [],
       modalStatus:false,
@@ -94,11 +105,17 @@ export default class VarList extends PureComponent {
       record:{},
       visible:false,
       isTrust:0,//授权状态框显示状态
+      selectedRowKeys:[],//table选中数据
     };
   }
   componentDidMount() {
     this.change()
   }
+  //table单选触发函数
+  onSelectChange = selectedRowKeys => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
+  };
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
     this.setState({
@@ -163,6 +180,7 @@ export default class VarList extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.addEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button><Icon type="export" />导出列表</Button>
       </Fragment>
     )
   }
@@ -201,51 +219,56 @@ export default class VarList extends PureComponent {
       visible:true,
       type:type,
       record:record,
-      isTrust:0,
-    })
-  }
-  //授权事件
-  empower=(status,record={})=>{
-    this.setState({
-      isTrust:status,
-      visible:true,
-      record:record
-    },()=>{
     })
   }
   render() {
+    const { loading, selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      hideDefaultSelections: true,
+      onChange: this.onSelectChange,
+      selections:[
+        {
+          key:'batch-empower',
+          text:'批量授权',
+          onSelect:()=>{
+
+          }
+        },
+        {
+          key:'cancel-empower',
+          text:'批量取消授权',
+          onSelect:()=>{
+
+          }
+        }
+      ]
+    };
     return (
-     <PageTableTitle title={'角色管理'} renderBtn={this.renderTitleBtn}>
+     <PageTableTitle title={'策略权限'}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-       <Modal
-         title={this.state.isTrust===1?null:(this.state.type===1?'添加':'修改')}
-         visible={this.state.visible}
-         onOk={this.addFormSubmit}
-         onCancel={()=>this.setState({visible:false})}
-       >
-         <AddForm
-           getSubKey={this.getSubKey}
-           type={this.state.type}
-           isTrust={this.state.isTrust}
-           record={this.state.record}
+       <Row>
+         <Col style={{lineHeight:'40px'}}>当前授权人:王笑笑</Col>
+       </Row>
+       <Row>
+         <Table
+           rowSelection={rowSelection}
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
          />
-       </Modal>
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+       </Row>
       </PageTableTitle>
     )
   }

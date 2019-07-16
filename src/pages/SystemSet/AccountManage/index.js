@@ -33,29 +33,49 @@ export default class VarList extends PureComponent {
         key:'key'
       },
       {
-        title: '角色名称',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        title: '用户名',
+        dataIndex: 'username',
+        key:'username'
       },
       {
-        title: '角色说明',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        title: '姓名',
+        dataIndex: 'name',
+        key:'name'
       },
       {
-        title: '角色状态',
-        key:'varname',
-        dataIndex:'varname'
+        title: '邮箱',
+        key:'email',
+        dataIndex:'email'
       },
+      {
+        title: '手机号码',
+        key:'mobile',
+        dataIndex:'mobile'
+      },
+        {
+          title: '添加时间',
+          key:'addTime',
+          dataIndex:'addTime'
+        },
+        {
+          title: '用户状态',
+          key:'status',
+          dataIndex:'status'
+        },
+        {
+          title: '角色',
+          key:'role',
+          dataIndex:'role'
+        },
       {
         title: '操作',
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>{this.empower(1,record)}}>授权</span>
-            <span style={{marginLeft:10,marginRight:10}} onClick={()=>this.addEdit(2,record)}>修改</span>
+            <span style={{marginRight:10}} onClick={()=>{this.goPolicyPower()}}>策略权限</span>
+            <span style={{marginRight:10}} onClick={()=>{this.addEdit(2,record)}}>修改</span>
             <Popconfirm
-              title="您确定要删除该角色吗？"
+              title="是否确认删除该账号？"
               onConfirm={this.confirm}
               onCancel={this.cancel}
               okText="Yes"
@@ -69,17 +89,13 @@ export default class VarList extends PureComponent {
       data:[
         {
           key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
+          username:'王德发',
+          name:'王德发',
+          email:'13636579254@163.com',
+          mobile:13636579254,
+          addTime:'20180716',
+          status:'启用',
+          role:'风控专员',
         }
       ],
       checkedData: [],
@@ -163,6 +179,7 @@ export default class VarList extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.addEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button><Icon type="export" />导出列表</Button>
       </Fragment>
     )
   }
@@ -180,10 +197,10 @@ export default class VarList extends PureComponent {
       pathname:'/riskReport/reportList/mould/preview',
     })
   }
-  //去风控策略列表
-  goPolicyList = ()=>{
+  //去策略权限
+  goPolicyPower = ()=>{
     router.push({
-      pathname:'/riskManage/riskpolicylist/list',
+      pathname:'/systemSet/accountManage/policyPower',
     })
   }
   //弹框点击确定事件
@@ -201,21 +218,11 @@ export default class VarList extends PureComponent {
       visible:true,
       type:type,
       record:record,
-      isTrust:0,
-    })
-  }
-  //授权事件
-  empower=(status,record={})=>{
-    this.setState({
-      isTrust:status,
-      visible:true,
-      record:record
-    },()=>{
     })
   }
   render() {
     return (
-     <PageTableTitle title={'角色管理'} renderBtn={this.renderTitleBtn}>
+     <PageTableTitle title={'账号管理'} renderBtn={this.renderTitleBtn}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered
@@ -234,7 +241,7 @@ export default class VarList extends PureComponent {
           showTotal={(total, range) => this.showTotal(total, range)}
         />
        <Modal
-         title={this.state.isTrust===1?null:(this.state.type===1?'添加':'修改')}
+         title={this.state.type===1?'新增':'修改'}
          visible={this.state.visible}
          onOk={this.addFormSubmit}
          onCancel={()=>this.setState({visible:false})}

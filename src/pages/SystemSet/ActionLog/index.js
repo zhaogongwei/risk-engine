@@ -9,8 +9,6 @@ import {
   message,
   Icon
 } from 'antd';
-import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
-import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
@@ -33,53 +31,45 @@ export default class VarList extends PureComponent {
         key:'key'
       },
       {
-        title: '角色名称',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        title: '用户名',
+        dataIndex: 'username',
+        key:'username'
       },
       {
-        title: '角色说明',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        title: '姓名',
+        dataIndex: 'name',
+        key:'name'
       },
       {
-        title: '角色状态',
-        key:'varname',
-        dataIndex:'varname'
+        title: '操作菜单',
+        key:'acMenu',
+        dataIndex:'acMenu'
       },
       {
-        title: '操作',
-        key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>{this.empower(1,record)}}>授权</span>
-            <span style={{marginLeft:10,marginRight:10}} onClick={()=>this.addEdit(2,record)}>修改</span>
-            <Popconfirm
-              title="您确定要删除该角色吗？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-          </div>
-        )
-      }],
+        title: '操作数据',
+        key:'acData',
+        dataIndex:'acData'
+      },
+      {
+        title: '操作类型',
+        key:'acType',
+        dataIndex:'acType'
+      },
+      {
+        title: '操作时间',
+        key:'acTime',
+        dataIndex:'acTime'
+      },
+      ],
       data:[
         {
           key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
+          username:'wangxiaodong',
+          name:'王晓东',
+          acMenu:'角色管理',
+          acData:'修改了角色：管理员-->超级管理员',
+          acType:'修改',
+          acTime:'2018-09-10',
         }
       ],
       checkedData: [],
@@ -162,7 +152,7 @@ export default class VarList extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={()=>this.addEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button><Icon type="export" />导出列表</Button>
       </Fragment>
     )
   }
@@ -215,7 +205,7 @@ export default class VarList extends PureComponent {
   }
   render() {
     return (
-     <PageTableTitle title={'角色管理'} renderBtn={this.renderTitleBtn}>
+     <PageTableTitle title={'操作日志'} renderBtn={this.renderTitleBtn}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered
@@ -233,19 +223,6 @@ export default class VarList extends PureComponent {
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
         />
-       <Modal
-         title={this.state.isTrust===1?null:(this.state.type===1?'添加':'修改')}
-         visible={this.state.visible}
-         onOk={this.addFormSubmit}
-         onCancel={()=>this.setState({visible:false})}
-       >
-         <AddForm
-           getSubKey={this.getSubKey}
-           type={this.state.type}
-           isTrust={this.state.isTrust}
-           record={this.state.record}
-         />
-       </Modal>
       </PageTableTitle>
     )
   }
