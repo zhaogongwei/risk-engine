@@ -43,11 +43,21 @@ class FlowWrapper extends React.Component{
       const node = type === 'edge'?e.item.getSource():''
       const outEdges = node?node.getOutEdges():''
       console.log(node,'node')
+      const nodeType = node['model']?node['model']['type']:'';
+      console.log(nodeType,'nodeType')
       console.log(outEdges,'outEdges')
-      if(outEdges.length>2){
-        message.error('每个节点最多只能输出两条线!')
-        this.handleAddItem()
+      if(nodeType=='simple'||nodeType=='complex'){
+        if(outEdges.length>2){
+          message.error('该节点最多只能输出两条线!')
+          this.handleAddItem()
+        }
+      }else{
+        if(outEdges.length>1){
+          message.error('该节点最多只能输出一条线!')
+          this.handleAddItem()
+        }
       }
+
     }
   }
   render(){

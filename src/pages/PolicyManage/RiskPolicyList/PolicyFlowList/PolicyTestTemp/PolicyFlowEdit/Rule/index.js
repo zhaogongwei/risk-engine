@@ -35,11 +35,7 @@ export default class AssetTypeDeploy extends PureComponent {
         title: '序号',
         dataIndex: 'key',
         key:'key'
-      },
-        {
-          dataIndex: 'varId',
-          key:'varId'
-        }
+      }
       ,{
         title: '变量名称',
         dataIndex: 'variableName',

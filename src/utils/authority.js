@@ -23,3 +23,25 @@ export function setAuthority(authority) {
   const proAuthority = typeof authority === 'string' ? [authority] : authority;
   return localStorage.setItem('antd-pro-authority', JSON.stringify(proAuthority));
 }
+
+//存储用户名
+export function setUserName(authority) {
+  return sessionStorage.setItem('A-EMS-username', authority);
+}
+export function getUserName() {
+  return sessionStorage.getItem('A-EMS-username');
+}
+export function deleteUserName() {
+  return sessionStorage.removeItem('A-EMS-username');
+}
+
+//存储用户ID
+export function setUserId(authority) {
+  return sessionStorage.setItem('A-EMS-userId', authority);
+}
+export function getUserId() {
+  return sessionStorage.getItem('A-EMS-userId');
+}
+export function deleteUserId() {
+  return sessionStorage.removeItem('A-EMS-userId');
+}

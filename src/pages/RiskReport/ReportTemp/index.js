@@ -73,7 +73,9 @@ export default class VarList extends PureComponent {
               label: '策略',
               show: true,
               clickHandler: () => {
-
+                router.push({
+                  pathname:'/policyManage/riskpolicylist/list'
+                })
               }
             },
             {

@@ -50,7 +50,8 @@ export default class PolicyList extends PureComponent {
       },{
         title: '状态',
         key:'status',
-        dataIndex:'status'
+        dataIndex:'status',
+        render:(record)=>record===1?'启用':'禁用'
       },{
         title: '负责人',
         key:'leader',
@@ -62,16 +63,17 @@ export default class PolicyList extends PureComponent {
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
             <Popconfirm
-              title="是否确认禁用该策略？"
+              title={record.status?'是否禁用该策略?':'是否启用该策略?'}
               onConfirm={this.confirm}
               onCancel={this.cancel}
               okText="Yes"
               cancelText="No"
             >
-              <span style={{paddingLeft:10,paddingRight:10}}>禁用</span>
+              <span style={{paddingLeft:10,paddingRight:10}}>{record.status?'禁用':'启用'}</span>
             </Popconfirm>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>标签</span>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goPolicyFlowList()}>策略流</span>
           </div>
         )
       }],
@@ -83,7 +85,17 @@ export default class PolicyList extends PureComponent {
           policyCode:'best',
           policyExplain:'适用于信用贷',
           outreport:'信用贷最牛报告',
-          status:'启用',
+          status:1,
+          leader:'王大大',
+        },
+        {
+          key:2,
+          policyType:'主策略',
+          policyName:'信贷最牛策略',
+          policyCode:'best',
+          policyExplain:'适用于信用贷',
+          outreport:'信用贷最牛报告',
+          status:0,
           leader:'王大大',
         }
       ],
@@ -175,6 +187,12 @@ export default class PolicyList extends PureComponent {
   goLabel = () =>{
     router.push({
       pathname:'/policyManage/riskpolicylist/risklabel',
+    })
+  }
+  //跳转策略流列表
+  goPolicyFlowList=()=>{
+    router.push({
+      pathname:'/policyManage/riskpolicylist/policyFlow/list'
     })
   }
   render() {

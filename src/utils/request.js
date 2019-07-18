@@ -1,11 +1,9 @@
-/**
- * request 网络请求工具
- * 更详细的api文档: https://bigfish.alipay.com/doc/api#request
- */
-import { extend } from 'umi-request';
+import fetch from 'dva/fetch';
 import { notification } from 'antd';
+import { routerRedux } from 'dva/router';
 import router from 'umi/router';
-
+import { getAuthority, setAuthority } from './authority';
+import { cookie } from '../utils/utils';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -23,50 +21,106 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
-
-/**
- * 异常处理程序
- */
-const errorHandler = error => {
-  const { response = {} } = error;
+function checkStatus(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  }
   const errortext = codeMessage[response.status] || response.statusText;
-  const { status, url } = response;
-
-  if (status === 401) {
-    notification.error({
-      message: '未登录或登录已过期，请重新登录。',
-    });
-    // @HACK
-    /* eslint-disable no-underscore-dangle */
-    window.g_app._store.dispatch({
-      type: 'login/logout',
-    });
-    return;
-  }
   notification.error({
-    message: `请求错误 ${status}: ${url}`,
-    description: errortext,
+    message: `请求错误 ${response.status}:`,
+    description: `${response.url}  ${errortext}`,
   });
-  // environment should not be used
-  if (status === 403) {
-    router.push('/exception/403');
-    return;
-  }
-  if (status <= 504 && status >= 500) {
-    router.push('/exception/500');
-    return;
-  }
-  if (status >= 404 && status < 422) {
-    router.push('/exception/404');
-  }
-};
+  const error = new Error(errortext);
+  error.name = response.status;
+  error.response = response;
+  throw error;
+}
 
 /**
- * 配置request请求时的默认参数
+ * Requests a URL, returning a promise.
+ *
+ * @param  {string} url       The URL we want to request
+ * @param  {object} [options] The options we want to pass to "fetch"
+ * @return {object}           An object containing either "data" or "err"
  */
-const request = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
-});
+export default function request(url, options) {
+  //   有操作请求的时候就重新存储一下cookie
+  if (getAuthority()) setAuthority(getAuthority())
+  const defaultOptions = {
+    credentials: 'include',
+  };
+  const newOptions = { ...defaultOptions, ...options };
+  if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
+    if (!(newOptions.body instanceof FormData)) {
+      newOptions.headers = {
+        Accept: 'application/json',
+        Cookies: getAuthority(),
+        'Content-Type': 'application/json; charset=utf-8',
+        ...newOptions.headers,
+      };
+      newOptions.body = JSON.stringify(newOptions.body);
+    } else {
+      // newOptions.body is FormData
+      newOptions.headers = {
+        Accept: 'application/json',
+        Cookies: getAuthority(),
+        ...newOptions.headers,
+      };
+    }
+  } else {
+    newOptions.headers = {
+      Cookies: getAuthority(),
+      ...newOptions.headers
+    }
+  }
 
-export default request;
+  return fetch(url, newOptions)
+    .then(checkStatus)
+    .then(async (response) => {
+      // newOptions.method === 'DELETE' ||
+      if (response.status === 204) {
+        return response.text();
+      }
+      return response.json();
+    })
+    .then(data => {
+      // 验证登录是否失效
+      if (data.status && data.status === 'EUS000010') {
+        //   登陆失效以后清除所有用户信息
+        cookie().delete("hyjf-admin-id")
+        window.localStorage.removeItem("permission")
+        window.localStorage.removeItem("userInfo")
+        //   登陆失效以后记录失效之前的路径    以便登陆成功以后定位失效页面
+        if (location.pathname !== '/user/login') {
+          localStorage.setItem('last-visit-url', location.pathname)
+        }
+        router.push('/user/login')
+        return data
+      }
+      return data
+    })
+    .catch(e => {
+      const { dispatch } = window.g_app._store;
+      const status = e.name;
+      if (status === 401) {
+        dispatch({
+          type: 'login/logout',
+        });
+        return;
+      }
+      if (status === 403) {
+        router.push('/exception/403');
+        return;
+      }
+      if (status <= 504 && status >= 500) {
+        router.push('/exception/500');
+        return {
+          status: "500",
+          statusDesc: 'api接口异常'
+        };
+      }
+      if (status >= 404 && status < 422) {
+        router.push('/exception/404');
+      }
+    });
+}

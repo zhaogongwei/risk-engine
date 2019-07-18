@@ -59,8 +59,8 @@ export default class VarList extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.goAddPage({...record,type:2})} style={{marginRight:20}}>查看</span>
-            <span onClick={()=>{this.goPolicyList()}}>三方数据查询</span>
+            <span onClick={()=>this.goRiskReport()} style={{marginRight:20}}>查看</span>
+            <span onClick={()=>{this.goDataQuery()}}>三方数据查询</span>
           </div>
         )
       }],
@@ -169,10 +169,16 @@ export default class VarList extends PureComponent {
       state:obj
     })
   }
-  //去风控策略列表
-  goPolicyList = ()=>{
+  //跳转三方数据查询
+  goDataQuery = ()=>{
     router.push({
-      pathname:'/riskManage/riskpolicylist/list',
+      pathname:'/riskReport/reportList/queryData',
+    })
+  }
+  //跳转报告模板
+  goRiskReport = ()=>{
+    router.push({
+      pathname:'/riskReport/reportList/mould/preview',
     })
   }
   render() {

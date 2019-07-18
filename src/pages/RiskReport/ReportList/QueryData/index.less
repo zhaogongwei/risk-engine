@@ -1,0 +1,61 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+:global{
+  .container{
+    height:100%;
+    .tabContainer{
+      display: flex;
+      height:100%;
+      .selectContainer{
+        position:relative;
+        min-width:160px;
+        height:100%;
+      }
+      .tabSelectWrap{
+        position:fixed;
+        top:50%;
+        left:280px;
+        a{
+          display: block;
+          width:140px;
+          margin-bottom:5px;
+          color:#333;
+          line-height: 40px;
+          text-align:center;
+          background:#dbeef3;
+        }
+        a:hover{
+          color:#fff;
+          background:#499bff;
+        }
+        .active{
+          color:#fff;
+          background:#499bff;
+        }
+      }
+      .tabItmeWrap{
+        flex:1;
+        width: 300px;
+        height: 300px;
+      }
+    }
+    .tab_item{
+      display: none;
+    }
+    .show{
+      display: block;
+    }
+  }
+  .ant-table-body{
+    .ant-table-tbody{
+      .textAlignCenter{
+        text-align:left !important;
+      }
+    }
+  }
+}
+
+
+

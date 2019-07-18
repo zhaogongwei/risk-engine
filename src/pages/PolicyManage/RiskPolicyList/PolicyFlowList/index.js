@@ -36,10 +36,23 @@ export default class PolicyList extends PureComponent {
         dataIndex: 'policyName',
         key:'policyName'
       },{
-        title: '模板名称',
-        key:'policyCode',
-        dataIndex:'policyCode'
+        title: '策略流版本号',
+        dataIndex: 'policyEdit',
+        key:'policyEdit'
       },{
+        title: '版本号描述',
+        key:'descEdit',
+        dataIndex:'descEdit'
+      },{
+        title: '更新时间',
+        key:'addTime',
+        dataIndex:'addTime'
+      },{
+          title: '状态',
+          key:'status',
+          dataIndex:'status',
+          render:(record)=>record===1?'启用':'禁用'
+        },{
         title: '负责人',
         key:'leader',
         dataIndex:'leader'
@@ -50,15 +63,15 @@ export default class PolicyList extends PureComponent {
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
             <Popconfirm
-              title="是否确认禁用该策略？"
+              title={record.status===1?"是否确认禁用该策略？":"是否确认启用该策略？"}
               onConfirm={this.confirm}
               onCancel={this.cancel}
               okText="Yes"
               cancelText="No"
             >
-              <span style={{paddingLeft:10,paddingRight:10}}>禁用</span>
+              <span style={{paddingLeft:10,paddingRight:10}}>{record.status===1?'禁用':'启用'}</span>
             </Popconfirm>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goPolicyTest}>测试</span>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
           </div>
         )
@@ -68,10 +81,20 @@ export default class PolicyList extends PureComponent {
           key:1,
           policyType:'主策略',
           policyName:'信贷最牛策略',
-          policyCode:'best',
-          policyExplain:'适用于信用贷',
-          outreport:'信用贷最牛报告',
-          status:'启用',
+          policyEdit:'1.0',
+          descEdit:'是和所有策略',
+          addTime:'2016-06-06',
+          status:1,
+          leader:'王大大',
+        },
+        {
+          key:2,
+          policyType:'主策略',
+          policyName:'信贷最牛策略',
+          policyEdit:'1.0',
+          descEdit:'调整了规则',
+          addTime:'2016-06-06',
+          status:0,
           leader:'王大大',
         }
       ],
@@ -159,10 +182,10 @@ export default class PolicyList extends PureComponent {
       </Fragment>
     )
   }
-  //跳转风控标签页面
-  goLabel = () =>{
+  //跳转策略测试模板
+  goPolicyTest = () =>{
     router.push({
-      pathname:'/policyManage/riskpolicylist/risklabel',
+      pathname:'/policyManage/riskpolicylist/policyFlow/test',
     })
   }
   render() {

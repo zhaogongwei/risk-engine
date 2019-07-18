@@ -15,6 +15,7 @@ import { routerRedux } from 'dva/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
+import router from 'umi/router';
 
 @connect(({ assetDeploy, loading }) => ({
   assetDeploy,
@@ -76,7 +77,7 @@ export default class RiskLabel extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.openLabelEdit(2)}>编辑</span>
+            <span onClick={()=>this.goAddEdit(2)}>编辑</span>
             <Popconfirm
               title="是否确认禁用该策略？"
               onConfirm={this.confirm}
@@ -116,7 +117,7 @@ export default class RiskLabel extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    this.change();
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -193,29 +194,17 @@ export default class RiskLabel extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={()=>this.openLabelEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
-  //跳转编辑/新增页面
-  goAddPage = ()=>{
-    this.props.dispatch(routerRedux.push({pathname:'/details/RiskManagement/PolicyList/RiskLabel'}))
-  }
-  //点击取消
-  handleCancel =()=>{
-    this.setState({visible:false},()=>{
-    })
-  }
-  //点击确定
-  handleOk =()=>{
-    this.setState({visible:false},()=>{
-    })
-  }
-  openLabelEdit=(type)=>{
-    this.setState({
-      visible:true,
-      type:type
-    },()=>{
+  //跳转新增/编辑页面
+  goAddEdit=(type)=>{
+    router.push({
+      pathname:'/policyManage/riskpolicylist/risklabel/edit',
+      query:{
+        type:type,
+      }
     })
   }
   render() {
@@ -238,15 +227,6 @@ export default class RiskLabel extends PureComponent {
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
         />
-       <Modal
-         width={750}
-         title={this.state.type===1?'新增标签':'编辑标签'}
-         visible={this.state.visible}
-         onOk={this.handleOk}
-         onCancel={this.handleCancel}
-       >
-         <LabelEdit/>
-       </Modal>
       </PageTableTitle>
     )
   }

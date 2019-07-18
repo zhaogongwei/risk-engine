@@ -24,7 +24,7 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/riskManage/varclass', /*authority: ['admin', 'user']*/ },
+      { path: '/', redirect: '/varManage/varclass', /*authority: ['admin', 'user']*/ },
       /*{
         path: '/dashboard',
         name: 'dashboard',
@@ -360,6 +360,14 @@ export default [
                 name: 'risklabel',
                 component: './PolicyManage/RiskPolicyList/RiskLabel',
               },
+              //风控标签 >新增/编辑
+              {
+                path: '/policyManage/riskpolicylist/risklabel/edit',
+                name: 'edit',
+                component: './PolicyManage/RiskPolicyList/RiskLabel/LabelEdit',
+                hideInMenu:true
+
+              },
               //策略流列表
               {
                 path: '/policyManage/riskpolicylist/policyFlow',
@@ -451,6 +459,13 @@ export default [
             name:'reportList',
             component:'./RiskReport/ReportList'
           },
+          //风控列表>三方数据查询
+          {
+            path:'/riskReport/reportList/queryData',
+            name:'queryData',
+            component:'./RiskReport/ReportList/QueryData',
+            hideInMenu:true
+          },
           //风控报告模板
           {
             path:'/riskReport/reportList/mould',
@@ -470,7 +485,7 @@ export default [
             name:'preview',
             component:'./RiskReport/ReportTemp/TempView',
             hideInMenu:true
-          }
+          },
         ]
       },
       //系统设置
@@ -507,7 +522,7 @@ export default [
         ]
       },
       //风险管理
-      {
+      /*{
         name:'riskManage',
         icon: 'highlight',
         path: '/riskManage',
@@ -664,7 +679,7 @@ export default [
             ]
           },
         ]
-      },
+      },*/
       {
         component: '404',
       },

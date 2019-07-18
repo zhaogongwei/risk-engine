@@ -3,6 +3,7 @@ export default {
   namespace: 'risklabel',
 
   state: {
+    labelList:[],
     editorData: {},
     selectId:'',
     selectItem:{},
@@ -58,6 +59,13 @@ export default {
         ...state,
         pageList:payload
       }
-    }
+    },
+    labelListHandle(state,{payload}){
+      console.log('payload',payload)
+      return {
+        ...state,
+        labelList:payload.labelList,
+      }
+    },
   },
 };
