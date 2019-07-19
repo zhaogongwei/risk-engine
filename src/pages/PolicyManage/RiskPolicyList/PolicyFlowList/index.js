@@ -158,7 +158,7 @@ export default class PolicyList extends PureComponent {
   //去编辑页面
   goEditPage=(type)=>{
     router.push({
-      pathname:'/policyManage/riskpolicylist/list/edit',
+      pathname:'/policyManage/riskpolicylist/policyFlow/edit',
       state:{
         type:type
       }

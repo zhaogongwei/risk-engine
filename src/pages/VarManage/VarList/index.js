@@ -85,6 +85,12 @@ export default class VarList extends PureComponent {
         dataIndex:'enmuval'
       },
       {
+        title:'状态',
+        key:'status',
+        dataIndex:'status',
+        render:(record)=>record===1?'启用':'禁用'
+      },
+      {
         title: '操作',
         key:'action',
         render: (record) => (
@@ -117,6 +123,22 @@ export default class VarList extends PureComponent {
           max:88,
           min:11,
           enmuval:'男、女',
+          status:1,
+        },
+        {
+          key:1,
+          oneclass:'反欺诈',
+          twoclass:'注册',
+          varname:'注册时间',
+          varcode:'变量代码',
+          vartype:'变量类型',
+          isenmu:'否',
+          length:22,
+          defVal:'男',
+          max:88,
+          min:11,
+          enmuval:'男、女',
+          status:0,
         }
       ],
       checkedData: [],

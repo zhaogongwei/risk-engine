@@ -182,7 +182,6 @@ class DetailForm extends React.Component {
     }
     return (
       <Card type="inner" size="small" title={upperFirst(type)} bordered={false}>
-        <p>版本号:1.0</p>
         <Form onSubmit={this.handleSubmit}>
           {type === 'node' && this.renderNodeDetail()}
           {type === 'edge' && this.renderEdgeDetail()}

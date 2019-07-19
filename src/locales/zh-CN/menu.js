@@ -51,6 +51,7 @@ export default {
   'menu.policyManage.policylist': '风控策略列表',
   'menu.policyManage.policylist.list': '策略列表',
   'menu.policyManage.policylist.edit': '策略编辑',
+  'menu.policyManage.policylist.deploy': '输入输出配置',
   'menu.policyManage.policylist.risklabel': '风控标签',
   'menu.policyManage.policylist.policyFlow': '策略流列表',
   'menu.policyManage.policylist.policyFlow.list': '策略流列表',

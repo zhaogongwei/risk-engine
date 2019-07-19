@@ -296,6 +296,11 @@ export default class LabelEdit extends PureComponent {
                 )}
               </FormItem>
             </Col>
+            <Col style={{color:'#FF0000'}} push={7}>
+              {
+                type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+              }
+            </Col>
           </Row>
           <Row type="flex" align="middle">
             <Col xxl={6} md={4}>

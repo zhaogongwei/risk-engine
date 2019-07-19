@@ -10,8 +10,6 @@ import {
   Input,
   Select,
   message,
-  Radio,
-  Tooltip,
   Form
 } from 'antd';
 import { connect } from 'dva'
@@ -21,14 +19,13 @@ import router from 'umi/router';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
-const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
+const FormItem = Form.Item
 
 @connect(({ policyList, loading }) => ({
   policyList,
 }))
 @Form.create()
-export default class PolicyEdit extends PureComponent {
+export default class InputDeploy extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,7 +51,7 @@ export default class PolicyEdit extends PureComponent {
           dataIndex: 'type',
           key:'type'
         }
-        ],
+      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -167,8 +164,8 @@ export default class PolicyEdit extends PureComponent {
     })
     var offset = (currentPage-1)*pageSize
     var list =[]
-   array.length>10?list = array.slice(offset,offset+pageSize):list = array
-   this.props.dispatch({
+    array.length>10?list = array.slice(offset,offset+pageSize):list = array
+    this.props.dispatch({
       type: 'policyList/savePageList',
       payload:list
     })
@@ -208,51 +205,48 @@ export default class PolicyEdit extends PureComponent {
       onChange: this.onSelectChange,
     };
     return (
-      <PageTableTitle title={state.type===1?'新增策略':'编辑策略'}>
+      <PageTableTitle title={'输入输出配置'}>
         <Form
           className="ant-advanced-search-form"
         >
-          <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
+          <Row  gutter={16} type="flex" align="top">
+            <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,content:'*'}}></span>输入变量 :</Col>
+            <Col span={15}>
+              <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
+                <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
+                <Col><Button type="primary" onClick={this.deleteList}>删除</Button></Col>
+              </Row>
+              <Row >
+                <Table
+                  bordered
+                  pagination={false}
+                  rowSelection={rowSelection}
+                  columns={this.state.columns}
+                  dataSource={this.props.policyList.pageList}
+                  loading={this.props.loading}
+                />
+              </Row>
+              <Row>
+                <Pagination
+                  style={{ marginBottom: "50px" }}
+                  showQuickJumper
+                  defaultCurrent={1}
+                  current={this.state.current}
+                  total={this.props.policyList.tableList.length}
+                  onChange={this.onChange}
+                  showTotal={(total, range) => this.showTotal(total, range)}
+                />
+              </Row>
+            </Col>
+          </Row>
+          <Row gutter={24} type="flex" align="middle">
             <Col xxl={4} md={6}>
-              <FormItem label="策略类型" {...formItemConfig}>
+              <FormItem label="输出变量" {...formItemConfig}>
                 {getFieldDecorator('assetsTypeName',{
                   initialValue:'',
                   rules:[{required:true}]
                 })(
-                  <Select allowClear={true}>
-                    <Option value={1}>主策略</Option>
-                    <Option value={2}>次策略</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="策略名称" {...formItemConfig}>
-                {getFieldDecorator('status',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="策略代码" >
-                {getFieldDecorator('status',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="策略负责人" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <Select allowClear={true}>
+                  <Select allowClear={true} style={{width:165}}>
                     <Option value={1}>王一</Option>
                     <Option value={2}>王二</Option>
                     <Option value={3}>王三</Option>
@@ -262,55 +256,7 @@ export default class PolicyEdit extends PureComponent {
               </FormItem>
             </Col>
           </Row>
-        <Row style={{marginBottom:20}} gutter={24} type="flex" align="middle">
-          <Col xxl={4} md={6}>
-            <FormItem label="输出变量" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
-                initialValue:'',
-                rules:[{required:true}]
-              })(
-                <Select allowClear={true} style={{width:165}}>
-                  <Option value={1}>王一</Option>
-                  <Option value={2}>王二</Option>
-                  <Option value={3}>王三</Option>
-                  <Option value={4}>王四</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row  style={{marginBottom:20}}gutter={24} type="flex" align="middle">
-          <Col xxl={4} md={6}>
-            <FormItem label="策略排序" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
-                initialValue:'',
-                rules:[{required:true}]
-              })(
-                <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col>
-            <Tooltip title="A-EMS接收资产后,按策略排序校验是否符合当前策略标签,如符合则资产进入当前策略">
-              <Icon type="question-circle" style={{fontSize:'24px',cursor:'pointer'}}/>
-            </Tooltip>
-          </Col>
-        </Row>
-        <Row style={{marginBottom:20}} gutter={24} type="flex" align="middle">
-          <Col xxl={4} md={6}>
-            <FormItem label="变量状态" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <RadioGroup name="radiogroup">
-                  <Radio value={1}>启用</Radio>
-                  <Radio value={0}>禁用</Radio>
-                </RadioGroup>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-          <Row style={{marginBottom:20}} type="flex" justify="center">
+          <Row type="flex" justify="center">
             <Col>
               <Button type="primary" onClick={this.formSubmit}>提交</Button>
               <Button  onClick={()=>router.goBack()}>返回</Button>

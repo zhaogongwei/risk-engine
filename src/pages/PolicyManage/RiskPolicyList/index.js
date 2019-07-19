@@ -62,15 +62,7 @@ export default class PolicyList extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <Popconfirm
-              title={record.status?'是否禁用该策略?':'是否启用该策略?'}
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>{record.status?'禁用':'启用'}</span>
-            </Popconfirm>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goDeploy}>变量设置</span>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>标签</span>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
             <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goPolicyFlowList()}>策略流</span>
@@ -163,6 +155,12 @@ export default class PolicyList extends PureComponent {
       state:{
         type:type
       }
+    })
+  }
+  //去输入输出配置
+  goDeploy=()=>{
+    router.push({
+      pathname:'/policyManage/riskpolicylist/list/deploy'
     })
   }
   //  刷新页面

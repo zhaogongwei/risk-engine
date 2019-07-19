@@ -354,6 +354,13 @@ export default [
                 component: './PolicyManage/RiskPolicyList/PolicyEdit',
                 hideInMenu:true
               },
+              //风控策略列表、输入输出配置
+              {
+                path: '/policyManage/riskpolicylist/list/deploy',
+                name: 'deploy',
+                component: './PolicyManage/RiskPolicyList/InputDeploy',
+                hideInMenu:true
+              },
               //风控标签
               {
                 path: '/policyManage/riskpolicylist/risklabel',

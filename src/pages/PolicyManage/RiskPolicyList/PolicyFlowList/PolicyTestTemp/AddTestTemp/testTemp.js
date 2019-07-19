@@ -400,8 +400,7 @@ export default class testTemp extends Component {
                   </Col>
                 </Row>
                 <Row type="flex" gutter={32} justify="center" style={{marginTop:20}}>
-                  <Button type="primary">保存数据</Button>
-                  <Button type="primary">执行测试</Button>
+                  <Button type="primary">保存并执行测试</Button>
                   <Button type="primary">返回</Button>
                 </Row>
             </Col>

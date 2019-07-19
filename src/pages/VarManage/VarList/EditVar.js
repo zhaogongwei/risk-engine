@@ -168,9 +168,9 @@ export default class EditVar extends PureComponent {
             <Col xxl={4} md={6}>
               <FormItem label="变量分类" {...formItemConfig}>
                 {getFieldDecorator('oneclass',{
-                  initialValue:'',
+                  initialValue:'请选择一级分类',
                   rules:[
-                    {required:true,message:'请选择一级分类',}
+                    {required:true,}
                   ]
                 })(
                   <Select allowClear={true}>
@@ -183,12 +183,12 @@ export default class EditVar extends PureComponent {
             <Col xxl={3} md={4}>
               <FormItem label="" >
                 {getFieldDecorator('parentId',{
-                  initialValue:'',
+                  initialValue:'请选择二级分类',
                   rules:[
                     {required:true}
                   ]
                 })(
-                  <Select allowClear={true}>
+                  <Select allowClear={true} >
                     <Option value={1}>注册</Option>
                     <Option value={2}>评分规则</Option>
                     <Option value={3}>借款人信息</Option>
@@ -347,6 +347,18 @@ export default class EditVar extends PureComponent {
                   </RadioGroup>
                 )}
               </FormItem>
+            </Col>
+            <Col style={{color:'#FF0000'}} push={10}>
+              {
+                state.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+              }
+            </Col>
+          </Row>
+          <Row>
+            <Col xxl={8} md={12}  style={{color:'#FF0000'}}>
+              {
+                state.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
+              }
             </Col>
           </Row>
           <Row type="flex" justify="center">

@@ -33,24 +33,11 @@ export default class RiskLabel extends PureComponent {
         title: '标签名称',
         dataIndex: 'labelName',
         key:'labelName'
-      },{
-        title: '资产来源',
-        dataIndex: 'assetSource',
-        key:'assetSource'
-      },{
-        title: '资产类型',
-        key:'assetType',
-        dataIndex:'assetType'
       },
         {
-          title: '还款类型',
-          dataIndex: 'repayType',
-          key:'repayType'
-        },
-        {
-          title: '借款期限',
-          dataIndex: 'loanDate',
-          key:'loanDate'
+          title:'标签内容',
+          dataIndex:'labelCont',
+          key:'labelCont'
         },
         {
           title: '创建时间',
@@ -79,7 +66,7 @@ export default class RiskLabel extends PureComponent {
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
             <span onClick={()=>this.goAddEdit(2)}>编辑</span>
             <Popconfirm
-              title="是否确认禁用该策略？"
+              title="是否确认删除该策略？"
               onConfirm={this.confirm}
               onCancel={this.cancel}
               okText="Yes"
@@ -94,10 +81,7 @@ export default class RiskLabel extends PureComponent {
         {
           key:1,
           labelName:'壹钱包房抵贷',
-          assetSource:'壹钱包',
-          assetType:'房贷',
-          repayType:'等额本息',
-          loanDate:'12、18、24(月)',
+          labelCont:'<资产来源：极速云> <资产类型：个人经营贷><期限：12月>',
           createTime:'2018-06-06',
           updateTime:'2018-06-06',
           responser:'王大大',

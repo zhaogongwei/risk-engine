@@ -38,7 +38,7 @@ export default class VarClass extends PureComponent {
       columns:[
         { title: '序号', dataIndex: 'number', key: 'number',width:'25%' },
         { title: '分类名称', dataIndex: 'name', key: 'name',width:'19%'},
-        { title: '变量数量', dataIndex: 'amount',key: 'amount',width:'38%',},
+        { title: '分类描述', dataIndex: 'classDes',key: 'classDes',width:'38%',},
         {
           title: 'Action',
           width:180,
@@ -161,7 +161,7 @@ export default class VarClass extends PureComponent {
     const columns = [
       { title: '序号', dataIndex: 'number', key: 'number',width:'24%' },
       { title: '分类名称', dataIndex: 'name', key: 'name', width:'19%'},
-      { title: '变量数量', dataIndex: 'amount', key: 'amount', width:'36%',
+      { title: '分类描述', dataIndex: 'classDes', key: 'amount', width:'36%',
         render:(record)=>(<a onClick={()=>router.push('/varManage/varlist')}>{record}</a>),
       },
       {
@@ -190,25 +190,25 @@ export default class VarClass extends PureComponent {
         key:1,
         number:1,
         name:'反欺诈',
-        amount:9,
+        classDes:'王大大的分类',
         secList:[
           {
             key:1,
             number: 1,
             name: '注册',
-            amount: 6,
+            classDes:'王大大的分类',
           },
           {
             key:2,
             number: 2,
             name: '登录',
-            amount: 6,
+            classDes:'王大大的分类',
           },
           {
             key:3,
             number: 3,
             name: '借款',
-            amount: 6,
+            classDes:'王大大的分类',
           },
         ]
       },
@@ -216,25 +216,25 @@ export default class VarClass extends PureComponent {
         key:2,
         number:2,
         name:'信审模块',
-        amount:9,
+        classDes:'王大大的分类',
         secList:[
           {
             key:1,
             number: 1,
             name: '评分规则',
-            amount: 9,
+            classDes:'王大大的分类',
           },
           {
             key:2,
             number: 2,
             name: '借款人信息',
-            amount: 9,
+            classDes:'王大大的分类',
           },
           {
             key:3,
             number: 3,
             name: '自动拒绝规则',
-            amount: 9,
+            classDes:'王大大的分类',
           },
         ]
       },
