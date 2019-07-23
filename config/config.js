@@ -115,6 +115,9 @@ export default {
   manifest: {
     basePath: '/',
   },
+  externals:{
+    'sweetalert2': 'Sweetalert2',
+  },
 
   chainWebpack: webpackPlugin,
 };

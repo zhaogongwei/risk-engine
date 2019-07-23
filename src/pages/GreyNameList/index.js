@@ -1,5 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
+import Swal from 'sweetalert2'
 import {
   Button,
   Table,
@@ -8,7 +10,6 @@ import {
   message,
   Icon
 } from 'antd';
-import Swal from 'sweetalert2'
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
@@ -31,115 +32,118 @@ export default class VarList extends PureComponent {
         key:'key'
       },
       {
-        title: '一级分类',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        title: '姓名',
+        dataIndex: 'name',
+        key:'name'
       },
       {
-        title: '二级分类',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        title: '身份证号',
+        dataIndex: 'idCard',
+        key:'idCard'
       },
       {
-        title: '变量名',
-        key:'varname',
-        dataIndex:'varname'
+        title: '灰名单来源',
+        key:'source',
+        dataIndex:'source'
       },
       {
-        title: '变量代码',
-        key:'varcode',
-        dataIndex:'varcode'
+        title: '性别',
+        key:'sex',
+        dataIndex:'sex'
       },
       {
-        title: '变量类型',
-        key:'vartype',
-        dataIndex:'vartype'
+        title: '手机号',
+        key:'phone',
+        dataIndex:'phone'
       },
       {
-        title: '是否枚举',
-        key:'isenmu',
-        dataIndex:'isenmu'
-      },
-      {
-        title: '长度',
-        key:'length',
-        dataIndex:'length'
-      },
-      {
-        title: '缺省值',
-        key:'defVal',
-        dataIndex:'defVal'
-      },
-      {
-        title: '最大值',
-        key:'max',
-        dataIndex:'max'
-      },
-      {
-        title: '最小值',
-        key:'min',
-        dataIndex:'min'
-      },
-      {
-        title: '枚举值',
-        key:'enmuval',
-        dataIndex:'enmuval'
-      },
-      {
-        title:'状态',
+        title: '状态',
         key:'status',
         dataIndex:'status',
-        render:(record)=>record===1?'启用':'禁用'
+        render:(record)=>record==1?'启用':'禁用'
       },
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.goAddPage({...record,type:2})}>编辑</span>
-            <Popconfirm
-              title="是否确认删除该变量？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-            <span onClick={()=>{this.goPolicyList()}}>应用策略</span>
-          </div>
-        )
+        render: (record) => {
+          const linkArr = [
+            {
+              label: record.status===1?'禁用':'启用',
+              show: true,
+              clickHandler: async() => {
+                const confirm = await Swal({
+                  text: '确定要执行本次操作吗',
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消'
+                })
+                if (confirm.value) {
+                  // 请求开启/停用方法
+
+                }
+              }
+            },
+            {
+              label: '拉黑',
+              show: true,
+              clickHandler: async() => {
+                const confirm = await Swal({
+                  text: '确定要执行本次操作吗',
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消'
+                })
+                if (confirm.value) {
+                  // 请求开启/停用方法
+
+                }
+              }
+            },
+            {
+              label: '删除',
+              show: true,
+              clickHandler: async() => {
+                const confirm = await Swal({
+                  text: '确定要执行本次操作吗',
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消'
+                })
+                if (confirm.value) {
+                  // 请求开启/停用方法
+
+                }
+              }
+            },
+
+          ];
+          return <DropdownDetail linkArr={linkArr}></DropdownDetail>
+        }
       }],
       data:[
         {
           key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-          status:1,
+          name:'张三',
+          idCard:'160145236545632654569',
+          source:'壹钱包逾期',
+          sex:'男',
+          phone:13333333333,
+          status:0,
         },
         {
           key:2,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-          status:0,
+          name:'张三',
+          idCard:'160145236545632654569',
+          source:'壹钱包逾期',
+          sex:'男',
+          phone:13333333333,
+          status:1,
         }
       ],
       checkedData: [],
@@ -232,40 +236,14 @@ export default class VarList extends PureComponent {
     })
   }
   //去风控策略列表
-  goPolicyList = async()=>{
-    const text = [
-      {
-        msg:'信贷风控策略'
-      },
-      {
-        msg:'消费贷风控策略'
-      },
-      {
-        msg:'个人经营贷风控策略'
-      },
-    ]
-    var textHtml = ''
-      text.map((item,index)=>{
-      textHtml+='<p>'+item['msg']+'</p>'
+  goPolicyList = ()=>{
+    router.push({
+      pathname:'/varManage/riskpolicylist/list',
     })
-    console.log(textHtml)
-    const confirm = await Swal({
-      html: textHtml,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消'
-    })
-    if (confirm.value) {
-      // 请求开启/停用方法
-      router.push({
-        pathname:'/policyManage/riskpolicylist/list',
-      })
-    }
   }
   render() {
     return (
-     <PageTableTitle title={'变量列表'} renderBtn={this.renderTitleBtn}>
+     <PageTableTitle title={'本地灰名单库'} renderBtn={this.renderTitleBtn}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered

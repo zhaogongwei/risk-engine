@@ -184,6 +184,7 @@ export default [
         name: 'exception',
         icon: 'warning',
         path: '/exception',
+        hideInMenu:true,
         routes: [
           // exception
           {
@@ -267,7 +268,7 @@ export default [
         ],
       },*/
       //  editor
-      {
+      /*{
         name: 'editor',
         icon: 'highlight',
         path: '/editor',
@@ -298,7 +299,7 @@ export default [
             component: './Editor/GGEditor/Koni',
           },
         ],
-      },
+      },*/
       //变量管理
       {
         name:'varManage',
@@ -444,11 +445,32 @@ export default [
                     component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/SetVar',
                     hideInMenu:true,
                   },
+                  //策略流编辑>三方数据查询
+                  {
+                    path: '/policyManage/riskpolicylist/policyFlow/edit/threeSide',
+                    name: 'threeSide',
+                  component: './PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp/PolicyFlowEdit/ThreeSideQuery',
+                    hideInMenu:true,
+                  },
                 ]
               },
             ]
           }
         ]
+      },
+      //本地灰名单库
+      {
+        name:'greyName',
+        icon: 'highlight',
+        path: '/greyName/list',
+        component:'./GreyNameList'
+      },
+      //本地黑名单库
+      {
+        name:'blackName',
+        icon: 'highlight',
+        path: '/blackName/list',
+        component:'./BlackNameList'
       },
       //风控报告
       {
@@ -520,12 +542,12 @@ export default [
             component:'./SystemSet/AccountManage/PolicyPower',
             hideInMenu:true
           },
-          //操作日志
+          //接口配置
           {
-            path:'/systemSet/actionLog',
-            name:'actionLog',
-            component:'./SystemSet/ActionLog',
-          },
+            path:'systemSet/urlDeploy',
+            name:'urlDeploy',
+            component:'./SystemSet/UrlDeploy'
+          }
         ]
       },
       //风险管理

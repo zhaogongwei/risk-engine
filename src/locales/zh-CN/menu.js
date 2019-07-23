@@ -63,6 +63,9 @@ export default {
   'menu.policyManage.policylist.policyFlow.scoreModel': '评分模型',
   'menu.policyManage.policylist.policyFlow.decModel': '决策模型',
   'menu.policyManage.policylist.policyFlow.setVar': '设置变量',
+  'menu.policyManage.policylist.policyFlow.threeSide': '三方查询',
+  'menu.greyName': '本地灰名单库',
+  'menu.blackName': '本地黑名单库',
   'menu.riskReport': '风控报告',
   'menu.riskReport.reportList': '风控报告列表',
   'menu.riskReport.mould': '风控报告模板',
@@ -74,5 +77,6 @@ export default {
   'menu.systemSet.accountManage': '账号管理',
   'menu.systemSet.policyPower': '策略权限',
   'menu.systemSet.actionLog': '操作日志',
+  'menu.systemSet.urlDeploy': '接口配置',
 
 };
