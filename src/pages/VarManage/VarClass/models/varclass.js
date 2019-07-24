@@ -1,66 +1,56 @@
-
+import * as api from '@/services/VarManage/VarClass';
+import { addListKey } from '@/utils/utils'
 export default {
   namespace: 'varclass',
 
   state: {
-    editorData: {},
+    varClassList: [],
     selectId:'',
     selectItem:{},
     status:false,
   },
 
   effects: {
-    *fetchNotices({payload,callback}, { call, put }) {
+    //获取变量分类列表
+    *fetchVarClassList({payload}, { call, put }) {
+      let response = yield call(api.queryClassList,payload)
       yield put({
-        type: 'saveEditorData',
-        payload,
-      });
-      callback()
-    },
-    *saveId({payload},{call,put}){
-      yield put({
-        type: 'saveEditId',
+        type: 'saveVarClassList',
         payload,
       });
     },
-    *saveItem({payload},{call,put}){
+    //添加变量(一级/二级）
+    *addVarClass({payload},{call,put}){
+      let response = yield call(api.addVarClass,payload)
       yield put({
-        type: 'saveEditItem',
+        type: 'saveVarClassList',
         payload,
       });
     },
-    *change({payload},{call,put}){
+    //编辑变量(一级/二级)
+    *editVarClass({payload},{call,put}){
+      let response = yield call(api.editVarClass,payload)
       yield put({
-        type:'changeStatus',
+        type: 'saveVarClassList',
+        payload,
+      });
+    },
+    //删除变量
+    *delVarClass({payload},{call,put}){
+      let response = yield call(api.delVarClass,payload)
+      yield put({
+        type:'saveVarClassList',
         payload
       })
     }
   },
 
   reducers: {
-    saveEditorData(state, { payload }) {
+    saveVarClassList(state, { payload }) {
       return {
         ...state,
-        editorData: payload,
+        varClassList: payload,
       };
     },
-    saveEditId(state, { payload }) {
-      return {
-        ...state,
-        selectId: payload,
-      };
-    },
-    saveEditItem(state,{payload}){
-      return{
-        ...state,
-        selectItem:payload
-      }
-    },
-    changeStatus(state,{payload}){
-      return {
-        ...state,
-        status:payload
-      }
-    }
   },
 };

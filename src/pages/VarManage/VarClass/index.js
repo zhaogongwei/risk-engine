@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Pagination,
@@ -14,6 +14,7 @@ import {
 import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
+import "antd/dist/antd.css";
 import AddForm from './addForm';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
@@ -157,6 +158,13 @@ export default class VarClass extends PureComponent {
     }
     return title;
   }
+  renderBtn = () => {
+    return (
+      <Fragment>
+        <Button onClick={()=>this.clickDialog(1)}><Icon type="plus" />添加分类</Button>
+      </Fragment>
+    )
+  }
   render() {
     const columns = [
       { title: '序号', dataIndex: 'number', key: 'number',width:'24%' },
@@ -241,9 +249,8 @@ export default class VarClass extends PureComponent {
     ];
     const { permission } = this.props
     return (
-      <PageTableTitle title={'变量分类'}>
+      <PageHeaderWrapper  renderBtn={this.renderBtn}>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Button type="primary" onClick={()=>this.clickDialog(1)}>添加分类</Button>
         <Table
           className="components-table-demo-nested"
           columns={columns}
@@ -269,7 +276,7 @@ export default class VarClass extends PureComponent {
           title={this.state.title}
           record={this.state.record}
         />
-      </PageTableTitle>
+      </PageHeaderWrapper>
     )
   }
 }

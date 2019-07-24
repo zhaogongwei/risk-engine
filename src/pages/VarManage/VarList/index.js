@@ -246,7 +246,7 @@ export default class VarList extends PureComponent {
     ]
     var textHtml = ''
       text.map((item,index)=>{
-      textHtml+='<p>'+item['msg']+'</p>'
+      textHtml+=`<p>${item['msg']}</p>`
     })
     console.log(textHtml)
     const confirm = await Swal({

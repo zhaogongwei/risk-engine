@@ -1,4 +1,4 @@
-import { queryNotices } from '@/services/api';
+import { queryNotices,queryMenuData,queryPermission } from '@/services/api';
 
 export default {
   namespace: 'global',
@@ -6,6 +6,7 @@ export default {
   state: {
     collapsed: false,
     notices: [],
+    menus:[]
   },
 
   effects: {
@@ -65,6 +66,32 @@ export default {
         },
       });
     },
+    //获取菜单
+    *fetchMenus({payload},{put,call}){
+      //获取权限
+      const permissionList = yield call(queryPermission);
+      // 保存权限信息到localStorage
+      if (permissionList && permissionList.status === 1) localStorage.setItem('permission', JSON.stringify(permissionList))
+      const response = yield call(queryMenuData);
+      /*if(response && response.data && response.status == 1) {
+        response.data.unshift({
+          icon: "icon-gongzuotai",
+          key: 0,
+          title: "我的工作台",
+          url: "/dashboard/default",
+        })
+      }*/
+      response.data.unshift({
+        icon: "dashboard",
+        key: 0,
+        title: "我的工作台",
+        url: "/dashboard/default",
+      })
+      yield put({
+        type: 'setMenuDate',
+        payload: response.data,
+      });
+    }
   },
 
   reducers: {
@@ -84,6 +111,12 @@ export default {
       return {
         ...state,
         notices: state.notices.filter(item => item.type !== payload),
+      };
+    },
+    setMenuDate(state, { payload }) {
+      return {
+        ...state,
+        menus: payload,
       };
     },
   },

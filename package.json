@@ -33,12 +33,12 @@
     "tslint:fix": "tslint --fix 'src/**/*.ts*'"
   },
   "lint-staged": {
-    "**/*.less": "stylelint --syntax less",
-    "**/*.{js,jsx}": "npm run lint-staged:js",
-    "**/*.{js,ts,tsx,json,jsx,less}": [
-      "node ./scripts/lint-prettier.js",
+    "**/*.{js,jsx,less}": [
+      "prettier --write",
       "git add"
-    ]
+    ],
+    "**/*.{js,jsx}": "npm run lint-staged:js",
+    "**/*.less": "stylelint --syntax less"
   },
   "browserslist": [
     "> 1%",
@@ -75,6 +75,7 @@
     "react-fittext": "^1.0.0",
     "react-media": "^1.9.2",
     "resize-observer-polyfill": "^1.5.1",
+    "sweetalert2": "^8.14.0",
     "umi": "^2.4.4",
     "umi-plugin-react": "^1.7.2",
     "umi-request": "^1.0.5"

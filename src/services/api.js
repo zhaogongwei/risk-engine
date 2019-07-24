@@ -1,6 +1,26 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
+//风控引擎
+
+const _baseApi = '/risk-engine';
+
+//获取菜单
+export async function queryMenuData(params){
+  return request(`${_baseApi}/menu_data`,{
+    method:'POST',
+    body:params
+  })
+}
+
+//获取权限
+export async function queryPermission(params) {
+  return request(_baseApi + '/system/menu/perms',{
+    method: 'POST',
+    body: params
+  });
+}
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }

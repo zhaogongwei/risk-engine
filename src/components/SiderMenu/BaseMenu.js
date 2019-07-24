@@ -1,80 +1,108 @@
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
 import { Menu, Icon } from 'antd';
 import Link from 'umi/link';
-import { urlToList } from '../_utils/pathTools';
-import { getMenuMatches } from './SiderMenuUtils';
-import { isUrl } from '@/utils/utils';
-import styles from './index.less';
+import isEqual from 'lodash/isEqual';
+import memoizeOne from 'memoize-one';
+import pathToRegexp from 'path-to-regexp';
 import IconFont from '@/components/IconFont';
+import { urlToList } from '../_utils/pathTools';
+import styles from './index.less';
 
 const { SubMenu } = Menu;
 
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
-//   icon: 'icon-geren' #For Iconfont ,
 //   icon: 'http://demo.com/icon.png',
 //   icon: <Icon type="setting" />,
 const getIcon = icon => {
+  if (typeof icon === 'string' && icon.indexOf('http') === 0) {
+    return <img src={icon} alt="icon" className={styles.icon} />;
+  }
   if (typeof icon === 'string') {
-    if (isUrl(icon)) {
-      return <Icon component={() => <img src={icon} alt="icon" className={styles.icon} />} />;
-    }
-    if (icon.startsWith('icon-')) {
-      return <IconFont type={icon} />;
-    }
-    return <Icon type={icon} />;
+    return <IconFont type={icon} />;
   }
   return icon;
 };
 
+export const getMenuMatches = (flatMenuKeys, path) =>
+  flatMenuKeys.filter(item => {
+    if (item) {
+      return pathToRegexp(item).test(path);
+    }
+    return false;
+  });
+
 export default class BaseMenu extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.getSelectedMenuKeys = memoizeOne(this.getSelectedMenuKeys, isEqual);
+    this.flatMenuKeys = this.getFlatMenuKeys(props.menuData);
+  }
+
+  /**
+   * Recursively flatten the data
+   * [{path:string},{path:string}] => {path,path2}
+   * @param  menus
+   */
+  getFlatMenuKeys(menus) {
+    let keys = [];
+    menus.forEach(item => {
+      if (item.children) {
+        keys = keys.concat(this.getFlatMenuKeys(item.children));
+      }
+      keys.push(item.url);
+    });
+    return keys;
+  }
+
   /**
    * 获得菜单子节点
    * @memberof SiderMenu
    */
-  getNavMenuItems = menusData => {
+  getNavMenuItems = (menusData, parent) => {
     if (!menusData) {
       return [];
     }
     return menusData
-      .filter(item => item.name && !item.hideInMenu)
-      .map(item => this.getSubMenuOrItem(item))
+      .filter(item => item.title && !item.hideInMenu)
+      .map(item => {
+        // make dom
+        const ItemDom = this.getSubMenuOrItem(item, parent);
+        return this.checkPermissionItem(item.authority, ItemDom);
+      })
       .filter(item => item);
   };
 
   // Get the currently selected menu
-  getSelectedMenuKeys = pathname => {
-    const { flatMenuKeys } = this.props;
-    return urlToList(pathname).map(itemPath => getMenuMatches(flatMenuKeys, itemPath).pop());
-  };
+  getSelectedMenuKeys = pathname =>
+    urlToList(pathname).map(itemPath => getMenuMatches(this.flatMenuKeys, itemPath).pop());
 
   /**
    * get SubMenu or Item
    */
   getSubMenuOrItem = item => {
     // doc: add hideChildrenInMenu
-    if (item.children && !item.hideChildrenInMenu && item.children.some(child => child.name)) {
-      const { name } = item;
+    if (item.children && !item.hideChildrenInMenu && item.children.some(child => child.title)) {
+      const { title } = item;
       return (
         <SubMenu
           title={
             item.icon ? (
               <span>
                 {getIcon(item.icon)}
-                <span>{name}</span>
+                <span>{title}</span>
               </span>
             ) : (
-              name
+              title
             )
           }
-          key={item.path}
+          key={item.url}
         >
           {this.getNavMenuItems(item.children)}
         </SubMenu>
       );
     }
-    return <Menu.Item key={item.path}>{this.getMenuItemPath(item)}</Menu.Item>;
+    return <Menu.Item key={item.url}>{this.getMenuItemPath(item)}</Menu.Item>;
   };
 
   /**
@@ -83,8 +111,8 @@ export default class BaseMenu extends PureComponent {
    * @memberof SiderMenu
    */
   getMenuItemPath = item => {
-    const { name } = item;
-    const itemPath = this.conversionPath(item.path);
+    const { title } = item;
+    const itemPath = this.conversionPath(item.url);
     const icon = getIcon(item.icon);
     const { target } = item;
     // Is it a http link
@@ -92,7 +120,7 @@ export default class BaseMenu extends PureComponent {
       return (
         <a href={itemPath} target={target}>
           {icon}
-          <span>{name}</span>
+          <span>{title}</span>
         </a>
       );
     }
@@ -111,9 +139,19 @@ export default class BaseMenu extends PureComponent {
         }
       >
         {icon}
-        <span>{name}</span>
+        <span>{title}</span>
       </Link>
     );
+  };
+
+  // permission to check
+  checkPermissionItem = (authority, ItemDom) => {
+    const { Authorized } = this.props;
+    if (Authorized && Authorized.check) {
+      const { check } = Authorized;
+      return check(authority, ItemDom);
+    }
+    return ItemDom;
   };
 
   conversionPath = path => {
@@ -123,27 +161,12 @@ export default class BaseMenu extends PureComponent {
     return `/${path || ''}`.replace(/\/+/g, '/');
   };
 
-  getPopupContainer = (fixedHeader, layout) => {
-    if (fixedHeader && layout === 'topmenu') {
-      return this.wrap;
-    }
-    return document.body;
-  };
-
-  getRef = ref => {
-    this.wrap = ref;
-  };
-
   render() {
     const {
       openKeys,
       theme,
       mode,
       location: { pathname },
-      className,
-      collapsed,
-      fixedHeader,
-      layout,
     } = this.props;
     // if pathname can't match, use the nearest parent's key
     let selectedKeys = this.getSelectedMenuKeys(pathname);
@@ -151,33 +174,25 @@ export default class BaseMenu extends PureComponent {
       selectedKeys = [openKeys[openKeys.length - 1]];
     }
     let props = {};
-    if (openKeys && !collapsed) {
+    if (openKeys) {
       props = {
-        openKeys: openKeys.length === 0 ? [...selectedKeys] : openKeys,
+        openKeys,
       };
     }
     const { handleOpenChange, style, menuData } = this.props;
-    const cls = classNames(className, {
-      'top-nav-menu': mode === 'horizontal',
-    });
-
     return (
-      <>
-        <Menu
-          key="Menu"
-          mode={mode}
-          theme={theme}
-          onOpenChange={handleOpenChange}
-          selectedKeys={selectedKeys}
-          style={style}
-          className={cls}
-          {...props}
-          getPopupContainer={() => this.getPopupContainer(fixedHeader, layout)}
-        >
-          {this.getNavMenuItems(menuData)}
-        </Menu>
-        <div ref={this.getRef} />
-      </>
+      <Menu
+        key="Menu"
+        mode={mode}
+        theme={theme}
+        onOpenChange={handleOpenChange}
+        selectedKeys={selectedKeys}
+        style={style}
+        className={mode === 'horizontal' ? 'top-nav-menu' : ''}
+        {...props}
+      >
+        {this.getNavMenuItems(menuData)}
+      </Menu>
     );
   }
 }
