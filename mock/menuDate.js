@@ -4,7 +4,7 @@ export default {
       //变量管理
       {
         title:'变量管理',
-        icon:'dashboard',
+        icon:'icon-bianliangguanli',
         url:'/varManage',
         children:[
           //变量分类
@@ -15,14 +15,14 @@ export default {
           //变量列表
           {
             url: '/varManage/varlist',
-            name: '变量列表',
+            title: '变量列表',
           },
         ]
       },
       //策略管理
       {
         title:'策略管理',
-        icon:'highlight',
+        icon:'icon-celueguanli',
         url:'/policyManage',
         children:[
           //风控策略列表
@@ -77,19 +77,19 @@ export default {
       //本地灰名单库
       {
         title:'本地灰名单库',
-        icon: 'highlight',
+        icon: 'icon-huimingdan',
         url: '/greyName/list',
       },
       //本地黑名单库
       {
         title:'本地黑名单库',
-        icon: 'highlight',
+        icon: 'icon-heimingdan',
         url: '/blackName/list',
       },
       //风控报告
       {
         title:'风控报告',
-        icon: 'highlight',
+        icon: 'icon-fengkongbaogao',
         url: '/riskReport',
         children:[
           {
@@ -111,7 +111,7 @@ export default {
       //系统设置
       {
         title:'系统设置',
-        icon: 'highlight',
+        icon: 'icon-xitongshezhi',
         url: '/systemSet',
         children:[
           {

@@ -9,25 +9,16 @@ import {
   Dropdown,
   Icon,
   Popconfirm,
-  message
+  message,
+  Card,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
-import "antd/dist/antd.css";
 import AddForm from './addForm';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
-const menu = (
-  <Menu>
-    <Menu.Item>
-      Action 1
-    </Menu.Item>
-    <Menu.Item>
-      Action 2
-    </Menu.Item>
-  </Menu>
-);
+import Swal from 'sweetalert2';
 @connect(({ varclass, loading }) => ({
   varclass,
   loading: loading.effects['assetDeploy/riskSubmit']
@@ -37,26 +28,31 @@ export default class VarClass extends PureComponent {
     super(props);
     this.state = {
       columns:[
-        { title: '序号', dataIndex: 'number', key: 'number',width:'25%' },
-        { title: '分类名称', dataIndex: 'name', key: 'name',width:'19%'},
-        { title: '分类描述', dataIndex: 'classDes',key: 'classDes',width:'38%',},
+        { title: '序号', dataIndex: 'number', key: 'number',width:'30%' },
+        { title: '分类名称', dataIndex: 'name', key: 'name',width:'9%'},
+        { title: '分类描述', dataIndex: 'classDes',key: 'classDes',width:'48%',},
         {
           title: 'Action',
-          width:180,
-          render: (record) => (
-            <div>
-              <Button icon="edit" onClick={()=>{this.clickDialog(4,record)}}/>
-              <Popconfirm
-                title="您确定要删除此分类？"
-                onConfirm={this.confirm}
-                onCancel={this.cancel}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button icon="delete" />
-              </Popconfirm>
-            </div>
-          ),
+          width:100,
+          render: (record) => {
+            const action = (
+              <Menu>
+                <Menu.Item onClick={() => {this.clickDialog(4, record)}}>
+                  <Icon type="edit"/>编辑
+                </Menu.Item>
+                <Menu.Item onClick={()=>this.deleteVar()}>
+                  <Icon type="delete"/>删除
+                </Menu.Item>
+              </Menu>
+            )
+            return (
+              <Dropdown overlay={action}>
+                <a className="ant-dropdown-link" href="#">
+                  操作<Icon type="down"/>
+                </a>
+              </Dropdown>
+            )
+          }
         },
       ],
       checkedData: [],
@@ -127,19 +123,10 @@ export default class VarClass extends PureComponent {
       current:value
     })
   }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
-  }
-
   expandedRowRender = (record,index) => {
     return (
       <Table
+        bordered={false}
         showHeader={false}
         columns={this.state.columns}
         dataSource={record.secList}
@@ -165,6 +152,20 @@ export default class VarClass extends PureComponent {
       </Fragment>
     )
   }
+  //删除变量
+  deleteVar=async(type=1,record={})=>{
+    const confirmVal = await Swal.fire({
+      text: '确定要删除该分类吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     const columns = [
       { title: '序号', dataIndex: 'number', key: 'number',width:'24%' },
@@ -175,21 +176,27 @@ export default class VarClass extends PureComponent {
       {
         title: '操作',
         key: 'action',
-        width:380,
         render: (record) => {
-          return<div>
-                  <Button icon="plus-square" onClick={()=>{this.clickDialog(2,record)}}/>
-                  <Button icon="edit" onClick={()=>{this.clickDialog(3,record)}}/>
-                  <Popconfirm
-                    title="您确定要删除此分类？"
-                    onConfirm={this.confirm}
-                    onCancel={this.cancel}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button icon="delete" />
-                  </Popconfirm>
-                </div>
+          const action = (
+            <Menu>
+              <Menu.Item onClick={()=>{this.clickDialog(2,record)}}>
+                <Icon type="plus"/>添加二级分类
+              </Menu.Item>
+              <Menu.Item onClick={()=>{this.clickDialog(3,record)}}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.deleteVar()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
         }
       },
     ];
@@ -250,32 +257,34 @@ export default class VarClass extends PureComponent {
     const { permission } = this.props
     return (
       <PageHeaderWrapper  renderBtn={this.renderBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          className="components-table-demo-nested"
-          columns={columns}
-          expandedRowRender={(record,index)=>this.expandedRowRender(record,index)}
-          defaultExpandAllRows={true}
-          dataSource={data}
-          pagination={false}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-        <AddForm
-          showState={this.state.modalStatus}
-          onChange={this.handleChildChange}
-          getSubKey={this.getSubKey}
-          type={this.state.type}
-          title={this.state.title}
-          record={this.state.record}
-        />
+        <Card bordered={false}>
+          <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+          <Table
+            style={{border: "1px solid #e8e8e8"}}
+            bordered={false}
+            columns={columns}
+            expandedRowRender={(record,index)=>this.expandedRowRender(record,index)}
+            defaultExpandAllRows={true}
+            dataSource={data}
+            pagination={false}
+          />
+          <Pagination
+            style={{ marginBottom: "50px" }}
+            showQuickJumper
+            defaultCurrent={1}
+            current={this.state.current}
+            total={100}
+            onChange={this.onChange}
+            showTotal={(total, range) => this.showTotal(total, range)}
+          />
+          <AddForm
+            showState={this.state.modalStatus}
+            onChange={this.handleChildChange}
+            getSubKey={this.getSubKey}
+            type={this.state.type}
+            title={this.state.title}
+            record={this.state.record}
+          /></Card>
       </PageHeaderWrapper>
     )
   }

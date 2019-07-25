@@ -82,7 +82,7 @@ export default {
         })
       }*/
       response.data.unshift({
-        icon: "dashboard",
+        icon: "icon-wodegongzuotai",
         key: 0,
         title: "我的工作台",
         url: "/dashboard/default",

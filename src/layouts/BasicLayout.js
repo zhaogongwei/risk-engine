@@ -135,7 +135,7 @@ class BasicLayout extends React.Component {
     const { location, breadcrumbNameMap } = this.props;
     return {
       location,
-      breadcrumbNameMap,
+      breadcrumbNameMap:this.breadcrumbNameMap,
     };
   }
   getMenuData() {

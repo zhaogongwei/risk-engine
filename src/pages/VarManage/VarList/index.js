@@ -1,12 +1,16 @@
 import React, { PureComponent, Fragment } from 'react';
 import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
   Pagination,
   Popconfirm,
   message,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
 } from 'antd';
 import Swal from 'sweetalert2'
 import { connect } from 'dva'
@@ -94,21 +98,29 @@ export default class VarList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.goAddPage({...record,type:2})}>编辑</span>
-            <Popconfirm
-              title="是否确认删除该变量？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-            <span onClick={()=>{this.goPolicyList()}}>应用策略</span>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={() => this.goAddPage({ ...record, type: 2 })}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={() => this.deleteVar()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+              <Menu.Item onClick={() => this.goPolicyList()}>
+                <Icon type="snippets" />应用策略
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+
+        }
       }],
       data:[
         {
@@ -182,15 +194,6 @@ export default class VarList extends PureComponent {
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
-  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -263,27 +266,43 @@ export default class VarList extends PureComponent {
       })
     }
   }
+  //删除变量
+  deleteVar=async(type=1,record={})=>{
+    const confirmVal = await Swal.fire({
+      text: '确定要删除该变量吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'变量列表'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+       <Card bordered={false}>
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

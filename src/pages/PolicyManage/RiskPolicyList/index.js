@@ -1,11 +1,14 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
   Pagination,
   Popconfirm,
+  Menu,
+  Dropdown,
   message,
+  Card,
   Icon
 } from 'antd';
 import { connect } from 'dva'
@@ -60,14 +63,31 @@ export default class PolicyList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goDeploy}>变量设置</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goLabel}>标签</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goPolicyFlowList()}>策略流</span>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={this.goDeploy}>
+                <Icon type="setting" />变量设置
+              </Menu.Item>
+              <Menu.Item onClick={this.goLabel}>
+                <Icon type="snippets" />标签
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.goEditPage(2)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.goPolicyFlowList()}>
+                <Icon type="diff" />策略流
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -195,25 +215,27 @@ export default class PolicyList extends PureComponent {
   }
   render() {
     return (
-     <PageTableTitle title={'风控策略列表'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+         <Card bordered={false}>
+           <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+           <Table
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={this.state.data}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.current}
+             total={100}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
+      </PageHeaderWrapper>
     )
   }
 }

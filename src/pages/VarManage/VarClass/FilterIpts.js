@@ -78,7 +78,7 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={2}>
+          <Col  xxl={{ span: 4}} md={{ span: 6}} offset={2}>
             <Button type="primary" onClick={this.formSubmit}>查询</Button>
             <Button type="primary" onClick={this.reset}>清空</Button>
           </Col>

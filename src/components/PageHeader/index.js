@@ -29,7 +29,6 @@ export default class PageHeader extends PureComponent {
       wide = false,
       hiddenBreadcrumb = false,
     } = this.props;
-    console.log(this.props,666)
     const clsString = classNames(styles.pageHeader, className);
     const activeKeyProps = {};
     if (tabDefaultActiveKey !== undefined) {
