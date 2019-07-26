@@ -1,11 +1,14 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
   Pagination,
   Popconfirm,
+  Menu,
+  Dropdown,
   message,
+  Card,
   Icon
 } from 'antd';
 import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
@@ -54,39 +57,32 @@ export default class VarList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const linkArr = [
-            {
-              label: '编辑',
-              show: true,
-              clickHandler: () => {
-                this.goAddPage({type:2})
-              }
-            },
-            {
-              label: '查看',
-              show: true,
-              clickHandler: () => {
-                this.goPreview()
-              }
-            },
-            {
-              label: '策略',
-              show: true,
-              clickHandler: () => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={() => this.goAddPage({type:2})}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.goPreview()}>
+                <Icon type="zoom-in" />查看
+              </Menu.Item>
+              <Menu.Item onClick={()=>
                 router.push({
                   pathname:'/policyManage/riskpolicylist/list'
-                })
-              }
-            },
-            {
-              label: '资产',
-              show: true,
-              clickHandler: () => {
-
-              }
-            },
-          ];
-          return <DropdownDetail linkArr={linkArr}></DropdownDetail>
+                })}>
+                <Icon type="delete"/>策略
+              </Menu.Item>
+              <Menu.Item >
+                <Icon type="unordered-list" />资产
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
         }
       }],
       data:[
@@ -208,25 +204,27 @@ export default class VarList extends PureComponent {
   }
   render() {
     return (
-     <PageTableTitle title={'风控报告模板'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+        <Card bordered={false}>
+          <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+          <Table
+            bordered
+            pagination={false}
+            columns={this.state.columns}
+            dataSource={this.state.data}
+            loading={this.props.loading}
+          />
+          <Pagination
+            style={{ marginBottom: "50px" }}
+            showQuickJumper
+            defaultCurrent={1}
+            current={this.state.current}
+            total={100}
+            onChange={this.onChange}
+            showTotal={(total, range) => this.showTotal(total, range)}
+          />
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

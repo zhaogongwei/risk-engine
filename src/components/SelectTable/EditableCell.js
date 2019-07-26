@@ -61,9 +61,9 @@ const EditableFormRow = Form.create()(EditableRow);
   
     changeHandler(value, record, type,col,tableList) {
       record[type] = value
-      const row =record['row']
-      console.log(row,col,value)
-      this.checkVal(row,col,value,tableList)?this.changeVal(row,col,value,tableList):tableList.push({row:row,col:col,val:value,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]})
+      //const row =record['row']
+      console.log(value, record, type,col,tableList)
+      //this.checkVal(row,col,value,tableList)?this.changeVal(row,col,value,tableList):tableList.push({row:row,col:col,val:value,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]})
     }
     //查询当前值是否存在
     checkVal=(row,col,val,arr)=>{

@@ -15,6 +15,13 @@ export default {
         selectVar:[],
       }
     ],
+    //子标题列表
+    titleList:[
+      {
+        title:'标题一',
+        tableList:[]
+      }
+    ],
     page:{
       currentPage:1,
       more:true,
@@ -71,6 +78,12 @@ export default {
         reportList:payload.reportList,
       }
     },
+    titleListHandle(state,{payload}){
+      return{
+        ...state,
+        titleList:payload.titleList
+      }
+    }
   },
 };
 

@@ -40,9 +40,9 @@ export default class Editable extends Component {
     console.log('newProps',newProps)
     this.emptySelect()
     this.setState({
-      tableList:newProps.dataSource
+      tableList:newProps.titleList
     })
-    this.pagination(10,1,newProps.dataSource);
+    this.pagination(10,1,newProps.titleList);
 
   }
   onSelectChange = (selectedRowKeys) => {
@@ -66,7 +66,7 @@ export default class Editable extends Component {
       current:current,
       currentPage:current
     })
-    this.pagination(10,current,this.state.tableList)
+    //this.pagination(10,current,this.state.tableList)
   }
   //前端分页
   pagination=(pageSize=10,currentPage=1,array=[])=>{
@@ -92,14 +92,13 @@ export default class Editable extends Component {
   componentDidMount(){
     console.log('props',this.props)
     const {dataSource} = this.props
-    this.setState({
+    /*this.setState({
       tableList:dataSource
     })
-    this.pagination(10,1,dataSource);
+    this.pagination(10,1,dataSource);*/
     this.props.getSubKey(this,'child')
   }
   render() {
-    debugger
     const { dataSource } = this.props;
     const components = {
       body: {
@@ -139,12 +138,12 @@ export default class Editable extends Component {
           </Col>
           <Col> <Button type="primary" onClick={this.props.addVar}>新增</Button></Col>
           <Col><Button type="primary" onClick={this.props.deleteVar}>删除</Button></Col>
-          <Col  span={1} push={14} style={{display:'flex',flexDirection:'column',justifyContent:'flex-end'}}>
+          {/*<Col  span={1} push={14} style={{display:'flex',flexDirection:'column',justifyContent:'flex-end'}}>
             <Button  onClick={this.props.handleAdd} ><Icon type="plus" theme="outlined" style={{transform: 'translateX(-20%)'}}/></Button>
             {
               this.props.index>0?<Button onClick={this.props.handleDelete}><Icon type="minus" theme="outlined" style={{transform: 'translateX(-20%)'}}/></Button>:''
             }
-          </Col>
+          </Col>*/}
         </Row>
         <Row>
           <Col span={18} push={2}>
@@ -168,7 +167,7 @@ export default class Editable extends Component {
               showQuickJumper
               defaultCurrent={1}
               current={this.state.current}
-              total={this.state.tableList.length?this.state.tableList.length:0}
+              total={100}
               onChange={this.onChange}
               showTotal={(total, range) => this.showTotal(total, range)}
             />

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import RptTable from '@/components/RptTable/RptTable'
 import AddForm from './AddForm';
 import {
@@ -14,6 +14,7 @@ import {
   Select,
   Form,
   message,
+  Card,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -247,52 +248,63 @@ export default class Index extends Component {
   saveData=()=>{
     console.log(this.props.tempEdit)
   }
+  renderBtn = () => {
+    return (
+      <Fragment>
+        <Button onClick={()=>this.clickDialog(1)}><Icon type="plus" />新增</Button>
+      </Fragment>
+    )
+  }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { titleList } = this.props.tempEdit
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
     return (
-      <PageTableTitle title={'新增/编辑报告模板'}>
-        <RptTable
-          loading={this.props.loading}
-          columns={this.state.columns}
-          dataSource={this.props.tempEdit.reportList}
-          tableList={this.props.tempEdit.reportList}
-          handleDelete={this.handleDelete}
-          handleAdd={this.handleAdd}
-          addVar={this.addVar}
-          deleteVar={this.deleteVar}
-          saveSelectVar={this.saveSelectVar}
-        />
-        <Modal
-          className={'ant-modal-sm'}
-          width={1000}
-          title={''}
-          visible={this.state.addModalVisible}
-          onOk={this.addFormSubmit}
-          destroyOnClose={true}
-          confirmLoading={this.props.submitLoading}
-          onCancel={() => this.setState({ addModalVisible: false })}
-        >
-          <AddForm
-            number={this.state.number}
-            getSubKey={this.getSubKey}
+      <PageHeaderWrapper renderBtn={this.renderBtn}>
+        <Card bordered={false}>
+          <RptTable
+            loading={this.props.loading}
+            columns={this.state.columns}
+            dataSource={this.props.tempEdit.reportList}
+            tableList={this.props.tempEdit.reportList}
+            handleDelete={this.handleDelete}
+            handleAdd={this.handleAdd}
+            addVar={this.addVar}
+            deleteVar={this.deleteVar}
+            saveSelectVar={this.saveSelectVar}
+            titleList={titleList}
           />
-        </Modal>
-        <Row type="flex" gutter={16} align="middle" justify="center">
-          <Col col={8}>
-            <Button type="primary" onClick={this.saveData}>保存</Button>
-          </Col>
-          <Col col={8}>
-            <Button type="primary">预览</Button>
-          </Col>
-          <Col col={8}>
-            <Button type="primary">取消</Button>
-          </Col>
-        </Row>
-      </PageTableTitle>
+          <Modal
+            className={'ant-modal-sm'}
+            width={1000}
+            title={''}
+            visible={this.state.addModalVisible}
+            onOk={this.addFormSubmit}
+            destroyOnClose={true}
+            confirmLoading={this.props.submitLoading}
+            onCancel={() => this.setState({ addModalVisible: false })}
+          >
+            <AddForm
+              number={this.state.number}
+              getSubKey={this.getSubKey}
+            />
+          </Modal>
+          <Row type="flex" gutter={16} align="middle" justify="center">
+            <Col col={8}>
+              <Button type="primary" onClick={this.saveData}>保存</Button>
+            </Col>
+            <Col col={8}>
+              <Button type="primary">预览</Button>
+            </Col>
+            <Col col={8}>
+              <Button type="primary">取消</Button>
+            </Col>
+          </Row>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

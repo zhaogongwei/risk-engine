@@ -239,7 +239,6 @@ export default class AssetTypeDeploy extends PureComponent {
           }
         })
       }else{
-        debugger;
         if(Object.keys(radioValueCopy).length){
           //编辑后一个变量
           if(this.state.mold){
