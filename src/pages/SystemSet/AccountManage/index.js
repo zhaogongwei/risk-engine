@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -7,9 +7,11 @@ import {
   Popconfirm,
   Modal,
   message,
-  Icon
+  Menu,
+  Dropdown,
+  Icon,
+  Card,
 } from 'antd';
-import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
 import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -22,7 +24,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class VarList extends PureComponent {
+export default class AccountManage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -70,21 +72,28 @@ export default class VarList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{marginRight:10}} onClick={()=>{this.goPolicyPower()}}>策略权限</span>
-            <span style={{marginRight:10}} onClick={()=>{this.addEdit(2,record)}}>修改</span>
-            <Popconfirm
-              title="是否确认删除该账号？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={()=>{this.goPolicyPower()}}>
+                <Icon type="edit"/>策略权限
+              </Menu.Item>
+              <Menu.Item onClick={()=>{this.addEdit(2,record)}}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.deleteAccount()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -140,15 +149,6 @@ export default class VarList extends PureComponent {
       }
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -220,40 +220,59 @@ export default class VarList extends PureComponent {
       record:record,
     })
   }
+  //删除账号
+  deleteAccount=async(type=1,record={})=>{
+    const confirmVal = await Swal.fire({
+      text: '确定要删除该账号吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'账号管理'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-       <Modal
-         title={this.state.type===1?'新增':'修改'}
-         visible={this.state.visible}
-         onOk={this.addFormSubmit}
-         onCancel={()=>this.setState({visible:false})}
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+       <Card
+        bordered={false}
+        title={'账号管理'}
        >
-         <AddForm
-           getSubKey={this.getSubKey}
-           type={this.state.type}
-           isTrust={this.state.isTrust}
-           record={this.state.record}
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
          />
-       </Modal>
-      </PageTableTitle>
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+         <Modal
+           title={this.state.type===1?'新增账号':'修改账号'}
+           visible={this.state.visible}
+           onOk={this.addFormSubmit}
+           onCancel={()=>this.setState({visible:false})}
+         >
+           <AddForm
+             getSubKey={this.getSubKey}
+             type={this.state.type}
+             isTrust={this.state.isTrust}
+             record={this.state.record}
+           />
+         </Modal>
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

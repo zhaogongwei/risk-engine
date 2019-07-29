@@ -226,19 +226,27 @@ export default [
           }
         ]
       },
-      //本地灰名单库
+      //黑名单管理
       {
-        name:'greyName',
-        icon: 'highlight',
-        path: '/greyName/list',
-        component:'./GreyNameList'
-      },
-      //本地黑名单库
-      {
-        name:'blackName',
-        icon: 'highlight',
-        path: '/blackName/list',
-        component:'./BlackNameList'
+        name:'nameManage',
+        icon:'highlight',
+        path:'/nameManage',
+        routes:[
+          //本地灰名单库
+          {
+            name:'greyName',
+            icon: 'highlight',
+            path: '/nameManage/greyName/list',
+            component:'./NameManage/GreyNameList'
+          },
+          //本地黑名单库
+          {
+            name:'blackName',
+            icon: 'highlight',
+            path: '/nameManage/blackName/list',
+            component:'./NameManage/BlackNameList'
+          },
+        ]
       },
       //风控报告
       {
@@ -312,7 +320,7 @@ export default [
           },
           //接口配置
           {
-            path:'systemSet/urlDeploy',
+            path:'/systemSet/urlDeploy',
             name:'urlDeploy',
             component:'./SystemSet/UrlDeploy'
           }

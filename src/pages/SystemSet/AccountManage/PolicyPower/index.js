@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -10,6 +10,7 @@ import {
   Icon,
   Row,
   Col,
+  Card
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -245,31 +246,36 @@ export default class VarList extends PureComponent {
       ]
     };
     return (
-     <PageTableTitle title={'策略权限'}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-       <Row>
-         <Col style={{lineHeight:'40px'}}>当前授权人:王笑笑</Col>
-       </Row>
-       <Row>
-         <Table
-           rowSelection={rowSelection}
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={this.state.data}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.current}
-           total={100}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Row>
-      </PageTableTitle>
+     <PageHeaderWrapper>
+       <Card
+        bordered={false}
+        title={'策略权限'}
+       >
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Row>
+           <Col style={{lineHeight:'40px'}}>当前授权人:王笑笑</Col>
+         </Row>
+         <Row>
+           <Table
+             rowSelection={rowSelection}
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={this.state.data}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.current}
+             total={100}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Row>
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

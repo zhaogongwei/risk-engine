@@ -125,62 +125,27 @@ export default class AddForm extends Component {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
+    const tProps = {
+      treeData,
+      onChange: this.onChange,
+      treeCheckable: true,
+      maxTagCount: 0,
+      dropdownStyle: { maxHeight: 600, overflow: 'auto' },
+      treeDefaultExpandedKeys: [],
+      showCheckedStrategy: SHOW_PARENT,
+      style: {
+        width: 450,
+      },
+      allowClear: true
+    };
     return (
             <Form
               className="ant-advanced-search-form"
             >
               <Row style={{marginBottom:10}}>
                 <Col xxl={20} md={12}>
-                  <FormItem label="用户名" {...formItemConfig}>
-                    {getFieldDecorator('username',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="密码" {...formItemConfig}>
-                    {getFieldDecorator('password',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="确认密码" {...formItemConfig}>
-                    {getFieldDecorator('comfirmWord',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
                   <FormItem label="姓名" {...formItemConfig}>
-                    {getFieldDecorator('name',{
+                    {getFieldDecorator('trueName',{
                       initialValue:'',
                       rules:[
                         {
@@ -195,11 +160,13 @@ export default class AddForm extends Component {
               </Row>
               <Row style={{marginBottom:10}}>
                 <Col xxl={20} md={12}>
-                  <FormItem label="邮箱" {...formItemConfig}>
-                    {getFieldDecorator('email',{
+                  <FormItem label="身份证号" {...formItemConfig}>
+                    {getFieldDecorator('idCard',{
                       initialValue:'',
                       rules:[
-                        {}
+                        {
+                          required:true,
+                        }
                       ]
                     })(
                       <Input/>
@@ -209,7 +176,23 @@ export default class AddForm extends Component {
               </Row>
               <Row style={{marginBottom:10}}>
                 <Col xxl={20} md={12}>
-                  <FormItem label="手机号码" {...formItemConfig}>
+                  <FormItem label="性别" {...formItemConfig}>
+                    {getFieldDecorator('sex',{
+                      initialValue:'',
+                      rules:[
+                        {
+                          required:true,
+                        }
+                      ]
+                    })(
+                      <Input/>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row style={{marginBottom:10}}>
+                <Col xxl={20} md={12}>
+                  <FormItem label="手机号" {...formItemConfig}>
                     {getFieldDecorator('mobile',{
                       initialValue:'',
                       rules:[
@@ -225,28 +208,9 @@ export default class AddForm extends Component {
               </Row>
               <Row style={{marginBottom:10}}>
                 <Col xxl={20} md={12}>
-                  <FormItem label="角色" {...formItemConfig}>
-                    {getFieldDecorator('role',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Select allowClear={true}>
-                        <Option value={1} >是</Option>
-                        <Option value={0} >否</Option>
-                      </Select>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="用户状态"  {...formItemConfig}>
+                  <FormItem label="状态"  {...formItemConfig}>
                     {getFieldDecorator('status',{
-                      initialValue:!this.props.type ? this.props.record.status : null,
+                      initialValue:'',
                       rules: [
                         { required: true, message: '角色状态为必选'}
                       ],

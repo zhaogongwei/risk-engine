@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -7,9 +7,11 @@ import {
   Popconfirm,
   Modal,
   message,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
 } from 'antd';
-import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
 import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -22,7 +24,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class VarList extends PureComponent {
+export default class RoleManage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,21 +52,28 @@ export default class VarList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>{this.empower(1,record)}}>授权</span>
-            <span style={{marginLeft:10,marginRight:10}} onClick={()=>this.addEdit(2,record)}>修改</span>
-            <Popconfirm
-              title="您确定要删除该角色吗？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-          </div>
-        )
+        render: (record) =>{
+          const action = (
+            <Menu>
+              <Menu.Item onClick={()=>{this.empower(1,record)}}>
+                <Icon type="edit"/>授权
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.addEdit(2,record)}>
+                <Icon type="edit"/>修改
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.deleteRole()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -124,15 +133,6 @@ export default class VarList extends PureComponent {
       }
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -213,9 +213,29 @@ export default class VarList extends PureComponent {
     },()=>{
     })
   }
+  //删除角色
+  deleteRole=async(type=1,record={})=>{
+    const confirmVal = await Swal.fire({
+      text: '确定要删除该角色吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'角色管理'} renderBtn={this.renderTitleBtn}>
+     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+         <Card
+            bordered={false}
+            title={'角色管理'}
+         >
+
+         </Card>
         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
         <Table
           bordered
@@ -234,7 +254,7 @@ export default class VarList extends PureComponent {
           showTotal={(total, range) => this.showTotal(total, range)}
         />
        <Modal
-         title={this.state.isTrust===1?null:(this.state.type===1?'添加':'修改')}
+         title={this.state.isTrust===1?null:(this.state.type===1?'新增角色':'修改角色')}
          visible={this.state.visible}
          onOk={this.addFormSubmit}
          onCancel={()=>this.setState({visible:false})}
@@ -246,7 +266,7 @@ export default class VarList extends PureComponent {
            record={this.state.record}
          />
        </Modal>
-      </PageTableTitle>
+      </PageHeaderWrapper>
     )
   }
 }

@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -10,7 +10,8 @@ import {
   Input,
   Select,
   message,
-  Form
+  Form,
+  Card
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -205,71 +206,76 @@ export default class InputDeploy extends PureComponent {
       onChange: this.onSelectChange,
     };
     return (
-      <PageTableTitle title={'输入输出配置'}>
-        <Form
-          className="ant-advanced-search-form"
-        >
-          <Row  gutter={16} type="flex" align="top">
-            <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,content:'*'}}></span>输入变量 :</Col>
-            <Col span={15}>
-              <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
-                <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
-                <Col><Button type="primary" onClick={this.deleteList}>删除</Button></Col>
-              </Row>
-              <Row >
-                <Table
-                  bordered
-                  pagination={false}
-                  rowSelection={rowSelection}
-                  columns={this.state.columns}
-                  dataSource={this.props.policyList.pageList}
-                  loading={this.props.loading}
-                />
-              </Row>
-              <Row>
-                <Pagination
-                  style={{ marginBottom: "50px" }}
-                  showQuickJumper
-                  defaultCurrent={1}
-                  current={this.state.current}
-                  total={this.props.policyList.tableList.length}
-                  onChange={this.onChange}
-                  showTotal={(total, range) => this.showTotal(total, range)}
-                />
-              </Row>
-            </Col>
-          </Row>
-          <Row gutter={24} type="flex" align="middle">
-            <Col xxl={4} md={6}>
-              <FormItem label="输出变量" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <Select allowClear={true} style={{width:165}}>
-                    <Option value={1}>王一</Option>
-                    <Option value={2}>王二</Option>
-                    <Option value={3}>王三</Option>
-                    <Option value={4}>王四</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row type="flex" justify="center">
-            <Col>
-              <Button type="primary" onClick={this.formSubmit}>提交</Button>
-              <Button  onClick={()=>router.goBack()}>返回</Button>
-            </Col>
-          </Row>
-        </Form>
-        <Dialog
-          showState={this.state.modalStatus}
-          onChange={this.handleChildChange}
-          childDeploy={this.getSubDeploy}
-          pagination={this.pagination}
-        />
-      </PageTableTitle>
+      <PageHeaderWrapper>
+        <Card bordered={false}>
+          <Form
+            className="ant-advanced-search-form"
+          >
+            {/*<Row style={{fontSize:18,color:'#333'}}>
+              输入输出配置
+            </Row>*/}
+            <Row  gutter={16} type="flex" align="top">
+              <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,content:'*'}}></span>输入变量 :</Col>
+              <Col span={15}>
+                <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
+                  <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
+                  <Col><Button type="primary" onClick={this.deleteList}>删除</Button></Col>
+                </Row>
+                <Row >
+                  <Table
+                    bordered
+                    pagination={false}
+                    rowSelection={rowSelection}
+                    columns={this.state.columns}
+                    dataSource={this.props.policyList.pageList}
+                    loading={this.props.loading}
+                  />
+                </Row>
+                <Row>
+                  <Pagination
+                    style={{ marginBottom: "50px" }}
+                    showQuickJumper
+                    defaultCurrent={1}
+                    current={this.state.current}
+                    total={this.props.policyList.tableList.length}
+                    onChange={this.onChange}
+                    showTotal={(total, range) => this.showTotal(total, range)}
+                  />
+                </Row>
+              </Col>
+            </Row>
+            <Row gutter={24} type="flex" align="middle">
+              <Col xxl={4} md={6}>
+                <FormItem label="输出变量" {...formItemConfig}>
+                  {getFieldDecorator('assetsTypeName',{
+                    initialValue:'',
+                    rules:[{required:true}]
+                  })(
+                    <Select allowClear={true} style={{width:165}}>
+                      <Option value={1}>王一</Option>
+                      <Option value={2}>王二</Option>
+                      <Option value={3}>王三</Option>
+                      <Option value={4}>王四</Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row type="flex" justify="center">
+              <Col>
+                <Button type="primary" onClick={this.formSubmit}>提交</Button>
+                <Button  onClick={()=>router.goBack()}>返回</Button>
+              </Col>
+            </Row>
+          </Form>
+          <Dialog
+            showState={this.state.modalStatus}
+            onChange={this.handleChildChange}
+            childDeploy={this.getSubDeploy}
+            pagination={this.pagination}
+          />
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

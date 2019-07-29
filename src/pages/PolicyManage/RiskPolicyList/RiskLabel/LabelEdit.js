@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -12,6 +13,7 @@ import {
   Radio,
   Modal,
   Popconfirm,
+  Card
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -45,56 +47,13 @@ export default class LabelEdit extends PureComponent {
           editable:true,
           type:'input',
           isFocus:true
-        },{
-          title: '变量代码',
-          dataIndex: 'variableCode',
-          key:'variableCode',
-        },{
-          title: '条件',
-          key:'compareCondition',
-          dataIndex:'compareCondition',
-          editable:true,
-          type:'select',
-          value:[
-            {
-              name:'<=',
-              id:'<='
-            },
-            {
-              name:'<',
-              id:'<'
-            },
-            {
-              name:'=',
-              id:'='
-            },
-            {
-              name:'>=',
-              id:'>='
-            },
-            {
-              name:'>',
-              id:'>'
-            },
-            {
-              name:'!=',
-              id:'!='
-            },
-          ]
         },
         {
-          title: '比较值',
+          title: '值',
           key:'compareValue',
           dataIndex:'compareValue',
           editable:true,
           type:'more'
-        },
-        {
-          title: '规则编码',
-          key:'ruleCode',
-          dataIndex:'ruleCode',
-          editable:true,
-          type:'input'
         },
         {
           title: '操作',
@@ -235,83 +194,93 @@ export default class LabelEdit extends PureComponent {
     const { getFieldDecorator } = this.props.form
     const {type} = this.props.location.query;
     const formItemConfig = {
-      labelCol:{span:6},
+      labelCol:{span:4},
       wrapperCol:{span:16},
     }
 
     return (
-      <PageTableTitle title={type===1?'新增标签':'编辑标签'}>
-        <Form
-          className="ant-advanced-search-form"
+      <PageHeaderWrapper>
+        <Card
+          bordered={false}
+          title={type===1?'新增标签':'编辑标签'}
         >
-          <Row style={{marginBottom:10}} gutter={24} type="flex" align="middle">
-            <Col xxl={6} md={4}>
-              <FormItem label="标签名称" {...formItemConfig}>
-                {getFieldDecorator('status',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row style={{marginBottom:10}} type="flex">
-            <Col xxl={18} md={12}>
-              <RuleTable
-                bordered
-                pagination={false}
-                columns={this.state.columns}
-                dataSource={this.props.risklabel.labelList}
-                handleAdd={()=>this.clickDialog(1)}
-                handleModify={this.clickDialog}
-                loading={this.props.loading}
-              />
-            </Col>
-            <Modal
-              title={'选择变量'}
-              visible={this.state.visible}
-              onOk={this.addFormSubmit}
-              onCancel={this.handleCancel}
-              width={1040}
-            >
-              <AddForm
-                type={this.state.type}
-                number={this.state.number}
-                getSubKey={this.getSubKey}
-              />
-            </Modal>
-          </Row>
-          <Row style={{marginBottom:10}} type="flex" align="middle">
-            <Col xxl={6} md={4}>
-              <FormItem label="状态" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:'',
-                  rules:[{required:true}]
-                })(
-                  <RadioGroup>
-                    <Radio value={0}>禁用</Radio>
-                    <Radio value={1}>启用</Radio>
-                  </RadioGroup>
-                )}
-              </FormItem>
-            </Col>
-            <Col style={{color:'#FF0000'}} push={7}>
-              {
-                type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
-              }
-            </Col>
-          </Row>
-          <Row type="flex" align="middle">
-            <Col xxl={6} md={4}>
-              <Row type="flex" align="middle" justify="center">
-                <Button type="primary">保存并提交</Button>
-                <Button onClick={()=>router.goBack()}>取消</Button>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </PageTableTitle>
+          <Form
+            className="ant-advanced-search-form"
+          >
+            <Row style={{marginBottom:10}} gutter={24} type="flex" align="middle">
+              <Col xxl={10} md={8}>
+                <FormItem label="标签名称" {...formItemConfig}>
+                  {getFieldDecorator('status',{
+                    initialValue:'',
+                    rules:[{required:true}]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row style={{marginBottom:10}}>
+              <Col xxl={10} md={8}>
+                <Row>
+                  <Col span={4}></Col>
+                  <Col span={16}>
+                    <RuleTable
+                      bordered
+                      pagination={false}
+                      columns={this.state.columns}
+                      dataSource={this.props.risklabel.labelList}
+                      handleAdd={()=>this.clickDialog(1)}
+                      handleModify={this.clickDialog}
+                      loading={this.props.loading}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+              <Modal
+                title={'选择变量'}
+                visible={this.state.visible}
+                onOk={this.addFormSubmit}
+                onCancel={this.handleCancel}
+                width={1040}
+              >
+                <AddForm
+                  type={this.state.type}
+                  number={this.state.number}
+                  getSubKey={this.getSubKey}
+                />
+              </Modal>
+            </Row>
+            <Row style={{marginBottom:10}} type="flex" align="middle">
+              <Col xxl={10} md={8}>
+                <FormItem label="状态" {...formItemConfig}>
+                  {getFieldDecorator('assetsTypeName',{
+                    initialValue:'',
+                    rules:[{required:true}]
+                  })(
+                    <RadioGroup>
+                      <Radio value={0}>禁用</Radio>
+                      <Radio value={1}>启用</Radio>
+                    </RadioGroup>
+                  )}
+                </FormItem>
+              </Col>
+              <Col style={{color:'#FF0000'}} push={7}>
+                {
+                  type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+                }
+              </Col>
+            </Row>
+            <Row type="flex" align="middle">
+              <Col xxl={10} md={8}>
+                <Row type="flex" align="middle" justify="center">
+                  <Button type="primary">保存并提交</Button>
+                  <Button onClick={()=>router.goBack()}>取消</Button>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

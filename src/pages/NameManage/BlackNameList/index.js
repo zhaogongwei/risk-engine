@@ -1,6 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
-import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Swal from 'sweetalert2'
 import {
   Button,
@@ -8,11 +7,16 @@ import {
   Pagination,
   Popconfirm,
   message,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
+  Modal,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
+import AddForm from './addForm';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
@@ -21,7 +25,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class VarList extends PureComponent {
+export default class BlackNameList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,64 +70,23 @@ export default class VarList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const linkArr = [
-            {
-              label: record.status===1?'禁用':'启用',
-              show: true,
-              clickHandler: async() => {
-                const confirm = await Swal({
-                  text: '确定要执行本次操作吗',
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消'
-                })
-                if (confirm.value) {
-                  // 请求开启/停用方法
-
-                }
-              }
-            },
-            {
-              label: '拉黑',
-              show: true,
-              clickHandler: async() => {
-                const confirm = await Swal({
-                  text: '确定要执行本次操作吗',
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消'
-                })
-                if (confirm.value) {
-                  // 请求开启/停用方法
-
-                }
-              }
-            },
-            {
-              label: '删除',
-              show: true,
-              clickHandler: async() => {
-                const confirm = await Swal({
-                  text: '确定要执行本次操作吗',
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消'
-                })
-                if (confirm.value) {
-                  // 请求开启/停用方法
-
-                }
-              }
-            },
-
-          ];
-          return <DropdownDetail linkArr={linkArr}></DropdownDetail>
+          const action = (
+            <Menu>
+              <Menu.Item onClick={() => this.isForbid()}>
+                <Icon type="edit"/>{record.status===1?'禁用':'启用'}
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.deleteName()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
         }
       }],
       data:[
@@ -154,7 +117,8 @@ export default class VarList extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status:1
+      status:1,
+      visible:false
     };
   }
   componentDidMount() {
@@ -223,7 +187,7 @@ export default class VarList extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={()=>this.goAddPage({type:1})}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.setState({visible:true})}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -241,27 +205,80 @@ export default class VarList extends PureComponent {
       pathname:'/varManage/riskpolicylist/list',
     })
   }
+  //启用/禁用
+  isForbid=async() => {
+    const confirm = await Swal({
+      text: '确定要执行本次操作吗',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if (confirm.value) {
+      // 请求开启/停用方法
+
+    }
+  }
+  deleteName=async(record)=>{
+    const confirm = await Swal({
+      text: '确定要执行本次操作吗',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if (confirm.value) {
+      // 请求开启/停用方法
+
+    }
+  }
+  //弹框点击确定事件
+  addFormSubmit=async ()=>{
+    const response = this.addForm.submitHandler();
+    if(response&&response.status === '000'){
+      this.setState({
+        visible:false
+      })
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'本地灰名单库'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+       <Card
+         bordered={false}
+         title={'本地黑名单库'}
+         >
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+         <Modal
+           title={'新增'}
+           visible={this.state.visible}
+           onOk={this.addFormSubmit}
+           onCancel={()=>this.setState({visible:false})}
+         >
+         <AddForm
+           getSubKey={this.getSubKey}
+         />
+         </Modal>
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

@@ -1,12 +1,15 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
   Pagination,
   Popconfirm,
   message,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -19,7 +22,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class VarList extends PureComponent {
+export default class ReportList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,12 +60,25 @@ export default class VarList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.goRiskReport()} style={{marginRight:20}}>查看</span>
-            <span onClick={()=>{this.goDataQuery()}}>三方数据查询</span>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={()=>this.goRiskReport()}>
+                <Icon type="edit"/>查看
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.goRiskReport()}>
+                <Icon type="delete"/>三方数据查询
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -183,25 +199,30 @@ export default class VarList extends PureComponent {
   }
   render() {
     return (
-     <PageTableTitle title={'风控报告列表'}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper>
+       <Card
+        bordered={false}
+        title={'风控报告列表'}
+       >
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

@@ -96,6 +96,11 @@ export default class VarList extends PureComponent {
         render:(record)=>record===1?'启用':'禁用'
       },
       {
+        title:'更新时间',
+        key:'updateTime',
+        dataIndex:'updateTime',
+      },
+      {
         title: '操作',
         key:'action',
         render: (record) => {
@@ -137,6 +142,7 @@ export default class VarList extends PureComponent {
           min:11,
           enmuval:'男、女',
           status:1,
+          updateTime:'2019-07-29'
         },
         {
           key:2,
@@ -152,6 +158,7 @@ export default class VarList extends PureComponent {
           min:11,
           enmuval:'男、女',
           status:0,
+          updateTime:'2019-07-29'
         }
       ],
       checkedData: [],

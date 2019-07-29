@@ -1,18 +1,22 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
   Pagination,
   Popconfirm,
   message,
-  Icon
+  Menu,
+  Dropdown,
+  Icon,
+  Card,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
+import Swal from 'sweetalert2';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
 @connect(({ assetDeploy, loading }) => ({
@@ -60,21 +64,28 @@ export default class PolicyList extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <Popconfirm
-              title={record.status===1?"是否确认禁用该策略？":"是否确认启用该策略？"}
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>{record.status===1?'禁用':'启用'}</span>
-            </Popconfirm>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goPolicyTest}>测试</span>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goEditPage(2)}>编辑</span>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={()=>this.goEditPage(2)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={this.goPolicyTest}>
+                <Icon type="delete"/>测试
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.isForbid(record)}>
+                <Icon type="delete"/>{record.status===1?'禁用':'启用'}
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -188,27 +199,46 @@ export default class PolicyList extends PureComponent {
       pathname:'/policyManage/riskpolicylist/policyFlow/test',
     })
   }
+  //启用/禁用
+  isForbid=async(record)=>{
+    const confirmVal = await Swal.fire({
+      text: record.status===1?"是否确认禁用该策略？":"是否确认启用该策略？",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'策略流列表'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+       <Card
+         bordered={false}
+         title ={'策略流列表'}
+       >
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

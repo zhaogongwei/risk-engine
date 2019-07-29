@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Row,
   Col,
@@ -8,7 +8,8 @@ import {
   Select,
   Radio,
   Form,
-  Popconfirm
+  Popconfirm,
+  Card
 } from 'antd';
 import router from 'umi/router';
 import styles from '../FilterIpts.less'
@@ -160,215 +161,220 @@ export default class EditVar extends PureComponent {
     }
     const {state}= {...this.props.location}
     return (
-      <PageTableTitle title={state.type ===1?'添加变量':'编辑变量'} renderBtn={this.renderTitleBtn}>
-        <Form
-          className="ant-advanced-search-form"
+      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+        <Card
+          bordered={false}
+          title={state.type ===1?'新增变量':'编辑变量'}
         >
-          <Row className={styles.btmMargin}  type="flex" align="middle">
-            <Col xxl={4} md={6}>
-              <FormItem label="变量分类" {...formItemConfig}>
-                {getFieldDecorator('oneclass',{
-                  initialValue:'请选择一级分类',
-                  rules:[
-                    {required:true,}
-                  ]
-                })(
-                  <Select allowClear={true}>
-                    <Option value={'反欺诈'}>反欺诈</Option>
-                    <Option value={'信审模块'}>信审模块</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={3} md={4}>
-              <FormItem label="" >
-                {getFieldDecorator('parentId',{
-                  initialValue:'请选择二级分类',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Select allowClear={true} >
-                    <Option value={1}>注册</Option>
-                    <Option value={2}>评分规则</Option>
-                    <Option value={3}>借款人信息</Option>
-                    <Option value={4}>借款人信息</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="变量名" {...formItemConfig}>
-                {getFieldDecorator('variableName',{
-                  initialValue:'',
-                  rules:[
-                    {required:true,}
-                  ]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="变量代码" {...formItemConfig}>
-                {getFieldDecorator('variableCode',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="变量类型" {...formItemConfig}>
-                {getFieldDecorator('variableType',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Select allowClear={true}>
-                    <Option value={'num'}>数字</Option>
-                    <Option value={'character'}>字符</Option>
-                    <Option value={'date'}>日期</Option>
-                    <Option value={'time'}>时间</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}  type="flex" align="middle">
-            <Col xxl={4} md={6}>
-              <FormItem label="是否枚举" {...formItemConfig}>
-                {getFieldDecorator('enumFlag',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Select allowClear={true} onChange={(e)=>this.handleChange(e)}>
-                    <Option value={1}>是</Option>
-                    <Option value={0}>否</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={3} md={4}>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="长度" {...formItemConfig}>
-                {getFieldDecorator('variableLength',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="最小值" {...formItemConfig}>
-                {getFieldDecorator('minValue',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-            <Col xxl={4} md={6}>
-              <FormItem label="最大值" {...formItemConfig}>
-                {getFieldDecorator('maxValue',{
-                  initialValue:'',
-                  rules:[
-                    {required:true}
-                  ]
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          {this.state.isShow?
-          <Row className={styles.btmMargin}  type="flex" align="top">
-            <Col xxl={4} md={6}>
-              <FormItem label="枚举值配置:" {...formItemConfig}>
-              </FormItem>
-            </Col>
-            <Col xxl={8} md={12}>
-              <EditableTable
-                list={this.props.varList}
-                columns={this.columns}
-                handleAdd={this.handleAdd}
-                handleDelete={this.handleDelete}
-              />
-            </Col>
-          </Row>:null}
-          <Row className={styles.btmMargin}  type="flex" align="middle">
-            <Col xxl={4} md={6}>
-              <FormItem label="缺省值" {...formItemConfig}>
-                {getFieldDecorator('defaultValue',{
-                  initialValue:''
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}  type="flex" align="top">
-            <Col xxl={8} md={12}>
-              <FormItem label="变量说明" labelCol={{span:4}} wrapperCol={{span:20}}>
-                {getFieldDecorator('remark',{
-                  initialValue:''
-                })(
-                  <TextArea
-                    style={{ minHeight: 32 }}
-                    placeholder="请输入你的阶段性工作目标"
-                    rows={5}
+          <Form
+            className="ant-advanced-search-form"
+          >
+            <Row className={styles.btmMargin}  type="flex" align="middle">
+              <Col xxl={4} md={6}>
+                <FormItem label="变量分类" {...formItemConfig}>
+                  {getFieldDecorator('oneclass',{
+                    initialValue:'请选择一级分类',
+                    rules:[
+                      {required:true,}
+                    ]
+                  })(
+                    <Select allowClear={true}>
+                      <Option value={'反欺诈'}>反欺诈</Option>
+                      <Option value={'信审模块'}>信审模块</Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={3} md={4}>
+                <FormItem label="" >
+                  {getFieldDecorator('parentId',{
+                    initialValue:'请选择二级分类',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Select allowClear={true} >
+                      <Option value={1}>注册</Option>
+                      <Option value={2}>评分规则</Option>
+                      <Option value={3}>借款人信息</Option>
+                      <Option value={4}>借款人信息</Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="变量名" {...formItemConfig}>
+                  {getFieldDecorator('variableName',{
+                    initialValue:'',
+                    rules:[
+                      {required:true,}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="变量代码" {...formItemConfig}>
+                  {getFieldDecorator('variableCode',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="变量类型" {...formItemConfig}>
+                  {getFieldDecorator('variableType',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Select allowClear={true}>
+                      <Option value={'num'}>数字</Option>
+                      <Option value={'character'}>字符</Option>
+                      <Option value={'date'}>日期</Option>
+                      <Option value={'time'}>时间</Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row className={styles.btmMargin}  type="flex" align="middle">
+              <Col xxl={4} md={6}>
+                <FormItem label="是否枚举" {...formItemConfig}>
+                  {getFieldDecorator('enumFlag',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Select allowClear={true} onChange={(e)=>this.handleChange(e)}>
+                      <Option value={1}>是</Option>
+                      <Option value={0}>否</Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={3} md={4}>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="长度" {...formItemConfig}>
+                  {getFieldDecorator('variableLength',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="最小值" {...formItemConfig}>
+                  {getFieldDecorator('minValue',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+              <Col xxl={4} md={6}>
+                <FormItem label="最大值" {...formItemConfig}>
+                  {getFieldDecorator('maxValue',{
+                    initialValue:'',
+                    rules:[
+                      {required:true}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            {this.state.isShow?
+              <Row className={styles.btmMargin}  type="flex" align="top">
+                <Col xxl={4} md={6}>
+                  <FormItem label="枚举值配置:" {...formItemConfig}>
+                  </FormItem>
+                </Col>
+                <Col xxl={8} md={12}>
+                  <EditableTable
+                    list={this.props.varList}
+                    columns={this.columns}
+                    handleAdd={this.handleAdd}
+                    handleDelete={this.handleDelete}
                   />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}  type="flex" align="middle">
-            <Col xxl={4} md={6}>
-              <FormItem label="变量状态" {...formItemConfig}>
-                {getFieldDecorator('status',{
-                  initialValue:''
-                })(
-                  <RadioGroup name="radiogroup">
-                    <Radio value={1}>启用</Radio>
-                    <Radio value={0}>禁用</Radio>
-                  </RadioGroup>
-                )}
-              </FormItem>
-            </Col>
-            <Col style={{color:'#FF0000'}} push={10}>
-              {
-                state.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
-              }
-            </Col>
-          </Row>
-          <Row>
-            <Col xxl={8} md={12}  style={{color:'#FF0000'}}>
-              {
-                state.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
-              }
-            </Col>
-          </Row>
-          <Row type="flex" justify="center">
-            <Col>
-              <Button type="primary" onClick={this.formSubmit}>保存并提交</Button>
-              <Button type="primary" onClick={this.goBack}>返回</Button>
-            </Col>
-          </Row>
-        </Form>
-      </PageTableTitle>
+                </Col>
+              </Row>:null}
+            <Row className={styles.btmMargin}  type="flex" align="middle">
+              <Col xxl={4} md={6}>
+                <FormItem label="缺省值" {...formItemConfig}>
+                  {getFieldDecorator('defaultValue',{
+                    initialValue:''
+                  })(
+                    <Input />
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row className={styles.btmMargin}  type="flex" align="top">
+              <Col xxl={8} md={12}>
+                <FormItem label="变量说明" labelCol={{span:4}} wrapperCol={{span:20}}>
+                  {getFieldDecorator('remark',{
+                    initialValue:''
+                  })(
+                    <TextArea
+                      style={{ minHeight: 32 }}
+                      placeholder="请输入你的阶段性工作目标"
+                      rows={5}
+                    />
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row className={styles.btmMargin}  type="flex" align="middle">
+              <Col xxl={4} md={6}>
+                <FormItem label="变量状态" {...formItemConfig}>
+                  {getFieldDecorator('status',{
+                    initialValue:''
+                  })(
+                    <RadioGroup name="radiogroup">
+                      <Radio value={1}>启用</Radio>
+                      <Radio value={0}>禁用</Radio>
+                    </RadioGroup>
+                  )}
+                </FormItem>
+              </Col>
+              <Col style={{color:'#FF0000'}} push={10}>
+                {
+                  state.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+                }
+              </Col>
+            </Row>
+            <Row>
+              <Col xxl={8} md={12}  style={{color:'#FF0000'}}>
+                {
+                  state.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
+                }
+              </Col>
+            </Row>
+            <Row type="flex" justify="center">
+              <Col>
+                <Button type="primary" onClick={this.formSubmit}>保存并提交</Button>
+                <Button type="primary" onClick={this.goBack}>返回</Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

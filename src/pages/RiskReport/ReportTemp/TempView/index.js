@@ -1,5 +1,5 @@
 import React, { PureComponent} from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Affix,
   Button,
@@ -7,7 +7,8 @@ import {
   Col,
   Tabs,
   Anchor,
-  List
+  List,
+  Card
 } from 'antd';
 const { Link } = Anchor;
 const TabPane = Tabs.TabPane;
@@ -198,8 +199,12 @@ export default  class Index extends  PureComponent{
       },
     ]
     return(
-
-      <PageTableTitle title={'报告预览'}>
+      <PageHeaderWrapper >
+        <Card
+          bordered={false}
+          title={'报告预览'}
+        >
+        </Card>
         <Row>
           <Col span={5}>资产编号 180630304040333</Col>
           <Col span={4}>姓名 王*</Col>
@@ -239,7 +244,7 @@ export default  class Index extends  PureComponent{
             <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
           </Col>
         </Row>
-      </PageTableTitle>
+      </PageHeaderWrapper>
     )
   }
 }

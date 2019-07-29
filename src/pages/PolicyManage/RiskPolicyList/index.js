@@ -151,15 +151,6 @@ export default class PolicyList extends PureComponent {
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
-  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;

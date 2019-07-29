@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -7,7 +7,10 @@ import {
   Popconfirm,
   Modal,
   message,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -22,7 +25,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class VarList extends PureComponent {
+export default class UrlDeploy extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,34 +54,23 @@ export default class VarList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const linkArr = [
-            {
-              label: '修改',
-              show: true,
-              clickHandler: () => {
-                this.addEditPage(2)
-              }
-            },
-            {
-              label: '删除',
-              show: true,
-              clickHandler: async() => {
-                const confirm = await Swal({
-                  text: '确定要执行本次操作吗',
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消'
-                })
-                if (confirm.value) {
-                  // 请求开启/停用方法
-
-                }
-              }
-            },
-          ];
-          return <DropdownDetail linkArr={linkArr}></DropdownDetail>
+          const action = (
+            <Menu>
+              <Menu.Item onClick={() => this.addEditPage(2)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={()=>this.deleteUrl()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
         }
       }
       ],
@@ -192,38 +184,58 @@ export default class VarList extends PureComponent {
       })
     }
   }
+  //删除接口
+  deleteUrl=async() => {
+    const confirm = await Swal({
+      text: '确定要删除该接口吗',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if (confirm.value) {
+      // 请求开启/停用方法
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'接口配置'} renderBtn={this.renderTitleBtn}>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={100}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-       <Modal
-         title={this.state.type===1?'新增':'修改'}
-         visible={this.state.visible}
-         onOk={this.addFormSubmit}
-         onCancel={()=>this.setState({visible:false})}
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+       <Card
+          bordered={false}
+          title={'接口配置'}
        >
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={100}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+         <Modal
+           title={this.state.type===1?'新增接口':'修改接口'}
+           visible={this.state.visible}
+           onOk={this.addFormSubmit}
+           onCancel={()=>this.setState({visible:false})}
+         >
          <AddForm
            getSubKey={this.getSubKey}
            type={this.state.type}
            record={this.state.record}
          />
-       </Modal>
-      </PageTableTitle>
+         </Modal>
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

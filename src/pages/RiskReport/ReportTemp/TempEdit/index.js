@@ -230,13 +230,17 @@ export default class Index extends Component {
   render() {
     const { getFieldDecorator } = this.props.form
     const { titleList } = this.props.tempEdit
+    const { state } = this.props.location
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
     return (
       <PageHeaderWrapper renderBtn={this.renderBtn}>
-        <Card bordered={false}>
+        <Card
+          bordered={false}
+          title={state.type===1?'新增风控报告模板':'编辑风控报告模板'}
+        >
           <RptTable
             loading={this.props.loading}
             columns={this.state.columns}

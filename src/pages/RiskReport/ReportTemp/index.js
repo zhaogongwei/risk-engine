@@ -205,7 +205,10 @@ export default class VarList extends PureComponent {
   render() {
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
-        <Card bordered={false}>
+        <Card
+          bordered={false}
+          title="风控报告模板"
+        >
           <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
           <Table
             bordered

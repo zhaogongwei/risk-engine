@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Button,
   Table,
@@ -7,7 +7,10 @@ import {
   Popconfirm,
   message,
   Modal,
-  Icon
+  Icon,
+  Card,
+  Menu,
+  Dropdown,
 } from 'antd';
 import LabelEdit from './LabelEdit';
 import { connect } from 'dva'
@@ -16,6 +19,7 @@ import { routerRedux } from 'dva/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
+import Swal from 'sweetalert2';
 
 @connect(({ assetDeploy, loading }) => ({
   assetDeploy,
@@ -62,20 +66,25 @@ export default class RiskLabel extends PureComponent {
       {
         title: '操作',
         key:'action',
-        render: (record) => (
-          <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span onClick={()=>this.goAddEdit(2)}>编辑</span>
-            <Popconfirm
-              title="是否确认删除该策略？"
-              onConfirm={this.confirm}
-              onCancel={this.cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span style={{paddingLeft:10,paddingRight:10}}>删除</span>
-            </Popconfirm>
-          </div>
-        )
+        render: (record) => {
+          const action = (
+            <Menu>
+              <Menu.Item onClick={() => this.goAddEdit(2)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={() => this.delLabel()}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
+            </Menu>
+          )
+          return (
+            <Dropdown overlay={action}>
+              <a className="ant-dropdown-link" href="#">
+                操作<Icon type="down"/>
+              </a>
+            </Dropdown>
+          )
+        }
       }],
       data:[
         {
@@ -137,15 +146,6 @@ export default class RiskLabel extends PureComponent {
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
-  }
   //点击配置弹窗
   clickDialog=(record)=>{
     this.childDeploy.reset()
@@ -191,27 +191,43 @@ export default class RiskLabel extends PureComponent {
       }
     })
   }
+  //删除标签
+  delLabel=async (record)=>{
+    const confirmVal = await Swal.fire({
+      text: '删除后可能导致符合该标签的资产无法匹配策略是否确认删除该标签?',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+
+    }
+  }
   render() {
     return (
-     <PageTableTitle title={'风控标签'} renderBtn={this.renderTitleBtn}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.current}
-          total={20}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-      </PageTableTitle>
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+       <Card bordered={false}>
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={this.state.data}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={20}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+       </Card>
+      </PageHeaderWrapper>
     )
   }
 }

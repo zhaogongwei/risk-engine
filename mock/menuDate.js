@@ -74,17 +74,23 @@ export default {
           }
         ]
       },
-      //本地灰名单库
+      //黑名单管理
       {
-        title:'本地灰名单库',
-        icon: 'icon-huimingdan',
-        url: '/greyName/list',
-      },
-      //本地黑名单库
-      {
-        title:'本地黑名单库',
-        icon: 'icon-heimingdan',
-        url: '/blackName/list',
+        title:'黑名单管理',
+        icon:'icon-huimingdan',
+        url:'/nameManage',
+        children:[
+          //本地灰名单库
+          {
+            title:'本地灰名单库',
+            url: '/nameManage/greyName/list',
+          },
+          //本地黑名单库
+          {
+            title:'本地黑名单库',
+            url: '/nameManage/blackName/list',
+          },
+        ]
       },
       //风控报告
       {
@@ -126,7 +132,7 @@ export default {
           },
           //接口配置
           {
-            url:'systemSet/urlDeploy',
+            url:'/systemSet/urlDeploy',
             title:'接口配置',
           }
         ]
