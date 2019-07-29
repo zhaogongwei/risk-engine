@@ -19,7 +19,8 @@ export default {
     titleList:[
       {
         title:'标题一',
-        tableList:[]
+        tableList:[],//table数据
+        selectVar:[],//table中选中要删除的变量
       }
     ],
     page:{

@@ -163,16 +163,17 @@ export default class Index extends Component {
     const checkedList = this.child.submitHandler();
     console.log(checkedList)
     //table数据集合
-    let {reportList} =this.props.tempEdit
-    let newlist =[...reportList[this.state.number]['checkList'],...checkedList];
+    let {titleList} =this.props.tempEdit
+    let newlist =[...titleList[this.state.number]['tableList'],...checkedList];
     const newData = addListKey(deepCopy(newlist))
-    reportList.splice(this.state.number,1,{...reportList[this.state.number],...{checkList:newData}})
+    titleList.splice(this.state.number,1,{...titleList[this.state.number],...{tableList:newData}})
     this.props.dispatch({
-      type: 'tempEdit/rptListHandle',
+      type: 'tempEdit/titleListHandle',
       payload: {
-        reportList:reportList
+        titleList:titleList
       }
     })
+    console.log(this.props.tempEdit.titleList)
     this.setState({
       addModalVisible: false
     })
@@ -180,41 +181,13 @@ export default class Index extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
-  //添加table
-  handleAdd = (key)=>{
-    const {reportList }= this.props.tempEdit
-    reportList.splice(key+1,0,{checkList:[],title:''})
-    this.props.dispatch({
-      type: 'tempEdit/rptListHandle',
-      payload: {
-        reportList:reportList,
-      }
-    })
-
-    console.log(key)
-    console.log(reportList)
-  }
-  //减少table
-  handleDelete = (key)=>{
-    const {reportList}= this.props.tempEdit
-      const newlist = reportList.filter((item,index) => index !== key)
-
-    this.props.dispatch({
-      type: 'tempEdit/rptListHandle',
-      payload: {
-        reportList:addListKey(newlist),
-      }
-    })
-      console.log(key)
-      console.log(newlist)
-  }
   //删除对应表格变量
   deleteVar=(key,list,callback)=>{
     console.log(key,list)
-    const {reportList}= this.props.tempEdit;
-    const selectVar= reportList[key]['selectVar'];
+    const {titleList}= this.props.tempEdit;
+    const selectVar= titleList[key]['selectVar'];
     //对应表格的数据
-    let checkList = reportList[key]['checkList'];
+    let checkList = titleList[key]['tableList'];
     if(selectVar.length>0){
       for(var i of selectVar){
         checkList.forEach((item,index)=>{
@@ -223,27 +196,26 @@ export default class Index extends Component {
           }
         })
       }
-      addListKey(reportList[key]['checkList'])
+      addListKey(titleList[key]['tableList'])
       /*console.log(newlist)
       reportList.splice(this.state.number,1,{key:this.state.number,title:reportList[this.state.number]['title'],checkList:newlist})*/
       this.props.dispatch({
-        type: 'tempEdit/rptListHandle',
+        type: 'tempEdit/titleListHandle',
         payload: {
-          reportList:reportList
+          titleList:titleList
         }
       })
       callback()
     }else{
       message.error('删除失败,请勾选要删除的项目!');
     }
-    console.log(reportList)
     console.log(key,list)
   }
   //存储对应table选中的变量
   saveSelectVar=(index,list)=>{
     console.log(index,list)
-    const {reportList}= this.props.tempEdit;
-    reportList[index]['selectVar']=list;
+    const {titleList}= this.props.tempEdit;
+    titleList[index]['selectVar']=list;
   }
   saveData=()=>{
     console.log(this.props.tempEdit)

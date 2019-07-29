@@ -37,12 +37,11 @@ export default class Editable extends Component {
     }
   }
   componentWillReceiveProps(newProps){
-    console.log('newProps',newProps)
     this.emptySelect()
     this.setState({
-      tableList:newProps.titleList
+      tableList:newProps.dataSource
     })
-    this.pagination(10,1,newProps.titleList);
+    this.pagination(10,1,newProps.dataSource);
 
   }
   onSelectChange = (selectedRowKeys) => {
@@ -66,7 +65,7 @@ export default class Editable extends Component {
       current:current,
       currentPage:current
     })
-    //this.pagination(10,current,this.state.tableList)
+    this.pagination(10,current,this.state.tableList)
   }
   //前端分页
   pagination=(pageSize=10,currentPage=1,array=[])=>{
@@ -90,12 +89,11 @@ export default class Editable extends Component {
 
   }
   componentDidMount(){
-    console.log('props',this.props)
-    const {dataSource} = this.props
-    /*this.setState({
+    const {dataSource}=this.props;
+    this.setState({
       tableList:dataSource
     })
-    this.pagination(10,1,dataSource);*/
+    this.pagination(10,1,dataSource);
     this.props.getSubKey(this,'child')
   }
   render() {
@@ -167,7 +165,7 @@ export default class Editable extends Component {
               showQuickJumper
               defaultCurrent={1}
               current={this.state.current}
-              total={100}
+              total={dataSource.length}
               onChange={this.onChange}
               showTotal={(total, range) => this.showTotal(total, range)}
             />

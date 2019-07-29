@@ -37,6 +37,7 @@ export default class RptTable extends Component {
     console.log(value,record,type)
     record[type]?record[type]['title']=value:''
   }
+  //输入框值校验
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -55,7 +56,6 @@ export default class RptTable extends Component {
     const title = await this.child.submitHandler();
     const {titleList} = this.props;
     titleList.push({...title,tableList:[]})
-    console.log(title)
     this.setState({
       visible:false
     })
@@ -73,8 +73,6 @@ export default class RptTable extends Component {
     this.setState({
       selectKey:0
     })
-    console.log(titleList)
-    console.log(this.props)
   }
   componentDidMount(){
   }
@@ -86,13 +84,13 @@ export default class RptTable extends Component {
     console.log(index)
   }
   render() {
-    const {columns,dataSource,loading,titleList} = this.props;
+    const {columns,dataSource,loading} = this.props;
+    const {titleList} = this.props.tempEdit;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
-    console.log(titleList)
     const formItem = titleList.map((item,index)=>
       (
         <div style={{marginBottom:20,paddingTop:20,paddingBottom:20,border:'1px solid #E4E4E4'}}
@@ -104,7 +102,16 @@ export default class RptTable extends Component {
               <FormItem label="标题" {...formItemConfig} >
                 {getFieldDecorator(`names${Math.random()}`,{
                   initialValue:item.title,
-                  rules:[]
+                  rules:[
+                    {min:3,message:'最少输入3位!'},
+                    {max:20,message:'最多输入20位!'}
+                  ],
+                  validator:(rule,val,cb)=>{
+                    if(!val){
+                      cb('请输入内容!');
+                      return;
+                    }
+                  }
                 })(
                   <Input placeholder="passenger name" onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
                 )}
@@ -115,7 +122,7 @@ export default class RptTable extends Component {
             <Editable
               key={index}
               columns={columns}
-              dataSource={[]}
+              dataSource={item['tableList']}
               loading={loading}
               index={index}
               handleDelete={()=>this.props.handleDelete(index)}
