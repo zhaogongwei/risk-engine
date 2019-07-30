@@ -1,17 +1,20 @@
 import React, { PureComponent, Fragment } from 'react';
 import { routerRedux } from 'dva/router';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Popconfirm,
   Button,
   Table,
   Pagination,
-  Icon
+  Icon,
+  Card,
+  Modal
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import AddForm from './AddForm';
+import Dialog from './Dialog';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import SelectableTable from '@/components/SelectTable'
 
@@ -19,10 +22,7 @@ import SelectableTable from '@/components/SelectTable'
   ({ decision}) => ({decision})
 )
 
-
-
-
-export default class BorrowerList extends PureComponent {
+export default class DecisModel extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -102,7 +102,12 @@ export default class BorrowerList extends PureComponent {
       dataList:[],
       type:0,//0:设置行变量  1：设置列变量
       tableList:[
-      ]
+      ],
+      visible:false,//弹框
+      inputType:0,//0:行变量，1：列变量 2：输出结果
+      resultVarId:{},//输出变量
+      rowVar:{},//行变量
+      colVar:{},//列变量
     };
   }
   componentDidMount() {
@@ -224,6 +229,32 @@ export default class BorrowerList extends PureComponent {
       type:1
     })
   }
+  //弹框确定事件
+  handleOk=()=>{
+    this.setState({visible:false},()=>{
+      const {radioValue} = this.dialog.submitHandler();
+      if(this.state.inputType === 0){
+        this.setState({
+          rowVar:radioValue
+        })
+      }else if(this.state.inputType === 1){
+        this.setState({
+          colVar:radioValue
+        })
+      }else if(this.state.inputType === 2){
+        this.setState({
+          resultVarId:radioValue
+        })
+      }
+    })
+  }
+  //弹框唤起事件
+  openDialog=(type)=>{
+    this.setState({
+      visible:true,
+      inputType:type,
+    })
+  }
   render() {
     const { permission } = this.props
     const newData = [{
@@ -234,42 +265,51 @@ export default class BorrowerList extends PureComponent {
       mobile:'',
     }];
     return (
-           <PageTableTitle title={'决策模型'} renderBtn={this.renderTitleBtn}>
-             <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-             {/*<p>列设置:</p>
-             <SetRowCol
-               list={this.props.decision.one}
-               columns={this.state.columnsOne}
-               handleAdd={this.handleAdd}
-               handleDelete={this.handleDelete}
-             />
-             <Button type="primary" onClick={this.formSubmit}>保存列</Button>
-             <p>行设置：</p>
-             <SetRowCol
-               list={this.props.decision.two}
-               columns={this.state.columnsTwo}
-               handleAdd={this.handleAddTwo}
-               handleDelete={this.handleDeleteRow}
-             />
-             <Button type="primary" onClick={this.formSubmitRow}>保存行</Button>*/}
-             <SelectableTable
-               list={this.props.decision}
-               columns={this.props.decision.tableCol}
-               setRow={this.setRow}
-               setCol={this.setCol}
-               tableList={this.state.tableList}
-             />
-             <AddForm
-               showState={this.state.modalStatus}
-               type={this.state.type}
-               number={this.state.number}
-               onChange={this.handleChildChange}
-               getSubKey={this.getSubKey}
-               colVar="高风险规则触发数"
-               rowVar="评分卡得分"
-             />
-             <Button type="primary" onClick={this.formSubmitTable}>保存表格</Button>
-          </PageTableTitle>
+           <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+             <Card
+                bordered={false}
+                title={'决策模型'}
+             >
+               <FilterIpts
+                 getSubKey={this.getSubKey}
+                 change={this.onChange}
+                 current={this.state.currentPage}
+                 changeDefault={this.changeDefault}
+                 openDialog={this.openDialog}
+                 resultVarId={this.state.resultVarId}
+                 rowVar={this.state.rowVar}
+                 colVar={this.state.colVar}
+               />
+               <SelectableTable
+                 list={this.props.decision}
+                 columns={this.props.decision.tableCol}
+                 setRow={this.setRow}
+                 setCol={this.setCol}
+                 tableList={this.state.tableList}
+               />
+               <AddForm
+                 showState={this.state.modalStatus}
+                 type={this.state.type}
+                 number={this.state.number}
+                 onChange={this.handleChildChange}
+                 getSubKey={this.getSubKey}
+                 colVar="高风险规则触发数"
+                 rowVar="评分卡得分"
+               />
+               <Modal
+                 title={'选择变量'}
+                 visible={this.state.visible}
+                 onOk={this.handleOk}
+                 onCancel={()=>this.setState({visible:false})}
+                 width={1040}
+               >
+                 <Dialog
+                    getSubKey={this.getSubKey}
+                 />
+               </Modal>
+               <Button type="primary" onClick={this.formSubmitTable}>保存表格</Button>
+             </Card>
+          </PageHeaderWrapper>
     )
   }
 }

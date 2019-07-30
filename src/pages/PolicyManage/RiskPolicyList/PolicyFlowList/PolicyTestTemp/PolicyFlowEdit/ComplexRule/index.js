@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Row,
   Col,
@@ -10,7 +10,8 @@ import {
   Icon,
   Form,
   Popconfirm,
-  Modal
+  Modal,
+  Card
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
@@ -121,9 +122,10 @@ export default class AssetTypeDeploy extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status:1,
+      status:1,//状态判断 1:表格 0：输出结果
       visible:false,
       mold:0,
+      resultVarId:{}
     };
   }
   componentDidMount() {
@@ -185,11 +187,20 @@ export default class AssetTypeDeploy extends PureComponent {
   clickDialog=(type,record,mold)=>{
     console.log(type,record,mold)
     this.setState({
+      status:1,
       visible:true,
       type:type,
       mold:mold,
       number:record?record['key']:''
     },()=>{
+    })
+  }
+  //输出结果
+  outResult=()=>{
+    this.setState({
+      visible:true,
+      status:0,
+      type:0,
     })
   }
   //  刷新页面
@@ -227,53 +238,63 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //弹框按钮确定
   addFormSubmit =()=>{
-    this.setState({visible:false},()=>{
-      const {checkedList,radioValue} = this.addForm.submitHandler();
-      const radioValueCopy = deepCopy(radioValue)
-      console.log(radioValue)
-      if(this.state.type){
-        this.props.dispatch({
-          type: 'complex/ruleListHandle',
-          payload: {
-            ruleList:addListKey(deepCopy([...this.props.complex.ruleList,...checkedList]))
-          }
-        })
-      }else{
-        if(Object.keys(radioValueCopy).length){
-          //编辑后一个变量
-          if(this.state.mold){
-            const {ruleList} = this.props.complex;
-            const ruleRadio = ruleList[this.state.number-1];
-            let newData = {};
-            newData['compareVarId'] = radioValue['varId'];
-            newData['variableNameTwo'] = radioValue['variableName'];
-            newData['variableCodeTwo'] = radioValue['variableCode'];
-            newData['variableType'] = radioValue['variableType'];
-            ruleList.splice(this.state.number-1,1,{...ruleRadio,...newData,})
+      this.setState({visible:false},()=>{
+        if(this.state.status){
+          const {checkedList,radioValue} = this.addForm.submitHandler();
+          const radioValueCopy = deepCopy(radioValue)
+          console.log(radioValue)
+          if(this.state.type){
             this.props.dispatch({
               type: 'complex/ruleListHandle',
               payload: {
-                ruleList:addListKey(deepCopy(ruleList))
+                ruleList:addListKey(deepCopy([...this.props.complex.ruleList,...checkedList]))
               }
             })
           }else{
-            //编辑前一个变量
-            console.log(radioValueCopy)
-            console.log(this.props.complex)
-            const {ruleList} = this.props.complex
-            console.log(ruleList,'ruleList')
-            const ruleRadio = ruleList[this.state.number-1];
-            ruleList.splice(this.state.number-1,1,{...ruleRadio,...radioValue})
-            this.props.dispatch({
-              type: 'complex/ruleListHandle',
-              payload: {
-                ruleList:addListKey(deepCopy(ruleList))
+            if(Object.keys(radioValueCopy).length){
+              //编辑后一个变量
+              if(this.state.mold){
+                const {ruleList} = this.props.complex;
+                const ruleRadio = ruleList[this.state.number-1];
+                let newData = {};
+                newData['compareVarId'] = radioValue['varId'];
+                newData['variableNameTwo'] = radioValue['variableName'];
+                newData['variableCodeTwo'] = radioValue['variableCode'];
+                newData['variableType'] = radioValue['variableType'];
+                ruleList.splice(this.state.number-1,1,{...ruleRadio,...newData,})
+                this.props.dispatch({
+                  type: 'complex/ruleListHandle',
+                  payload: {
+                    ruleList:addListKey(deepCopy(ruleList))
+                  }
+                })
+              }else{
+                //编辑前一个变量
+                console.log(radioValueCopy)
+                console.log(this.props.complex)
+                const {ruleList} = this.props.complex
+                console.log(ruleList,'ruleList')
+                const ruleRadio = ruleList[this.state.number-1];
+                ruleList.splice(this.state.number-1,1,{...ruleRadio,...radioValue})
+                this.props.dispatch({
+                  type: 'complex/ruleListHandle',
+                  payload: {
+                    ruleList:addListKey(deepCopy(ruleList))
+                  }
+                })
               }
-            })
+            }
           }
+        }else{
+          //输出结果值选择
+          const {checkedList,radioValue} = this.addForm.submitHandler();
+          this.setState({
+            resultVarId:radioValue,
+            visible:false,
+          })
         }
-      }
-    })
+
+      })
   }
   render() {
     const { permission } = this.props
@@ -283,39 +304,50 @@ export default class AssetTypeDeploy extends PureComponent {
       wrapperCol:{span:16},
     }
     return (
-      <PageTableTitle title={'复杂规则'}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <ComplexTable
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={this.props.complex.ruleList}
-          handleAdd={this.handleAdd}
-          handleModify={this.clickDialog}
-          loading={this.props.loading}
-        />
-        <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
-          <Col>
-            <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
-          </Col>
-          <Col>
-            <Button type="primary">返回</Button>
-          </Col>
-        </Row>
-        <Modal
-          title={'选择变量'}
-          visible={this.state.visible}
-          onOk={this.addFormSubmit}
-          onCancel={this.handleCancel}
-          width={1040}
+      <PageHeaderWrapper>
+        <Card
+          bordered={false}
+          title={'复杂规则'}
         >
-          <AddForm
-            type={this.state.type}
-            number={this.state.number}
+          <FilterIpts
             getSubKey={this.getSubKey}
+            change={this.onChange}
+            current={this.state.currentPage}
+            changeDefault={this.changeDefault}
+            outResult={this.outResult}
+            resultVarId={this.state.resultVarId}
           />
-        </Modal>
-      </PageTableTitle>
+          <ComplexTable
+            bordered
+            pagination={false}
+            columns={this.state.columns}
+            dataSource={this.props.complex.ruleList}
+            handleAdd={this.handleAdd}
+            handleModify={this.clickDialog}
+            loading={this.props.loading}
+          />
+          <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
+            <Col>
+              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+            </Col>
+            <Col>
+              <Button type="primary">返回</Button>
+            </Col>
+          </Row>
+          <Modal
+            title={'选择变量'}
+            visible={this.state.visible}
+            onOk={this.addFormSubmit}
+            onCancel={this.handleCancel}
+            width={1040}
+          ><AddForm
+              type={this.state.type}
+              number={this.state.number}
+              getSubKey={this.getSubKey}
+            />
+          </Modal>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

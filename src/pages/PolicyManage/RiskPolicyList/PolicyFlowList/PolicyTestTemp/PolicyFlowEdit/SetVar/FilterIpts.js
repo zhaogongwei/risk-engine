@@ -44,6 +44,7 @@ export default class FilterIpts extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { resultVarId } = this.props
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -69,9 +70,12 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="输出结果" {...formItemConfig}>
               {getFieldDecorator('assetsTypeCode',{
-                initialValue:''
+                initialValue:resultVarId['name']?resultVarId['name']:''
               })(
-                <Input />
+                <Input
+                  onClick={()=>this.props.outResult()}
+                  readOnly
+                />
               )}
             </FormItem>
           </Col>

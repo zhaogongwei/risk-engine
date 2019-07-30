@@ -43,7 +43,8 @@ export default class FilterIpts extends Component {
     this.props.getSubKey(this,'child')
   }
   render() {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator } = this.props.form;
+    const { resultVarId } = this.props
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -69,12 +70,12 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="输出结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:''
+                initialValue:resultVarId['variableName']?resultVarId['variableName']:''
               })(
-                <Select allowClear={true}>
-                  <Option value={2}>注册时间</Option>
-                  <Option value={3}>年龄</Option>
-                </Select>
+                <Input
+                  onClick={()=>this.props.outResult()}
+                  readOnly
+                />
               )}
             </FormItem>
           </Col>

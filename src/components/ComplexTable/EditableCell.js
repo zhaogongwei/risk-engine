@@ -111,6 +111,7 @@ const EditableFormRow = Form.create()(EditableRow);
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
           onClick={(e)=>this.props.handleModify()}
+          readOnly
         />;
       }else if(this.props.type==='more'){
         if(this.props.record['kind']==='num'){

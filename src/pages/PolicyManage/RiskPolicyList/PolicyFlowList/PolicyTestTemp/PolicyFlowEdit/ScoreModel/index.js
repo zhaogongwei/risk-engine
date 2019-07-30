@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
   Row,
   Col,
@@ -9,7 +9,8 @@ import {
   Icon,
   Popconfirm,
   message,
-  Modal
+  Modal,
+  Card
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
@@ -189,12 +190,13 @@ export default class ScoreModel extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status:1,
+      status:1,//状态判断 1:表格 0：输出结果
       number:'',//单选时选中变量的key
       tableState:false,//右侧表格显示状态
       varType:0,//变量类型 0：字符 1:数字
       varKey:0,//变量key值
-      visible:false
+      visible:false,
+      resultVarId:{},//输出结果
     };
   }
   componentDidMount() {
@@ -238,9 +240,18 @@ export default class ScoreModel extends PureComponent {
   clickDialog=(type,record)=>{
     console.log(type,record)
     this.setState({
+      status:1,
       visible:true,
       type:type,
       number:record?record['key']:''
+    })
+  }
+  //输出结果
+  outResult=()=>{
+    this.setState({
+      visible:true,
+      status:0,
+      type:0,
     })
   }
   //监听子组件数据变化
@@ -415,27 +426,35 @@ export default class ScoreModel extends PureComponent {
   //弹框按钮确定
   addFormSubmit=()=>{
     this.setState({visible:false},()=>{
-      const {checkedList,radioValue }= this.addForm.submitHandler();
-      console.log(this.state.checkedList)
-      if(this.state.type){
-        this.props.dispatch({
-          type: 'scoreModel/scoreListHandle',
-          payload: {
-            scoreList:addListKey(deepCopy([...this.props.scoreModel.scoreList,...checkedList]))
-          }
-        })
-        console.log(this.props.scoreModel)
-      }else{
-        if(Object.keys(radioValue).length){
-          const {scoreList} = this.props.scoreModel
-          scoreList.splice(this.state.number-1,1,radioValue)
+      if(this.state.status){
+        const {checkedList,radioValue }= this.addForm.submitHandler();
+        console.log(this.state.checkedList)
+        if(this.state.type){
           this.props.dispatch({
             type: 'scoreModel/scoreListHandle',
             payload: {
-              scoreList:addListKey(deepCopy(scoreList))
+              scoreList:addListKey(deepCopy([...this.props.scoreModel.scoreList,...checkedList]))
             }
           })
+          console.log(this.props.scoreModel)
+        }else{
+          if(Object.keys(radioValue).length){
+            const {scoreList} = this.props.scoreModel
+            scoreList.splice(this.state.number-1,1,radioValue)
+            this.props.dispatch({
+              type: 'scoreModel/scoreListHandle',
+              payload: {
+                scoreList:addListKey(deepCopy(scoreList))
+              }
+            })
+          }
         }
+      }else{
+        //输出结果值选择
+        const {checkedList,radioValue} = this.addForm.submitHandler();
+        this.setState({
+          resultVarId:radioValue,
+        })
       }
     })
   }
@@ -463,60 +482,72 @@ export default class ScoreModel extends PureComponent {
       }
     ]
     return (
-      <PageTableTitle title={'评分模型'}>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-        <Row type="flex" gutter={24} align="top">
-          <Col span={12}>
-            <ScoreModelTable
-              dataSource={this.props.scoreModel.scoreList}
-              columns={this.state.columns}
-              handleAdd={()=>this.clickDialog(1)}
-              handleModify={this.clickDialog}
-            />
-          </Col>
-          <Col span={12}>
-            {
-              this.state.tableState?
-                <div>
-                  <Row>
-                    <SetRowCol
-                      title={'评分明细'}
-                      list={this.state.varType?this.props.scoreModel.one:this.props.scoreModel.two}
-                      columns={this.state.varType?this.state.columnNum:this.state.columnStr}
-                      handleAdd={this.handleAddRight}
-                    />
-                  </Row>
-                  <Row type="flex" justify="center">
-                    <Button type="primary" style={{marginTop:20}} onClick={this.handleSave}>保存</Button>
-                  </Row>
-                </div>
-                :''
-            }
-
-          </Col>
-        </Row>
-        <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
-          <Col>
-            <Button type="primary" onClick={this.save}>保存并提交</Button>
-          </Col>
-          <Col>
-            <Button>返回</Button>
-          </Col>
-        </Row>
-        <Modal
-          title={'选择变量'}
-          visible={this.state.visible}
-          onOk={this.addFormSubmit}
-          onCancel={this.handleCancel}
-          width={1040}
+      <PageHeaderWrapper >
+        <Card
+          bordered={false}
+          title={'评分模型'}
         >
-          <AddForm
-            type={this.state.type}
-            number={this.state.number}
+          <FilterIpts
             getSubKey={this.getSubKey}
+            change={this.onChange}
+            current={this.state.currentPage}
+            changeDefault={this.changeDefault}
+            outResult={this.outResult}
+            resultVarId={this.state.resultVarId}
           />
-        </Modal>
-      </PageTableTitle>
+          <Row type="flex" gutter={24} align="top">
+            <Col span={12}>
+              <ScoreModelTable
+                dataSource={this.props.scoreModel.scoreList}
+                columns={this.state.columns}
+                handleAdd={()=>this.clickDialog(1)}
+                handleModify={this.clickDialog}
+              />
+            </Col>
+            <Col span={12}>
+              {
+                this.state.tableState?
+                  <div>
+                    <Row>
+                      <SetRowCol
+                        title={'评分明细'}
+                        list={this.state.varType?this.props.scoreModel.one:this.props.scoreModel.two}
+                        columns={this.state.varType?this.state.columnNum:this.state.columnStr}
+                        handleAdd={this.handleAddRight}
+                      />
+                    </Row>
+                    <Row type="flex" justify="center">
+                      <Button type="primary" style={{marginTop:20}} onClick={this.handleSave}>保存</Button>
+                    </Row>
+                  </div>
+                  :''
+              }
+
+            </Col>
+          </Row>
+          <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
+            <Col>
+              <Button type="primary" onClick={this.save}>保存并提交</Button>
+            </Col>
+            <Col>
+              <Button>返回</Button>
+            </Col>
+          </Row>
+          <Modal
+            title={'选择变量'}
+            visible={this.state.visible}
+            onOk={this.addFormSubmit}
+            onCancel={this.handleCancel}
+            width={1040}
+          >
+            <AddForm
+              type={this.state.type}
+              number={this.state.number}
+              getSubKey={this.getSubKey}
+            />
+          </Modal>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

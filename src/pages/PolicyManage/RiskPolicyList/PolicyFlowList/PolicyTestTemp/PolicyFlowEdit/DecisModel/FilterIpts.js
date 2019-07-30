@@ -44,6 +44,7 @@ export default class FilterIpts extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { resultVarId,rowVar,colVar } = this.props
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -56,36 +57,36 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="行变量" {...formItemConfig}>
               {getFieldDecorator('assetsTypeName',{
-                initialValue:''
+                initialValue:rowVar['variableName']?rowVar['variableName']:''
               })(
-                <Select allowClear={true}>
-                  <Option value={1}>评分卡得分</Option>
-                  <Option value={2}>高风险规则触发数</Option>
-                </Select>
+                <Input
+                  onClick={()=>this.props.openDialog(0)}
+                  readOnly
+                />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="列变量" {...formItemConfig}>
               {getFieldDecorator('assetsTypeCode',{
-                initialValue:''
+                initialValue:colVar['variableName']?colVar['variableName']:''
               })(
-                <Select allowClear={true}>
-                  <Option value={1}>评分卡得分</Option>
-                  <Option value={2}>高风险规则触发数</Option>
-                </Select>
+                <Input
+                  onClick={()=>this.props.openDialog(1)}
+                  readOnly
+                />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="输出变量" {...formItemConfig}>
               {getFieldDecorator('assetsTypeCode1',{
-                initialValue:''
+                initialValue:resultVarId['variableName']?resultVarId['variableName']:''
               })(
-                <Select allowClear={true}>
-                  <Option value={1}>评分卡得分</Option>
-                  <Option value={2}>高风险规则触发数</Option>
-                </Select>
+                <Input
+                  onClick={()=>this.props.openDialog(2)}
+                  readOnly
+                />
               )}
             </FormItem>
           </Col>
