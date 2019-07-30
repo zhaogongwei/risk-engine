@@ -56,7 +56,7 @@ class HeaderView extends Component {
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
-    if (key === 'userCenter') {
+    /*if (key === 'userCenter') {
       router.push('/account/center');
       return;
     }
@@ -67,7 +67,7 @@ class HeaderView extends Component {
     if (key === 'userinfo') {
       router.push('/account/settings/base');
       return;
-    }
+    }*/
     if (key === 'logout') {
       dispatch({
         type: 'login/logout',

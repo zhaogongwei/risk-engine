@@ -3,8 +3,21 @@ import request from '@/utils/request';
 
 //风控引擎
 
-const _baseApi = '/risk-engine';
-
+const _baseApi = '/ncbx-admin';
+// 登录接口
+export async function accountLogin(params) {
+  return request(_baseApi + '/system/login?validateCode='+ params.validateCode, {
+    method: 'POST',
+    body: params,
+  });
+}
+//   登录以后   根据旧密码修改新密码
+export async function changePassword(params) {
+  return request(`${_baseApi}/user/password/modifyByOld`, {
+    method: 'POST',
+    body: params,
+  });
+}
 //获取菜单
 export async function queryMenuData(params){
   return request(`${_baseApi}/menu_data`,{

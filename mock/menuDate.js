@@ -1,5 +1,5 @@
 export default {
-  'POST /risk-engine/menu_data/':{
+  'POST /ncbx-admin/menu_data/':{
     data:[
       //变量管理
       {

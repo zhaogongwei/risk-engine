@@ -13,7 +13,7 @@ export default {
     rules: [
       {
         required: true,
-        message: 'Please enter username!',
+        message: '请输入用户名!',
       },
     ],
   },
@@ -28,7 +28,7 @@ export default {
     rules: [
       {
         required: true,
-        message: 'Please enter password!',
+        message: '请输入密码',
       },
     ],
   },
@@ -59,6 +59,19 @@ export default {
       {
         required: true,
         message: 'Please enter Captcha!',
+      },
+    ],
+  },
+  ImgCaptcha: {
+    props: {
+      size: 'large',
+      prefix: <Icon type="picture" className={styles.prefixIcon} />,
+      placeholder: 'ImgCaptcha',
+    },
+    rules: [
+      {
+        required: true,
+        message: '图形验证码不能为空',
       },
     ],
   },

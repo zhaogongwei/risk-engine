@@ -85,6 +85,17 @@ export default {
   //     pathRewrite: { '^/server': '' },
   //   },
   // },
+  /*proxy: {
+    '/ncbx-admin': {
+      // target: 'http://10.10.2.59:8071', // 张云凯
+      // target: 'http://10.10.3.74:8071', // 李彬
+      target: 'http://47.105.219.130:8071', // 测试环境
+      // target: 'http://10.10.3.74:8071', // 李彬
+      // target: 'http://10.10.3.85:8071', // 季君君
+      changeOrigin: true,
+      pathRewrite: { '^/ncbx-admin': '/ncbx-admin' },
+    },
+  },*/
   ignoreMomentLocale: true,
   lessLoaderOptions: {
     javascriptEnabled: true,

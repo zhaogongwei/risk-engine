@@ -1,6 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import { message } from 'antd';
+import { fakeAccountLogin, getFakeCaptcha,accountLogin,changePassword } from '@/services/api';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
@@ -13,14 +14,14 @@ export default {
   },
 
   effects: {
-    *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+    *login({ payload,callback }, { call, put }) {
+      const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response&&response.status === 1) {
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -29,14 +30,18 @@ export default {
           const redirectUrlParams = new URL(redirect);
           if (redirectUrlParams.origin === urlParams.origin) {
             redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
+            if (redirect.startsWith('/#')) {
+              redirect = redirect.substr(2);
             }
           } else {
-            redirect = null;
+            window.location.href = redirect;
+            return;
           }
         }
         yield put(routerRedux.replace(redirect || '/'));
+      }else{
+        callback();
+        message.error(response.statusDesc);
       }
     },
 
@@ -66,6 +71,10 @@ export default {
         );
       }
     },
+    //   使用旧密码更改密码
+    *changePassword({ payload }, { call }) {
+      return yield call(changePassword, payload);
+    }
   },
 
   reducers: {

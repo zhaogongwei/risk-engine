@@ -117,6 +117,27 @@ class WrapFormItem extends Component {
         </FormItem>
       );
     }
+    if(type === 'ImgCaptcha'){
+      const inputProps = omit(otherProps, ['onGetCode']);
+      return (
+        <FormItem>
+          <Row gutter={8}>
+            <Col span={19}>
+              {getFieldDecorator(name, options)(<Input {...customprops} {...inputProps} />)}
+            </Col>
+            <Col span={5} style={{ paddingLeft: 0 }}>
+              <img
+                src={this.props.src}
+                style={{ display: 'block', height: 38 }}
+                onClick={() => {
+                  this.props.onGetCode();
+                }}
+              />
+            </Col>
+          </Row>
+        </FormItem>
+      );
+    }
     return (
       <FormItem>
         {getFieldDecorator(name, options)(<Input {...customprops} {...otherProps} />)}

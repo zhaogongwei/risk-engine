@@ -1,15 +1,30 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
-import { Spin, Tag, Menu, Icon, Avatar, Tooltip, message } from 'antd';
+import { Spin, Tag, Menu, Icon, Avatar, Tooltip, message,Modal,Form,Input } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
+import forge from 'node-forge';
+import { connect } from 'dva';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
 import HeaderDropdown from '../HeaderDropdown';
 import SelectLang from '../SelectLang';
+import { score } from '@/utils/utils'
 import styles from './index.less';
+const FormItem = Form.Item;
 
+@Form.create()
+
+@connect(({login}) => ({
+  login
+}))
 export default class GlobalHeaderRight extends PureComponent {
+  state={
+    modalVisible: false,
+    level: 0,
+    oldPasswordStatus: '',
+    avatar: true
+  }
   getNoticeData() {
     const { notices = [] } = this.props;
     if (notices.length === 0) {
@@ -40,7 +55,46 @@ export default class GlobalHeaderRight extends PureComponent {
     });
     return groupBy(newNotices, 'type');
   }
-
+  //   修改密码
+  changePassword = () => {
+    this.setState({
+      modalVisible: true
+    })
+  }
+  //   退出登录
+  signOut = () => {
+    this.props.dispatch({
+      type: 'login/logout'
+    })
+  }
+  //   确认修改密码
+  confirmChangePassword = () => {
+    this.props.form.validateFields(async (err, values) => {
+      if (!err) {
+        const oldPwd = forge.md.md5.create();
+        oldPwd.update(values.oldPassword);
+        const pwd = forge.md.md5.create();
+        pwd.update(values.password);
+        const response = await this.props.dispatch({
+          type: 'login/changePassword',
+          payload: {
+            oriPassword: oldPwd.digest().toHex(),
+            password: pwd.digest().toHex(),
+          }
+        })
+        if (response && response.status === 1) {
+          this.setState({
+            modalVisible: false
+          })
+          message.success(response.statusDesc)
+          //   退出登录  重新登录
+          this.signOut()
+        } else {
+          message.error(response.statusDesc)
+        }
+      }
+    })
+  }
   getUnreadData = noticeData => {
     const unreadMsg = {};
     Object.entries(noticeData).forEach(([key, value]) => {
@@ -72,11 +126,12 @@ export default class GlobalHeaderRight extends PureComponent {
       onNoticeClear,
       theme,
     } = this.props;
+    const { getFieldDecorator } = this.props.form;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item key="userCenter">
-          <Icon type="user" />
-          <FormattedMessage id="menu.account.center" defaultMessage="account center" />
+        <Menu.Item key="userCenter" onClick={this.changePassword}>
+          <Icon type="setting" />
+          修改密码
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout">
@@ -180,6 +235,150 @@ export default class GlobalHeaderRight extends PureComponent {
           <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
         )}
         {/*<SelectLang className={styles.action} />*/}
+        <Modal
+          visible={this.state.modalVisible}
+          onOk={this.confirmChangePassword}
+          destroyOnClose={true}
+          onCancel={() => this.setState({ modalVisible: false })}
+          width={550}
+          title={'修改密码'}
+          bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
+        >
+          <Form>
+            <FormItem
+              label="username"
+              style={{display: 'none'}}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 18 }}
+            >
+              {getFieldDecorator('username', {
+                rules: [],
+                initialValue: 'admin'
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              label="旧密码"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 12 }}
+              hasFeedback
+              validateStatus={this.state.oldPasswordStatus}
+            >
+              {getFieldDecorator('oldPassword', {
+                rules: [{
+                  required: true,
+                  validator: async (rule, value, cb) => {
+                    if (!value) {
+                      cb('请填写信息')
+                      return
+                    }
+                    // if (value.length < 8 || !(value.toString()).match(/^(?![0-9]+$)(?![a-zA-Z]+$)(?![\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]+$)[0-9A-Za-z\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]{8,16}$/)) {
+                    //   cb('密码8-16位，必须包含字母、数字、符号至少两种')
+                    //   this.setState({
+                    //     oldPasswordStatus: 'error'
+                    //   })
+                    //   return
+                    // }
+                    this.setState({
+                      oldPasswordStatus: 'success'
+                    })
+                  }
+                }],
+              })(
+                <Input type='password' maxLength={16} id='success' />
+              )}
+            </FormItem>
+            <FormItem
+              label="新密码"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 12 }}
+              hasFeedback
+              validateStatus={this.state.passwordStatus}
+            >
+              {getFieldDecorator('password', {
+                rules: [{
+                  required: true,
+                  validator: (rule, value, cb) => {
+                    if (!value) {
+                      this.setState({
+                        passwordStatus: 'error'
+                      })
+                      cb('请填写信息')
+                      return
+                    }
+                    if (value.length < 8 || !(value.toString()).match(/^(?![0-9]+$)(?![a-zA-Z]+$)(?![\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]+$)[0-9A-Za-z\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]{8,16}$/)) {
+                      this.setState({
+                        passwordStatus: 'error'
+                      })
+                      cb('密码8-16位，必须包含字母、数字、符号至少两种')
+                      return
+                    }
+                    this.setState({
+                      level: score(value),
+                      passwordStatus: 'success'
+                    })
+                    cb()
+                  }
+                }],
+              })(
+                <Input type='password' maxLength={16} style={{ textSecurity: 'disc' }} />
+              )}
+            </FormItem>
+            {/* <FormItem
+                label="密码强度"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 12 }}
+              >
+                <span className={classNames(styles.psdStrength, level < 40 && level > 0 ? styles.psdweak : '')}>弱</span>
+                <span className={classNames(styles.psdStrength, level >= 40 && level < 70 ? styles.psdin : '')}>中</span>
+                <span className={classNames(styles.psdStrength, level >= 70 ? styles.psdstrong : '')}>强</span>
+              </FormItem> */}
+            <FormItem
+              label="确认新密码"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 12 }}
+              hasFeedback
+              validateStatus={this.state.newPassword2status}
+            >
+              {getFieldDecorator('newPassword2', {
+                rules: [{
+                  required: true,
+                  validator: (rule, value, cb) => {
+                    if (!value) {
+                      this.setState({
+                        newPassword2status: 'error'
+                      })
+                      cb('请输入密码！')
+                      return
+                    }
+                    if (value.length < 8 || !(value.toString()).match(/^(?![0-9]+$)(?![a-zA-Z]+$)(?![\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]+$)[0-9A-Za-z\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]{8,16}$/)) {
+                      this.setState({
+                        newPassword2status: 'error'
+                      })
+                      cb('密码8-16位，必须包含字母、数字、符号至少两种')
+                      return
+                    }
+                    const newpsd = this.props.form.getFieldValue('password')
+                    if (value !== newpsd) {
+                      this.setState({
+                        newPassword2status: 'error'
+                      })
+                      cb('两次密码不同！')
+                      return
+                    }
+                    this.setState({
+                      newPassword2status: 'success'
+                    })
+                    cb()
+                  }
+                }],
+              })(
+                <Input type='password' maxLength={16} />
+              )}
+            </FormItem>
+          </Form>
+        </Modal>
       </div>
     );
   }

@@ -3,10 +3,11 @@ import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
 import Link from 'umi/link';
 import { Checkbox, Alert, Modal, Icon } from 'antd';
+import forge from 'node-forge';
 import Login from '@/components/Login';
 import styles from './Login.less';
-
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
+const _baseApi = '/ncbx-admin';
+const { Tab, UserName, Password, Mobile, Captcha, Submit,ImgCaptcha} = Login;
 
 @connect(({ login, loading }) => ({
   login,
@@ -16,6 +17,7 @@ class LoginPage extends Component {
   state = {
     type: 'account',
     autoLogin: true,
+    imgSrc: '/system/captcha/make',
   };
 
   onTabChange = type => {
@@ -47,12 +49,15 @@ class LoginPage extends Component {
     const { type } = this.state;
     if (!err) {
       const { dispatch } = this.props;
+      const md = forge.md.md5.create();
+      md.update(values.password);
       dispatch({
         type: 'login/login',
         payload: {
           ...values,
-          type,
+          password:md.digest().toHex(),
         },
+        callback:()=>this.onGetImgCaptcha()
       });
     }
   };
@@ -62,7 +67,18 @@ class LoginPage extends Component {
       autoLogin: e.target.checked,
     });
   };
+  //点击获取图形验证码
+  onGetImgCaptcha = () => {
+    this.setState({
+      imgSrc: _baseApi + '/system/captcha/make?v=' + new Date().getTime(),
+    });
+  };
 
+  componentDidMount() {
+    this.setState({
+      imgSrc: _baseApi + '/system/captcha/make?v=' + new Date().getTime(),
+    });
+  }
   renderMessage = content => (
     <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
   );
@@ -80,14 +96,13 @@ class LoginPage extends Component {
             this.loginForm = form;
           }}
         >
-          <Tab key="account" tab={formatMessage({ id: 'app.login.tab-login-credentials' })}>
             {login.status === 'error' &&
               login.type === 'account' &&
               !submitting &&
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
             <UserName
               name="userName"
-              placeholder={`${formatMessage({ id: 'app.login.userName' })}: admin or user`}
+              placeholder="账号"
               rules={[
                 {
                   required: true,
@@ -97,7 +112,7 @@ class LoginPage extends Component {
             />
             <Password
               name="password"
-              placeholder={`${formatMessage({ id: 'app.login.password' })}: ant.design`}
+              placeholder="密码"
               rules={[
                 {
                   required: true,
@@ -109,55 +124,17 @@ class LoginPage extends Component {
                 this.loginForm.validateFields(this.handleSubmit);
               }}
             />
-          </Tab>
-          <Tab key="mobile" tab={formatMessage({ id: 'app.login.tab-login-mobile' })}>
-            {login.status === 'error' &&
-              login.type === 'mobile' &&
-              !submitting &&
-              this.renderMessage(
-                formatMessage({ id: 'app.login.message-invalid-verification-code' })
-              )}
-            <Mobile
-              name="mobile"
-              placeholder={formatMessage({ id: 'form.phone-number.placeholder' })}
-              rules={[
-                {
-                  required: true,
-                  message: formatMessage({ id: 'validation.phone-number.required' }),
-                },
-                {
-                  pattern: /^1\d{10}$/,
-                  message: formatMessage({ id: 'validation.phone-number.wrong-format' }),
-                },
-              ]}
+            <ImgCaptcha
+              name="validateCode"
+              placeholder="请输入图形验证码"
+              onGetCode={this.onGetImgCaptcha}
+              src={this.state.imgSrc}
+              onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
             />
-            <Captcha
-              name="captcha"
-              placeholder={formatMessage({ id: 'form.verification-code.placeholder' })}
-              countDown={120}
-              onGetCaptcha={this.onGetCaptcha}
-              getCaptchaButtonText={formatMessage({ id: 'form.get-captcha' })}
-              getCaptchaSecondText={formatMessage({ id: 'form.captcha.second' })}
-              rules={[
-                {
-                  required: true,
-                  message: formatMessage({ id: 'validation.verification-code.required' }),
-                },
-              ]}
-            />
-          </Tab>
-          <div>
-            <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
-              <FormattedMessage id="app.login.remember-me" />
-            </Checkbox>
-            <a style={{ float: 'right' }} href="">
-              <FormattedMessage id="app.login.forgot-password" />
-            </a>
-          </div>
           <Submit loading={submitting}>
             <FormattedMessage id="app.login.login" />
           </Submit>
-          <div className={styles.other}>
+          {/*<div className={styles.other}>
             <FormattedMessage id="app.login.sign-in-with" />
             <Icon type="alipay-circle" className={styles.icon} theme="outlined" />
             <Icon type="taobao-circle" className={styles.icon} theme="outlined" />
@@ -165,7 +142,7 @@ class LoginPage extends Component {
             <Link className={styles.register} to="/user/register">
               <FormattedMessage id="app.login.signup" />
             </Link>
-          </div>
+          </div>*/}
         </Login>
       </div>
     );

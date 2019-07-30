@@ -262,3 +262,46 @@ export function cookie() {
   }
   return cookie
 }
+
+//   统计密码评分标准
+export function score(s){
+  let num=0
+  if(s.length<10){
+    num+=5
+  }else if(s.length>=10&&s.length<=12){
+    num+=10
+  }else{
+    num+=25
+  }
+  if(s.match(/[A-Za-z]/g)==null){
+    num+=0
+  }else if(s.match(/[A-Z]/g)==null){
+    num+=10
+  }else if(s.match(/[a-z]/g)==null){
+    num+=10
+  }else if(/[A-Z]/.test(s)&&/[a-z]/.test(s)){
+    num+=20
+  }
+  if(s.match(/\d/g)==null){
+    num+=0
+  }else if(s.match(/\d/g).length==1){
+    num+=10
+  }else if(s.match(/\d/g).length>1){
+    num+=20
+  }
+  if(s.match(/[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]/g)==null){
+    num+=0
+  }else if(s.match(/[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]/g).length==1){
+    num+=10
+  }else if(s.match(/[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]/g).length>1){
+    num+=25
+  }
+  if(/\d/.test(s)&&/[a-z]/.test(s)&&/[A-Z]/.test(s)&&/[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]/.test(s)){
+    num+=5
+  }else if(/\d/.test(s)&&/[a-zA-Z]/.test(s)&&/[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\|\[\]\\\;\'\:\"\,\.\/\<\>\?]/.test(s)){
+    num+=3
+  }else if(/\d/.test(s)&&/[a-zA-Z]/.test(s)){
+    num+=2
+  }
+  return num
+}
