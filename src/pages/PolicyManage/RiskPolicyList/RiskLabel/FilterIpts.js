@@ -56,46 +56,10 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="标签名称" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
+              {getFieldDecorator('labelName',{
                 initialValue:''
               })(
                 <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="资产来源" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="资产类型" >
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="还款类型" >
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
               )}
             </FormItem>
           </Col>

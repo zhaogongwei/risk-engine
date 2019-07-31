@@ -1,9 +1,15 @@
-
+import * as api from '@/services/PolicyManage/RiskPolicyList/RiskLabel';
+import { addListKey } from '@/utils/utils'
 export default {
   namespace: 'risklabel',
 
   state: {
-    labelList:[],
+    labelList:[],//风控标签列表
+    labelObj:{
+      labelName:'',
+      labelStatus:0,
+      list:[]
+    },//新增、编辑标签
     editorData: {},
     selectId:'',
     selectItem:{},
@@ -37,7 +43,39 @@ export default {
         type:'changeStatus',
         payload
       })
-    }
+    },
+    //获取风控标签列表
+    *fetchRiskLabelList({payload}, { call, put }) {
+      let response = yield call(api.queryRiskLabelList,payload)
+      yield put({
+        type: 'labelListHandle',
+        payload,
+      });
+    },
+    //新增风控标签
+    *addRiskLabel({payload}, { call, put }) {
+      let response = yield call(api.addRiskLabel,payload)
+      yield put({
+        type: 'labelObjHandle',
+        payload,
+      });
+    },
+    //编辑风控标签
+    *editRiskLabel({payload}, { call, put }) {
+      let response = yield call(api.editRiskLabel,payload)
+      yield put({
+        type: 'labelObjHandle',
+        payload,
+      });
+    },
+    //删除风控标签
+    *delRiskLabel({payload}, { call, put }) {
+      let response = yield call(api.delRiskLabel,payload)
+      yield put({
+        type: 'labelListHandle',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -67,5 +105,11 @@ export default {
         labelList:payload.labelList,
       }
     },
+    labelObjHanlder(state,{payload}){
+      return {
+        ...state,
+        labelObj:payload.labelObj,
+      }
+    }
   },
 };

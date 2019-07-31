@@ -153,28 +153,16 @@ export default class DeployDialog extends Component {
       checkAll: e.target.checked,
     });
   }
-  allChecked=(value)=>{
-    plainOptions.map((item,index)=>{
-      item.checked = value;
-    })
-  }
   //点击确定
-  handleOk = ()=>{
-    this.setState({visible:false},()=>{
-      this.props.onChange(false)
-      this.props.dispatch({
-        type: 'policyList/saveTableList',
-        payload: addListKey(deepCopy([...this.props.policyList.tableList,...this.state.checkedList]))
-      })
-      this.props.pagination(10,1,addListKey(deepCopy([...this.props.policyList.tableList,...this.state.checkedList])))
-    })
+  submitHanler=()=>{
+    return this.state;
   }
-  //点击取消
-  handleCancel =()=>{
-    this.setState({visible:false},()=>{
-        this.props.onChange(false)
+  //请客勾选
+  emptyCheck=()=>{
+    this.setState({
+      checkedList:[],
+      checkAll:false,
     })
-
   }
   //   获取表单信息
   getFormValue = () => {
@@ -188,29 +176,17 @@ export default class DeployDialog extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.childDeploy(this)
+    this.props.getSubKey(this,'dialog')
   }
   componentWillReceiveProps(newProps){
-    this.setState({
-      visible:newProps.showState
-    })
   }
   render() {
-    const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
-    console.log(this.props)
     return (
-      <Modal
-        title={'选择变量'}
-        visible={visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-        width={1040}
-      >
         <Form
           className="ant-advanced-search-form"
         >
@@ -262,11 +238,7 @@ export default class DeployDialog extends Component {
           </Row>
           <Divider />
           <div className={styles.btmMargin}>
-            {/*<CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onChange} />
-            */}
-
-
-              <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
+               <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                 {
                   plainOptions.map((item, index) => {
                      return  <Row type="flex" align="middle" key={index}>
@@ -305,7 +277,6 @@ export default class DeployDialog extends Component {
             </Col>
           </Row>
         </Form>
-      </Modal>
     )
   }
 }

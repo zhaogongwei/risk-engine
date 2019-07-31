@@ -70,87 +70,13 @@ export default class PolicyEdit extends PureComponent {
   }
   componentDidMount() {
   }
-  //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
-    })
-    this.pagination(10,current,this.props.policyList.tableList)
-  }
-  onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
-      }
-    })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
   //   获取子组件数据的方法
-  getSubData = (ref) => {
-    this.child = ref;
-  }
-  //   获取子组件数据的方法
-  getSubDeploy = (ref) => {
-    this.childDeploy = ref;
-  }
-  //展示页码
-  showTotal = (total, range) => {
-    return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
-  }
-  //点击配置弹窗
-  clickDialog=(record)=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      assetsTypeName:record.assetsTypeName,
-      code:record.assetsTypeCode,
-      id:record.id,
-      status:record.status,
-      type:false
-    })
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
-    })
+  getSubKey = (ref,name) => {
+    this[name] = ref;
   }
   //  刷新页面
   reload = () => {
     window.location.reload();
-  }
-  //查询时改变默认页数
-  changeDefault=(value)=>{
-    this.setState({
-      current:value
-    })
-  }
-  //右上角渲染
-  renderTitleBtn = () => {
-    return (
-      <Fragment>
-        <Button onClick={this.goAddPage}><Icon type="plus" theme="outlined" />新增</Button>
-      </Fragment>
-    )
-  }
-  //跳转编辑/新增页面
-  goAddPage = ()=>{
-    this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
   }
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -160,54 +86,14 @@ export default class PolicyEdit extends PureComponent {
   reset = () => {
     this.props.form.resetFields()
   }
-  //前端分页
-  pagination=(pageSize=10,currentPage=1,array=[])=>{
-    //起始位置
-    this.setState({
-      current:currentPage
-    })
-    var offset = (currentPage-1)*pageSize
-    var list =[]
-   array.length>10?list = array.slice(offset,offset+pageSize):list = array
-   this.props.dispatch({
-      type: 'policyList/savePageList',
-      payload:list
-    })
-  }
-  //删除表格数据
-  deleteList=()=>{
-    const {selectedRowKeys} = this.state;
-    const {tableList} = this.props.policyList;
-    console.log(tableList,selectedRowKeys)
-    let list = []
-    if(!selectedRowKeys.length){
-      message.error('删除失败,请勾选要删除的项目!');
-    }else{
-      for(var key of selectedRowKeys){
-        tableList.forEach((item,index)=>{
-          if(item['key']===key){
-            tableList.splice(index,1)
-          }
-        })
-      }
-    }
-    this.pagination(10,1,addListKey(tableList));
-    this.setState({
-      selectedRowKeys:[]
-    })
-  }
   render() {
     const { getFieldDecorator } = this.props.form
     const {state}=this.props.location
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
+      labelAlign:'left'
     }
-    const {selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
     return (
       <PageHeaderWrapper>
         <Card
@@ -220,7 +106,7 @@ export default class PolicyEdit extends PureComponent {
             <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="策略类型" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
+                  {getFieldDecorator('policyType',{
                     initialValue:'',
                     rules:[{required:true}]
                   })(
@@ -233,9 +119,12 @@ export default class PolicyEdit extends PureComponent {
               </Col>
               <Col xxl={4} md={6}>
                 <FormItem label="策略名称" {...formItemConfig}>
-                  {getFieldDecorator('status',{
+                  {getFieldDecorator('policyName',{
                     initialValue:'',
-                    rules:[{required:true}]
+                    rules:[
+                      {required:true},
+                      {max:15,message:'最多输入15位!'}
+                    ]
                   })(
                     <Input />
                   )}
@@ -243,9 +132,15 @@ export default class PolicyEdit extends PureComponent {
               </Col>
               <Col xxl={4} md={6}>
                 <FormItem label="策略代码" >
-                  {getFieldDecorator('status',{
+                  {getFieldDecorator('policyCode',{
                     initialValue:'',
-                    rules:[{required:true}]
+                    rules:[
+                      {
+                        required:true,
+                        pattern:/^[a-zA-Z]{1,15}$/,
+                        message:'只能输入15位的大写或小写字母!'
+                      },
+                    ]
                   })(
                     <Input />
                   )}
@@ -253,7 +148,7 @@ export default class PolicyEdit extends PureComponent {
               </Col>
               <Col xxl={4} md={6}>
                 <FormItem label="策略负责人" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
+                  {getFieldDecorator('policyLeader',{
                     initialValue:'',
                     rules:[{required:true}]
                   })(
@@ -267,23 +162,20 @@ export default class PolicyEdit extends PureComponent {
                 </FormItem>
               </Col>
             </Row>
-            <Row style={{marginBottom:20}} gutter={24} type="flex" align="middle">
-              <Col xxl={4} md={6}>
-                <FormItem label="输出变量" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
-                    initialValue:'',
-                    rules:[{required:true}]
-                  })(
-                    <Select allowClear={true} style={{width:165}}>
-                      <Option value={1}>王一</Option>
-                      <Option value={2}>王二</Option>
-                      <Option value={3}>王三</Option>
-                      <Option value={4}>王四</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
+            {
+              state.type===2?
+                <Row style={{marginBottom:20,marginLeft:8,fontSize:12,color:'#333'}}  type="flex" align="middle">
+                  <Col xxl={4} md={6}>
+                    创建时间 2019-07-31
+                  </Col>
+                  <Col xxl={4} md={6}>
+                    最后编辑时间 2019-07-31
+                  </Col>
+                  <Col xxl={4} md={6}>
+                    操作人 王大大
+                  </Col>
+                </Row>:null
+            }
             <Row  style={{marginBottom:20}}gutter={24} type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="策略排序" {...formItemConfig}>
@@ -322,12 +214,6 @@ export default class PolicyEdit extends PureComponent {
               </Col>
             </Row>
           </Form>
-          <Dialog
-            showState={this.state.modalStatus}
-            onChange={this.handleChildChange}
-            childDeploy={this.getSubDeploy}
-            pagination={this.pagination}
-          />
         </Card>
       </PageHeaderWrapper>
     )

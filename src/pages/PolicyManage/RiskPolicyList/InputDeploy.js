@@ -11,7 +11,8 @@ import {
   Select,
   message,
   Form,
-  Card
+  Card,
+  Modal,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -63,6 +64,7 @@ export default class InputDeploy extends PureComponent {
       id:'',
       status:1,
       selectedRowKeys: [],
+      visible:false,
     };
   }
   componentDidMount() {
@@ -79,31 +81,9 @@ export default class InputDeploy extends PureComponent {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
   }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
-      }
-    })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
   //   获取子组件数据的方法
-  getSubData = (ref) => {
-    this.child = ref;
-  }
-  //   获取子组件数据的方法
-  getSubDeploy = (ref) => {
-    this.childDeploy = ref;
+  getSubKey = (ref,name) => {
+    this[name]= ref;
   }
   //展示页码
   showTotal = (total, range) => {
@@ -111,43 +91,13 @@ export default class InputDeploy extends PureComponent {
   }
   //点击配置弹窗
   clickDialog=(record)=>{
-    this.childDeploy.reset()
     this.setState({
-      modalStatus:true,
-      assetsTypeName:record.assetsTypeName,
-      code:record.assetsTypeCode,
-      id:record.id,
-      status:record.status,
-      type:false
-    })
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
+      visible:true,
     })
   }
   //  刷新页面
   reload = () => {
     window.location.reload();
-  }
-  //查询时改变默认页数
-  changeDefault=(value)=>{
-    this.setState({
-      current:value
-    })
-  }
-  //右上角渲染
-  renderTitleBtn = () => {
-    return (
-      <Fragment>
-        <Button onClick={this.goAddPage}><Icon type="plus" theme="outlined" />新增</Button>
-      </Fragment>
-    )
-  }
-  //跳转编辑/新增页面
-  goAddPage = ()=>{
-    this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
   }
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -189,8 +139,18 @@ export default class InputDeploy extends PureComponent {
       }
     }
     this.pagination(10,1,addListKey(tableList));
-    this.setState({
-      selectedRowKeys:[]
+  }
+  //确定事件
+  handleOk=()=>{
+    this.setState({ visible:false,},()=>{
+      const {checkedList} = this.dialog.submitHanler();
+      const {tableList} = this.props.policyList;
+      this.props.dispatch({
+        type: 'policyList/saveTableList',
+        payload: addListKey(deepCopy([...tableList,...checkedList]))
+      })
+      this.pagination(10,1,addListKey(deepCopy([...tableList,...checkedList])))
+      this.dialog.emptyCheck();
     })
   }
   render() {
@@ -207,15 +167,15 @@ export default class InputDeploy extends PureComponent {
     };
     return (
       <PageHeaderWrapper>
-        <Card bordered={false}>
+        <Card
+          bordered={false}
+          title={'输入输出配置'}
+        >
           <Form
             className="ant-advanced-search-form"
           >
-            {/*<Row style={{fontSize:18,color:'#333'}}>
-              输入输出配置
-            </Row>*/}
             <Row  gutter={16} type="flex" align="top">
-              <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,content:'*'}}></span>输入变量 :</Col>
+              <Col style={{paddingLeft:30,paddingRight:0,fontSize:12,color:'#333'}}><span style={{display:'inline-block',color:'#f5222d',lineHeight:1,marginRight:4,fontSize:14,verticalAlign:'middle'}}>*</span>输入变量 :</Col>
               <Col span={15}>
                 <Row gutter={16} type="flex" align="middle" style={{marginBottom:20}}>
                   <Col> <Button type="primary" onClick={this.clickDialog}>选择变量</Button></Col>
@@ -268,12 +228,18 @@ export default class InputDeploy extends PureComponent {
               </Col>
             </Row>
           </Form>
-          <Dialog
-            showState={this.state.modalStatus}
-            onChange={this.handleChildChange}
-            childDeploy={this.getSubDeploy}
-            pagination={this.pagination}
-          />
+          <Modal
+            title={'选择变量'}
+            visible={this.state.visible}
+            onOk={this.handleOk}
+            onCancel={()=>this.setState({visible:false})}
+            width={1040}
+          >
+            <Dialog
+              getSubKey={this.getSubKey}
+              pagination={this.pagination}
+            />
+          </Modal>
         </Card>
       </PageHeaderWrapper>
     )

@@ -1,4 +1,5 @@
-
+import * as api from '@/services/PolicyManage/RiskPolicyList';
+import { addListKey } from '@/utils/utils'
 export default {
   namespace: 'policyList',
 
@@ -8,7 +9,8 @@ export default {
     selectItem:{},
     status:false,
     tableList:[],
-    pageList:[]
+    pageList:[],
+    policyList:[]
   },
 
   effects: {
@@ -36,7 +38,31 @@ export default {
         type:'changeStatus',
         payload
       })
-    }
+    },
+    //获取策略列表
+    *fetchPolicyList({payload}, { call, put }) {
+      let response = yield call(api.queryPolicyList,payload)
+      yield put({
+        type: 'savePolicyList',
+        payload,
+      });
+    },
+    //新增策略
+    *addPolicy({payload}, { call, put }) {
+      let response = yield call(api.addPolicy,payload)
+      yield put({
+        type: 'savePolicyList',
+        payload,
+      });
+    },
+    //编辑策略
+    *editPolicy({payload}, { call, put }) {
+      let response = yield call(api.editPolicy,payload)
+      yield put({
+        type: 'savePolicyList',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -57,6 +83,12 @@ export default {
       return {
         ...state,
         pageList:payload
+      }
+    },
+    savePolicyList(state,{payload}){
+      return {
+        ...state,
+        policyList:payload,
       }
     }
   },

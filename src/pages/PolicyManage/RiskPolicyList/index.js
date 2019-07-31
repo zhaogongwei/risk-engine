@@ -22,7 +22,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
   assetDeploy,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
-export default class PolicyList extends PureComponent {
+export default class RiskPolicyList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {

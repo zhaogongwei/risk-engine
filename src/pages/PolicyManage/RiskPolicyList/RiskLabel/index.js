@@ -12,7 +12,6 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import LabelEdit from './LabelEdit';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 // 验证权限的组件
@@ -21,9 +20,9 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
 import Swal from 'sweetalert2';
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ risklabel, loading }) => ({
+  risklabel,
+  loading: loading.effects['risklabel/riskSubmit']
 }))
 export default class RiskLabel extends PureComponent {
   constructor(props) {
@@ -110,7 +109,6 @@ export default class RiskLabel extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change();
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -129,7 +127,7 @@ export default class RiskLabel extends PureComponent {
       formData = {}
     }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
+      type: 'assetDeploy/fetchRiskLabelList',
       data: {
         ...formData,
         currPage,
@@ -145,24 +143,6 @@ export default class RiskLabel extends PureComponent {
   //展示页码
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
-  }
-  //点击配置弹窗
-  clickDialog=(record)=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      assetsTypeName:record.assetsTypeName,
-      code:record.assetsTypeCode,
-      id:record.id,
-      status:record.status,
-      type:false
-    })
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
-    })
   }
   //  刷新页面
   reload = () => {

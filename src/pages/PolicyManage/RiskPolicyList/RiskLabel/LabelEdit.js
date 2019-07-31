@@ -13,7 +13,8 @@ import {
   Radio,
   Modal,
   Popconfirm,
-  Card
+  Card,
+  message,
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
@@ -21,7 +22,6 @@ import AddForm from './AddForm';
 import RuleTable from '@/components/RuleTable';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle';
 import router from 'umi/router';
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -67,7 +67,7 @@ export default class LabelEdit extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//0:单选按钮，1：多选按钮
+      type:0,//0:单选按钮，1：多选按钮
       pageSize:10,
       currentPage:1,
       current:1,
@@ -107,16 +107,7 @@ export default class LabelEdit extends PureComponent {
   }
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
-    formQueryData['borrowDate'] = this.getDateValue()
     return formQueryData;
-  }
-  getDateValue = () =>{
-    let DateValue = this.props.form.getFieldsValue(['borrowDate1','borrowDate2','borrowDate3','borrowDate4','borrowDate5','borrowDate6','borrowDate7'])
-    let DateArray = [];
-    for(var date in DateValue){
-      DateArray.push(DateValue[date])
-    }
-    return DateArray
   }
   formSubmit=()=>{
     console.log(this.getFormValue())
@@ -167,26 +158,22 @@ export default class LabelEdit extends PureComponent {
   addFormSubmit =()=>{
     this.setState({visible:false},()=>{
       const {checkedList,radioValue} = this.addForm.submitHandler();
-      if(this.state.type){
+      const {labelList} = this.props.risklabel;
+      if(Object.keys(radioValue).length){
+        if(labelList.find((item)=>item['varId'] ===radioValue['varId'])){
+          message.error('不能添加相同的变量!')
+          return;
+        }
+        if(labelList.length>20){
+          message.error('最多可配置20个标签')
+          return;
+        }
         this.props.dispatch({
           type: 'risklabel/labelListHandle',
           payload: {
-            labelList:addListKey(deepCopy([...this.props.risklabel.labelList,...checkedList]))
+            labelList:addListKey(deepCopy([...labelList,radioValue]))
           }
         })
-      }else{
-        if(Object.keys(radioValue).length){
-          console.log(radioValue)
-          console.log(this.props.rule)
-          const {labelList} = this.props.risklabel
-          labelList.splice(this.state.number-1,1,radioValue)
-          this.props.dispatch({
-            type: 'risklabel/labelListHandle',
-            payload: {
-              labelList:addListKey(deepCopy(labelList))
-            }
-          })
-        }
       }
     })
   }
@@ -212,7 +199,10 @@ export default class LabelEdit extends PureComponent {
                 <FormItem label="标签名称" {...formItemConfig}>
                   {getFieldDecorator('status',{
                     initialValue:'',
-                    rules:[{required:true}]
+                    rules:[
+                      {required:true},
+                      {max:30,message:'最多输入30位!'}
+                    ]
                   })(
                     <Input />
                   )}
@@ -244,7 +234,6 @@ export default class LabelEdit extends PureComponent {
                 width={1040}
               >
                 <AddForm
-                  type={this.state.type}
                   number={this.state.number}
                   getSubKey={this.getSubKey}
                 />
@@ -265,9 +254,7 @@ export default class LabelEdit extends PureComponent {
                 </FormItem>
               </Col>
               <Col style={{color:'#FF0000'}} push={7}>
-                {
-                  type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
-                }
+                最近操作时间：2018-08-08 00:00:00 操作人：  王大大
               </Col>
             </Row>
             <Row type="flex" align="middle">

@@ -55,35 +55,30 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="策略类型" {...formItemConfig}>
-              {getFieldDecorator('policyType',{
-                initialValue:''
+            <FormItem label="策略流版本号" {...formItemConfig}>
+              {getFieldDecorator('policyEdition',{
+                initialValue:'',
+                rules:[
+                  {
+                    max:20,message:'最多输入20位!'
+                  }
+                ]
               })(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="策略名称" {...formItemConfig}>
-              {getFieldDecorator('policyName',{
-                initialValue:''
+            <FormItem label="版本号描述" {...formItemConfig}>
+              {getFieldDecorator('editionDes',{
+                initialValue:'',
+                rules:[
+                  {
+                    max:20,message:'最多输入20位!'
+                  }
+                ]
               })(
                 <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="负责人" {...formItemConfig}>
-              {getFieldDecorator('modelName',{
-                initialValue:''
-              })(
-                <Select  allowClear={true}  >
-                  <Option value={'month'}>等额本息</Option>
-                  <Option value={'end'}>按月计息,到期还本还息</Option>
-                  <Option value={'endmonth'}>先息后本</Option>
-                  <Option value={'endday'}>按天计息,到期还本还息</Option>
-                  <Option value={'principal'}>等额本金</Option>
-                </Select>
               )}
             </FormItem>
           </Col>

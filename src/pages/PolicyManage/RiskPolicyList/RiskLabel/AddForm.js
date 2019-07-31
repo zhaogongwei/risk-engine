@@ -306,35 +306,19 @@ export default class DeployDialog extends Component {
           </Row>
           <Divider />
           <div className={styles.btmMargin}>
-            {
-              this.props.type?
-                <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
-                  {
-                    plainOptions.map((item, index) => {
-                      return  <Row type="flex" align="middle" key={index}>
-                        <Col span={8}>
-                          <Checkbox value={item}>{item.variableName}</Checkbox>
-                        </Col>
-                        <Col span={8}>{item.variableType}</Col>
-                        <Col span={8}>{item.variableName}</Col>
-                      </Row>
-                    })
-                  }
-                </Checkbox.Group>:
-                <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
-                  {
-                    plainOptions.map((item, index) => {
-                      return  <Row type="flex" align="middle" key={index}>
-                        <Col span={8}>
-                          <Radio  value={item}>{item.variableName}</Radio >
-                        </Col>
-                        <Col span={8}>{item.variableType}</Col>
-                        <Col span={8}>{item.variableName}</Col>
-                      </Row>
-                    })
-                  }
-                </RadioGroup>
-            }
+            <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
+              {
+                plainOptions.map((item, index) => {
+                  return  <Row type="flex" align="middle" key={index}>
+                    <Col span={8}>
+                      <Radio  value={item}>{item.variableName}</Radio >
+                    </Col>
+                    <Col span={8}>{item.variableType}</Col>
+                    <Col span={8}>{item.variableName}</Col>
+                  </Row>
+                })
+              }
+            </RadioGroup>
           </div>
           <Divider />
           <Row className={styles.btmMargin} type="flex" align="middle" justify="space-between">

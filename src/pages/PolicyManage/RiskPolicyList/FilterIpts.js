@@ -55,27 +55,36 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="策略名称" {...formItemConfig}>
-              {getFieldDecorator('policyName',{
-                initialValue:''
-              })(
-                <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="策略流版本号" {...formItemConfig}>
+            <FormItem label="策略类型" {...formItemConfig}>
               {getFieldDecorator('policyType',{
                 initialValue:''
               })(
+                <Select allowClear={true}>
+                  <Option value={1}>主策略</Option>
+                  <Option value={2}>次策略</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col xxl={4} md={6}>
+            <FormItem label="策略名称" {...formItemConfig}>
+              {getFieldDecorator('policyName',{
+                initialValue:'',
+                rules:[
+                  {max:20,message:'最多输入20位!'}
+                ]
+              })(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
-            <FormItem label="版本号描述" {...formItemConfig}>
-              {getFieldDecorator('editDesc',{
-                initialValue:''
+            <FormItem label="策略代码" {...formItemConfig}>
+              {getFieldDecorator('policyCode',{
+                initialValue:'',
+                rules:[
+                  {max:20,message:'最多输入20位!'}
+                ]
               })(
                 <Input />
               )}

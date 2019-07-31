@@ -19,11 +19,11 @@ import FilterIpts from './FilterIpts';
 import Swal from 'sweetalert2';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ policyFlowList, loading }) => ({
+  policyFlowList,
+  loading: loading.effects['policyFlowList/riskSubmit']
 }))
-export default class PolicyList extends PureComponent {
+export default class PolicyFlowList extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -121,7 +121,6 @@ export default class PolicyList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
