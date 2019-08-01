@@ -122,7 +122,7 @@ export default class BlackNameList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    //this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -150,15 +150,6 @@ export default class BlackNameList extends PureComponent {
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
-  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -166,12 +157,6 @@ export default class BlackNameList extends PureComponent {
   //展示页码
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
-    })
   }
   //  刷新页面
   reload = () => {
@@ -197,12 +182,6 @@ export default class BlackNameList extends PureComponent {
     router.push({
       pathname:'/varManage/varlist/editPage',
       state:obj
-    })
-  }
-  //去风控策略列表
-  goPolicyList = ()=>{
-    router.push({
-      pathname:'/varManage/riskpolicylist/list',
     })
   }
   //启用/禁用

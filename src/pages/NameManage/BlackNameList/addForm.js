@@ -64,16 +64,6 @@ export default class AddForm extends Component {
       loading:true
     }
   }
-  //显示弹窗
-  showModal = ()=>{
-
-  }
-  //设置加载状态
-  setLoading=(status)=>{
-    this.setState({
-      loading:status
-    })
-  }
   //点击确定
   submitHandler = ()=>new Promise((resolve,reject)=>{
     const response = {
@@ -114,30 +104,12 @@ export default class AddForm extends Component {
   }
   componentWillReceiveProps(nextProps){
   }
-  onChange = value => {
-    console.log('onChange ', value);
-    this.setState({ value });
-  };
   render() {
-    const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
-    const tProps = {
-      treeData,
-      onChange: this.onChange,
-      treeCheckable: true,
-      maxTagCount: 0,
-      dropdownStyle: { maxHeight: 600, overflow: 'auto' },
-      treeDefaultExpandedKeys: [],
-      showCheckedStrategy: SHOW_PARENT,
-      style: {
-        width: 450,
-      },
-      allowClear: true
-    };
     return (
             <Form
               className="ant-advanced-search-form"

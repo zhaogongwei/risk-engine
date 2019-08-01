@@ -21,7 +21,7 @@ export default {
       let response = yield call(api.isForbid,payload)
       yield put({
         type: 'flowListHanlder',
-        payload,
+        payload:response,
       });
     },
   },

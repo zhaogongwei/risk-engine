@@ -15,6 +15,7 @@ const TabPane = Tabs.TabPane;
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import ReportComponent from './ReportComponent'
+import Tab from './tab'
 import router from 'umi/router';
 @connect(({ riskReport}) => ({
   riskReport,
@@ -22,7 +23,10 @@ import router from 'umi/router';
 
 export default  class Index extends  PureComponent{
   constructor(props){
-    super(props)
+    super(props);
+    this.state={
+      selectKey:0,//当前选中tab key值
+    }
 
   }
   //初始化信息
@@ -30,6 +34,12 @@ export default  class Index extends  PureComponent{
   }
   //返回
   goBack=()=>{
+  }
+  //tab切换
+  handleTab=(key)=>{
+    this.setState({
+      selectKey:key,
+    })
   }
   render(){
     const data = [
@@ -198,49 +208,31 @@ export default  class Index extends  PureComponent{
         ]
       },
     ]
+    const titleWrapper=
+     <div>
+       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号199208223418</span>
+     </div>;
     return(
       <PageHeaderWrapper >
         <Card
           bordered={false}
-          title={'报告预览'}
+          title={titleWrapper}
+          extra={'报告编号 180630304040333'}
+          headStyle={{fontSize:14}}
         >
         </Card>
         <Row>
-          <Col span={5}>资产编号 180630304040333</Col>
-          <Col span={4}>姓名 王*</Col>
-          <Col span={5}>身份证号 123456789</Col>
-          <Col span={5}>报告编号 123456789</Col>
-          <Col span={5}>审批结果 自动审核通过</Col>
+          <Tab
+            selectKey={this.state.selectKey}
+            tabList={data}
+            handleTab={this.handleTab}
+          />
         </Row>
         <Row>
-          <Col span={2}>
-            <Affix style={{ position: 'fixed', top: '50%'}}>
-              <Anchor>
-                {
-                  data.map((item,index)=>{
-                    return (
-                      <Link href={`#list${index}`} key={index} title={item.title} />
-                    )
-                  })
-                }
-              </Anchor>
-            </Affix>
-          </Col>
-          <Col span={1}></Col>
           <Col span={18}>
-            {
-              data.map((item,index)=>{
-                return (
-                  <div id={`list${index}`} style={{marginBottom:10}} key={index}>
-                    <ReportComponent
-                      title={item.title}
-                      time={item.createTime}
-                      dataSource={item.list}
-                    />
-                  </div>
-                )
-              })
-            }
+            <ReportComponent
+              list={data}
+            />
             <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
           </Col>
         </Row>
