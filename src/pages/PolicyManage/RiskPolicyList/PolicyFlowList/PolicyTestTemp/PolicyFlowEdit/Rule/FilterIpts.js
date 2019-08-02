@@ -16,6 +16,9 @@ const FormItem = Form.Item
 @Form.create()
 
 export default class FilterIpts extends Component {
+  state={
+    visible:false,
+  }
   //查询
   formSubmit = async (e) => {
     this.props.changeDefault(1)
@@ -39,15 +42,25 @@ export default class FilterIpts extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
-  changeHandler=(e)=>{
-    console.log(e)
-  }
   componentDidMount () {
     this.props.getSubKey(this,'child')
   }
+  //计数结果显隐控制
+  changeHandle=(e)=>{
+    if(e==='count'){
+      this.setState({
+        visible:true,
+      })
+    }else{
+      this.setState({
+        visible:false,
+      })
+    }
+  }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { resultVarId } = this.props
+    const { resultVarId,countResult } = this.props
+    const { visible } = this.state
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -62,7 +75,7 @@ export default class FilterIpts extends Component {
               {getFieldDecorator('ruleCondition',{
                 initialValue:''
               })(
-                <Select allowClear={true}>
+                <Select allowClear={true} onChange={this.changeHandle}>
                   <Option value={'or'}>命中任一规则</Option>
                   <Option value={'and'}>命中全部规则</Option>
                   <Option value={'count'}>计数命中规则</Option>
@@ -76,12 +89,27 @@ export default class FilterIpts extends Component {
                 initialValue:resultVarId['variableName']?resultVarId['variableName']:''
               })(
                 <Input
-                  onClick={()=>this.props.outResult()}
+                  onClick={()=>this.props.outResult(0)}
                   readOnly
                 />
               )}
             </FormItem>
           </Col>
+          {
+            visible?
+              <Col xxl={4} md={6}>
+                <FormItem label="计数结果" {...formItemConfig}>
+                  {getFieldDecorator('tally',{
+                    initialValue:countResult['variableName']?countResult['variableName']:''
+                  })(
+                    <Input
+                      onClick={()=>this.props.outResult(1)}
+                      readOnly
+                    />
+                  )}
+                </FormItem>
+              </Col>:null
+          }
         </Row>
       </Form>
     )

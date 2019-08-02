@@ -115,7 +115,9 @@ export default class AssetTypeDeploy extends PureComponent {
       id:'',
       status:1,//状态判断 1:表格 0：输出结果
       visible:false,
+      isCount:0,//计数结果类型判断
       resultVarId:{},//输出结果
+      countResult:{},//计数结果
     };
   }
   componentDidMount() {
@@ -164,11 +166,12 @@ export default class AssetTypeDeploy extends PureComponent {
     })
   }
   //输出结果
-  outResult=()=>{
+  outResult=(type)=>{
     this.setState({
       visible:true,
       status:0,
       type:0,
+      isCount:type
     })
   }
   //  刷新页面
@@ -232,9 +235,16 @@ export default class AssetTypeDeploy extends PureComponent {
         }else{
           //输出结果值选择
           const {checkedList,radioValue} = this.addForm.submitHandler();
-          this.setState({
-            resultVarId:radioValue,
-          })
+          const {isCount} = this.state;
+          if(isCount){
+            this.setState({
+              countResult:radioValue,
+            })
+          }else{
+            this.setState({
+              resultVarId:radioValue,
+            })
+          }
         }
       })
   }
@@ -258,6 +268,7 @@ export default class AssetTypeDeploy extends PureComponent {
             changeDefault={this.changeDefault}
             outResult={this.outResult}
             resultVarId={this.state.resultVarId}
+            countResult={this.state.countResult}
           />
           <RuleTable
             bordered

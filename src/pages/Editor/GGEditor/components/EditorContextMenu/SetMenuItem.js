@@ -11,16 +11,18 @@ const change = (props) => {
   const id = getSelected()[0].id
   const selectedItem = getSelected()[0].getModel()
   console.log(selectedItem)
-  if (id && selectedItem.type === 'rule') {
-    router.push(`/riskManage/riskpolicylist/flow/setRule?id=${id}`)
+  if (id && selectedItem.type === 'simple') {
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}`)
   }else if(id && selectedItem.type === 'complex'){
-    router.push(`/riskManage/riskpolicylist/flow/complex?id=${id}`)
-  }else if(id && selectedItem.type === 'scoModel'){
-    router.push(`/riskManage/riskpolicylist/flow/scoreModel?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}`)
+  }else if(id && selectedItem.type === 'scoreModel'){
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
   }else if(id && selectedItem.type === 'setVar'){
-    router.push(`/editor/flow/setRule?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar`)
   }else if(id && selectedItem.type === 'desModel'){
-    router.push(`/editor/flow/setRule?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}`)
+  }else if(id && selectedItem.type === 'query'){
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}`)
   }
   const data = save();
   props.dispatch({

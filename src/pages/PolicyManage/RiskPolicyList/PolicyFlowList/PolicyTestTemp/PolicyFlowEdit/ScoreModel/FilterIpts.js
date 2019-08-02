@@ -55,20 +55,7 @@ export default class FilterIpts extends Component {
       >
         <Row  gutter={24} >
           <Col xxl={4} md={6}>
-            <FormItem label="规则条件" {...formItemConfig}>
-              {getFieldDecorator('ruleCondition',{
-                initialValue:''
-              })(
-                <Select allowClear={true}>
-                  <Option value={'or'}>命中任一规则</Option>
-                  <Option value={'and'}>命中全部规则</Option>
-                  <Option value={'count'}>计数命中规则</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="输出结果" {...formItemConfig}>
+            <FormItem label="评分结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
                 initialValue:resultVarId['variableName']?resultVarId['variableName']:''
               })(
