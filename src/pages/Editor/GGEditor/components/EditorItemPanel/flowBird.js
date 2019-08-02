@@ -22,6 +22,7 @@ class FlowBird extends React.Component {
         console.log(this.getPath(item),'getPath')
         console.log(item.getEdges(),'getEdges')
         const size = model.size.split('*')
+        console.log(size,'size')
         const width = size[0];
         const height = size[1];
         group.addShape('image', {

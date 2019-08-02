@@ -229,7 +229,7 @@ export default  class Index extends  PureComponent{
           />
         </Row>
         <Row>
-          <Col span={18}>
+          <Col>
             <ReportComponent
               list={data}
             />

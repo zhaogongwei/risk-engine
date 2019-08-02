@@ -2,15 +2,17 @@ import React, { Component } from 'react'
 import {
   Row,
   Col,
-  Divider
+  Divider,
+  Tooltip
 } from 'antd';
+import './report.less'
 export default class ReportComponent extends Component{
 
   render(){
     for(let item of this.props.list){
       for(let j of item['list']){
-        var num = 5-item['list'].length%5;
-        if(item['list'].length%5 !==0){
+        var num = 6-item['list'].length%6;
+        if(item['list'].length%6 !==0){
           for(var a=0;a<num;a++){
             item['list'].push({name:'',value:''})
           }
@@ -23,36 +25,39 @@ export default class ReportComponent extends Component{
         this.props.dataSource.push({name:'',value:''})
       }
     }*/
-    const style={
-      borderTop:'1px dashed #E4E4E4',
-      paddingTop:10,
-      paddingBottom:10
+    const titleStyle_1={
+      background:'#EDF3FB',
     }
-    const othStyle={
-      paddingTop:10,
-      paddingBottom:10
+    const titleStyle_2={
+      background:'#F6F6F6'
     }
     const {list}=this.props;
     return (
-      <div>
+      <div style={{paddingLeft:10,paddingRight:10}}>
         {
           list&&list.map((item,index)=>{
             return(
-              <div>
-                <div className={'titleWrapper'}>
-                  <span>{item['title']}</span>
-                  <span>{item['time']?`生成日期${item['time']}`:null}</span>
+              <div id={`list${index}`} key={index} style={{paddingTop:20}}>
+                <div className={'titleWrapper'} style={{marginTop:25,marginBottom:30,}}>
+                  <span style={{fontSize:24,color:"#333"}}>{item['title']}</span>
+                  <span style={{fontSize:14,color:"#333",marginLeft:20}}>{item['createTime']?`生成日期${item['createTime']}`:null}</span>
                 </div>
                 <div className={'rptCont'}>
                   <Row type="flex">
-                    {
-                      item['list']&&item['list'].map((con,num)=>{
-                        return <Col>
-                                  <p>{con['name']?con['name']:'-----'}</p>
-                                  <p>{con['value']?con['value']:'-----'}</p>
-                               </Col>
-                      })
-                    }
+                    <Col span={20}>
+                      {
+                        item['list']&&item['list'].map((con,num)=>{
+                          return <Col span={4} key={num}>
+                            <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['name']?con['name']:'-----'}</p>
+                            <div className={'conStyle'}>
+                              <Tooltip title={con['value']}>
+                                <span>{con['value']?con['value']:'-----'}</span>
+                              </Tooltip>
+                            </div>
+                          </Col>
+                        })
+                      }
+                    </Col>
                   </Row>
                 </div>
               </div>
