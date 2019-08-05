@@ -16,8 +16,8 @@ import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import AddForm from './AddForm';
+import EditForm from './editForm';
 import ScoreModelTable from '@/components/ScoreModelTable'
-import SetRowCol from '@/components/SetRowCol'
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 
 @connect(({ editorFlow,scoreModel, loading }) => ({
@@ -195,12 +195,13 @@ export default class ScoreModel extends PureComponent {
       tableState:false,//右侧表格显示状态
       varType:0,//变量类型 0：字符 1:数字
       varKey:0,//变量key值
-      visible:false,
+      visible:false,//选择变量弹框显隐状态
+      editShow:false,//编辑弹框显隐状态
       resultVarId:{},//输出结果
     };
   }
   componentDidMount() {
-    this.change()
+    //this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -289,106 +290,37 @@ export default class ScoreModel extends PureComponent {
       }
     })
   }
-  //右侧表格添加数据
-  handleAddRight = () => {
-    if(!this.state.varType){
-      //变量为字符类型
-      const {option,kind,isenum} = this.props.scoreModel.scoreList[this.state.varKey-1]
-      console.log(option)
-      const {count, dataSource} = this.props.scoreModel.two;
-      const newData = {
-        term:'',
-        val:'',
-        score:'',
-        enum:option,
-        kind:kind,
-        isenum:isenum
-      };
-      this.props.dispatch({
-        type: 'scoreModel/addTwoData',
-        payload: {
-          dataSource: addListKey([...dataSource, newData]),
-        }
-      })
-
-    }else{
-      //变量为数字类型
-      const { count, dataSource } = this.props.scoreModel.one;
-      //   要添加表格的对象
-      const newData = {
-        lowerCondition:'',
-        lowerValue:'',
-        highCondition:'',
-        highValue:'',
-        score:'',
-      };
-      //   调用models中的方法改变dataSource渲染页面
-      this.props.dispatch({
-        type: 'scoreModel/addDataSource',
-        payload: {
-          dataSource: addListKey([...dataSource, newData]),
-        }
-      })
-      console.log(this.props)
-    }
-  }
-  //   删除右侧表格数据
-  handleDeleteRight = (key) => {
-    if(!this.state.varType){
-      //变量为字符类型
-      const {dataSource,count} = this.props.scoreModel.two
-      const newDataSource = dataSource.filter(item => item.key !== key)
-      this.props.dispatch({
-        type:'scoreModel/delStrData',
-        payload:{
-          dataSource:addListKey(newDataSource),
-        }
-      })
-    }else{
-      //变量为数字类型
-      const {dataSource,count} = this.props.scoreModel.one;
-      //   调用models的方法去删除dataSource中的数据
-      const newDataSource = dataSource.filter(item => item.key !== key)
-      console.log('newDataSource',newDataSource)
-      this.props.dispatch({
-        type: 'scoreModel/delNumData',
-        payload: {
-          dataSource: addListKey(newDataSource),
-        }
-      })
-    }
-
-  }
   //表格编辑
   handledit=(record)=>{
     console.log(record)
     this.setState({
-      tableState:true,
+      editShow:true,
       varKey:record.key,
       varType:record.kind == 'num'?1:0
     },()=>{
       //点击不同的变量的编辑时，先清除数据右边表格数据
       const {key} = record
       const {scoreList} = this.props.scoreModel
-      const {detailist} =scoreList[key-1]
+      const {variableInfoList} =scoreList[key-1]
       //点击编辑时，先判断该变量是否有变量明细值
-      if(detailist&&detailist.length>0){
+      if(variableInfoList&&variableInfoList.length>0){
         if(this.state.varType){
           this.props.dispatch({
             type: 'scoreModel/delNumData',
             payload: {
-              dataSource: addListKey(detailist),
+              dataSource: addListKey(variableInfoList),
             }
           })
         }else{
           this.props.dispatch({
             type:'scoreModel/delStrData',
             payload:{
-              dataSource:addListKey(detailist),
+              dataSource:addListKey(variableInfoList),
             }
           })
         }
       }else{
+        //清空数据
         this.props.dispatch({
           type: 'scoreModel/delNumData',
           payload: {
@@ -403,21 +335,6 @@ export default class ScoreModel extends PureComponent {
         })
       }
     })
-  }
-  //右侧表格数据保存
-  handleSave = ()=>{
-    const {scoreList,one,two} = this.props.scoreModel
-    const {varKey} = this.state
-    //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
-    //变量为数字类型
-    if(this.state.varType){
-      Object.assign(scoreList[varKey-1],{variableInfoList:one.dataSource})
-    }else{
-      //变量为字符类型
-      Object.assign(scoreList[varKey-1],{variableInfoList:two.dataSource})
-    }
-    message.success('保存成功')
-    console.log(this.props.scoreModel)
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -456,6 +373,14 @@ export default class ScoreModel extends PureComponent {
           resultVarId:radioValue,
         })
       }
+    })
+  }
+  //编辑弹框保存事件
+  editFormSubmit=()=>{
+    this.setState({
+      editShow:false,
+    },()=>{
+      this.editForm.handleSave()
     })
   }
   save=()=>{
@@ -504,7 +429,7 @@ export default class ScoreModel extends PureComponent {
                 handleModify={this.clickDialog}
               />
             </Col>
-            <Col span={12}>
+           {/* <Col span={12}>
               {
                 this.state.tableState?
                   <div>
@@ -523,7 +448,7 @@ export default class ScoreModel extends PureComponent {
                   :''
               }
 
-            </Col>
+            </Col>*/}
           </Row>
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
@@ -543,6 +468,20 @@ export default class ScoreModel extends PureComponent {
             <AddForm
               type={this.state.type}
               number={this.state.number}
+              getSubKey={this.getSubKey}
+            />
+          </Modal>
+          <Modal
+            title={'评分明细'}
+            visible={this.state.editShow}
+            onOk={this.editFormSubmit}
+            onCancel={()=>this.setState({editShow:false})}
+            okText="保存"
+            width={700}
+          >
+            <EditForm
+              varType={this.state.varType}
+              varKey={this.state.varKey}
               getSubKey={this.getSubKey}
             />
           </Modal>
