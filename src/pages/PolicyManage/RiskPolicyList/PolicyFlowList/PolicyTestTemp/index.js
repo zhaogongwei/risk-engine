@@ -16,9 +16,9 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ testTemp, loading }) => ({
-  testTemp,
-  loading: loading.effects['testTemp/riskSubmit']
+@connect(({ policyTestTemp, loading }) => ({
+  policyTestTemp,
+  loading: loading.effects['policyTestTemp/fetchTestTempList']
 }))
 export default class PolicyTestTemp extends PureComponent {
   constructor(props) {
@@ -78,7 +78,7 @@ export default class PolicyTestTemp extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    //this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -97,7 +97,7 @@ export default class PolicyTestTemp extends PureComponent {
       formData = {}
     }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
+      type: 'policyTestTemp/fetchTestTempList',
       data: {
         ...formData,
         currPage,
@@ -105,15 +105,6 @@ export default class PolicyTestTemp extends PureComponent {
       }
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{

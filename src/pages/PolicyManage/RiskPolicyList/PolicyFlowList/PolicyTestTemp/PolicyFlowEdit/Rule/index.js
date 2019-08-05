@@ -28,7 +28,7 @@ const FormItem = Form.Item
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
 @Form.create()
-export default class AssetTypeDeploy extends PureComponent {
+export default class SimpleRule extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -89,7 +89,7 @@ export default class AssetTypeDeploy extends PureComponent {
         type:'more'
       },
       {
-        title: '规则编码',
+        title: '命中标记',
         key:'ruleCode',
         dataIndex:'ruleCode',
         editable:true,

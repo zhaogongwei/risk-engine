@@ -145,9 +145,8 @@ const plainOptions = [
   },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
-@connect(({scoreModel,rule})=>({
-  scoreModel,
-  rule,
+@connect(({setVar})=>({
+  setVar,
 }))
 
 @Form.create()

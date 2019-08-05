@@ -6,9 +6,6 @@ export default {
   state: {
     tempList: [],//测试模板列表
     tempObj:[],//测试模板集合
-    selectId:'',
-    selectItem:{},
-    status:false,
   },
 
   effects: {

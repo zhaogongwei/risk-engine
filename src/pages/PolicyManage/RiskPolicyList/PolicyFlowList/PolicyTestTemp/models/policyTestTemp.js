@@ -1,14 +1,11 @@
 import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp';
 import { addListKey } from '@/utils/utils'
 export default {
-  namespace: 'testTemp',
+  namespace: 'policyTestTemp',
 
   state: {
     tempList: [],//测试模板列表
     tempObj:[],//测试模板集合
-    selectId:'',
-    selectItem:{},
-    status:false,
   },
 
   effects: {

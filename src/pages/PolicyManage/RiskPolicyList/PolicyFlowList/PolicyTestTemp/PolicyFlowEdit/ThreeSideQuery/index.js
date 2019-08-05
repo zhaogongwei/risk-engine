@@ -15,37 +15,15 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({threeSide})=>({
+  threeSide
+}))
 
 @Form.create()
 
 export default class ThreeSideQuery extends Component {
-  //查询
-  formSubmit = async (e) => {
-    this.props.changeDefault(1)
-    const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
-    })
-
-  }
-  //   获取表单信息
-  getFormValue = () => {
-    let formData = this.props.form.getFieldsValue();
-    if (formData.metaTime&&formData.metaTime.length) {
-      formData.createTimeStart = moment(formData.metaTime[0]).format('YYYY-MM-DD')
-      formData.createTimeEnd = moment(formData.metaTime[1]).format('YYYY-MM-DD')
-    }
-    return formData;
-  }
-  //重置
-  reset = () => {
-    this.props.form.resetFields()
+  state={
+    checkedList:[],
   }
   componentDidMount () {
   }

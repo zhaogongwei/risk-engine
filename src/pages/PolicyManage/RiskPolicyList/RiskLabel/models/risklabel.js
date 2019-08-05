@@ -11,39 +11,11 @@ export default {
       list:[]
     },//新增、编辑标签
     editorData: {},
-    selectId:'',
-    selectItem:{},
-    status:false,
     tableList:[],
     pageList:[]
   },
 
   effects: {
-    *fetchNotices({payload,callback}, { call, put }) {
-      yield put({
-        type: 'saveEditorData',
-        payload,
-      });
-      callback()
-    },
-    *saveId({payload},{call,put}){
-      yield put({
-        type: 'saveEditId',
-        payload,
-      });
-    },
-    *saveItem({payload},{call,put}){
-      yield put({
-        type: 'saveEditItem',
-        payload,
-      });
-    },
-    *change({payload},{call,put}){
-      yield put({
-        type:'changeStatus',
-        payload
-      })
-    },
     //获取风控标签列表
     *fetchRiskLabelList({payload}, { call, put }) {
       let response = yield call(api.queryRiskLabelList,payload)

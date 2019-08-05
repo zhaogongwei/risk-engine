@@ -1,3 +1,4 @@
+import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyFlowEdit';
 import { addListKey } from '@/utils/utils'
 import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
@@ -6,15 +7,14 @@ export default {
   namespace: 'scoreModel',
 
   state: {
-    riskList:[],
     scoreList:[],
     scoreDetail:[],
-    one:{
+    numList:{
       count:1,
       dataSource:[
       ]
     },
-    two:{
+    strList:{
       count:1,
       dataSource:[
       ]
@@ -29,29 +29,19 @@ export default {
   },
 
   effects: {
-    *riskSubmit(payload, { call, put }) {
-      let response = yield call(queryRiskList,payload.data)
+    //评分模型节点信息查询
+    *queryScoreInfo(payload, { call, put }) {
+      let response = yield call(api.queryScoreInfo,payload)
       if(response && response.status === '000000'){
-        response.resultList = addListKey(response.resultList,payload.data.currPage,payload.data.pageSize)
-        yield put({
+        /*yield put({
           type:'riskListHandle',
           payload:response
-        })
+        })*/
       }
     },
-    //配置
-    *riskDeploy({payload,callback},{call,put}){
-      let response = yield call(deployRisk,payload)
-      if(response&&response.status == '000000'){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
-    },
-    //新增
-    *riskAdd({payload,callback},{call,put}){
-      let response = yield call(addRisk,payload)
+    //简单规则节点信息保存
+    *saveScoreInfo({payload,callback},{call,put}){
+      let response = yield call(api.saveScoreInfo,payload)
       if(response&&response.status == '000000'){
         message.success(response.statusDesc)
         callback()
@@ -62,13 +52,6 @@ export default {
   },
 
   reducers: {
-    riskListHandle(state, { payload }) {
-      return {
-        ...state,
-        riskList:payload.resultList,
-        page:payload.page
-      }
-    },
     scoreListHandle(state,{payload}){
       console.log('payload',payload)
       return {
@@ -76,19 +59,19 @@ export default {
         scoreList:payload.scoreList,
       }
     },
-    addDataSource(state, {payload}) {
+    addNumData(state, {payload}) {
       return {
         ...state,
-        one:{
+        numList:{
           dataSource: payload.dataSource,
           count: payload.count,
         }
       };
     },
-    addTwoData(state,{payload}){
+    addStrData(state,{payload}){
         return {
           ...state,
-          two:{
+          strList:{
             dataSource: payload.dataSource,
             count: payload.count,
           }
@@ -97,7 +80,7 @@ export default {
     delNumData(state, {payload}) {
       return {
         ...state,
-        one:{
+        numList:{
           dataSource: payload.dataSource,
           count:payload.count
         }
@@ -106,7 +89,7 @@ export default {
     delStrData(state, {payload}) {
       return {
         ...state,
-        two:{
+        strList:{
           dataSource: payload.dataSource,
           count:payload.count
         }

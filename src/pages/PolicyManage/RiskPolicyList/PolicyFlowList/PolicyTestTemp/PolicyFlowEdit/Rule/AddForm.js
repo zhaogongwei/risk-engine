@@ -145,14 +145,13 @@ const plainOptions = [
   },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
-@connect(({scoreModel,rule})=>({
-  scoreModel,
+@connect(({rule})=>({
   rule,
 }))
 
 @Form.create()
 
-export default class DeployDialog extends Component {
+export default class AddForm extends Component {
   constructor(props){
     super(props)
     this.state = {

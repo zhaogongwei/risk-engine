@@ -4,10 +4,10 @@ import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
 
 export default {
-  namespace: 'rule',
+  namespace: 'setVar',
 
   state: {
-    ruleList:[],
+    varList:[],
     page:{
       currentPage:1,
       more:true,
@@ -18,9 +18,9 @@ export default {
   },
 
   effects: {
-    //简单规则节点信息查询
-    *queryRuleInfo(payload, { call, put }) {
-      let response = yield call(api.queryRuleInfo,payload)
+    //设置变量节点信息查询
+    *queryVarInfo(payload, { call, put }) {
+      let response = yield call(api.queryVarInfo,payload)
       if(response && response.status === '000000'){
         /*yield put({
           type:'riskListHandle',
@@ -28,9 +28,9 @@ export default {
         })*/
       }
     },
-    //简单规则节点信息保存
-    *saveRuleInfo({payload,callback},{call,put}){
-      let response = yield call(api.saveRuleInfo,payload)
+    //设置变量节点信息保存
+    *saveVarInfo({payload,callback},{call,put}){
+      let response = yield call(api.saveVarInfo,payload)
       if(response&&response.status == '000000'){
         message.success(response.statusDesc)
         callback()
@@ -41,11 +41,11 @@ export default {
   },
 
   reducers: {
-    ruleListHandle(state,{payload}){
+    varListHandle(state,{payload}){
       console.log('payload',payload)
       return {
         ...state,
-        ruleList:payload.ruleList,
+        varList:payload.varList,
       }
     },
   },

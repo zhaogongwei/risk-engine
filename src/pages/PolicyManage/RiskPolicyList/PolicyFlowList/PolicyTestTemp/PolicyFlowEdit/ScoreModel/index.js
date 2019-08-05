@@ -23,7 +23,6 @@ import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 @connect(({ editorFlow,scoreModel, loading }) => ({
   editorFlow,
   scoreModel,
-  loading: loading.effects['assetDeploy/riskSubmit']
 }))
 export default class ScoreModel extends PureComponent {
   constructor(props) {
@@ -429,33 +428,17 @@ export default class ScoreModel extends PureComponent {
                 handleModify={this.clickDialog}
               />
             </Col>
-           {/* <Col span={12}>
-              {
-                this.state.tableState?
-                  <div>
-                    <Row>
-                      <SetRowCol
-                        title={'评分明细'}
-                        list={this.state.varType?this.props.scoreModel.one:this.props.scoreModel.two}
-                        columns={this.state.varType?this.state.columnNum:this.state.columnStr}
-                        handleAdd={this.handleAddRight}
-                      />
-                    </Row>
-                    <Row type="flex" justify="center">
-                      <Button type="primary" style={{marginTop:20}} onClick={this.handleSave}>保存</Button>
-                    </Row>
-                  </div>
-                  :''
-              }
-
-            </Col>*/}
           </Row>
-          <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
-            <Col>
-              <Button type="primary" onClick={this.save}>保存并提交</Button>
-            </Col>
-            <Col>
-              <Button>返回</Button>
+          <Row style={{marginTop:20}}>
+            <Col span={12}>
+              <Row type="flex" gutter={24} justify="center" >
+                <Col>
+                  <Button type="primary" onClick={this.save}>保存并提交</Button>
+                </Col>
+                <Col>
+                  <Button>返回</Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Modal

@@ -4,23 +4,16 @@ import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
 
 export default {
-  namespace: 'rule',
+  namespace: 'threeSide',
 
   state: {
-    ruleList:[],
-    page:{
-      currentPage:1,
-      more:true,
-      pageSize:10,
-      totalNum:10,
-      totalPage:1
-    },
+    dataList:[],
   },
 
   effects: {
-    //简单规则节点信息查询
-    *queryRuleInfo(payload, { call, put }) {
-      let response = yield call(api.queryRuleInfo,payload)
+    //三方数据查询节点信息查询
+    *queryThreeSideInfo(payload, { call, put }) {
+      let response = yield call(api.queryThreeSideInfo,payload)
       if(response && response.status === '000000'){
         /*yield put({
           type:'riskListHandle',
@@ -28,9 +21,9 @@ export default {
         })*/
       }
     },
-    //简单规则节点信息保存
-    *saveRuleInfo({payload,callback},{call,put}){
-      let response = yield call(api.saveRuleInfo,payload)
+    //三方数据查询节点信息保存
+    *saveThreeSideInfo({payload,callback},{call,put}){
+      let response = yield call(api.saveThreeSideInfo,payload)
       if(response&&response.status == '000000'){
         message.success(response.statusDesc)
         callback()
@@ -41,11 +34,11 @@ export default {
   },
 
   reducers: {
-    ruleListHandle(state,{payload}){
+    dataListHandle(state,{payload}){
       console.log('payload',payload)
       return {
         ...state,
-        ruleList:payload.ruleList,
+        dataList:payload.dataList,
       }
     },
   },

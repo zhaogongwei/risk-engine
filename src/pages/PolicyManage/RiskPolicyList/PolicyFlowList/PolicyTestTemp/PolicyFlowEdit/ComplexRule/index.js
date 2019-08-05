@@ -25,10 +25,9 @@ const FormItem = Form.Item
 @connect(({ editorFlow, loading,complex}) => ({
   editorFlow,
   complex,
-  loading: loading.effects['assetDeploy/riskSubmit']
 }))
 @Form.create()
-export default class AssetTypeDeploy extends PureComponent {
+export default class ComplexRule extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -98,7 +97,7 @@ export default class AssetTypeDeploy extends PureComponent {
           key:'variableCodeTwo',
         },
       {
-        title: '规则编码',
+        title: '命中标记',
         key:'ruleCode',
         dataIndex:'ruleCode',
         editable:true,

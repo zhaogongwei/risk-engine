@@ -18,9 +18,9 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ policyList, loading }) => ({
+  policyList,
+  loading: loading.effects['policyList/fetchPolicyList']
 }))
 export default class RiskPolicyList extends PureComponent {
   constructor(props) {
@@ -123,7 +123,7 @@ export default class RiskPolicyList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    //this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {

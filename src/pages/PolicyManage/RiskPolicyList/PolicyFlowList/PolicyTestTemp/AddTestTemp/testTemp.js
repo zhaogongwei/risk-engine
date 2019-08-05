@@ -310,7 +310,9 @@ const result = [
     content:'结束'
   },
 ]
-//@connect()
+@connect(({testTemp})=>({
+  testTemp
+}))
 
 @Form.create()
 export default class testTemp extends Component {
@@ -319,12 +321,7 @@ export default class testTemp extends Component {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
+      type: 'assetDtestTempeploy/fetchTestTempList',
     })
 
   }

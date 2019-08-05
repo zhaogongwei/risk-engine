@@ -189,7 +189,7 @@ export default class EditForm extends Component {
       //变量为字符类型
       const {option,kind,isenum} = this.props.scoreModel.scoreList[this.props.varKey-1]
       console.log(option)
-      const {count, dataSource} = this.props.scoreModel.two;
+      const {count, dataSource} = this.props.scoreModel.strList;
       const newData = {
         term:'',
         val:'',
@@ -199,7 +199,7 @@ export default class EditForm extends Component {
         isenum:isenum
       };
       this.props.dispatch({
-        type: 'scoreModel/addTwoData',
+        type: 'scoreModel/addStrData',
         payload: {
           dataSource: addListKey([...dataSource, newData]),
         }
@@ -207,7 +207,7 @@ export default class EditForm extends Component {
 
     }else{
       //变量为数字类型
-      const { count, dataSource } = this.props.scoreModel.one;
+      const { count, dataSource } = this.props.scoreModel.numList;
       //   要添加表格的对象
       const newData = {
         lowerCondition:'',
@@ -218,7 +218,7 @@ export default class EditForm extends Component {
       };
       //   调用models中的方法改变dataSource渲染页面
       this.props.dispatch({
-        type: 'scoreModel/addDataSource',
+        type: 'scoreModel/addNumData',
         payload: {
           dataSource: addListKey([...dataSource, newData]),
         }
@@ -230,7 +230,7 @@ export default class EditForm extends Component {
   handleDeleteRight = (key) => {
     if(!this.props.varType){
       //变量为字符类型
-      const {dataSource,count} = this.props.scoreModel.two
+      const {dataSource,count} = this.props.scoreModel.strList
       const newDataSource = dataSource.filter(item => item.key !== key)
       this.props.dispatch({
         type:'scoreModel/delStrData',
@@ -240,7 +240,7 @@ export default class EditForm extends Component {
       })
     }else{
       //变量为数字类型
-      const {dataSource,count} = this.props.scoreModel.one;
+      const {dataSource,count} = this.props.scoreModel.numList;
       //   调用models的方法去删除dataSource中的数据
       const newDataSource = dataSource.filter(item => item.key !== key)
       console.log('newDataSource',newDataSource)
@@ -254,15 +254,15 @@ export default class EditForm extends Component {
   }
   //右侧表格数据保存(必须点击保存否则数据不予保存)
   handleSave = ()=>{
-    const {scoreList,one,two} = this.props.scoreModel
+    const {scoreList,numList,strList} = this.props.scoreModel
     const {varKey} = this.props
     //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
     //变量为数字类型
     if(this.props.varType){
-      Object.assign(scoreList[varKey-1],{variableInfoList:one.dataSource})
+      Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
     }else{
       //变量为字符类型
-      Object.assign(scoreList[varKey-1],{variableInfoList:two.dataSource})
+      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
     }
     message.success('保存成功')
     console.log(this.props.scoreModel)
@@ -272,7 +272,7 @@ export default class EditForm extends Component {
       <Row>
         <Col>
           <SetRowCol
-            list={this.props.varType?this.props.scoreModel.one:this.props.scoreModel.two}
+            list={this.props.varType?this.props.scoreModel.numList:this.props.scoreModel.strList}
             columns={this.props.varType?this.state.columnNum:this.state.columnStr}
             handleAdd={this.handleAddRight}
           />
