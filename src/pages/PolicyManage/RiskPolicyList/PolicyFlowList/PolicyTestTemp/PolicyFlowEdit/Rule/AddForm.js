@@ -163,11 +163,24 @@ export default class AddForm extends Component {
       singleChecked:false,
       radioValue:'',
       type:1,// 0:单选框  1：多选框
+      pageSize:10,
+      currPage:1,
+      loading:false,
     }
   }
-  //显示弹窗
-  showModal = ()=>{
-
+  //变量列表查询
+  formSubmit=()=>{
+    this.change(1)
+  }
+  change = async (page)=>{
+    const res = await  this.props.dispatch({
+      type: 'rule/queryVarList',
+      payload: {
+        ...this.getFormValue(),
+        currPage:page,
+        pageSize:this.state.pageSize,
+      }
+    })
   }
   //展示页码
   showTotal = (total, range) => {
@@ -176,23 +189,25 @@ export default class AddForm extends Component {
   //  分页器改变页数的时候执行的方法
   onPageChange = (current) => {
     this.setState({
-      current:current,
-      currentPage:current
+      currPage:current
+    },()=>{
+      this.change(current)
     })
-    this.change(current)
   }
   onChange = (checkedList) => {
     console.log('选中',checkedList)
+    const {varList} = this.props.rule
     this.setState({
       checkedList:checkedList,
-      indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
-      checkAll: checkedList.length === plainOptions.length,
+      indeterminate: !!checkedList.length && (checkedList.length < varList.length),
+      checkAll: checkedList.length === varList.length,
     });
   }
 
   onCheckAllChange = (e) => {
+    const {varList} = this.props.rule
     this.setState({
-      checkedList: e.target.checked ? plainOptions : [],
+      checkedList: e.target.checked ? varList : [],
       indeterminate: false,
       checkAll: e.target.checked,
     });
@@ -230,8 +245,6 @@ export default class AddForm extends Component {
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
-    formQueryData.assetsTypeName=formQueryData.assetsTypeName.trim()
-    formQueryData.assetsTypeCode=formQueryData.assetsTypeCode.trim()
     return formQueryData;
   }
   //重置
@@ -246,9 +259,27 @@ export default class AddForm extends Component {
       visible:newProps.showState
     })
   }
+  //一级分类选择监听事件
+  oneClassHandle=(value)=>{
+    console.log(value)
+    this.props.form.setFields({
+      secondTypeId: {
+        value:''
+      },
+    });
+    //二级分类列表查询
+    this.props.dispatch({
+      type: 'rule/queryTwoClassList',
+      payload: {
+        firstTypeId:value,
+        secondTypeId:'',
+      }
+    })
+  }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
+    const { varList,page,oneClassList,twoClassList } = this.props.rule
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -260,47 +291,52 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin} gutter={0} type="flex" align="middle">
             <Col xxl={6} md={10}>
               <FormItem label="变量分类"  wrapperCol={{span:8}}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:!this.props.type? this.props.assetsTypeName:'',
-                  rules: [{ required: true, whitespace:true,message: '请输入资产类型名称!'}],
+                {getFieldDecorator('firstTypeId',{
+                  initialValue:'',
                 })(
-                  <Select allowClear={true}>
-                    <Option value={1}>王一</Option>
-                    <Option value={2}>王二</Option>
-                    <Option value={3}>王三</Option>
-                    <Option value={4}>王四</Option>
-                  </Select>
+                    <Select allowClear={true} onChange={this.oneClassHandle}>
+                      {
+                        oneClassList&&oneClassList.map((item,index)=>{
+                          return (
+                            <Option value={item.id} key={index}>{item.typeName}</Option>
+                          )
+                        })
+                      }
+                    </Select>
                 )}
               </FormItem>
             </Col>
             <Col xxl={4} md={8}>
               <FormItem wrapperCol={{span:16}}>
-                {getFieldDecorator('assetsTypeCode',{
-                  initialValue:!this.props.type?this.props.code:'',
+                {getFieldDecorator('secondTypeId',{
+                  initialValue:'',
                 })(
                   <Select allowClear={true}>
-                    <Option value={1}>王一</Option>
-                    <Option value={2}>王二</Option>
-                    <Option value={3}>王三</Option>
-                    <Option value={4}>王四</Option>
+                    {
+                      twoClassList&&twoClassList.map((item,index)=>{
+                        return (
+                          <Option value={item.id} key={index}>{item.typeName}</Option>
+                        )
+                      })
+                    }
                   </Select>
                 )}
               </FormItem>
             </Col>
             <Col xxl={6} md={10}>
-              <FormItem label="状态" {...formItemConfig}>
-                {getFieldDecorator('status',{
-                  initialValue:!this.props.type?this.props.status:1
+              <FormItem label="变量名称" {...formItemConfig}>
+                {getFieldDecorator('variableName',{
+                  initialValue:''
                 })(
-                  <Input/>
+                  <Input placeholder="请输入变量名称!"/>
                 )}
               </FormItem>
             </Col>
             <Col offset={2}>
-              <Button type="primary">查询</Button>
+              <Button type="primary" onClick={this.formSubmit}>查询</Button>
             </Col>
             <Col>
-              <Button type="primary">清空查询</Button>
+              <Button type="primary" onClick={this.reset}>清空查询</Button>
             </Col>
           </Row>
           <Divider />
@@ -309,12 +345,12 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    plainOptions.map((item, index) => {
+                    varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox value={item}>{item.variableName}</Checkbox>
                         </Col>
-                        <Col span={8}>{item.variableType}</Col>
+                        <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.variableName}</Col>
                       </Row>
                     })
@@ -322,12 +358,12 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    plainOptions.map((item, index) => {
+                    varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Radio  value={item}>{item.variableName}</Radio >
                         </Col>
-                        <Col span={8}>{item.variableType}</Col>
+                        <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.variableName}</Col>
                       </Row>
                     })
@@ -354,8 +390,8 @@ export default class AddForm extends Component {
                 style={{ marginBottom: "50px" }}
                 showQuickJumper
                 defaultCurrent={1}
-                current={this.state.current}
-                total={12}
+                current={this.state.currPage}
+                total={page.totalNum}
                 onChange={this.onPageChange}
                 showTotal={(total, range) => this.showTotal(total, range)}
               />

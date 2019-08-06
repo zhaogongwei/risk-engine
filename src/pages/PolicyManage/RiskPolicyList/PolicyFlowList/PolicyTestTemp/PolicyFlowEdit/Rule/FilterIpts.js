@@ -21,7 +21,10 @@ export default class FilterIpts extends Component {
   }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
+    const {resultVarId,countResult} = this.props;
+    let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.resultVarId=resultVarId['id'];
+    formQueryData.countVarId=countResult['id'];
     return formQueryData;
   }
   //重置
@@ -85,7 +88,7 @@ export default class FilterIpts extends Component {
             visible?
               <Col xxl={4} md={6}>
                 <FormItem label="计数结果" {...formItemConfig}>
-                  {getFieldDecorator('tally',{
+                  {getFieldDecorator('countVarId',{
                     initialValue:countResult['variableName']?countResult['variableName']:''
                   })(
                     <Input

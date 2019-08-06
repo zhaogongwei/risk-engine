@@ -133,7 +133,10 @@ export function deepCopy (obj){
   // 只拷贝对象
   if (typeof obj !== 'object') return;
   // 根据obj的类型判断是新建一个数组还是一个对象
-  var newObj = obj instanceof Array ? [] : {};
+  var newObj;
+  if(obj instanceof Object){
+    newObj =  obj instanceof Array ? [] : {};
+  }
   for (var key in obj) {
     // 遍历obj,并且判断是obj的属性才拷贝
     if (obj.hasOwnProperty(key)) {

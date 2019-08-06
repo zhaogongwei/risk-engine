@@ -123,6 +123,29 @@ export default class SimpleRule extends PureComponent {
   componentDidMount() {
     console.log(this.props.editorFlow.selectId,'selectId')
     console.log(this.props.editorFlow.editorData,'editorData')
+    const {query} = this.props.location;
+    //请求变量列表
+    this.props.dispatch({
+      type: 'rule/queryVarList',
+      payload: {
+      }
+    })
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'rule/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    //查询节点信息
+    this.props.dispatch({
+      type: 'rule/queryRuleInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
+
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -191,16 +214,19 @@ export default class SimpleRule extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'simple',
-      variables:this.props.rule.ruleList,
-    }
-    console.log(this.child.getFormValue())
-    console.log(this.props.rule.ruleList)
-    console.log(JSON.stringify(data))
+    const formData = this.child.getFormValue();
+    const {ruleList} = this.props.rule;
+    const {selectId} = this.props.editorFlow;
+    const {query} = this.props.location;
+    this.props.dispatch({
+      type: 'rule/saveRuleInfo',
+      payload: {
+        ...formData,
+        ruleType:'simple',
+        variables:ruleList,
+        nodeId:query['id']
+      }
+    })
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -255,6 +281,7 @@ export default class SimpleRule extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    console.log('ruleList',this.props)
     return (
       <PageHeaderWrapper >
         <Card

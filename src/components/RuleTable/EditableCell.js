@@ -91,7 +91,11 @@ const EditableFormRow = Form.create()(EditableRow);
     onDateChange=(date,record,type) =>{
       record[type]=moment(date).format(dateFormat)
     }
+    onInput=(value)=>{
+      console.log(this.inputNum)
+    }
     getInput = () => {
+      debugger;
       if (this.props.type === 'select') {
         return <Select
           onPressEnter={this.save}
@@ -110,36 +114,45 @@ const EditableFormRow = Form.create()(EditableRow);
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          onClick={(e)=>this.props.handleModify()}
+          //onClick={(e)=>this.props.handleModify()}
           readOnly
         />;
       }else if(this.props.type==='more'){
-        if(this.props.record['kind']==='num'){
+        if(this.props.record['variableType']==='num'){
+          return <Input
+            ref={node => (this.inputNum = node)}
+            onPressEnter={this.save}
+            onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+          />;
+        }else if(this.props.record['variableType']==='char'&&!this.props.record['enumFlag']){
           return <Input
             ref={node => (this.input = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
           />;
-        }else if(this.props.record['kind']==='str'&&this.props.record['isenum']){
+        }else if(this.props.record['enumFlag']){
           return <Select
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
             {
-              this.props.record['option']&&this.props.record['option'].map((item,index)=>{
+              this.props.record['variableEnumList']&&this.props.record['variableEnumList'].map((item,index)=>{
                 return (
-                  <Option value={item.id} key={index}>{item.name}</Option>
+                  <Option value={item.variableId} key={index}>{item.enumValue}</Option>
                 )
               })
             }
           </Select>;
-        }else if(this.props.record['kind'] ==='date'){
+        }else if(this.props.record['variableType'] ==='date'){
           return <DatePicker onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}/>
+        }else if(this.props.record['variableType'] ==='time'){
+          return <DatePicker showTime onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}/>
         }else{
           return <Input
             ref={node => (this.input = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+            readOnly
           />;
         }
       }else{
@@ -176,7 +189,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 return (
                   <FormItem style={{ margin: 0 }}>
                     {getFieldDecorator(`dataIndex${Math.random()}`, {
-                      initialValue: record['kind']==='date'&&dataIndex==='compare'?moment(record[dataIndex]?record[dataIndex]:new Date(), dateFormat):record[dataIndex]?record[dataIndex]:'',
+                      initialValue: record['variableType']==='date'&&dataIndex==='compareValue'?moment(record[dataIndex]?record[dataIndex]:new Date(), dateFormat):record[dataIndex]?record[dataIndex]:'',
                     })(
                       this.getInput()
                     )}
