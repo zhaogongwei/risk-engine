@@ -219,14 +219,20 @@ export default class AddForm extends Component {
       radioValue:e.target.value
     })
   }
-  allChecked=(value)=>{
-    plainOptions.map((item,index)=>{
-      item.checked = value;
-    })
-  }
   //点击确定
   submitHandler=()=>{
-      return this.state
+      let records={};
+      const {radioValue}=this.state;
+      if(Object.keys(radioValue).length){
+        records['varId']=radioValue['id'];
+        records['varCode']=radioValue['variableCode'];
+        records['varName']=radioValue['variableName'];
+        records['varType']=radioValue['variableType'];
+        records['enumFlag']=radioValue['enumFlag'];
+        records['enumList']=radioValue['variableEnumList'];
+      }
+
+      return records
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -364,7 +370,7 @@ export default class AddForm extends Component {
                           <Radio  value={item}>{item.variableName}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
-                        <Col span={8}>{item.variableName}</Col>
+                        <Col span={8}>{item.remark}</Col>
                       </Row>
                     })
                   }

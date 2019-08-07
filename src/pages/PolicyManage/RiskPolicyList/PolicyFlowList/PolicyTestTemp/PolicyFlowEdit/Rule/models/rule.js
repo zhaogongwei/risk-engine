@@ -18,6 +18,13 @@ export default {
       totalNum:10,
       totalPage:1
     },
+    formData:{
+      countVarId:'',
+      countVarValue:'',
+      resultVarId:'',
+      resultVarValue:'',
+      ruleCondition:'',
+    }
   },
 
   effects: {
@@ -30,9 +37,6 @@ export default {
           payload:response
         })
       }
-      response.data.records.forEach((item,index)=>{
-        item['varId']=item['id']
-      })
       return response;
     },
     //一级变量分类查询
@@ -61,11 +65,12 @@ export default {
     *queryRuleInfo({payload}, { call, put }) {
       let response = yield call(api.queryRuleInfo,payload)
       if(response && response.status === 1){
-        /*yield put({
-          type:'riskListHandle',
+        yield put({
+          type:'InitruleListHandle',
           payload:response
-        })*/
+        })
       }
+      return response;
     },
     //简单规则节点信息保存
     *saveRuleInfo({payload,callback},{call,put}){
@@ -80,6 +85,16 @@ export default {
   },
 
   reducers: {
+    //初始化规则列表处理
+    InitruleListHandle(state,{payload}){
+      console.log('payload',payload)
+      return {
+        ...state,
+        ruleList:addListKey(payload.data.variables),
+        formData:{...payload.data}
+      }
+    },
+    //弹框规则列表处理
     ruleListHandle(state,{payload}){
       console.log('payload',payload)
       return {
@@ -87,6 +102,7 @@ export default {
         ruleList:payload.ruleList,
       }
     },
+    //变量列表处理
     varListHandle(state,{payload}){
       return {
         ...state,
@@ -98,12 +114,14 @@ export default {
         }
       }
     },
+    //一级分类
     oneClassHandle(state,{payload}){
       return {
         ...state,
         oneClassList:payload.data
       }
     },
+    //二级分类
     twoClassHandle(state,{payload}){
       return {
         ...state,
