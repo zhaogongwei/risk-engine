@@ -32,7 +32,9 @@ export default class FilterIpts extends Component {
   }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
+    const {resultVarId} = this.props;
+    let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.resultVarId=resultVarId['resultVarId'];
     return formQueryData;
   }
   //重置
@@ -57,7 +59,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="评分结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:resultVarId['variableName']?resultVarId['variableName']:''
+                initialValue:resultVarId['varName']?resultVarId['varName']:''
               })(
                 <Input
                   onClick={()=>this.props.outResult()}

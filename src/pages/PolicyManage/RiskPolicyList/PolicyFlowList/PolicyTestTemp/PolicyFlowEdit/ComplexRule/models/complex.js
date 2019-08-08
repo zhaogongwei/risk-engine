@@ -9,12 +9,12 @@ export default {
   state: {
     complexList:[],//复杂规则列表
     formData:{
-      countVarId:'',
-      countVarValue:'',
-      resultVarId:'',
-      resultVarValue:'',
-      ruleCondition:'',
-    }
+      countVarId:'',//计数结果id
+      countVarValue:'',//计数结果
+      resultVarId:'',//输出结果id
+      resultVarValue:'',//输出结果
+      ruleCondition:'',//规则条件
+    },
   },
 
   effects: {

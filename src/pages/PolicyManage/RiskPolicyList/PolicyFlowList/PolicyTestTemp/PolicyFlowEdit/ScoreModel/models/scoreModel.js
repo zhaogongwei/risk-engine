@@ -7,18 +7,17 @@ export default {
   namespace: 'scoreModel',
 
   state: {
-    scoreList:[],
-    scoreDetail:[],
+    scoreList:[],//评分模型列表
     numList:{
       count:1,
       dataSource:[
       ]
-    },
+    },//数字类型变量列表
     strList:{
       count:1,
       dataSource:[
       ]
-    },
+    },//字符类型变量列表
     page:{
       currentPage:1,
       more:true,
@@ -26,17 +25,21 @@ export default {
       totalNum:10,
       totalPage:1
     },
+    formData:{
+      resultVarId:'',//输出结果id
+      resultVarValue:'',//输出结果
+    },
   },
 
   effects: {
     //评分模型节点信息查询
-    *queryScoreInfo(payload, { call, put }) {
+    *queryScoreInfo({payload}, { call, put }) {
       let response = yield call(api.queryScoreInfo,payload)
-      if(response && response.status === '000000'){
-        /*yield put({
-          type:'riskListHandle',
+      if(response && response.status === 1){
+        yield put({
+          type:'InitScoreListHandle',
           payload:response
-        })*/
+        })
       }
     },
     //简单规则节点信息保存
@@ -52,6 +55,15 @@ export default {
   },
 
   reducers: {
+    //初始化评分卡列表数据
+    InitScoreListHandle(state,{payload}){
+      return {
+        ...state,
+        scoreList:addListKey(payload.data.variables),
+        formData:{...payload.data}
+      }
+    },
+    //评分卡列表数据处理
     scoreListHandle(state,{payload}){
       console.log('payload',payload)
       return {
@@ -59,6 +71,7 @@ export default {
         scoreList:payload.scoreList,
       }
     },
+    //添加数字类型变量
     addNumData(state, {payload}) {
       return {
         ...state,
@@ -68,6 +81,7 @@ export default {
         }
       };
     },
+    //添加字符类型变量
     addStrData(state,{payload}){
         return {
           ...state,
@@ -77,6 +91,7 @@ export default {
           }
         }
     },
+    //删除数字类型变量
     delNumData(state, {payload}) {
       return {
         ...state,
@@ -86,6 +101,7 @@ export default {
         }
       };
     },
+    //删除字符类型变量
     delStrData(state, {payload}) {
       return {
         ...state,
