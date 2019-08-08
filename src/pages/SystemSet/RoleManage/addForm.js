@@ -76,24 +76,13 @@ export default class AddForm extends Component {
     })
   }
   //点击确定
-  submitHandler = ()=>new Promise((resolve,reject)=>{
-    const response = {
-      status:'000'
-    }
-    if(!this.props.type){
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
+  submitHandler = ()=>{
+    this.props.form.validateFields((err, values) => {
+      if(!err){
 
-        }
-      })
-    }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-        }
-      })
-    }
-    resolve(response)
-  })
+      }
+    })
+  }
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -113,8 +102,6 @@ export default class AddForm extends Component {
       })
     },3000)
   }
-  componentWillReceiveProps(nextProps){
-  }
   onChange = value => {
     console.log('onChange ', value);
     this.setState({ value });
@@ -124,7 +111,7 @@ export default class AddForm extends Component {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{span:6},
-      wrapperCol:{span:16},
+      wrapperCol:{span:14},
     }
     const tProps = {
       treeData,
@@ -132,84 +119,72 @@ export default class AddForm extends Component {
       treeCheckable: true,
       maxTagCount: 0,
       dropdownStyle: { maxHeight: 600, overflow: 'auto' },
-      treeDefaultExpandedKeys: [],
       showCheckedStrategy: SHOW_PARENT,
-      style: {
-        width: 450,
-      },
       allowClear: true
     };
     return (
       <div>
-        {
-          this.props.isTrust?
-            <Row className={styles.btmMargin}>
-              <Col xxl={4} md={6}>
-                <FormItem label="授权">
-                  {getFieldDecorator('combotreeListSrch', {
-                    initialValue: []
+        <Form className="ant-advanced-search-form">
+          <Row className={styles.btmMargin}>
+            <Col xxl={20} md={12}>
+              <FormItem label="角色名称" {...formItemConfig}>
+                {getFieldDecorator('assetsTypeName',{
+                  initialValue:'',
+                    rules:[{
+                      required:true,
+                      message: '请输入角色名称'
+                    }]
                   })(
-                    <Spin spinning={this.state.loading}>
-                      <TreeSelect {...tProps} allowClear={true}/>
-                    </Spin>
+                    <Input/>
                   )}
-                </FormItem>
-              </Col>
-            </Row>:
-            <Form
-              className="ant-advanced-search-form"
-            >
-              <Row className={styles.btmMargin}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="角色名称" {...formItemConfig}>
-                    {getFieldDecorator('assetsTypeName',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row className={styles.btmMargin}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="角色说明" {...formItemConfig}>
-                    {getFieldDecorator('assetsTypeCode',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <TextArea rows={4}  style={{width:330}} placeholder="" />
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row className={styles.btmMargin}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="状态"  {...formItemConfig}>
-                    {getFieldDecorator('status',{
-                      initialValue:!this.props.type ? this.props.record.status : null,
-                      rules: [
-                        { required: true, message: '角色状态为必选'}
-                      ],
-                    })(
-                      <RadioGroup>
-                        <Radio value={1}>启用</Radio>
-                        <Radio value={2}>禁用</Radio>
-                      </RadioGroup>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-            </Form>
-        }
+              </FormItem>
+            </Col>
+          </Row>
+          <Row className={styles.btmMargin}>
+            <Col xxl={20} md={12}>
+              <FormItem label="角色说明" {...formItemConfig}>
+                {getFieldDecorator('assetsTypeCode',{
+                  initialValue:'',
+                  rules:[{
+                    required:true,
+                    message: '请输入角色说明'
+                  }]
+                })(
+                  <TextArea rows={4}  style={{width:330}} placeholder="" />
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row className={styles.btmMargin}>
+            <Col xxl={20} md={12}>
+              <FormItem label="状态"  {...formItemConfig}>
+                {getFieldDecorator('status',{
+                  initialValue:!this.props.type ? this.props.record.status : null,
+                  rules: [{ required: true, message: '请选择角色状态'}],
+                  })(
+                    <RadioGroup>
+                      <Radio value={1}>启用</Radio>
+                      <Radio value={2}>禁用</Radio>
+                    </RadioGroup>
+                  )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row className={styles.btmMargin}>
+            <Col xxl={20} md={12}>
+              <FormItem label="授权" {...formItemConfig}>
+                {getFieldDecorator('combotreeListSrch', {
+                  rules: [{ required: true, message: '请授权'}],
+                  // initialValue: []
+                })(
+                  <Spin spinning={this.state.loading}>
+                    <TreeSelect {...tProps} allowClear={true}/>
+                  </Spin>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
       </div>
     )
   }

@@ -20,9 +20,9 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ role, loading }) => ({
+  role,
+  loading: loading.effects['role/riskSubmit']
 }))
 export default class RoleManage extends PureComponent {
   constructor(props) {
@@ -55,9 +55,6 @@ export default class RoleManage extends PureComponent {
         render: (record) =>{
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>{this.empower(1,record)}}>
-                <Icon type="edit"/>授权
-              </Menu.Item>
               <Menu.Item onClick={()=>this.addEdit(2,record)}>
                 <Icon type="edit"/>修改
               </Menu.Item>
@@ -96,8 +93,8 @@ export default class RoleManage extends PureComponent {
       code:'',
       type:1,//1:添加 2：编辑
       pageSize:10,
-      currentPage:1,
-      current:1,
+      currPage:1,
+      pageSize:1,
       id:'',
       status:1,
       record:{},
@@ -109,12 +106,12 @@ export default class RoleManage extends PureComponent {
     this.change()
   }
   //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
+  onChange = (currPage,pageSize) => {
     this.setState({
-      current:current,
-      currentPage:current
+      currPage,
+      pageSize
     })
-    this.change(current)
+    this.change(currPage, pageSize)
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
@@ -125,8 +122,8 @@ export default class RoleManage extends PureComponent {
       formData = {}
     }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
+      type: 'role/queryRoleList',
+      payload: {
         ...formData,
         currPage,
         pageSize
@@ -163,6 +160,7 @@ export default class RoleManage extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.addEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button><Icon type="export" />导出列表</Button>
       </Fragment>
     )
   }
@@ -248,7 +246,7 @@ export default class RoleManage extends PureComponent {
           style={{ marginBottom: "50px" }}
           showQuickJumper
           defaultCurrent={1}
-          current={this.state.current}
+          current={this.state.currPage}
           total={100}
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
@@ -259,12 +257,12 @@ export default class RoleManage extends PureComponent {
          onOk={this.addFormSubmit}
          onCancel={()=>this.setState({visible:false})}
        >
-         <AddForm
+         { this.state.visible ? <AddForm
            getSubKey={this.getSubKey}
            type={this.state.type}
            isTrust={this.state.isTrust}
            record={this.state.record}
-         />
+         /> : null}
        </Modal>
       </PageHeaderWrapper>
     )

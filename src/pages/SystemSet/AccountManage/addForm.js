@@ -137,6 +137,7 @@ export default class AddForm extends Component {
                       rules:[
                         {
                           required:true,
+                          message: '请输入用户名'
                         }
                       ]
                     })(
