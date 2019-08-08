@@ -7,8 +7,9 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import styles from '../FilterIpts.less'
+
 const Option = Select.Option;
 const FormItem = Form.Item
 

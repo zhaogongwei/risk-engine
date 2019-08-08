@@ -23,7 +23,7 @@ import AddForm from './AddRole';
 
 @connect(({ role, loading }) => ({
   role,
-  loading: loading.effects['role/riskSubmit']
+  loading: loading.effects['role/queryRoleList']
 }))
 export default class RoleManage extends PureComponent {
   constructor(props) {

@@ -10,8 +10,9 @@ import {
   TreeSelect,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import styles from '../FilterIpts.less'
+
 const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
