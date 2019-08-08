@@ -12,13 +12,14 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
+import { findInArr,exportJudgment } from '@/utils/utils'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
-import { findInArr,exportJudgment } from '@/utils/utils'
+import AddForm from './AddRole';
+
 
 @connect(({ role, loading }) => ({
   role,

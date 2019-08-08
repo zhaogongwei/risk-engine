@@ -57,7 +57,7 @@ const treeData = [
 
 @Form.create()
 
-export default class AddForm extends Component {
+export default class IndexComponent extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -96,11 +96,6 @@ export default class AddForm extends Component {
   }
   componentDidMount () {
     this.props.getSubKey(this,'addForm');
-    setTimeout(()=>{
-      this.setState({
-        loading:false
-      })
-    },3000)
   }
   onChange = value => {
     console.log('onChange ', value);
@@ -177,9 +172,7 @@ export default class AddForm extends Component {
                   rules: [{ required: true, message: '请授权'}],
                   // initialValue: []
                 })(
-                  <Spin spinning={this.state.loading}>
-                    <TreeSelect {...tProps} allowClear={true}/>
-                  </Spin>
+                  <TreeSelect {...tProps} allowClear={true}/>
                 )}
               </FormItem>
             </Col>
