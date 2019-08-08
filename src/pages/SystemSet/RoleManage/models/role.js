@@ -5,6 +5,7 @@ export default {
 
   state: {
     roleList: [],//角色列表
+    queryConfig: {}
   },
 
   effects: {
@@ -57,5 +58,11 @@ export default {
         roleList: payload,
       };
     },
+    setQueryConfig(state, { payload }) {
+      return {
+        ...state,
+        queryConfig: payload
+      }
+    }
   },
 };

@@ -12,29 +12,28 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({ role }) => ({
+  role
+}))
 
 @Form.create()
 
 export default class FilterIpts extends Component {
   //查询
   formSubmit = async (e) => {
-    this.props.changeDefault(1)
-    const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
+    const formData = this.getFormValue();
+    const { dispatch } =  this.props;
+    await dispatch({
+      type: 'role/setQueryConfig',
+      payload: {
+        ...formData
       }
     })
-
+    this.props.change(1,this.props.pageSize)
   }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
-    return formQueryData;
+    return this.props.form.getFieldsValue()
   }
   //重置
   reset = () => {
@@ -56,18 +55,14 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="角色名称" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
+              {getFieldDecorator('status')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="角色状态" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
-                initialValue:''
-              })(
+              {getFieldDecorator('assetsTypeCode')(
                 <Select allowClear={true}>
                   <Option value={1}>启用</Option>
                   <Option value={2}>禁用</Option>

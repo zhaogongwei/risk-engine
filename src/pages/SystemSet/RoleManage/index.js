@@ -116,16 +116,10 @@ export default class RoleManage extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
       type: 'role/queryRoleList',
       payload: {
-        ...formData,
+        ...this.props.role.queryConfig,
         currPage,
         pageSize
       }
@@ -233,9 +227,8 @@ export default class RoleManage extends PureComponent {
             bordered={false}
             title={'角色管理'}
          >
-
          </Card>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currPage} pageSize={this.state.pageSize}/>
         <Table
           bordered
           pagination={false}

@@ -16,7 +16,6 @@ const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-const { SHOW_PARENT } = TreeSelect;
 const treeData = [
   {
     title: 'Node1',
@@ -53,7 +52,10 @@ const treeData = [
     ],
   },
 ];
-@connect()
+
+@connect(({ role }) => ({
+  role
+}))
 
 @Form.create()
 
@@ -61,19 +63,8 @@ export default class IndexComponent extends Component {
   constructor(props){
     super(props)
     this.state = {
-      value:[],
-      loading:true
+      value:[]
     }
-  }
-  //显示弹窗
-  showModal = ()=>{
-
-  }
-  //设置加载状态
-  setLoading=(status)=>{
-    this.setState({
-      loading:status
-    })
   }
   //点击确定
   submitHandler = ()=>{
@@ -102,11 +93,10 @@ export default class IndexComponent extends Component {
     this.setState({ value });
   };
   render() {
-    const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
-      labelCol:{span:6},
-      wrapperCol:{span:14},
+      labelCol: { span: 6 },
+      wrapperCol: { span: 14 }
     }
     const tProps = {
       treeData,
@@ -114,7 +104,6 @@ export default class IndexComponent extends Component {
       treeCheckable: true,
       maxTagCount: 0,
       dropdownStyle: { maxHeight: 600, overflow: 'auto' },
-      showCheckedStrategy: SHOW_PARENT,
       allowClear: true
     };
     return (
@@ -130,7 +119,7 @@ export default class IndexComponent extends Component {
                       message: '请输入角色名称'
                     }]
                   })(
-                    <Input/>
+                    <Input />
                   )}
               </FormItem>
             </Col>
