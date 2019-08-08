@@ -100,6 +100,7 @@ export default class SimpleRule extends PureComponent {
         title: '比较值',
         key:'compareValue',
         dataIndex:'compareValue',
+        width:200,
         editable:true,
         type:'more',
         cols:4,

@@ -27,7 +27,7 @@ export default class RuleTable extends PureComponent {
     super(props);
   }
   render() {
-    const { dataSource } = this.props;
+    const { dataSource} = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -51,6 +51,8 @@ export default class RuleTable extends PureComponent {
           isFocus:col.isFocus,
           type:col.type,
           value:col.value?col.value:null,
+          valueOth:col.valueOth?col.valueOth:null,
+          cols:col.cols?col.cols:null,
           handleModify:()=>this.props.handleModify(0,record,col.mold)
         })
       };
@@ -60,14 +62,14 @@ export default class RuleTable extends PureComponent {
         <Button onClick={this.props.handleAdd} type="primary" style={{ marginBottom: 16, float: "right", zIndex: '1',marginRight: '20px' }}>
           选择变量
         </Button>
-        <Table
-          components={components}
-          rowClassName={() => 'editable-row'}
-          bordered
-          pagination={false}
-          dataSource={dataSource}
-          columns={columns}
-        />
+          <Table
+            components={components}
+            rowClassName={() => 'editable-row'}
+            bordered
+            pagination={false}
+            dataSource={dataSource}
+            columns={columns}
+          />
       </div>
     );
   }

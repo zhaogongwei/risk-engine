@@ -46,7 +46,7 @@ export async function saveRuleInfo(params) {
 //复杂规则
 //节点数据查询
 export async function queryComplexInfo(params) {
-  return request(`${_baseApi}/complex/info/${params}`, {
+  return request(`${_baseApi}/complex/info/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params
@@ -67,7 +67,7 @@ export async function saveComplexInfo(params) {
 //评分卡模型
 //节点数据查询
 export async function queryScoreInfo(params) {
-  return request(`${_baseApi}/score/info/${params}`, {
+  return request(`${_baseApi}/score/info/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params
@@ -88,7 +88,7 @@ export async function saveScoreInfo(params) {
 //设置变量
 //节点数据查询
 export async function queryVarInfo(params) {
-  return request(`${_baseApi}/score/info/${params}`, {
+  return request(`${_baseApi}/score/info/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params
@@ -109,7 +109,7 @@ export async function saveVarInfo(params) {
 //三方数据查询
 //节点数据查询
 export async function queryThreeSideInfo(params) {
-  return request(`${_baseApi}/score/info/${params}`, {
+  return request(`${_baseApi}/score/info/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params

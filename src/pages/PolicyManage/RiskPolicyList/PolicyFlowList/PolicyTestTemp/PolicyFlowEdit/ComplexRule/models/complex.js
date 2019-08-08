@@ -7,31 +7,32 @@ export default {
   namespace: 'complex',
 
   state: {
-    ruleList:[],
-    page:{
-      currentPage:1,
-      more:true,
-      pageSize:10,
-      totalNum:10,
-      totalPage:1
-    },
+    complexList:[],//复杂规则列表
+    formData:{
+      countVarId:'',
+      countVarValue:'',
+      resultVarId:'',
+      resultVarValue:'',
+      ruleCondition:'',
+    }
   },
 
   effects: {
     //复杂规则节点信息查询
-    *queryComplexInfo(payload, { call, put }) {
+    *queryComplexInfo({payload}, { call, put }) {
       let response = yield call(api.queryComplexInfo,payload)
-      if(response && response.status === '000000'){
-        /*yield put({
-          type:'riskListHandle',
+      if(response && response.status === 1){
+        yield put({
+          type:'InitComplexListHandle',
           payload:response
-        })*/
+        })
       }
+      return response
     },
     //复杂规则节点信息保存
     *saveComplexInfo({payload,callback},{call,put}){
       let response = yield call(api.saveComplexInfo,payload)
-      if(response&&response.status == '000000'){
+      if(response&&response.status == 1){
         message.success(response.statusDesc)
         callback()
       }else{
@@ -41,11 +42,21 @@ export default {
   },
 
   reducers: {
-    ruleListHandle(state,{payload}){
+    //初始化复杂规则列表处理
+    InitComplexListHandle(state,{payload}){
       console.log('payload',payload)
       return {
         ...state,
-        ruleList:payload.ruleList,
+        complexList:addListKey(payload.data.variables),
+        formData:{...payload.data}
+      }
+    },
+    //规则列表处理
+    complexListHandle(state,{payload}){
+      console.log('payload',payload)
+      return {
+        ...state,
+        complexList:payload.complexList,
       }
     },
   },

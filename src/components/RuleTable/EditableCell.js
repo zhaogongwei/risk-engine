@@ -91,6 +91,7 @@ const EditableFormRow = Form.create()(EditableRow);
     getInput = () => {
       if (this.props.type === 'select') {
         return <Select
+          style={{width:'100%'}}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
         >
@@ -130,6 +131,7 @@ const EditableFormRow = Form.create()(EditableRow);
           />;
         }else if(this.props.record['enumFlag']){
           return <Select
+            style={{width:'100%'}}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
@@ -143,10 +145,14 @@ const EditableFormRow = Form.create()(EditableRow);
           </Select>;
         }else if(this.props.record['varType'] ==='date'){
           return <DatePicker
+                    style={{width:'100%'}}
                     onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}
                   />
         }else if(this.props.record['varType'] ==='time'){
-          return <DatePicker showTime onChange={(date)=>this.onTimeChange(date,this.props.record,this.props.dataIndex)}/>
+          return <DatePicker
+                    showTime
+                    style={{width:'100%'}}
+                    onChange={(date)=>this.onTimeChange(date,this.props.record,this.props.dataIndex)}/>
         }else{
           return <Input
             ref={node => (this.input = node)}
