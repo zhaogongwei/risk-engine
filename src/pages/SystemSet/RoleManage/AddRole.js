@@ -86,13 +86,14 @@ export default class IndexComponent extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'addForm');
+
   }
   onChange = value => {
     console.log('onChange ', value);
     this.setState({ value });
   };
   render() {
+    const { updateVisible, isShowEdit } = this.props
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol: { span: 6 },
@@ -108,6 +109,12 @@ export default class IndexComponent extends Component {
     };
     return (
       <div>
+        <Modal
+         title={this.state.type===1?'新增角色':'修改角色'}
+         visible={updateVisible}
+         onOk={this.submitHandler}
+         onCancel={() => isShowEdit(false)}
+       >
         <Form className="ant-advanced-search-form">
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
@@ -143,7 +150,7 @@ export default class IndexComponent extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="状态"  {...formItemConfig}>
                 {getFieldDecorator('status',{
-                  initialValue:!this.props.type ? this.props.record.status : null,
+                  initialValue: null,
                   rules: [{ required: true, message: '请选择角色状态'}],
                   })(
                     <RadioGroup>
@@ -167,6 +174,7 @@ export default class IndexComponent extends Component {
             </Col>
           </Row>
         </Form>
+        </Modal>
       </div>
     )
   }
