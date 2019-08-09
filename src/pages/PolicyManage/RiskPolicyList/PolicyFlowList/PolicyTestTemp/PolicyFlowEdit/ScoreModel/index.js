@@ -15,15 +15,19 @@ import {
 import { connect } from 'dva'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
-import AddForm from './AddForm';
+//import AddForm from './AddForm';
+import AddForm from '@/components/VarListModal/AddForm'
+import EditForm from './editForm';
 import ScoreModelTable from '@/components/ScoreModelTable'
-import SetRowCol from '@/components/SetRowCol'
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 
-@connect(({ editorFlow,scoreModel, loading }) => ({
+@connect(({ editorFlow,scoreModel, loading,varList }) => ({
   editorFlow,
   scoreModel,
-  loading: loading.effects['assetDeploy/riskSubmit']
+  varList,
+  loading:loading.effects['scoreModel/queryScoreInfo'],
+  buttonLoading:loading.effects['scoreModel/saveScoreInfo'],
+  submiting:loading.effects['scoreModel/verifyMixed'],
 }))
 export default class ScoreModel extends PureComponent {
   constructor(props) {
@@ -36,17 +40,17 @@ export default class ScoreModel extends PureComponent {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'variableName',
-        key:'variableName',
+        dataIndex: 'varName',
+        key:'varName',
         editable: true,
       },{
         title: '代码',
-        dataIndex: 'variableCode',
-        key:'variableCode'
+        dataIndex: 'varCode',
+        key:'varCode'
       },{
         title: '类型',
-        key:'variableType',
-        dataIndex:'variableType'
+        key:'varType',
+        dataIndex:'varType'
       },
         {
           title: '操作',
@@ -60,132 +64,10 @@ export default class ScoreModel extends PureComponent {
                     </div>
           },
         }],
-      columnNum:[
-        {
-          title: '序号',
-          dataIndex: 'key',
-          key:'key'
-        },
-        {
-          title: '下限条件',
-          dataIndex: 'lowerCondition',
-          editable:true,
-          key:'lowerCondition',
-          type:'select',
-          value:[
-            {
-              name:'>',
-              id:'>'
-            },
-            {
-              name:'>=',
-              id:'>='
-            },
-            {
-              name:'=',
-              id:'='
-            }
-          ]
-        },{
-          title: '下限值',
-          dataIndex: 'lowerValue',
-          editable:true,
-          key:'lowerValue',
-          type:'input'
-        },{
-          title: '上限条件',
-          dataIndex: 'highCondition',
-          editable:true,
-          key:'highCondition',
-          type:'select',
-          value:[
-            {
-              name:'<',
-              id:'<'
-            },
-            {
-              name:'<=',
-              id:'<='
-            },
-            {
-              name:'=',
-              id:'='
-            }
-          ]
-        },{
-          title: '上限值',
-          dataIndex: 'highValue',
-          editable:true,
-          key:'highValue',
-          type:'input'
-        },
-        {
-          title: '评分',
-          dataIndex: 'score',
-          editable:true,
-          key:'score',
-          type:'input'
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (record) => {
-            return(<Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDeleteRight(record.key)}>
-              <a href="javascript:;">删除</a>
-            </Popconfirm>)
-          }
-        }
-      ],
-      columnStr:[
-        {
-          title: '序号',
-          dataIndex: 'key',
-          key:'key'
-        },
-        {
-          title: '条件',
-          dataIndex: 'highCondition',
-          editable:true,
-          type:'select',
-          key:'highCondition',
-          value:[
-            {
-              name:'==',
-              id:'=='
-            },
-            {
-              name:'!=',
-              id:'!='
-            }
-          ]
-        },
-        {
-          title: '值',
-          dataIndex: 'highValue',
-          editable:true,
-          key:'highValue',
-        },
-        {
-          title: '评分',
-          dataIndex: 'score',
-          editable:true,
-          key:'score',
-          type:'input'
-        },
-        {
-          title: '操作',
-          key: 'action',
-          render: (record) => {
-            return(<Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDeleteRight(record.key)}>
-              <a href="javascript:;">删除</a>
-            </Popconfirm>)
-          }
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//0:单选按钮，1：多选按钮
+      type:0,//0:单选按钮，1：多选按钮
       pageSize:10,
       currentPage:1,
       current:1,
@@ -195,46 +77,47 @@ export default class ScoreModel extends PureComponent {
       tableState:false,//右侧表格显示状态
       varType:0,//变量类型 0：字符 1:数字
       varKey:0,//变量key值
-      visible:false,
+      visible:false,//选择变量弹框显隐状态
+      editShow:false,//编辑弹框显隐状态
       resultVarId:{},//输出结果
+      varObjRow:{},//每行的变量对象
     };
   }
-  componentDidMount() {
-    this.change()
-  }
-  //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
-    })
-    this.change(current)
-  }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+  async componentDidMount() {
+    const {query} = this.props.location;
+    //请求变量列表
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
+      type: 'varList/queryVarList',
+      payload: {
       }
     })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    //查询节点信息
+    const res = await this.props.dispatch({
+      type: 'scoreModel/queryScoreInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
+    if(res&&res.status===1){
+      this.setState({
+        resultVarId:{
+          resultVarId:res.data.resultVarId,
+          resultVarValue:res.data.resultVarValue,
+        },
+      })
+    }
   }
   //   获取子组件数据的方法
   getSubKey = (ref,key) => {
     this[key]=ref
-  }
-  //展示页码
-  showTotal = (total, range) => {
-    return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
   //点击配置弹窗
   clickDialog=(type,record)=>{
@@ -242,7 +125,6 @@ export default class ScoreModel extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      type:type,
       number:record?record['key']:''
     })
   }
@@ -251,13 +133,6 @@ export default class ScoreModel extends PureComponent {
     this.setState({
       visible:true,
       status:0,
-      type:0,
-    })
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
     })
   }
   //  刷新页面
@@ -289,106 +164,40 @@ export default class ScoreModel extends PureComponent {
       }
     })
   }
-  //右侧表格添加数据
-  handleAddRight = () => {
-    if(!this.state.varType){
-      //变量为字符类型
-      const {option,kind,isenum} = this.props.scoreModel.scoreList[this.state.varKey-1]
-      console.log(option)
-      const {count, dataSource} = this.props.scoreModel.two;
-      const newData = {
-        term:'',
-        val:'',
-        score:'',
-        enum:option,
-        kind:kind,
-        isenum:isenum
-      };
-      this.props.dispatch({
-        type: 'scoreModel/addTwoData',
-        payload: {
-          dataSource: addListKey([...dataSource, newData]),
-        }
-      })
-
-    }else{
-      //变量为数字类型
-      const { count, dataSource } = this.props.scoreModel.one;
-      //   要添加表格的对象
-      const newData = {
-        lowerCondition:'',
-        lowerValue:'',
-        highCondition:'',
-        highValue:'',
-        score:'',
-      };
-      //   调用models中的方法改变dataSource渲染页面
-      this.props.dispatch({
-        type: 'scoreModel/addDataSource',
-        payload: {
-          dataSource: addListKey([...dataSource, newData]),
-        }
-      })
-      console.log(this.props)
-    }
-  }
-  //   删除右侧表格数据
-  handleDeleteRight = (key) => {
-    if(!this.state.varType){
-      //变量为字符类型
-      const {dataSource,count} = this.props.scoreModel.two
-      const newDataSource = dataSource.filter(item => item.key !== key)
-      this.props.dispatch({
-        type:'scoreModel/delStrData',
-        payload:{
-          dataSource:addListKey(newDataSource),
-        }
-      })
-    }else{
-      //变量为数字类型
-      const {dataSource,count} = this.props.scoreModel.one;
-      //   调用models的方法去删除dataSource中的数据
-      const newDataSource = dataSource.filter(item => item.key !== key)
-      console.log('newDataSource',newDataSource)
-      this.props.dispatch({
-        type: 'scoreModel/delNumData',
-        payload: {
-          dataSource: addListKey(newDataSource),
-        }
-      })
-    }
-
-  }
   //表格编辑
-  handledit=(record)=>{
+  handledit=async (record)=>{
     console.log(record)
     this.setState({
-      tableState:true,
+      editShow:true,
       varKey:record.key,
-      varType:record.kind == 'num'?1:0
+      varObjRow:record,
+      varType:record.varType == 'num'?1:0
     },()=>{
       //点击不同的变量的编辑时，先清除数据右边表格数据
       const {key} = record
       const {scoreList} = this.props.scoreModel
-      const {detailist} =scoreList[key-1]
+      const {variableInfoList} =scoreList[key-1]
       //点击编辑时，先判断该变量是否有变量明细值
-      if(detailist&&detailist.length>0){
+      if(variableInfoList&&variableInfoList.length>0){
+        //变量为数字类型
         if(this.state.varType){
           this.props.dispatch({
             type: 'scoreModel/delNumData',
             payload: {
-              dataSource: addListKey(detailist),
+              dataSource: addListKey(variableInfoList),
             }
           })
         }else{
+          //字符类型
           this.props.dispatch({
             type:'scoreModel/delStrData',
             payload:{
-              dataSource:addListKey(detailist),
+              dataSource:addListKey(variableInfoList),
             }
           })
         }
       }else{
+        //清空数据
         this.props.dispatch({
           type: 'scoreModel/delNumData',
           payload: {
@@ -404,21 +213,6 @@ export default class ScoreModel extends PureComponent {
       }
     })
   }
-  //右侧表格数据保存
-  handleSave = ()=>{
-    const {scoreList,one,two} = this.props.scoreModel
-    const {varKey} = this.state
-    //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
-    //变量为数字类型
-    if(this.state.varType){
-      Object.assign(scoreList[varKey-1],{variableInfoList:one.dataSource})
-    }else{
-      //变量为字符类型
-      Object.assign(scoreList[varKey-1],{variableInfoList:two.dataSource})
-    }
-    message.success('保存成功')
-    console.log(this.props.scoreModel)
-  }
   //弹框按钮取消
   handleCancel =()=>{
     this.setState({visible:false})
@@ -426,61 +220,86 @@ export default class ScoreModel extends PureComponent {
   //弹框按钮确定
   addFormSubmit=()=>{
     this.setState({visible:false},()=>{
+      //弹框选择的值
+      const records= this.addForm.submitHandler();
+      //table输入框值选择
       if(this.state.status){
-        const {checkedList,radioValue }= this.addForm.submitHandler();
-        console.log(this.state.checkedList)
-        if(this.state.type){
-          this.props.dispatch({
-            type: 'scoreModel/scoreListHandle',
-            payload: {
-              scoreList:addListKey(deepCopy([...this.props.scoreModel.scoreList,...checkedList]))
+        if(Object.keys(records).length){
+          const {scoreList} = this.props.scoreModel
+          if(records['varType']==='num'||(records['varType']==='char'&&records['enumFlag'])){
+            const keyList = scoreList.filter(item => item['varId']===records['varId'])
+            console.log('key',keyList)
+            if(scoreList.length&&keyList.length){
+              message.error('不能添加重复变量!')
+              return;
             }
-          })
-          console.log(this.props.scoreModel)
-        }else{
-          if(Object.keys(radioValue).length){
-            const {scoreList} = this.props.scoreModel
-            scoreList.splice(this.state.number-1,1,radioValue)
             this.props.dispatch({
               type: 'scoreModel/scoreListHandle',
               payload: {
-                scoreList:addListKey(deepCopy(scoreList))
+                scoreList:addListKey(deepCopy([...scoreList,{...records}]))
               }
             })
+          }else{
+            message.error('只能添加数字、设置了枚举值的字符变量!')
           }
         }
       }else{
         //输出结果值选择
-        const {checkedList,radioValue} = this.addForm.submitHandler();
+        if(records['varType']!=='num'){
+          message.error('此处选择弹框中只能选择数字类型变量!');
+          return;
+        }
         this.setState({
-          resultVarId:radioValue,
+          resultVarId:{
+            resultVarId:records['varId'],
+            resultVarValue:records['varName'],
+          },
         })
       }
     })
   }
-  save=()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'score',
-      variables:this.props.scoreModel.scoreList,
+  //编辑弹框保存事件
+  //弹框表格数据保存(必须点击保存否则数据不予保存)（交集验证通过保存,不通过不保存）
+  editFormSubmit=async ()=>{
+    const {scoreList,numList,strList} = this.props.scoreModel;
+    const {varKey} = this.state;
+    if(this.state.varType){
+      const res = await this.props.dispatch({
+        type:'scoreModel/verifyMixed',
+        payload:{
+          variableInfoList:numList.dataSource,
+        }
+      })
+      if(res&&res.status ===1 ){
+        message.success(res.statusDesc)
+        Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
+        this.setState({editShow:false,})
+      }else{
+        message.error(res.statusDesc)
+      }
+    }else{
+      //变量为字符类型
+      message.success('保存成功')
+      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
+      this.setState({editShow:false,})
     }
-    console.log(this.props.scoreModel.scoreList)
-    console.log(JSON.stringify(data))
+  }
+  //保存数据
+  handleSave=()=>{
+    const formData = this.child.getFormValue();
+    const {scoreList} = this.props.scoreModel;
+    const {query} = this.props.location;
+    this.props.dispatch({
+      type: 'scoreModel/saveScoreInfo',
+      payload: {
+        ...formData,
+        ruleType:'score',
+        variables:scoreList,
+        nodeId:query['id']
+      }
+    })
   }
   render() {
-    const { permission } = this.props
-    const list = [
-      {
-        key:1,
-        varName:'zgw'
-      },
-      {
-        key:2,
-        varName:'ld'
-      }
-    ]
     return (
       <PageHeaderWrapper >
         <Card
@@ -490,8 +309,6 @@ export default class ScoreModel extends PureComponent {
           <FilterIpts
             getSubKey={this.getSubKey}
             change={this.onChange}
-            current={this.state.currentPage}
-            changeDefault={this.changeDefault}
             outResult={this.outResult}
             resultVarId={this.state.resultVarId}
           />
@@ -501,36 +318,21 @@ export default class ScoreModel extends PureComponent {
                 dataSource={this.props.scoreModel.scoreList}
                 columns={this.state.columns}
                 handleAdd={()=>this.clickDialog(1)}
+                loading={this.props.loading}
                 handleModify={this.clickDialog}
               />
             </Col>
-            <Col span={12}>
-              {
-                this.state.tableState?
-                  <div>
-                    <Row>
-                      <SetRowCol
-                        title={'评分明细'}
-                        list={this.state.varType?this.props.scoreModel.one:this.props.scoreModel.two}
-                        columns={this.state.varType?this.state.columnNum:this.state.columnStr}
-                        handleAdd={this.handleAddRight}
-                      />
-                    </Row>
-                    <Row type="flex" justify="center">
-                      <Button type="primary" style={{marginTop:20}} onClick={this.handleSave}>保存</Button>
-                    </Row>
-                  </div>
-                  :''
-              }
-
-            </Col>
           </Row>
-          <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
-            <Col>
-              <Button type="primary" onClick={this.save}>保存并提交</Button>
-            </Col>
-            <Col>
-              <Button>返回</Button>
+          <Row style={{marginTop:20}}>
+            <Col span={12}>
+              <Row type="flex" gutter={24} justify="center" >
+                <Col>
+                  <Button type="primary" loading={this.props.buttonLoading} onClick={this.handleSave}>保存并提交</Button>
+                </Col>
+                <Col>
+                  <Button>返回</Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Modal
@@ -544,6 +346,22 @@ export default class ScoreModel extends PureComponent {
               type={this.state.type}
               number={this.state.number}
               getSubKey={this.getSubKey}
+            />
+          </Modal>
+          <Modal
+            title={'评分明细'}
+            visible={this.state.editShow}
+            onOk={this.editFormSubmit}
+            onCancel={()=>this.setState({editShow:false})}
+            okText="保存"
+            width={1040}
+            confirmLoading={this.props.submiting}
+          >
+            <EditForm
+              varType={this.state.varType}
+              varKey={this.state.varKey}
+              getSubKey={this.getSubKey}
+              varObjRow={this.state.varObjRow}
             />
           </Modal>
         </Card>

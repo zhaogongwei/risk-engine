@@ -1,3 +1,4 @@
+import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyFlowEdit';
 import { addListKey } from '@/utils/utils'
 import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
@@ -6,19 +7,15 @@ export default {
   namespace: 'scoreModel',
 
   state: {
-    riskList:[],
-    scoreList:[],
-    scoreDetail:[],
-    one:{
-      count:1,
+    scoreList:[],//评分模型列表
+    numList:{
       dataSource:[
       ]
-    },
-    two:{
-      count:1,
+    },//数字类型变量列表
+    strList:{
       dataSource:[
       ]
-    },
+    },//字符类型变量列表
     page:{
       currentPage:1,
       more:true,
@@ -26,49 +23,51 @@ export default {
       totalNum:10,
       totalPage:1
     },
+    formData:{
+      resultVarId:'',//输出结果id
+      resultVarValue:'',//输出结果
+    },
   },
 
   effects: {
-    *riskSubmit(payload, { call, put }) {
-      let response = yield call(queryRiskList,payload.data)
-      if(response && response.status === '000000'){
-        response.resultList = addListKey(response.resultList,payload.data.currPage,payload.data.pageSize)
+    //评分模型节点信息查询
+    *queryScoreInfo({payload}, { call, put }) {
+      let response = yield call(api.queryScoreInfo,payload)
+      if(response && response.status === 1){
         yield put({
-          type:'riskListHandle',
+          type:'InitScoreListHandle',
           payload:response
         })
       }
+      return response;
     },
-    //配置
-    *riskDeploy({payload,callback},{call,put}){
-      let response = yield call(deployRisk,payload)
-      if(response&&response.status == '000000'){
+    //评分模型节点信息保存
+    *saveScoreInfo({payload,callback},{call,put}){
+      let response = yield call(api.saveScoreInfo,payload)
+      if(response && response.status == 1){
         message.success(response.statusDesc)
         callback()
       }else{
         message.error(response.statusDesc)
       }
     },
-    //新增
-    *riskAdd({payload,callback},{call,put}){
-      let response = yield call(addRisk,payload)
-      if(response&&response.status == '000000'){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
+    //评分模型交集验证
+    *verifyMixed({payload,callback},{call,put}){
+      let response = yield call(api.verifyMixed,payload)
+      return response
     },
   },
 
   reducers: {
-    riskListHandle(state, { payload }) {
+    //初始化评分卡列表数据
+    InitScoreListHandle(state,{payload}){
       return {
         ...state,
-        riskList:payload.resultList,
-        page:payload.page
+        scoreList:addListKey(payload.data.variables),
+        formData:{...payload.data}
       }
     },
+    //评分卡列表数据处理
     scoreListHandle(state,{payload}){
       console.log('payload',payload)
       return {
@@ -76,39 +75,39 @@ export default {
         scoreList:payload.scoreList,
       }
     },
-    addDataSource(state, {payload}) {
+    //添加数字类型变量
+    addNumData(state, {payload}) {
       return {
         ...state,
-        one:{
+        numList:{
           dataSource: payload.dataSource,
-          count: payload.count,
         }
       };
     },
-    addTwoData(state,{payload}){
+    //添加字符类型变量
+    addStrData(state,{payload}){
         return {
           ...state,
-          two:{
+          strList:{
             dataSource: payload.dataSource,
-            count: payload.count,
           }
         }
     },
+    //删除数字类型变量
     delNumData(state, {payload}) {
       return {
         ...state,
-        one:{
+        numList:{
           dataSource: payload.dataSource,
-          count:payload.count
         }
       };
     },
+    //删除字符类型变量
     delStrData(state, {payload}) {
       return {
         ...state,
-        two:{
+        strList:{
           dataSource: payload.dataSource,
-          count:payload.count
         }
       };
     },

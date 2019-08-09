@@ -1,3 +1,4 @@
+import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyFlowEdit';
 import { addListKey } from '@/utils/utils'
 import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
@@ -7,18 +8,9 @@ export default {
 
   state: {
     ruleList:[],
-    scoreList:[],
-    scoreDetail:[],
-    one:{
-      count:1,
-      dataSource:[
-      ]
-    },
-    two:{
-      count:1,
-      dataSource:[
-      ]
-    },
+    varList:[],//变量列表
+    oneClassList:[],//一级分类
+    twoClassList:[],//二级分类
     page:{
       currentPage:1,
       more:true,
@@ -26,33 +18,64 @@ export default {
       totalNum:10,
       totalPage:1
     },
+    formData:{
+      countVarId:'',
+      countVarValue:'',
+      resultVarId:'',
+      resultVarValue:'',
+      ruleCondition:'',
+    }
   },
 
   effects: {
-    *riskSubmit(payload, { call, put }) {
-      let response = yield call(queryRiskList,payload.data)
-      if(response && response.status === '000000'){
-        response.resultList = addListKey(response.resultList,payload.data.currPage,payload.data.pageSize)
+    //变量列表查询
+    *queryVarList({payload}, { call, put }) {
+      let response = yield call(api.queryVarList,payload)
+      if(response && response.status ===1){
         yield put({
-          type:'riskListHandle',
+          type:'varListHandle',
           payload:response
         })
       }
+      return response;
     },
-    //配置
-    *riskDeploy({payload,callback},{call,put}){
-      let response = yield call(deployRisk,payload)
-      if(response&&response.status == '000000'){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
+    //一级变量分类查询
+    *queryOneClassList({payload}, { call, put }) {
+      let response = yield call(api.queryVarClassList,payload)
+      if(response && response.status ===1){
+        yield put({
+          type:'oneClassHandle',
+          payload:response
+        })
       }
+      return response;
     },
-    //新增
-    *riskAdd({payload,callback},{call,put}){
-      let response = yield call(addRisk,payload)
-      if(response&&response.status == '000000'){
+    //二级变量分类查询
+    *queryTwoClassList({payload}, { call, put }) {
+      let response = yield call(api.queryVarClassList,payload)
+      if(response && response.status ===1){
+        yield put({
+          type:'twoClassHandle',
+          payload:response
+        })
+      }
+      return response;
+    },
+    //简单规则节点信息查询
+    *queryRuleInfo({payload}, { call, put }) {
+      let response = yield call(api.queryRuleInfo,payload)
+      if(response && response.status === 1){
+        yield put({
+          type:'InitruleListHandle',
+          payload:response
+        })
+      }
+      return response;
+    },
+    //简单规则节点信息保存
+    *saveRuleInfo({payload,callback},{call,put}){
+      let response = yield call(api.saveRuleInfo,payload)
+      if(response&&response.status == 1){
         message.success(response.statusDesc)
         callback()
       }else{
@@ -62,13 +85,16 @@ export default {
   },
 
   reducers: {
-    riskListHandle(state, { payload }) {
+    //初始化规则列表处理
+    InitruleListHandle(state,{payload}){
+      console.log('payload',payload)
       return {
         ...state,
-        riskList:payload.resultList,
-        page:payload.page
+        ruleList:addListKey(payload.data.variables),
+        formData:{...payload.data}
       }
     },
+    //弹框规则列表处理
     ruleListHandle(state,{payload}){
       console.log('payload',payload)
       return {
@@ -76,42 +102,32 @@ export default {
         ruleList:payload.ruleList,
       }
     },
-    addDataSource(state, {payload}) {
+    //变量列表处理
+    varListHandle(state,{payload}){
       return {
         ...state,
-        one:{
-          dataSource: payload.dataSource,
-          count: payload.count,
-        }
-      };
-    },
-    addTwoData(state,{payload}){
-      return {
-        ...state,
-        two:{
-          dataSource: payload.dataSource,
-          count: payload.count,
+        varList:payload.data.records,
+        page:{
+          currentPage:payload.data.current,
+          pageSize:payload.data.size,
+          totalNum:payload.data.total,
         }
       }
     },
-    delOneData(state, {payload}) {
+    //一级分类
+    oneClassHandle(state,{payload}){
       return {
         ...state,
-        one:{
-          dataSource: payload.dataSource,
-          count:payload.count
-        }
-      };
+        oneClassList:payload.data
+      }
     },
-    delTwoData(state, {payload}) {
+    //二级分类
+    twoClassHandle(state,{payload}){
       return {
         ...state,
-        two:{
-          dataSource: payload.dataSource,
-          count:payload.count
-        }
-      };
-    },
+        twoClassList:payload.data
+      }
+    }
   },
 };
 

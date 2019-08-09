@@ -11,24 +11,28 @@ import {
   Form,
   Popconfirm,
   Modal,
-  Card
+  Card,
+  message,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
-import AddForm from './AddForm';
+//import AddForm from './AddForm';
 import ComplexTable from '@/components/ComplexTable'
+import AddForm from '@/components/VarListModal/AddForm'
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment,addListKey,deepCopy} from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ editorFlow, loading,complex}) => ({
+@connect(({ editorFlow, loading,complex,varList}) => ({
   editorFlow,
   complex,
-  loading: loading.effects['assetDeploy/riskSubmit']
+  varList,
+  loading:loading.effects['complex/queryComplexInfo'],
+  buttonLoading:loading.effects['complex/saveComplexInfo'],
 }))
 @Form.create()
-export default class AssetTypeDeploy extends PureComponent {
+export default class ComplexRule extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,20 +43,23 @@ export default class AssetTypeDeploy extends PureComponent {
       },
         {
         title: '变量名称',
-        dataIndex: 'variableName',
-        key:'variableName',
+        dataIndex: 'varName',
+        key:'varName',
+        cols:1,
         editable:true,
         type:'input',
         isFocus:true,
         mold:0,
       },{
         title: '变量代码',
-        dataIndex: 'variableCode',
-        key:'variableCode',
+        dataIndex: 'varCode',
+        key:'varCode',
+        cols:2,
       },{
         title: '条件',
         key:'compareCondition',
         dataIndex:'compareCondition',
+        cols:3,
         editable:true,
         type:'select',
         value:[
@@ -80,13 +87,24 @@ export default class AssetTypeDeploy extends PureComponent {
             name:'!=',
             id:'!='
           },
+        ],
+        valueOth:[
+          {
+            name:'=',
+            id:'='
+          },
+          {
+            name:'!=',
+            id:'!='
+          },
         ]
       },
         {
           title: '变量名称',
-          dataIndex: 'variableNameTwo',
+          dataIndex: 'compareVarName',
           mold:1,
-          key:'variableNameTwo',
+          key:'compareVarName',
+          cols:4,
           editable:true,
           type:'input',
           isFocus:true
@@ -94,14 +112,16 @@ export default class AssetTypeDeploy extends PureComponent {
         {
           title: '变量代码',
           mold:1,
-          dataIndex: 'variableCodeTwo',
-          key:'variableCodeTwo',
+          dataIndex: 'compareVarCode',
+          key:'compareVarCode',
+          cols:5,
         },
       {
-        title: '规则编码',
+        title: '命中标记',
         key:'ruleCode',
         dataIndex:'ruleCode',
         editable:true,
+        cols:6,
         type:'input'
       },
       {
@@ -116,7 +136,7 @@ export default class AssetTypeDeploy extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//0:单选按钮，1：多选按钮
+      type:0,//0:单选按钮，1：多选按钮
       number:'',
       pageSize:10,
       currentPage:1,
@@ -125,37 +145,48 @@ export default class AssetTypeDeploy extends PureComponent {
       status:1,//状态判断 1:表格 0：输出结果
       visible:false,
       mold:0,
-      resultVarId:{}
+      isCount:0,//计数结果类型判断
+      resultVarId:{},//输出结果
+      countResult:{},//计数结果
+      submiting:true,//提交状态，
     };
   }
-  componentDidMount() {
-    this.change()
-  }
-  //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
-    })
-    this.change(current)
-  }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+  async componentDidMount() {
+    //this.change()
+    const {query} = this.props.location;
+    //请求变量列表
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
+      type: 'varList/queryVarList',
+      payload: {
       }
     })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    //查询节点信息
+    const res = await this.props.dispatch({
+      type: 'complex/queryComplexInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
+    if(res&&res.status===1){
+      this.setState({
+        resultVarId:{
+          resultVarId:res.data.resultVarId,
+          resultVarValue:res.data.resultVarValue,
+        },
+        countResult:{
+          countVarId:res.data.countVarId,
+          countVarValue:res.data.countVarValue,
+        },
+      })
+    }
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -163,23 +194,23 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //表格变量添加
   handleAdd=()=>{
-    const {ruleList} = this.props.complex
+    const {complexList} = this.props.complex
     //   要添加表格的对象
     const newData = {
       varId:'',
-      variableName:'',
-      variableCode:'',
+      varName:'',
+      varCode:'',
       compareCondition:'',
       compareVarId:'',
-      variableNameTwo:'',
-      variableCodeTwo:'',
+      compareVarCode:'',
+      compareVarName:'',
       ruleCode:'',
     };
     //   调用models中的方法改变dataSource渲染页面
     this.props.dispatch({
-      type: 'complex/ruleListHandle',
+      type: 'complex/complexListHandle',
       payload: {
-        ruleList: addListKey([...ruleList, newData]),
+        complexList: addListKey([...complexList, newData]),
       }
     })
   }
@@ -189,18 +220,17 @@ export default class AssetTypeDeploy extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      type:type,
       mold:mold,
       number:record?record['key']:''
     },()=>{
     })
   }
   //输出结果
-  outResult=()=>{
+  outResult=(type)=>{
     this.setState({
       visible:true,
       status:0,
-      type:0,
+      isCount:type,
     })
   }
   //  刷新页面
@@ -209,28 +239,30 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //删除表格数据
   handleDelete=(key)=>{
-    const {ruleList} = this.props.complex
-    const newDataSource = ruleList.filter(item => item.key !== key)
+    const {complexList} = this.props.complex
+    const newDataSource = complexList.filter(item => item.key !== key)
     this.props.dispatch({
-      type: 'complex/ruleListHandle',
+      type: 'complex/complexListHandle',
       payload: {
-        ruleList:addListKey(newDataSource)
+        complexList:addListKey(newDataSource)
       }
     })
   }
   //保存数据
   handleSave = ()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'complex',
-      variables:this.props.complex.ruleList,
-    }
-    console.log(this.child.getFormValue())
-    console.log(this.props.complex.ruleList)
-    console.log(JSON.stringify(data))
-    console.log(JSON.stringify({nodeJson:JSON.stringify(this.props.editorFlow.editorData)}))
+      const formData = this.child.getFormValue();
+      const {complexList} = this.props.complex;
+      const {selectId} = this.props.editorFlow;
+      const {query} = this.props.location;
+      this.props.dispatch({
+        type: 'complex/saveComplexInfo',
+        payload: {
+          ...formData,
+          ruleType:'complex',
+          variables:complexList,
+          nodeId:query['id']
+        }
+      })
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -239,61 +271,67 @@ export default class AssetTypeDeploy extends PureComponent {
   //弹框按钮确定
   addFormSubmit =()=>{
       this.setState({visible:false},()=>{
+        //table选择弹框
         if(this.state.status){
-          const {checkedList,radioValue} = this.addForm.submitHandler();
-          const radioValueCopy = deepCopy(radioValue)
-          console.log(radioValue)
-          if(this.state.type){
-            this.props.dispatch({
-              type: 'complex/ruleListHandle',
-              payload: {
-                ruleList:addListKey(deepCopy([...this.props.complex.ruleList,...checkedList]))
+          const records = this.addForm.submitHandler();
+          if(Object.keys(records).length){
+            //编辑后一个变量
+            if(this.state.mold){
+              const {complexList} = this.props.complex;
+              //当前选中的后一个变量
+              const selectedVar = complexList[this.state.number-1];
+              let newData = {};
+              newData['compareVarId'] = records['varId'];
+              newData['compareVarName'] = records['varName'];
+              newData['compareVarCode'] = records['varCode'];
+              newData['compareVarType'] = records['varType'];
+              if(selectedVar['varType']){
+                if(selectedVar['varType']!==records['varType']){
+                  message.error('字符类型必须一致!')
+                  return
+                }
               }
-            })
-          }else{
-            if(Object.keys(radioValueCopy).length){
-              //编辑后一个变量
-              if(this.state.mold){
-                const {ruleList} = this.props.complex;
-                const ruleRadio = ruleList[this.state.number-1];
-                let newData = {};
-                newData['compareVarId'] = radioValue['varId'];
-                newData['variableNameTwo'] = radioValue['variableName'];
-                newData['variableCodeTwo'] = radioValue['variableCode'];
-                newData['variableType'] = radioValue['variableType'];
-                ruleList.splice(this.state.number-1,1,{...ruleRadio,...newData,})
-                this.props.dispatch({
-                  type: 'complex/ruleListHandle',
-                  payload: {
-                    ruleList:addListKey(deepCopy(ruleList))
-                  }
-                })
-              }else{
-                //编辑前一个变量
-                console.log(radioValueCopy)
-                console.log(this.props.complex)
-                const {ruleList} = this.props.complex
-                console.log(ruleList,'ruleList')
-                const ruleRadio = ruleList[this.state.number-1];
-                ruleList.splice(this.state.number-1,1,{...ruleRadio,...radioValue})
-                this.props.dispatch({
-                  type: 'complex/ruleListHandle',
-                  payload: {
-                    ruleList:addListKey(deepCopy(ruleList))
-                  }
-                })
-              }
+              complexList.splice(this.state.number-1,1,{...selectedVar,...newData,})
+              this.props.dispatch({
+                type: 'complex/complexListHandle',
+                payload: {
+                  complexList:addListKey(complexList)
+                }
+              })
+            }else{
+              //编辑前一个变量
+              const {complexList} = this.props.complex
+              //前一个选中的变量
+              const selectedVar = complexList[this.state.number-1];
+              complexList.splice(this.state.number-1,1,{...selectedVar,...records})
+              this.props.dispatch({
+                type: 'complex/complexListHandle',
+                payload: {
+                  complexList:addListKey(complexList)
+                }
+              })
             }
           }
         }else{
           //输出结果值选择
-          const {checkedList,radioValue} = this.addForm.submitHandler();
-          this.setState({
-            resultVarId:radioValue,
-            visible:false,
-          })
+          const records = this.addForm.submitHandler();
+          const {isCount} = this.state;
+          if(isCount){
+            this.setState({
+              countResult:{
+                countVarId:records['varId'],
+                countVarValue:records['varName'],
+              },
+            })
+          }else{
+            this.setState({
+              resultVarId:{
+                resultVarId:records['varId'],
+                resultVarValue:records['varName'],
+              },
+            })
+          }
         }
-
       })
   }
   render() {
@@ -316,19 +354,21 @@ export default class AssetTypeDeploy extends PureComponent {
             changeDefault={this.changeDefault}
             outResult={this.outResult}
             resultVarId={this.state.resultVarId}
+            countResult={this.state.countResult}
           />
           <ComplexTable
             bordered
             pagination={false}
             columns={this.state.columns}
-            dataSource={this.props.complex.ruleList}
+            dataSource={this.props.complex.complexList}
             handleAdd={this.handleAdd}
             handleModify={this.clickDialog}
             loading={this.props.loading}
+            getSubKey={this.getSubKey}
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
-              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+              <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
             </Col>
             <Col>
               <Button type="primary">返回</Button>

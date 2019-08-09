@@ -22,13 +22,11 @@ import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ assetDeploy, loading,rule}) => ({
-  assetDeploy,
-  rule,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({setVar}) => ({
+  setVar,
 }))
 @Form.create()
-export default class AssetTypeDeploy extends PureComponent {
+export default class setVar extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -169,18 +167,18 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //删除表格数据
   handleDelete=(key)=>{
-    const {ruleList} = this.props.rule
-    const newDataSource = ruleList.filter(item => item.key !== key)
+    const {varList} = this.props.setVar
+    const newDataSource = varList.filter(item => item.key !== key)
     this.props.dispatch({
-      type: 'rule/ruleListHandle',
+      type: 'setVar/ruleListHandle',
       payload: {
-        ruleList:addListKey(newDataSource)
+        varList:addListKey(newDataSource)
       }
     })
   }
   //保存数据
   handleSave = ()=>{
-    console.log(this.props.rule.ruleList)
+    console.log(this.props.setVar.varList)
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -194,20 +192,20 @@ export default class AssetTypeDeploy extends PureComponent {
         console.log(checkedList)
         if(this.state.type){
           this.props.dispatch({
-            type: 'rule/ruleListHandle',
+            type: 'setVar/varListHandle',
             payload: {
-              ruleList:addListKey(deepCopy([...this.props.rule.ruleList,...checkedList]))
+              varList:addListKey(deepCopy([...this.props.setVar.varList,...checkedList]))
             }
           })
         }else{
           console.log(this.state.radioValue)
-          console.log(this.props.rule)
-          const {ruleList} = this.props.rule
-          ruleList.splice(this.props.number-1,1,radioValue)
+          console.log(this.props.setVar)
+          const {varList} = this.props.setVar
+          varList.splice(this.props.number-1,1,radioValue)
           this.props.dispatch({
-            type: 'rule/ruleListHandle',
+            type: 'setVar/ruleListHandle',
             payload: {
-              ruleList:addListKey(deepCopy(ruleList))
+              varList:addListKey(deepCopy(varList))
             }
           })
         }
@@ -245,7 +243,7 @@ export default class AssetTypeDeploy extends PureComponent {
             bordered
             pagination={false}
             columns={this.state.columns}
-            dataSource={this.props.rule.ruleList}
+            dataSource={this.props.setVar.varList}
             handleAdd={()=>this.clickDialog(1)}
             handleModify={this.clickDialog}
             loading={this.props.loading}

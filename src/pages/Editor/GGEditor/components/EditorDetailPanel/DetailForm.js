@@ -50,7 +50,6 @@ class DetailForm extends React.Component {
         if (!item) {
           return;
         }
-
         executeCommand(() => {
           update(item, {
             ...values,
@@ -62,13 +61,48 @@ class DetailForm extends React.Component {
 
   renderEdgeShapeSelect = () => {
     return (
-      <Select onChange={this.handleSubmit}>
+      <Select onChange={this.handleChange}>
         <Option value="Y">是</Option>
         <Option value="N">否</Option>
       </Select>
     );
   };
-  
+  handleChange=(e)=>{
+    const { form, propsAPI } = this.props;
+    const { getSelected, executeCommand, update } = propsAPI;
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    const item = getSelected()[0];
+    const value_y={
+      label:'是',
+      type:'Y'
+    }
+    const value_n={
+      label:'否',
+      type:'N'
+    }
+    if(e=='Y'){
+      this.props.form.setFields({
+        label: {
+          value: '是'
+        },
+      });
+      executeCommand(() => {
+        update(item, value_y);
+      });
+    }else{
+      this.props.form.setFields({
+        label: {
+          value: '否'
+        },
+      });
+      executeCommand(() => {
+        update(item,value_n);
+      });
+    }
+    console.log(e)
+  }
   setRule = () => {
     const { label, jump } = this.item.getModel();
     const { form, propsAPI } = this.props;

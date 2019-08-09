@@ -27,7 +27,7 @@ export default class ScoreModelTable extends PureComponent {
     super(props);
   }
   render() {
-    const { dataSource } = this.props;
+    const { dataSource,loading } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -64,6 +64,7 @@ export default class ScoreModelTable extends PureComponent {
           pagination={false}
           dataSource={dataSource}
           columns={columns}
+          loading={loading}
         />
       </div>
     );

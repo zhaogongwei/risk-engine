@@ -22,7 +22,7 @@ import Swal from 'sweetalert2';
 
 @connect(({ risklabel, loading }) => ({
   risklabel,
-  loading: loading.effects['risklabel/riskSubmit']
+  loading: loading.effects['risklabel/fetchRiskLabelList']
 }))
 export default class RiskLabel extends PureComponent {
   constructor(props) {
@@ -127,7 +127,7 @@ export default class RiskLabel extends PureComponent {
       formData = {}
     }
     this.props.dispatch({
-      type: 'assetDeploy/fetchRiskLabelList',
+      type: 'risklabel/fetchRiskLabelList',
       data: {
         ...formData,
         currPage,

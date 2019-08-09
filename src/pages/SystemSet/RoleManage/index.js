@@ -12,17 +12,18 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import AddForm from './addForm';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
+import { findInArr,exportJudgment } from '@/utils/utils'
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
-import { findInArr,exportJudgment } from '@/utils/utils'
+import AddForm from './AddRole';
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+
+@connect(({ role, loading }) => ({
+  role,
+  loading: loading.effects['role/queryRoleList']
 }))
 export default class RoleManage extends PureComponent {
   constructor(props) {
@@ -55,10 +56,7 @@ export default class RoleManage extends PureComponent {
         render: (record) =>{
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>{this.empower(1,record)}}>
-                <Icon type="edit"/>授权
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.addEdit(2,record)}>
+              <Menu.Item onClick={()=>this.isShowEdit(true, 2, record)}>
                 <Icon type="edit"/>修改
               </Menu.Item>
               <Menu.Item onClick={()=>this.deleteRole()}>
@@ -91,43 +89,29 @@ export default class RoleManage extends PureComponent {
           enmuval:'男、女',
         }
       ],
-      checkedData: [],
-      modalStatus:false,
-      code:'',
-      type:1,//1:添加 2：编辑
+      type: 1,//1:添加 2：编辑
       pageSize:10,
-      currentPage:1,
-      current:1,
-      id:'',
-      status:1,
-      record:{},
-      visible:false,
-      isTrust:0,//授权状态框显示状态
+      currPage:1,
+      updateVisible:false,
     };
   }
   componentDidMount() {
     this.change()
   }
   //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
+  onChange = (currPage,pageSize) => {
     this.setState({
-      current:current,
-      currentPage:current
+      currPage,
+      pageSize
     })
-    this.change(current)
+    this.change(currPage, pageSize)
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
+      type: 'role/queryRoleList',
+      payload: {
+        ...this.props.role.queryConfig,
         currPage,
         pageSize
       }
@@ -142,49 +126,18 @@ export default class RoleManage extends PureComponent {
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
-    })
-  }
   //  刷新页面
   reload = () => {
     window.location.reload();
-  }
-  //查询时改变默认页数
-  changeDefault=(value)=>{
-    this.setState({
-      current:value
-    })
   }
   //右上角渲染
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={()=>this.addEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button><Icon type="export" />导出列表</Button>
       </Fragment>
     )
-  }
-  //跳转编辑/新增页面
-  goAddPage = (obj={})=>{
-    //this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
-    router.push({
-      pathname:'/riskReport/reportList/mould/edit',
-      state:obj
-    })
-  }
-  //去报告预览
-  goPreview=()=>{
-    router.push({
-      pathname:'/riskReport/reportList/mould/preview',
-    })
-  }
-  //去风控策略列表
-  goPolicyList = ()=>{
-    router.push({
-      pathname:'/riskManage/riskpolicylist/list',
-    })
   }
   //弹框点击确定事件
   addFormSubmit=async ()=>{
@@ -196,25 +149,14 @@ export default class RoleManage extends PureComponent {
     }
   }
   //添加、编辑事件
-  addEdit=(type,record={})=>{
+  isShowEdit=(flag, type, record = {})=>{
     this.setState({
-      visible:true,
-      type:type,
-      record:record,
-      isTrust:0,
-    })
-  }
-  //授权事件
-  empower=(status,record={})=>{
-    this.setState({
-      isTrust:status,
-      visible:true,
-      record:record
-    },()=>{
+      updateVisible: !!flag,
+      type
     })
   }
   //删除角色
-  deleteRole=async(type=1,record={})=>{
+  deleteRole=async()=>{
     const confirmVal = await Swal.fire({
       text: '确定要删除该角色吗？',
       type: 'warning',
@@ -228,15 +170,20 @@ export default class RoleManage extends PureComponent {
     }
   }
   render() {
+    const { type, updateVisible } = this.state
+    const modalParams = {
+      updateVisible,
+      type,
+      isShowEdit: this.isShowEdit
+    }
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
          <Card
             bordered={false}
             title={'角色管理'}
          >
-
          </Card>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currPage} pageSize={this.state.pageSize}/>
         <Table
           bordered
           pagination={false}
@@ -248,24 +195,15 @@ export default class RoleManage extends PureComponent {
           style={{ marginBottom: "50px" }}
           showQuickJumper
           defaultCurrent={1}
-          current={this.state.current}
+          current={this.state.currPage}
           total={100}
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
         />
-       <Modal
-         title={this.state.isTrust===1?null:(this.state.type===1?'新增角色':'修改角色')}
-         visible={this.state.visible}
-         onOk={this.addFormSubmit}
-         onCancel={()=>this.setState({visible:false})}
-       >
+         { this.state.updateVisible ? 
          <AddForm
-           getSubKey={this.getSubKey}
-           type={this.state.type}
-           isTrust={this.state.isTrust}
-           record={this.state.record}
-         />
-       </Modal>
+           {...modalParams}
+         /> : null}
       </PageHeaderWrapper>
     )
   }

@@ -4,7 +4,6 @@ import GGEditor, { Flow,RegisterNode } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowBird'
 import router from 'umi/router';
-//import FlowCircleExtend from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowCircleExtend'
 import FlowWrapper from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowWrapper'
 import EditorMinimap from '@/pages/Editor/GGEditor/components/EditorMinimap';
 import { FlowContextMenu } from '@/pages/Editor/GGEditor/components/EditorContextMenu';

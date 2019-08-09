@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import Highlighter from 'react-highlight-words';
 import {
   Row,
   Col,
@@ -11,7 +12,8 @@ import {
   Form,
   Popconfirm,
   Modal,
-  Card
+  Card,
+  Input,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
@@ -25,10 +27,11 @@ const FormItem = Form.Item
 @connect(({ editorFlow, loading,rule}) => ({
   editorFlow,
   rule,
-  loading: loading.effects['assetDeploy/riskSubmit']
+  loading: loading.effects['rule/queryRuleInfo'],
+  buttonLoading: loading.effects['rule/saveRuleInfo'],
 }))
 @Form.create()
-export default class AssetTypeDeploy extends PureComponent {
+export default class SimpleRule extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,21 +42,27 @@ export default class AssetTypeDeploy extends PureComponent {
       }
       ,{
         title: '变量名称',
-        dataIndex: 'variableName',
-        key:'variableName',
+        dataIndex: 'varName',
+        key:'varName',
         editable:true,
         type:'input',
-        isFocus:true
+        isFocus:true,
+        cols:1,
+        sorter: (a, b) => this.compareFunction(a['varName'],b['varName']),
+        sortDirections: ['ascend'],
+          ...this.getColumnSearchProps('varName'),
       },{
         title: '变量代码',
-        dataIndex: 'variableCode',
-        key:'variableCode',
+        dataIndex: 'varCode',
+        key:'varCode',
+        cols:2
       },{
         title: '条件',
         key:'compareCondition',
         dataIndex:'compareCondition',
         editable:true,
         type:'select',
+        cols:3,
         value:[
           {
             name:'<=',
@@ -79,21 +88,35 @@ export default class AssetTypeDeploy extends PureComponent {
             name:'!=',
             id:'!='
           },
+        ],
+        valueOther:[
+          {
+            name:'==',
+            id:'=='
+          },
+          {
+            name:'!=',
+            id:'!='
+          },
         ]
       },
       {
         title: '比较值',
         key:'compareValue',
         dataIndex:'compareValue',
+        width:200,
         editable:true,
-        type:'more'
+        type:'more',
+        cols:4,
+        pattern:/^\d{1,3}$/
       },
       {
-        title: '规则编码',
+        title: '命中标记',
         key:'ruleCode',
         dataIndex:'ruleCode',
         editable:true,
-        type:'input'
+        type:'input',
+        cols:5,
       },
       {
         title: '操作',
@@ -107,7 +130,7 @@ export default class AssetTypeDeploy extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//0:单选按钮，1：多选按钮
+      type:0,//0:单选按钮，1：多选按钮
       number:'',
       pageSize:10,
       currentPage:1,
@@ -115,12 +138,50 @@ export default class AssetTypeDeploy extends PureComponent {
       id:'',
       status:1,//状态判断 1:表格 0：输出结果
       visible:false,
+      isCount:0,//计数结果类型判断
       resultVarId:{},//输出结果
+      countResult:{},//计数结果
+      searchText: '',
     };
   }
-  componentDidMount() {
+ async componentDidMount () {
     console.log(this.props.editorFlow.selectId,'selectId')
     console.log(this.props.editorFlow.editorData,'editorData')
+    const {query} = this.props.location;
+    //请求变量列表
+    this.props.dispatch({
+      type: 'rule/queryVarList',
+      payload: {
+      }
+    })
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'rule/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    //查询节点信息
+    const res = await this.props.dispatch({
+      type: 'rule/queryRuleInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
+   if(res&&res.status===1){
+      this.setState({
+        resultVarId:{
+          resultVarId:res.data.resultVarId,
+          resultVarValue:res.data.resultVarValue,
+        },
+        countResult:{
+          countVarId:res.data.countVarId,
+          countVarValue:res.data.countVarValue,
+        },
+      })
+   }
+
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -158,17 +219,16 @@ export default class AssetTypeDeploy extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      type:type,
       number:record?record['key']:''
     },()=>{
     })
   }
   //输出结果
-  outResult=()=>{
+  outResult=(type)=>{
     this.setState({
       visible:true,
       status:0,
-      type:0,
+      isCount:type
     })
   }
   //  刷新页面
@@ -188,16 +248,19 @@ export default class AssetTypeDeploy extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'simple',
-      variables:this.props.rule.ruleList,
-    }
-    console.log(this.child.getFormValue())
-    console.log(this.props.rule.ruleList)
-    console.log(JSON.stringify(data))
+    const formData = this.child.getFormValue();
+    const {ruleList} = this.props.rule;
+    const {selectId} = this.props.editorFlow;
+    const {query} = this.props.location;
+    this.props.dispatch({
+      type: 'rule/saveRuleInfo',
+      payload: {
+        ...formData,
+        ruleType:'simple',
+        variables:ruleList,
+        nodeId:query['id']
+      }
+    })
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -206,37 +269,102 @@ export default class AssetTypeDeploy extends PureComponent {
   //弹框按钮确定
   addFormSubmit =()=>{
       this.setState({visible:false},()=>{
+        //添加变量
         if(this.state.status){
-          const {checkedList,radioValue} = this.addForm.submitHandler();
-          if(this.state.type){
-            this.props.dispatch({
-              type: 'rule/ruleListHandle',
-              payload: {
-                ruleList:addListKey(deepCopy([...this.props.rule.ruleList,...checkedList]))
-              }
-            })
-          }else{
-            if(Object.keys(radioValue).length){
-              console.log(radioValue)
-              console.log(this.props.rule)
-              const {ruleList} = this.props.rule
-              ruleList.splice(this.state.number-1,1,radioValue)
+          const records = this.addForm.submitHandler();
+            if(Object.keys(records).length){
               this.props.dispatch({
                 type: 'rule/ruleListHandle',
                 payload: {
-                  ruleList:addListKey(deepCopy(ruleList))
+                  ruleList:addListKey(deepCopy([...this.props.rule.ruleList,records]))
                 }
               })
             }
-          }
         }else{
           //输出结果值选择
-          const {checkedList,radioValue} = this.addForm.submitHandler();
-          this.setState({
-            resultVarId:radioValue,
-          })
+          const records = this.addForm.submitHandler();
+          const {isCount} = this.state;
+          if(isCount){
+            this.setState({
+              countResult:{
+                countVarId:records['varId'],
+                countVarValue:records['varName'],
+              },
+            })
+          }else{
+            this.setState({
+              resultVarId:{
+                resultVarId:records['varId'],
+                resultVarValue:records['varName'],
+              },
+            })
+          }
         }
       })
+  }
+  //table 按变量名称搜索
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => (
+      <Highlighter
+        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        searchWords={[this.state.searchText]}
+        autoEscape
+        textToHighlight={text.toString()}
+      />
+    ),
+  });
+
+  handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+  //按照变量首字母排序
+  compareFunction=(a,b)=>{
+    return a.localeCompare(b);
   }
   render() {
     const { permission } = this.props
@@ -245,6 +373,7 @@ export default class AssetTypeDeploy extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    console.log('ruleList',this.props)
     return (
       <PageHeaderWrapper >
         <Card
@@ -258,6 +387,7 @@ export default class AssetTypeDeploy extends PureComponent {
             changeDefault={this.changeDefault}
             outResult={this.outResult}
             resultVarId={this.state.resultVarId}
+            countResult={this.state.countResult}
           />
           <RuleTable
             bordered
@@ -270,7 +400,7 @@ export default class AssetTypeDeploy extends PureComponent {
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
-              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+              <Button type="primary" loading={this.props.buttonLoading} onClick={this.handleSave}>保存并提交</Button>
             </Col>
             <Col>
               <Button type="primary">返回</Button>

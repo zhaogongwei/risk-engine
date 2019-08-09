@@ -5,9 +5,10 @@ import {
   Input,
   Button,
   Select,
-  Form
+  Form,
+  Card,
 } from 'antd';
-import PageTableTitle from '@/components/PageTitle/PageTableTitle'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -309,7 +310,9 @@ const result = [
     content:'结束'
   },
 ]
-@connect()
+@connect(({testTemp})=>({
+  testTemp
+}))
 
 @Form.create()
 export default class testTemp extends Component {
@@ -318,12 +321,7 @@ export default class testTemp extends Component {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
+      type: 'assetDtestTempeploy/fetchTestTempList',
     })
 
   }
@@ -345,13 +343,17 @@ export default class testTemp extends Component {
       wrapperCol:{span:14},
     }
     return (
-      <PageTableTitle  title={'新增测试模板'}>
-        <Form
-          className="ant-advanced-search-form"
-          labelAlign="left"
+      <PageHeaderWrapper>
+        <Card
+          bordered={false}
+          title={'新增测试模板'}
         >
-          <Row type="flex" align="top"  gutter={16}>
-            <Col span={16} style={{marginRight:10}}>
+          <Form
+            className="ant-advanced-search-form"
+            labelAlign="left"
+          >
+            <Row type="flex" align="top"  gutter={16}>
+              <Col span={16} style={{marginRight:10}}>
                 <Row gutter={24} style={{textAlign:'center',lineHeight:'60px',fontSize:20,backgroundColor:'#F2F2F2',}}>输入变量</Row>
                 <Row type="flex" gutter={24} style={{backgroundColor:'#F2F2F2',paddingLeft:80}}>
                   {
@@ -365,7 +367,7 @@ export default class testTemp extends Component {
                                   initialValue:item.default
                                 })(
                                   <Input />
-                              )}
+                                )}
                               </FormItem>:
                               <FormItem label={item.label} {...formItemConfig}>
                                 {getFieldDecorator('modelName',{
@@ -403,34 +405,35 @@ export default class testTemp extends Component {
                   <Button type="primary">保存并执行测试</Button>
                   <Button type="primary">返回</Button>
                 </Row>
-            </Col>
-            <Col span={6} style={{backgroundColor:'#F2F2F2',minHeight:600}}>
-              <Row style={{textAlign:'center',lineHeight:'60px',fontSize:20}}>测试结果</Row>
-              <Row type="flex" justify="center">
-                <Col span={18}>
-                  {
-                    result.map((item,index)=>{
-                      return (
-                        <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
-                          <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.title}</Col>
-                          <Col>{item.content}</Col>
-                        </Row>
-                      )
-                    })
-                  }
-                </Col>
-              </Row>
-              <Row type="flex" justify="center">
-                <Col span={18}>
-                  <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
-                    风控报告
-                  </p>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </PageTableTitle>
+              </Col>
+              <Col span={6} style={{backgroundColor:'#F2F2F2',minHeight:600}}>
+                <Row style={{textAlign:'center',lineHeight:'60px',fontSize:20}}>测试结果</Row>
+                <Row type="flex" justify="center">
+                  <Col span={18}>
+                    {
+                      result.map((item,index)=>{
+                        return (
+                          <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
+                            <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.title}</Col>
+                            <Col>{item.content}</Col>
+                          </Row>
+                        )
+                      })
+                    }
+                  </Col>
+                </Row>
+                <Row type="flex" justify="center">
+                  <Col span={18}>
+                    <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
+                      风控报告
+                    </p>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </PageHeaderWrapper>
     )
   }
 }

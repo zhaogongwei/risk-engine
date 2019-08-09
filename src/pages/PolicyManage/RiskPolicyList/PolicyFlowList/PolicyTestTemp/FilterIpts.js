@@ -55,7 +55,7 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="策略类型" {...formItemConfig}>
+            <FormItem label="模板名称" {...formItemConfig}>
               {getFieldDecorator('policyType',{
                 initialValue:''
               })(

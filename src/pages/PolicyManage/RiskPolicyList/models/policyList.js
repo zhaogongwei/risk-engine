@@ -5,8 +5,6 @@ export default {
 
   state: {
     editorData: {},
-    selectId:'',
-    selectItem:{},
     status:false,
     tableList:[],
     pageList:[],
@@ -14,31 +12,6 @@ export default {
   },
 
   effects: {
-    *fetchNotices({payload,callback}, { call, put }) {
-      yield put({
-        type: 'saveEditorData',
-        payload,
-      });
-      callback()
-    },
-    *saveId({payload},{call,put}){
-      yield put({
-        type: 'saveEditId',
-        payload,
-      });
-    },
-    *saveItem({payload},{call,put}){
-      yield put({
-        type: 'saveEditItem',
-        payload,
-      });
-    },
-    *change({payload},{call,put}){
-      yield put({
-        type:'changeStatus',
-        payload
-      })
-    },
     //获取策略列表
     *fetchPolicyList({payload}, { call, put }) {
       let response = yield call(api.queryPolicyList,payload)
