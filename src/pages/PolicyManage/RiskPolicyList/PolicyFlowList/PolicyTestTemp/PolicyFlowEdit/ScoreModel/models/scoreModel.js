@@ -9,12 +9,10 @@ export default {
   state: {
     scoreList:[],//评分模型列表
     numList:{
-      count:1,
       dataSource:[
       ]
     },//数字类型变量列表
     strList:{
-      count:1,
       dataSource:[
       ]
     },//字符类型变量列表
@@ -41,11 +39,12 @@ export default {
           payload:response
         })
       }
+      return response;
     },
     //简单规则节点信息保存
     *saveScoreInfo({payload,callback},{call,put}){
       let response = yield call(api.saveScoreInfo,payload)
-      if(response&&response.status == '000000'){
+      if(response && response.status == 1){
         message.success(response.statusDesc)
         callback()
       }else{
@@ -77,7 +76,6 @@ export default {
         ...state,
         numList:{
           dataSource: payload.dataSource,
-          count: payload.count,
         }
       };
     },
@@ -87,7 +85,6 @@ export default {
           ...state,
           strList:{
             dataSource: payload.dataSource,
-            count: payload.count,
           }
         }
     },
@@ -97,7 +94,6 @@ export default {
         ...state,
         numList:{
           dataSource: payload.dataSource,
-          count:payload.count
         }
       };
     },
@@ -107,7 +103,6 @@ export default {
         ...state,
         strList:{
           dataSource: payload.dataSource,
-          count:payload.count
         }
       };
     },

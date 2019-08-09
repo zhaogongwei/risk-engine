@@ -16,20 +16,6 @@ const FormItem = Form.Item
 @Form.create()
 
 export default class FilterIpts extends Component {
-  //查询
-  formSubmit = async (e) => {
-    this.props.changeDefault(1)
-    const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
-    })
-
-  }
   //   获取表单信息
   getFormValue = () => {
     const {resultVarId} = this.props;
@@ -59,7 +45,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="评分结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:resultVarId['varName']?resultVarId['varName']:''
+                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:''
               })(
                 <Input
                   onClick={()=>this.props.outResult()}

@@ -1,6 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import EditableCell from './EditableCell'
-import { 
+import {
+  Row,
+  Col,
   Button,
   Form,
   Popconfirm,
@@ -22,12 +24,13 @@ const EditableFormRow = Form.create()(EditableRow);
 
 @Form.create()
 
-export default class ScoreModelTable extends PureComponent {
+export default class ScoreCard extends PureComponent {
   constructor(props) {
     super(props);
   }
   render() {
-    const { dataSource,loading } = this.props;
+    const { dataSource } = this.props.list;
+    const { varObjRow } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -48,15 +51,26 @@ export default class ScoreModelTable extends PureComponent {
           isRequired: col.nonRequired,
           pattern:col.pattern,
           max:col.max,
-          handleModify:()=>this.props.handleModify(0,record)
+          type:col.type,
+          value:col.value?col.value:null,
+          cols:col.cols?col.cols:null,
+          varObjRow:varObjRow,
         })
       };
     });
+
     return (
       <div>
-        <Button onClick={this.props.handleAdd} type="primary" style={{ marginBottom: 16, float: "right", zIndex: '1',marginRight: '20px' }}>
-          选择变量
-        </Button>
+        <Row type="flex" align="middle" justify="space-between" style={{marginBottom:16}}>
+          <Col>
+            {this.props.title?this.props.title:''}
+          </Col>
+          <Col>
+            <Button onClick={this.props.handleAdd} type="primary">
+              添加
+            </Button>
+          </Col>
+        </Row>
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
@@ -64,7 +78,6 @@ export default class ScoreModelTable extends PureComponent {
           pagination={false}
           dataSource={dataSource}
           columns={columns}
-          loading={loading}
         />
       </div>
     );

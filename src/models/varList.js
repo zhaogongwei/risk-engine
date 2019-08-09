@@ -28,6 +28,22 @@ export default {
           type:'varListHandle',
           payload:response
         })
+        if(!response.data.records.length){
+          message.error('暂无数据')
+        }
+      }else{
+        yield put({
+          type:'varListHandle',
+          payload:{
+            data:{
+              records:[],
+              current:1,
+              size:10,
+              total:0,
+            }
+          }
+        })
+        message.error(response.statusDesc)
       }
       return response;
     },

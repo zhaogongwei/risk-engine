@@ -25,6 +25,8 @@ import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
   editorFlow,
   scoreModel,
   varList,
+  loading:loading.effects['scoreModel/queryScoreInfo'],
+  buttonLoading:loading.effects['scoreModel/saveScoreInfo'],
 }))
 export default class ScoreModel extends PureComponent {
   constructor(props) {
@@ -77,6 +79,7 @@ export default class ScoreModel extends PureComponent {
       visible:false,//选择变量弹框显隐状态
       editShow:false,//编辑弹框显隐状态
       resultVarId:{},//输出结果
+      varObjRow:{},//每行的变量对象
     };
   }
   async componentDidMount() {
@@ -161,12 +164,13 @@ export default class ScoreModel extends PureComponent {
     })
   }
   //表格编辑
-  handledit=(record)=>{
+  handledit=async (record)=>{
     console.log(record)
     this.setState({
       editShow:true,
       varKey:record.key,
-      varType:record.kind == 'num'?1:0
+      varObjRow:record,
+      varType:record.varType == 'num'?1:0
     },()=>{
       //点击不同的变量的编辑时，先清除数据右边表格数据
       const {key} = record
@@ -174,6 +178,7 @@ export default class ScoreModel extends PureComponent {
       const {variableInfoList} =scoreList[key-1]
       //点击编辑时，先判断该变量是否有变量明细值
       if(variableInfoList&&variableInfoList.length>0){
+        //变量为数字类型
         if(this.state.varType){
           this.props.dispatch({
             type: 'scoreModel/delNumData',
@@ -182,6 +187,7 @@ export default class ScoreModel extends PureComponent {
             }
           })
         }else{
+          //字符类型
           this.props.dispatch({
             type:'scoreModel/delStrData',
             payload:{
@@ -219,17 +225,29 @@ export default class ScoreModel extends PureComponent {
       if(this.state.status){
         if(Object.keys(records).length){
           const {scoreList} = this.props.scoreModel
-          scoreList.splice(this.state.number-1,1,radioValue)
-          this.props.dispatch({
-            type: 'scoreModel/scoreListHandle',
-            payload: {
-              scoreList:addListKey(deepCopy([...scoreList,{...records}]))
+          if(records['varType']==='num'||(records['varType']==='char'&&records['enumFlag'])){
+            const keyList = scoreList.filter(item => item['varId']===records['varId'])
+            console.log('key',keyList)
+            if(scoreList.length&&keyList.length){
+              message.error('不能添加重复变量!')
+              return;
             }
-          })
+            this.props.dispatch({
+              type: 'scoreModel/scoreListHandle',
+              payload: {
+                scoreList:addListKey(deepCopy([...scoreList,{...records}]))
+              }
+            })
+          }else{
+            message.error('只能添加数字、设置了枚举值的字符变量!')
+          }
         }
       }else{
         //输出结果值选择
-        const {checkedList,radioValue} = this.addForm.submitHandler();
+        if(records['varType']!=='num'){
+          message.error('此处选择弹框中只能选择数字类型变量!');
+          return;
+        }
         this.setState({
           resultVarId:{
             resultVarId:records['varId'],
@@ -247,16 +265,20 @@ export default class ScoreModel extends PureComponent {
       this.editForm.handleSave()
     })
   }
-  save=()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'score',
-      variables:this.props.scoreModel.scoreList,
-    }
-    console.log(this.props.scoreModel.scoreList)
-    console.log(JSON.stringify(data))
+  //保存数据
+  handleSave=()=>{
+    const formData = this.child.getFormValue();
+    const {scoreList} = this.props.scoreModel;
+    const {query} = this.props.location;
+    this.props.dispatch({
+      type: 'scoreModel/saveScoreInfo',
+      payload: {
+        ...formData,
+        ruleType:'score',
+        variables:scoreList,
+        nodeId:query['id']
+      }
+    })
   }
   render() {
     return (
@@ -268,8 +290,6 @@ export default class ScoreModel extends PureComponent {
           <FilterIpts
             getSubKey={this.getSubKey}
             change={this.onChange}
-            current={this.state.currentPage}
-            changeDefault={this.changeDefault}
             outResult={this.outResult}
             resultVarId={this.state.resultVarId}
           />
@@ -279,6 +299,7 @@ export default class ScoreModel extends PureComponent {
                 dataSource={this.props.scoreModel.scoreList}
                 columns={this.state.columns}
                 handleAdd={()=>this.clickDialog(1)}
+                loading={this.props.loading}
                 handleModify={this.clickDialog}
               />
             </Col>
@@ -287,7 +308,7 @@ export default class ScoreModel extends PureComponent {
             <Col span={12}>
               <Row type="flex" gutter={24} justify="center" >
                 <Col>
-                  <Button type="primary" onClick={this.save}>保存并提交</Button>
+                  <Button type="primary" loading={this.props.buttonLoading} onClick={this.handleSave}>保存并提交</Button>
                 </Col>
                 <Col>
                   <Button>返回</Button>
@@ -320,6 +341,7 @@ export default class ScoreModel extends PureComponent {
               varType={this.state.varType}
               varKey={this.state.varKey}
               getSubKey={this.getSubKey}
+              varObjRow={this.state.varObjRow}
             />
           </Modal>
         </Card>

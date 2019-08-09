@@ -72,16 +72,6 @@ const EditableFormRow = Form.create()(EditableRow);
         //handleSave({ ...record, ...values });
       });
     }
-    checkInput=(value, record, type)=>{
-      this.props.form.validateFields([type],(error, values) => {
-        //验证 1：不通过，2：通过
-        if(error){
-          record[type]='error'
-        }else{
-          record[type] = value
-        }
-      })
-    }
     render() {
       const { editing } = this.state;
       const {
@@ -119,7 +109,7 @@ const EditableFormRow = Form.create()(EditableRow);
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
-                        onClick={(e)=>handleModify()}
+                        readOnly
                       />
                     )}
                   </FormItem>
