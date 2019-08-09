@@ -9,13 +9,16 @@ import {
   Dropdown,
   message,
   Card,
-  Icon
+  Icon,
+  Modal
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
+//   新增编辑组件
+import PolicyEdit from './PolicyEdit'
 import { findInArr,exportJudgment } from '@/utils/utils'
 
 @connect(({ policyList, loading }) => ({
@@ -39,22 +42,22 @@ export default class RiskPolicyList extends PureComponent {
         dataIndex: 'policyName',
         key:'policyName'
       },{
-        title: '策略流版本号',
+        title: '策略代码',
         key:'policyCode',
         dataIndex:'policyCode'
       },{
-        title: '版本号描述',
+        title: '策略说明',
         key:'policyExplain',
         dataIndex:'policyExplain'
       },{
-        title: '更新时间',
+        title: '输出报告',
         key:'creatTime',
         dataIndex:'creatTime'
       },{
         title: '状态',
         key:'status',
         dataIndex:'status',
-        render:(record)=>record===1?'启用':'禁用'
+        render: record => record === 1 ? '启用' : '禁用'
       },{
         title: '负责人',
         key:'leader',
@@ -119,7 +122,8 @@ export default class RiskPolicyList extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status:1
+      status: 1,
+      modalVisible: false,   //   新增策略状态
     };
   }
   componentDidMount() {
@@ -127,6 +131,7 @@ export default class RiskPolicyList extends PureComponent {
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
+    console.log(current, 'change')
     this.setState({
       current:current,
       currentPage:current
@@ -135,15 +140,16 @@ export default class RiskPolicyList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+    // let formData ;
+    // if(this.child){
+    //   formData = this.child.getFormValue()
+    // }else{
+    //   formData = {}
+    // }
+    let formData = this.props.policyList.queryData
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
+      type: 'policyList/fetchPolicyList',
+      payload: {
         ...formData,
         currPage,
         pageSize
@@ -152,7 +158,7 @@ export default class RiskPolicyList extends PureComponent {
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
-  getSubKey=(ref,key)=>{
+  getSubKey = (ref, key) => {
     this[key] = ref;
   }
   //展示页码
@@ -161,11 +167,14 @@ export default class RiskPolicyList extends PureComponent {
   }
   //去编辑页面
   goEditPage=(type)=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/list/edit',
-      state:{
-        type:type
-      }
+    // router.push({
+    //   pathname:'/policyManage/riskpolicylist/list/edit',
+    //   state:{
+    //     type:type
+    //   }
+    // })
+    this.setState({
+      modalVisible: true
     })
   }
   //去输入输出配置
@@ -204,11 +213,15 @@ export default class RiskPolicyList extends PureComponent {
       pathname:'/policyManage/riskpolicylist/policyFlow/list'
     })
   }
+  //   确定添加修改
+  confirmChange = () => {
+    console.log(this.edit.props.form.getFieldsValue())
+  }
   render() {
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card bordered={false}>
-           <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+           <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize} changeDefault={this.changeDefault}/>
            <Table
              bordered
              pagination={false}
@@ -226,6 +239,17 @@ export default class RiskPolicyList extends PureComponent {
              showTotal={(total, range) => this.showTotal(total, range)}
            />
          </Card>
+        <Modal
+          visible={this.state.modalVisible}
+          onOk={this.confirmChange}
+          destroyOnClose={true}
+          onCancel={() => this.setState({ modalVisible: false })}
+          width={550}
+          title={'新增策略'}
+          bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
+        >
+          <PolicyEdit returnSubKey={this.getSubKey} />
+        </Modal>
       </PageHeaderWrapper>
     )
   }

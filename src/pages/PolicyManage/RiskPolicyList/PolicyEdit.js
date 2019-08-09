@@ -16,14 +16,16 @@ import {
   Card
 } from 'antd';
 import { connect } from 'dva'
-import { routerRedux } from 'dva/router';
-import Dialog from './Dialog';
-import router from 'umi/router';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+
+const spanStyle = {
+  fontSize: '12px',
+  marginRight: '10px'
+}
 
 @connect(({ policyList, loading }) => ({
   policyList,
@@ -69,6 +71,7 @@ export default class PolicyEdit extends PureComponent {
     };
   }
   componentDidMount() {
+    this.props.returnSubKey(this, 'edit')
   }
   //   获取子组件数据的方法
   getSubKey = (ref,name) => {
@@ -88,134 +91,121 @@ export default class PolicyEdit extends PureComponent {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const {state}=this.props.location
     const formItemConfig = {
-      labelCol:{span:8},
-      wrapperCol:{span:16},
-      labelAlign:'left'
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 }
     }
     return (
-      <PageHeaderWrapper>
-        <Card
-          bordered={false}
-          title={state.type===1?'新增策略':'编辑策略'}
-        >
-          <Form
-            className="ant-advanced-search-form"
-          >
-            <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
-              <Col xxl={4} md={6}>
-                <FormItem label="策略类型" {...formItemConfig}>
-                  {getFieldDecorator('policyType',{
-                    initialValue:'',
-                    rules:[{required:true}]
-                  })(
-                    <Select allowClear={true}>
-                      <Option value={1}>主策略</Option>
-                      <Option value={2}>次策略</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-              <Col xxl={4} md={6}>
-                <FormItem label="策略名称" {...formItemConfig}>
-                  {getFieldDecorator('policyName',{
-                    initialValue:'',
-                    rules:[
-                      {required:true},
-                      {max:15,message:'最多输入15位!'}
-                    ]
-                  })(
-                    <Input />
-                  )}
-                </FormItem>
-              </Col>
-              <Col xxl={4} md={6}>
-                <FormItem label="策略代码" >
-                  {getFieldDecorator('policyCode',{
-                    initialValue:'',
-                    rules:[
-                      {
-                        required:true,
-                        pattern:/^[a-zA-Z]{1,15}$/,
-                        message:'只能输入15位的大写或小写字母!'
-                      },
-                    ]
-                  })(
-                    <Input />
-                  )}
-                </FormItem>
-              </Col>
-              <Col xxl={4} md={6}>
-                <FormItem label="策略负责人" {...formItemConfig}>
-                  {getFieldDecorator('policyLeader',{
-                    initialValue:'',
-                    rules:[{required:true}]
-                  })(
-                    <Select allowClear={true}>
-                      <Option value={1}>王一</Option>
-                      <Option value={2}>王二</Option>
-                      <Option value={3}>王三</Option>
-                      <Option value={4}>王四</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-            {
-              state.type===2?
-                <Row style={{marginBottom:20,marginLeft:8,fontSize:12,color:'#333'}}  type="flex" align="middle">
-                  <Col xxl={4} md={6}>
-                    创建时间 2019-07-31
-                  </Col>
-                  <Col xxl={4} md={6}>
-                    最后编辑时间 2019-07-31
-                  </Col>
-                  <Col xxl={4} md={6}>
-                    操作人 王大大
-                  </Col>
-                </Row>:null
-            }
-            <Row  style={{marginBottom:20}}gutter={24} type="flex" align="middle">
-              <Col xxl={4} md={6}>
-                <FormItem label="策略排序" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
-                    initialValue:'',
-                    rules:[{required:true}]
-                  })(
-                    <Input />
-                  )}
-                </FormItem>
-              </Col>
-              <Col>
-                <Tooltip title="A-EMS接收资产后,按策略排序校验是否符合当前策略标签,如符合则资产进入当前策略">
-                  <Icon type="question-circle" style={{fontSize:'24px',cursor:'pointer'}}/>
-                </Tooltip>
-              </Col>
-            </Row>
-            <Row style={{marginBottom:20}} gutter={24} type="flex" align="middle">
-              <Col xxl={4} md={6}>
-                <FormItem label="变量状态" {...formItemConfig}>
-                  {getFieldDecorator('status',{
-                    initialValue:''
-                  })(
-                    <RadioGroup name="radiogroup">
-                      <Radio value={1}>启用</Radio>
-                      <Radio value={0}>禁用</Radio>
-                    </RadioGroup>
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-            <Row style={{marginBottom:20}} type="flex" justify="center">
-              <Col>
-                <Button type="primary" onClick={this.formSubmit}>提交</Button>
-                <Button  onClick={()=>router.goBack()}>返回</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Card>
-      </PageHeaderWrapper>
+      <Form>
+        <Row>
+          <Col xxl={22}>
+            <FormItem label="策略类型" {...formItemConfig}>
+              {getFieldDecorator('policyType',{
+                initialValue:'',
+                rules:[{required:true}]
+              })(
+                <Select allowClear={true}>
+                  <Option value={1}>主策略</Option>
+                  <Option value={2}>次策略</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col xxl={22}>
+            <FormItem label="策略名称" {...formItemConfig}>
+              {getFieldDecorator('policyName',{
+                initialValue:'',
+                rules:[
+                  {required:true},
+                  {max:15,message:'最多输入15位!'}
+                ]
+              })(
+                <Input />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col xxl={22}>
+            <FormItem label="策略代码" {...formItemConfig}>
+              {getFieldDecorator('policyCode',{
+                initialValue:'',
+                rules:[
+                  {
+                    required:true,
+                    pattern:/^[a-zA-Z]{1,15}$/,
+                    message:'只能输入15位的大写或小写字母!'
+                  },
+                ]
+              })(
+                <Input />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col xxl={22}>
+            <FormItem label="策略负责人" {...formItemConfig}>
+              {getFieldDecorator('policyLeader',{
+                initialValue:'',
+                rules:[{required:true}]
+              })(
+                <Select allowClear={true}>
+                  <Option value={1}>王一</Option>
+                  <Option value={2}>王二</Option>
+                  <Option value={3}>王三</Option>
+                  <Option value={4}>王四</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row type="flex" align="middle" xxl={24}>
+          <Col xxl={19}>
+            <FormItem
+              label = "策略排序"
+              labelCol = {{ span: 7  }}
+              wrapperCol = {{ span: 16 }}
+            >
+              {getFieldDecorator('assetsTypeName',{
+                initialValue:'',
+                rules:[{required:true}]
+              })(
+                <Input />
+              )}
+            </FormItem>
+          </Col>
+          <Col style={{ marginBottom: '23px' }}>
+            <Tooltip title="A-EMS接收资产后,按策略排序校验是否符合当前策略标签,如符合则资产进入当前策略">
+              <Icon type="question-circle" style={{fontSize:'24px',cursor:'pointer'}}/>
+            </Tooltip>
+          </Col>
+        </Row>
+        <Row>
+          <Col xxl={22}>
+            <FormItem label="变量状态" {...formItemConfig}>
+              {getFieldDecorator('status',{
+                initialValue: 1
+              })(
+                <RadioGroup name="radiogroup">
+                  <Radio value={1}>启用</Radio>
+                  <Radio value={0}>禁用</Radio>
+                </RadioGroup>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <Col offset={12}>
+          <span style={{ ...spanStyle }}>
+            最后编辑时间: 2019-07-31
+          </span>
+          <span style={{ ...spanStyle }}>
+            操作人: 王大大
+          </span>
+        </Col>
+      </Form>
     )
   }
 }

@@ -8,13 +8,15 @@ export default {
     status:false,
     tableList:[],
     pageList:[],
-    policyList:[]
+    policyList:[],
+    queryData: {},   //   查询数据
   },
 
   effects: {
     //获取策略列表
-    *fetchPolicyList({payload}, { call, put }) {
-      let response = yield call(api.queryPolicyList,payload)
+    *fetchPolicyList({ payload }, { call, put }) {
+      console.log(payload, 'payload')
+      let response = yield call(api.queryPolicyList, payload)
       yield put({
         type: 'savePolicyList',
         payload,
@@ -58,10 +60,17 @@ export default {
         pageList:payload
       }
     },
-    savePolicyList(state,{payload}){
+    savePolicyList(state, { payload }){
       return {
         ...state,
-        policyList:payload,
+        policyList: payload
+      }
+    },
+    //   保存查询数据
+    saveQueryData(state, { payload }) {
+      return {
+        ...state,
+        queryData: payload
       }
     }
   },
