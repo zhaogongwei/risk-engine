@@ -48,6 +48,8 @@ export default class SimpleRule extends PureComponent {
         type:'input',
         isFocus:true,
         cols:1,
+        sorter: (a, b) => this.compareFunction(a['varName'],b['varName']),
+        sortDirections: ['ascend'],
           ...this.getColumnSearchProps('varName'),
       },{
         title: '变量代码',
@@ -360,6 +362,10 @@ export default class SimpleRule extends PureComponent {
     clearFilters();
     this.setState({ searchText: '' });
   };
+  //按照变量首字母排序
+  compareFunction=(a,b)=>{
+    return a.localeCompare(b);
+  }
   render() {
     const { permission } = this.props
     const { getFieldDecorator } = this.props.form
