@@ -118,6 +118,18 @@ export function addListKey(arr = [], current = 1, pageSize = 20) {
   return arr
 }
 
+export function addListKeydouble(arr = [], name = '',current = 1, pageSize = 10) {
+  if (Array.isArray(arr)) {
+    arr.map((item, index) => {
+    	item['key'] = index + 1 + (current - 1) * pageSize
+    	if(name != '' && Array.isArray(item[name])){
+    		 item[name].map((item2, index2) => item2['key'] = index2 + 1 )
+    	}
+    })
+  }
+  return arr
+}
+
 // 获取url中queryString方法
 export function getQueryString(name, searchUrl) {
   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');

@@ -28,7 +28,7 @@ export default class VarClass extends PureComponent {
     super(props);
     this.state = {
       columns:[
-        { title: '序号', dataIndex: 'number', key: 'number',width:'30%' },
+        { title: '序号', dataIndex: 'number', key: 'key',width:'30%' },
         { title: '分类名称', dataIndex: 'name', key: 'name',width:'9%'},
         { title: '分类描述', dataIndex: 'classDes',key: 'classDes',width:'48%',},
         {
@@ -72,20 +72,33 @@ export default class VarClass extends PureComponent {
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
+  	console.log(current)
     this.setState({
       current:current,
       currentPage:current
     })
+    
     this.change(current)
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
+  	let formData ;
     if(this.child){
       formData = this.child.getFormValue()
     }else{
       formData = {}
     }
+  	this.props.dispatch({
+      type: 'varclass/fetchVarClassList',
+      payload: {
+      	currPage:currPage,
+      	pageSize:pageSize,
+      	selectId:formData.status,
+      	selectIeamId:formData.itemStatus
+      }
+    })
+  	
+    
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
@@ -168,7 +181,7 @@ export default class VarClass extends PureComponent {
   }
   render() {
     const columns = [
-      { title: '序号', dataIndex: 'number', key: 'number',width:'24%' },
+      { title: '序号', dataIndex: 'number', key: 'key',width:'24%' },
       { title: '分类名称', dataIndex: 'name', key: 'name', width:'19%'},
       { title: '分类描述', dataIndex: 'classDes', key: 'amount', width:'36%',
         render:(record)=>(<a onClick={()=>router.push('/varManage/varlist')}>{record}</a>),
@@ -200,60 +213,6 @@ export default class VarClass extends PureComponent {
         }
       },
     ];
-    const data = [
-      {
-        key:1,
-        number:1,
-        name:'反欺诈',
-        classDes:'王大大的分类',
-        secList:[
-          {
-            key:1,
-            number: 1,
-            name: '注册',
-            classDes:'王大大的分类',
-          },
-          {
-            key:2,
-            number: 2,
-            name: '登录',
-            classDes:'王大大的分类',
-          },
-          {
-            key:3,
-            number: 3,
-            name: '借款',
-            classDes:'王大大的分类',
-          },
-        ]
-      },
-      {
-        key:2,
-        number:2,
-        name:'信审模块',
-        classDes:'王大大的分类',
-        secList:[
-          {
-            key:1,
-            number: 1,
-            name: '评分规则',
-            classDes:'王大大的分类',
-          },
-          {
-            key:2,
-            number: 2,
-            name: '借款人信息',
-            classDes:'王大大的分类',
-          },
-          {
-            key:3,
-            number: 3,
-            name: '自动拒绝规则',
-            classDes:'王大大的分类',
-          },
-        ]
-      },
-    ];
     const { permission } = this.props
     return (
       <PageHeaderWrapper  renderBtn={this.renderBtn}>
@@ -265,7 +224,7 @@ export default class VarClass extends PureComponent {
             columns={columns}
             expandedRowRender={(record,index)=>this.expandedRowRender(record,index)}
             defaultExpandAllRows={true}
-            dataSource={data}
+            dataSource={this.props.varclass.varClassList}
             pagination={false}
           />
           <Pagination
@@ -273,7 +232,7 @@ export default class VarClass extends PureComponent {
             showQuickJumper
             defaultCurrent={1}
             current={this.state.current}
-            total={100}
+            total={this.props.varclass.total}
             onChange={this.onChange}
             showTotal={(total, range) => this.showTotal(total, range)}
           />

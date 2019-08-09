@@ -55,7 +55,7 @@ export default class AddForm extends Component {
         }
       })
     }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
+      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','projectStatus'],(err, values) => {
           if(!err){
               const formData = this.getFormValue()
               this.props.dispatch({
@@ -109,6 +109,7 @@ export default class AddForm extends Component {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
+    console.log(this.props.record)
     return (
       <Modal
         title={this.props.title}
@@ -123,10 +124,10 @@ export default class AddForm extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="选择上级" {...formItemConfig}>
                 {getFieldDecorator('projectStatus',{
-                  initialValue:this.props.type===2?this.props.record['name']:''
+                  initialValue:this.props.type===2?this.props.record['id']:''
                 })(
                   <Select allowClear={true} disabled>
-                      <Option value={2} key={1}>{666}</Option>
+                      <Option value={this.props.record['id']} key={1}>{this.props.record['name']}</Option>
                   </Select>
                 )}
               </FormItem>
