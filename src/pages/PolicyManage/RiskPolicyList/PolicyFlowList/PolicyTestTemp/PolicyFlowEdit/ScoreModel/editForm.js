@@ -15,12 +15,12 @@ import {
   Popconfirm,
 } from 'antd';
 import { addListKey,deepCopy } from '@/utils/utils'
-import SetRowCol from '@/components/SetRowCol'
+import ScoreCard from '@/components/ScoreCard'
 import { connect } from 'dva'
 
 
-@connect(({scoreModel})=>({
-  scoreModel
+@connect(({scoreModel,loading})=>({
+  scoreModel,
 }))
 
 @Form.create()
@@ -39,6 +39,7 @@ export default class EditForm extends Component {
           title: '下限条件',
           dataIndex: 'lowerCondition',
           editable:true,
+          cols:1,
           key:'lowerCondition',
           type:'select',
           value:[
@@ -50,21 +51,19 @@ export default class EditForm extends Component {
               name:'>=',
               id:'>='
             },
-            {
-              name:'=',
-              id:'='
-            }
           ]
         },{
           title: '下限值',
           dataIndex: 'lowerValue',
           editable:true,
+          cols:2,
           key:'lowerValue',
           type:'input'
         },{
           title: '上限条件',
           dataIndex: 'highCondition',
           editable:true,
+          cols:3,
           key:'highCondition',
           type:'select',
           value:[
@@ -76,15 +75,12 @@ export default class EditForm extends Component {
               name:'<=',
               id:'<='
             },
-            {
-              name:'=',
-              id:'='
-            }
           ]
         },{
           title: '上限值',
           dataIndex: 'highValue',
           editable:true,
+          cols:4,
           key:'highValue',
           type:'input'
         },
@@ -92,6 +88,7 @@ export default class EditForm extends Component {
           title: '评分',
           dataIndex: 'score',
           editable:true,
+          cols:5,
           key:'score',
           type:'input'
         },
@@ -115,6 +112,7 @@ export default class EditForm extends Component {
           title: '条件',
           dataIndex: 'highCondition',
           editable:true,
+          cols:1,
           type:'select',
           key:'highCondition',
           value:[
@@ -132,12 +130,14 @@ export default class EditForm extends Component {
           title: '值',
           dataIndex: 'highValue',
           editable:true,
+          cols:2,
           key:'highValue',
         },
         {
           title: '评分',
           dataIndex: 'score',
           editable:true,
+          cols:3,
           key:'score',
           type:'input'
         },
@@ -173,6 +173,7 @@ export default class EditForm extends Component {
     }
     return newObj;
   }
+  //取消事件
   handleCancel =()=>{
     this.setState({visible:false},()=>{
       this.props.onChange(this.state.visible)
@@ -183,20 +184,20 @@ export default class EditForm extends Component {
   componentDidMount () {
     this.props.getSubKey(this,'editForm')
   }
-  //右侧表格添加数据
+  //弹框表格添加数据
   handleAddRight = () => {
+    const {varKey} = this.props;
+    const {scoreList} = this.props.scoreModel;
+    const {varType,enumList,enumFlag} = scoreList[varKey-1];
+    console.log(scoreList)
+    console.log(scoreList[varKey-1])
     if(!this.props.varType){
       //变量为字符类型
-      const {option,kind,isenum} = this.props.scoreModel.scoreList[this.props.varKey-1]
-      console.log(option)
-      const {count, dataSource} = this.props.scoreModel.strList;
+      const {dataSource} = this.props.scoreModel.strList;
       const newData = {
-        term:'',
-        val:'',
+        highCondition:'',
+        highValue:'',
         score:'',
-        enum:option,
-        kind:kind,
-        isenum:isenum
       };
       this.props.dispatch({
         type: 'scoreModel/addStrData',
@@ -207,7 +208,7 @@ export default class EditForm extends Component {
 
     }else{
       //变量为数字类型
-      const { count, dataSource } = this.props.scoreModel.numList;
+      const { dataSource } = this.props.scoreModel.numList;
       //   要添加表格的对象
       const newData = {
         lowerCondition:'',
@@ -226,7 +227,7 @@ export default class EditForm extends Component {
       console.log(this.props)
     }
   }
-  //   删除右侧表格数据
+  //删除弹框表格数据
   handleDeleteRight = (key) => {
     if(!this.props.varType){
       //变量为字符类型
@@ -252,29 +253,16 @@ export default class EditForm extends Component {
       })
     }
   }
-  //右侧表格数据保存(必须点击保存否则数据不予保存)
-  handleSave = ()=>{
-    const {scoreList,numList,strList} = this.props.scoreModel
-    const {varKey} = this.props
-    //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
-    //变量为数字类型
-    if(this.props.varType){
-      Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
-    }else{
-      //变量为字符类型
-      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
-    }
-    message.success('保存成功')
-    console.log(this.props.scoreModel)
-  }
   render() {
+    const {varObjRow} = this.props;
     return (
       <Row>
         <Col>
-          <SetRowCol
+          <ScoreCard
             list={this.props.varType?this.props.scoreModel.numList:this.props.scoreModel.strList}
             columns={this.props.varType?this.state.columnNum:this.state.columnStr}
             handleAdd={this.handleAddRight}
+            varObjRow={varObjRow}
           />
         </Col>
       </Row>

@@ -7,9 +7,7 @@ const _baseApi = '/engine'
 export async function queryRoleList(params) {
   return request(`${_baseApi}/admin/asset/list`, {
     method: 'POST',
-    body: {
-      ...params
-    },
+    body: params
   });
 }
 

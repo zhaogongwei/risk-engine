@@ -11,7 +11,9 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({rule})=>({
+  rule
+}))
 
 @Form.create()
 
@@ -21,7 +23,10 @@ export default class FilterIpts extends Component {
   }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
+    const {resultVarId,countResult} = this.props;
+    let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.resultVarId=resultVarId['resultVarId'];
+    formQueryData.countVarId=countResult['countVarId'];
     return formQueryData;
   }
   //重置
@@ -29,7 +34,7 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'child')
+    this.props.getSubKey(this,'child');
   }
   //计数结果显隐控制
   changeHandle=(e)=>{
@@ -44,9 +49,10 @@ export default class FilterIpts extends Component {
     }
   }
   render() {
-    const { getFieldDecorator } = this.props.form
-    const { resultVarId,countResult } = this.props
-    const { visible } = this.state
+    const { getFieldDecorator } = this.props.form;
+    const { resultVarId,countResult } = this.props;
+    const { formData } = this.props.rule;
+    const { visible } = this.state;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -59,7 +65,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="规则条件" {...formItemConfig}>
               {getFieldDecorator('ruleCondition',{
-                initialValue:''
+                initialValue:formData['ruleCondition']
               })(
                 <Select allowClear={true} onChange={this.changeHandle}>
                   <Option value={'or'}>命中任一规则</Option>
@@ -72,7 +78,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="输出结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:resultVarId['variableName']?resultVarId['variableName']:''
+                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:''
               })(
                 <Input
                   onClick={()=>this.props.outResult(0)}
@@ -82,11 +88,11 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           {
-            visible?
+            (visible||formData['ruleCondition']==='count')?
               <Col xxl={4} md={6}>
                 <FormItem label="计数结果" {...formItemConfig}>
-                  {getFieldDecorator('tally',{
-                    initialValue:countResult['variableName']?countResult['variableName']:''
+                  {getFieldDecorator('countVarId',{
+                    initialValue:countResult['countVarValue']?countResult['countVarValue']:''
                   })(
                     <Input
                       onClick={()=>this.props.outResult(1)}

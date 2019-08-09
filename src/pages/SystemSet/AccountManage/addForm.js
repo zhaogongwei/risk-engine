@@ -75,24 +75,13 @@ export default class AddForm extends Component {
     })
   }
   //点击确定
-  submitHandler = ()=>new Promise((resolve,reject)=>{
-    const response = {
-      status:'000'
-    }
-    if(!this.props.type){
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
+  submitHandler = ()=> {
+    this.props.form.validateFields((err, values) => {
+      if(!err){
 
-        }
-      })
-    }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-        }
-      })
-    }
-    resolve(response)
-  })
+      }
+    })
+  }
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -105,161 +94,152 @@ export default class AddForm extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'addForm');
-    setTimeout(()=>{
-      this.setState({
-        loading:false
-      })
-    },3000)
   }
-  componentWillReceiveProps(nextProps){
-  }
+
   onChange = value => {
     console.log('onChange ', value);
     this.setState({ value });
   };
   render() {
-    const {visible,loading} = this.state;
+    const { modalVisible, type, addEdit } = this.props;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
-      labelCol:{span:6},
-      wrapperCol:{span:16},
+      labelCol:{ span:6 },
+      wrapperCol:{ span:16 },
     }
     return (
-            <Form
-              className="ant-advanced-search-form"
-            >
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="用户名" {...formItemConfig}>
-                    {getFieldDecorator('username',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="密码" {...formItemConfig}>
-                    {getFieldDecorator('password',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="确认密码" {...formItemConfig}>
-                    {getFieldDecorator('comfirmWord',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="姓名" {...formItemConfig}>
-                    {getFieldDecorator('name',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="邮箱" {...formItemConfig}>
-                    {getFieldDecorator('email',{
-                      initialValue:'',
-                      rules:[
-                        {}
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="手机号码" {...formItemConfig}>
-                    {getFieldDecorator('mobile',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="角色" {...formItemConfig}>
-                    {getFieldDecorator('role',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Select allowClear={true}>
-                        <Option value={1} >是</Option>
-                        <Option value={0} >否</Option>
-                      </Select>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="用户状态"  {...formItemConfig}>
-                    {getFieldDecorator('status',{
-                      initialValue:!this.props.type ? this.props.record.status : null,
-                      rules: [
-                        { required: true, message: '角色状态为必选'}
-                      ],
-                    })(
-                      <RadioGroup>
-                        <Radio value={1}>启用</Radio>
-                        <Radio value={2}>禁用</Radio>
-                      </RadioGroup>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-            </Form>
+      <Modal
+        title={type === 1 ? '新增账号': '修改账号'}
+        visible={modalVisible}
+        onOk={this.submitHandler}
+        onCancel={()=>addEdit(false)}
+      >
+        <Form className="ant-advanced-search-form" >
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="用户名" {...formItemConfig}>
+                {getFieldDecorator('username',{
+                  initialValue: null,
+                  rules:[{
+                    required:true,
+                    message: '请输入用户名'
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="密码" {...formItemConfig}>
+                {getFieldDecorator('password',{
+                  initialValue: null,
+                  rules:[{
+                    required:true,
+                    message: '请输入密码'
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="确认密码" {...formItemConfig}>
+                {getFieldDecorator('comfirmWord',{
+                  initialValue: null,
+                  rules:[{
+                    required:true,
+                    message: '请输入确认密码'
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="姓名" {...formItemConfig}>
+                {getFieldDecorator('name',{
+                  initialValue: null,
+                  rules:[{
+                    required:true,
+                    message: '请输入姓名'
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="邮箱" {...formItemConfig}>
+                {getFieldDecorator('email',{
+                  initialValue:'',
+                  rules:[{
+                    required: false
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="手机号码" {...formItemConfig}>
+                {getFieldDecorator('mobile',{
+                  initialValue:'',
+                  rules:[{
+                    required:true,
+                    message: '请输入手机号码'
+                  }]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="角色" {...formItemConfig}>
+                {getFieldDecorator('role',{
+                  initialValue:'',
+                  rules:[{
+                    required:true,
+                    message: '请输入角色'
+                  }]
+                })(
+                  <Select allowClear={true}>
+                    <Option value={1} >是</Option>
+                    <Option value={0} >否</Option>
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row style={{ marginBottom:10 }}>
+            <Col xxl={20} md={12}>
+              <FormItem label="用户状态"  {...formItemConfig}>
+                {getFieldDecorator('status',{
+                  initialValue: null,
+                  rules: [
+                    { required: true, message: '用户状态为必选'}
+                  ]})(
+                    <RadioGroup>
+                      <Radio value={1}>启用</Radio>
+                      <Radio value={2}>禁用</Radio>
+                    </RadioGroup>
+                  )}
+                </FormItem>
+              </Col>
+          </Row>
+        </Form>
+      </Modal>
     )
   }
 }

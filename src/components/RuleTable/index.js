@@ -51,6 +51,8 @@ export default class RuleTable extends PureComponent {
           isFocus:col.isFocus,
           type:col.type,
           value:col.value?col.value:null,
+          valueOther:col.valueOther?col.valueOther:null,
+          cols:col.cols?col.cols:null,
           handleModify:()=>this.props.handleModify(0,record)
         })
       };

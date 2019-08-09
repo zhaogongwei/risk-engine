@@ -73,7 +73,6 @@ export default function request(url, options) {
       ...newOptions.headers
     }
   }
-
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(async (response) => {

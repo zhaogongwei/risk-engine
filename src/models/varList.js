@@ -4,10 +4,9 @@ import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
 
 export default {
-  namespace: 'rule',
+  namespace: 'varList',
 
   state: {
-    ruleList:[],
     varList:[],//变量列表
     oneClassList:[],//一级分类
     twoClassList:[],//二级分类
@@ -18,13 +17,6 @@ export default {
       totalNum:10,
       totalPage:1
     },
-    formData:{
-      countVarId:'',
-      countVarValue:'',
-      resultVarId:'',
-      resultVarValue:'',
-      ruleCondition:'',
-    }
   },
 
   effects: {
@@ -36,6 +28,22 @@ export default {
           type:'varListHandle',
           payload:response
         })
+        if(!response.data.records.length){
+          message.error('暂无数据')
+        }
+      }else{
+        yield put({
+          type:'varListHandle',
+          payload:{
+            data:{
+              records:[],
+              current:1,
+              size:10,
+              total:0,
+            }
+          }
+        })
+        message.error(response.statusDesc)
       }
       return response;
     },
@@ -61,47 +69,9 @@ export default {
       }
       return response;
     },
-    //简单规则节点信息查询
-    *queryRuleInfo({payload}, { call, put }) {
-      let response = yield call(api.queryRuleInfo,payload)
-      if(response && response.status === 1){
-        yield put({
-          type:'InitruleListHandle',
-          payload:response
-        })
-      }
-      return response;
-    },
-    //简单规则节点信息保存
-    *saveRuleInfo({payload,callback},{call,put}){
-      let response = yield call(api.saveRuleInfo,payload)
-      if(response&&response.status == 1){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
-    },
   },
 
   reducers: {
-    //初始化规则列表处理
-    InitruleListHandle(state,{payload}){
-      console.log('payload',payload)
-      return {
-        ...state,
-        ruleList:addListKey(payload.data.variables),
-        formData:{...payload.data}
-      }
-    },
-    //弹框规则列表处理
-    ruleListHandle(state,{payload}){
-      console.log('payload',payload)
-      return {
-        ...state,
-        ruleList:payload.ruleList,
-      }
-    },
     //变量列表处理
     varListHandle(state,{payload}){
       return {

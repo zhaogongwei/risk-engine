@@ -15,7 +15,7 @@ const change = (props) => {
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}`)
   }else if(id && selectedItem.type === 'complex'){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}`)
-  }else if(id && selectedItem.type === 'scoreModel'){
+  }else if(id && selectedItem.type === 'score'){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
   }else if(id && selectedItem.type === 'setVar'){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar`)

@@ -5,6 +5,7 @@ export default {
 
   state: {
     roleList: [],//角色列表
+    queryConfig: {}
   },
 
   effects: {
@@ -13,7 +14,7 @@ export default {
       let response = yield call(api.queryRoleList,payload)
       yield put({
         type: 'saveRoleList',
-        payload,
+        payload
       });
     },
     //添加角色
@@ -21,7 +22,7 @@ export default {
       let response = yield call(api.addRole,payload)
       yield put({
         type: 'saveRoleList',
-        payload,
+        payload
       });
     },
     //编辑角色
@@ -29,7 +30,7 @@ export default {
       let response = yield call(api.editRole,payload)
       yield put({
         type: 'saveRoleList',
-        payload,
+        payload
       });
     },
     //删除角色
@@ -57,5 +58,11 @@ export default {
         roleList: payload,
       };
     },
+    setQueryConfig(state, { payload }) {
+      return {
+        ...state,
+        queryConfig: payload
+      }
+    }
   },
 };

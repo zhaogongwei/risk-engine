@@ -4,8 +4,8 @@ import {
   Form,
   Popconfirm,
   Table,
-  Select,
   Input,
+  Select,
   DatePicker
 } from 'antd';
 import { connect } from 'dva'
@@ -22,7 +22,7 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 
 const EditableFormRow = Form.create()(EditableRow);
-  
+
   @Form.create()
   
   export default class EditableCell extends PureComponent {
@@ -68,55 +68,68 @@ const EditableFormRow = Form.create()(EditableRow);
       const { record, handleSave } = this.props;
       this.props.form.validateFields((error, values) => {
         if (error) {
+
           return;
         }
         this.toggleEdit();
         //handleSave({ ...record, ...values });
       });
     }
+    checkInput=(value, record, type)=>{
+      this.props.form.validateFields([type],(error, values) => {
+        //验证 1：不通过，2：通过
+        if(error){
+          record[type]='error'
+        }else{
+          record[type] = value
+        }
+      })
+    }
+    //日历监听事件
+    onDateChange=(date,record,type) =>{
+      record[type]=moment(date).format(dateFormat)
+    }
     getInput = () => {
       if (this.props.type === 'select') {
-        if(this.props.record['varType']==='num'){
+        return <Select
+                onPressEnter={this.save}
+                onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
+              >
+                {
+                  this.props.value&&this.props.value.map((item,index)=>{
+                    return (
+                      <Option value={item.id} key={index}>{item.name}</Option>
+                    )
+                  })
+                }
+              </Select>;
+      }else if(this.props.type === 'input' || this.props.varObjRow['varType']==='num'){
+        return <Input
+          ref={node => (this.input = node)}
+          onPressEnter={this.save}
+          onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+        />;
+      }else if(this.props.varObjRow['varType']==='char'){
+        if(this.props.varObjRow['enumFlag']){
           return <Select
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
             {
-              this.props.value&&this.props.value.map((item,index)=>{
+              this.props.varObjRow['enumList']&&this.props.varObjRow['enumList'].map((item,index)=>{
                 return (
-                  <Option value={item.id} key={index}>{item.name}</Option>
+                  <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
                 )
               })
             }
           </Select>;
         }else{
-          return <Select
+          return <Input
+            ref={node => (this.input = node)}
             onPressEnter={this.save}
-            onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
-          >
-            {
-              this.props.valueOth&&this.props.valueOth.map((item,index)=>{
-                return (
-                  <Option value={item.id} key={index}>{item.name}</Option>
-                )
-              })
-            }
-          </Select>;
+            onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+          />;
         }
-      }else if(this.props.type === 'input' && this.props.isFocus){
-        return <Input
-          ref={node => (this.input = node)}
-          onPressEnter={this.save}
-          onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          onClick={(e)=>this.props.handleModify()}
-          readOnly
-        />;
-      }else{
-        return <Input
-          ref={node => (this.input = node)}
-          onPressEnter={this.save}
-          onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-        />;
       }
     };
     render() {
@@ -132,8 +145,8 @@ const EditableFormRow = Form.create()(EditableRow);
         max,
         index,
         handleSave,
-        isFocus,
-        handleModify,
+        type,
+        value,
         ...restProps
       } = this.props;
       const { getFieldDecorator } = this.props.form;
@@ -146,26 +159,8 @@ const EditableFormRow = Form.create()(EditableRow);
                 return (
                   <FormItem style={{ margin: 0 }}>
                     {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
-                      initialValue: record[dataIndex]?record[dataIndex]:'',
-                      rules:[
-                        {
-                          required: true,
-                          validator: (rule, val, cb) => {
-                            console.log('val',val)
-                            if (!val) {
-                              cb('内容不能为空！')
-                              return
-                            }
-                            if(val.length>10){
-                              cb('内容长度不能超过20位!')
-                              return
-                            }
-                          }
-                        }
-                      ]
-                    })(
-                      this.getInput()
-                    )}
+                      initialValue: record[dataIndex]
+                    })(this.getInput())}
                   </FormItem>
                 );
               }}

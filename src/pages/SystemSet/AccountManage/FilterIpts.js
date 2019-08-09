@@ -14,24 +14,22 @@ const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item
 
-@connect()
+@connect(({ account }) => ({
+  account
+}))
 
 @Form.create()
 
 export default class FilterIpts extends Component {
   //查询
   formSubmit = async (e) => {
-    this.props.changeDefault(1)
     const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
+    const { dispatch } =  this.props;
+    await dispatch({
+      type:'account/setQueryConfig',
+      payload: formData
     })
-
+    this.props.change(1, this.props.pageSize)
   }
   //   获取表单信息
   getFormValue = () => {
@@ -62,54 +60,42 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="用户名" {...formItemConfig}>
-              {getFieldDecorator('username',{
-                initialValue:''
-              })(
+              {getFieldDecorator('username')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="姓名" {...formItemConfig}>
-              {getFieldDecorator('name',{
-                initialValue:''
-              })(
+              {getFieldDecorator('name')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="邮箱" {...formItemConfig}>
-              {getFieldDecorator('email',{
-                initialValue:''
-              })(
+              {getFieldDecorator('email')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="手机号码" {...formItemConfig}>
-              {getFieldDecorator('mobile',{
-                initialValue:''
-              })(
+              {getFieldDecorator('mobile')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="添加时间" {...formItemConfig}>
-              {getFieldDecorator('metaTime',{
-                initialValue:''
-              })(
+              {getFieldDecorator('metaTime')(
                 <RangePicker style={{width:210}}/>
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="用户状态" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
+              {getFieldDecorator('status')(
                 <Select allowClear={true}>
                   <Option value={1}>启用</Option>
                   <Option value={2}>禁用</Option>
@@ -119,9 +105,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="角色" {...formItemConfig}>
-              {getFieldDecorator('role',{
-                initialValue:''
-              })(
+              {getFieldDecorator('role')(
                 <Input />
               )}
             </FormItem>

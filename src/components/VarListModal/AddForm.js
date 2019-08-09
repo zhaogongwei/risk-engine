@@ -10,9 +10,9 @@ import {
   Button,
   Divider,
   Checkbox,
-  Pagination
+  Pagination,
+  Empty
 } from 'antd';
-import styles from '../../../../../FilterIpts.less'
 import { addListKey,deepCopy } from '@/utils/utils'
 import { connect } from 'dva'
 const FormItem = Form.Item
@@ -145,8 +145,8 @@ const plainOptions = [
   },
 ];
 const defaultCheckedList = ['Apple', 'Orange'];
-@connect(({rule})=>({
-  rule,
+@connect(({varList})=>({
+  varList,
 }))
 
 @Form.create()
@@ -173,10 +173,12 @@ export default class AddForm extends Component {
     this.change(1)
   }
   change = async (page)=>{
+    const {exeraRequest} = this.props;
     const res = await  this.props.dispatch({
-      type: 'rule/queryVarList',
+      type: 'varList/queryVarList',
       payload: {
         ...this.getFormValue(),
+        ...exeraRequest,
         currPage:page,
         pageSize:this.state.pageSize,
       }
@@ -196,7 +198,7 @@ export default class AddForm extends Component {
   }
   onChange = (checkedList) => {
     console.log('选中',checkedList)
-    const {varList} = this.props.rule
+    const {varList} = this.props.varList
     this.setState({
       checkedList:checkedList,
       indeterminate: !!checkedList.length && (checkedList.length < varList.length),
@@ -205,7 +207,7 @@ export default class AddForm extends Component {
   }
 
   onCheckAllChange = (e) => {
-    const {varList} = this.props.rule
+    const {varList} = this.props.varList
     this.setState({
       checkedList: e.target.checked ? varList : [],
       indeterminate: false,
@@ -275,7 +277,7 @@ export default class AddForm extends Component {
     });
     //二级分类列表查询
     this.props.dispatch({
-      type: 'rule/queryTwoClassList',
+      type: 'varList/queryTwoClassList',
       payload: {
         firstTypeId:value,
         secondTypeId:'',
@@ -285,7 +287,7 @@ export default class AddForm extends Component {
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
-    const { varList,page,oneClassList,twoClassList } = this.props.rule
+    const { varList,page,oneClassList,twoClassList } = this.props.varList
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -294,13 +296,16 @@ export default class AddForm extends Component {
         <Form
           className="ant-advanced-search-form"
         >
-          <Row className={styles.btmMargin} gutter={0} type="flex" align="middle">
+          <Row style={{marginBottom:'32px'}} gutter={0} type="flex" align="middle">
             <Col xxl={6} md={10}>
               <FormItem label="变量分类"  wrapperCol={{span:8}}>
                 {getFieldDecorator('firstTypeId',{
-                  initialValue:'',
                 })(
-                    <Select allowClear={true} onChange={this.oneClassHandle}>
+                    <Select
+                      allowClear={true}
+                      onChange={this.oneClassHandle}
+                      placeholder="一级分类"
+                    >
                       {
                         oneClassList&&oneClassList.map((item,index)=>{
                           return (
@@ -315,9 +320,11 @@ export default class AddForm extends Component {
             <Col xxl={4} md={8}>
               <FormItem wrapperCol={{span:16}}>
                 {getFieldDecorator('secondTypeId',{
-                  initialValue:'',
                 })(
-                  <Select allowClear={true}>
+                  <Select
+                    allowClear={true}
+                    placeholder="二级分类"
+                  >
                     {
                       twoClassList&&twoClassList.map((item,index)=>{
                         return (
@@ -346,7 +353,7 @@ export default class AddForm extends Component {
             </Col>
           </Row>
           <Divider />
-          <div className={styles.btmMargin}>
+          <div style={{marginBottom:'32px'}}>
             {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
@@ -364,7 +371,7 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    varList.map((item, index) => {
+                    varList.length>0?varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Radio  value={item}>{item.variableName}</Radio >
@@ -372,13 +379,13 @@ export default class AddForm extends Component {
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark}</Col>
                       </Row>
-                    })
+                    }):<Empty />
                   }
                 </RadioGroup>
             }
           </div>
           <Divider />
-          <Row className={styles.btmMargin} type="flex" align="middle" justify="space-between">
+          <Row style={{marginBottom:'32px'}} type="flex" align="middle" justify="space-between">
             <Col>
               {
                 this.props.type?

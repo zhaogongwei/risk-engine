@@ -11,6 +11,7 @@ import {
 import { connect } from 'dva'
 import moment from 'moment'
 const dateFormat = 'YYYY-MM-DD'
+const dateFormatTime = 'YYYY-MM-DD HH:mm:ss'
 const FormItem = Form.Item;
 const Option = Select.Option;
 const EditableContext = React.createContext();
@@ -63,6 +64,7 @@ const EditableFormRow = Form.create()(EditableRow);
     }
   
     changeHandler(value, record, type) {
+      console.log(value,record,type)
       record[type] = value
     }
   
@@ -77,28 +79,29 @@ const EditableFormRow = Form.create()(EditableRow);
         //handleSave({ ...record, ...values });
       });
     }
-    checkInput=(value, record, type)=>{
-      this.props.form.validateFields([type],(error, values) => {
-        //验证 1：不通过，2：通过
-        if(error){
-          record[type]='error'
-        }else{
-          record[type] = value
-        }
-      })
-    }
     //日历监听事件
     onDateChange=(date,record,type) =>{
       record[type]=moment(date).format(dateFormat)
     }
+    //时间监听事件
+    onTimeChange=(date,record,type)=>{
+      console.log(date)
+      record[type]=moment(date).format(dateFormatTime)
+    }
     getInput = () => {
       if (this.props.type === 'select') {
         return <Select
+          style={{width:'100%'}}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
         >
           {
+            this.props.record['varType']==='num'?
             this.props.value&&this.props.value.map((item,index)=>{
+              return (
+                <Option value={item.id} key={index}>{item.name}</Option>
+              )
+            }):this.props.valueOther&&this.props.valueOther.map((item,index)=>{
               return (
                 <Option value={item.id} key={index}>{item.name}</Option>
               )
@@ -110,36 +113,52 @@ const EditableFormRow = Form.create()(EditableRow);
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          onClick={(e)=>this.props.handleModify()}
+          //onClick={(e)=>this.props.handleModify()}
           readOnly
         />;
       }else if(this.props.type==='more'){
-        if(this.props.record['kind']==='num'){
+        if(this.props.record['varType']==='num'){
+          return <Input
+            ref={node => (this.inputNum = node)}
+            onPressEnter={this.save}
+            onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+          />;
+        }else if(this.props.record['varType']==='char'&&!this.props.record['enumFlag']){
           return <Input
             ref={node => (this.input = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
           />;
-        }else if(this.props.record['kind']==='str'&&this.props.record['isenum']){
+        }else if(this.props.record['enumFlag']){
           return <Select
+            style={{width:'100%'}}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
             {
-              this.props.record['option']&&this.props.record['option'].map((item,index)=>{
+              this.props.record['enumList']&&this.props.record['enumList'].map((item,index)=>{
                 return (
-                  <Option value={item.id} key={index}>{item.name}</Option>
+                  <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
                 )
               })
             }
           </Select>;
-        }else if(this.props.record['kind'] ==='date'){
-          return <DatePicker onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}/>
+        }else if(this.props.record['varType'] ==='date'){
+          return <DatePicker
+                    style={{width:'100%'}}
+                    onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}
+                  />
+        }else if(this.props.record['varType'] ==='time'){
+          return <DatePicker
+                    showTime
+                    style={{width:'100%'}}
+                    onChange={(date)=>this.onTimeChange(date,this.props.record,this.props.dataIndex)}/>
         }else{
           return <Input
             ref={node => (this.input = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+            readOnly
           />;
         }
       }else{
@@ -155,6 +174,7 @@ const EditableFormRow = Form.create()(EditableRow);
       const {
         editable,
         dataIndex,
+        cols,
         title,
         isRequired,
         pattern,
@@ -175,8 +195,14 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(`dataIndex${Math.random()}`, {
-                      initialValue: record['kind']==='date'&&dataIndex==='compare'?moment(record[dataIndex]?record[dataIndex]:new Date(), dateFormat):record[dataIndex]?record[dataIndex]:'',
+                    {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                      initialValue: (record['varType']==='date'||record['varType']==='time')&&dataIndex==='compareValue'?moment(record[dataIndex]):record[dataIndex]?record[dataIndex]:'',
+                      rules:[
+                        {
+                          pattern:record['varType']==='num'?pattern:/^.*$/,
+                          message:record['varType']==='num'?'只能输入3位的数字!':'',
+                        }
+                      ]
                     })(
                       this.getInput()
                     )}
