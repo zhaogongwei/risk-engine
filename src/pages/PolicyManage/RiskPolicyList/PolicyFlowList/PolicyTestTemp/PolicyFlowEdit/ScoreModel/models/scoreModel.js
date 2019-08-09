@@ -41,7 +41,7 @@ export default {
       }
       return response;
     },
-    //简单规则节点信息保存
+    //评分模型节点信息保存
     *saveScoreInfo({payload,callback},{call,put}){
       let response = yield call(api.saveScoreInfo,payload)
       if(response && response.status == 1){
@@ -50,6 +50,11 @@ export default {
       }else{
         message.error(response.statusDesc)
       }
+    },
+    //评分模型交集验证
+    *verifyMixed({payload,callback},{call,put}){
+      let response = yield call(api.verifyMixed,payload)
+      return response
     },
   },
 

@@ -19,8 +19,8 @@ import ScoreCard from '@/components/ScoreCard'
 import { connect } from 'dva'
 
 
-@connect(({scoreModel})=>({
-  scoreModel
+@connect(({scoreModel,loading})=>({
+  scoreModel,
 }))
 
 @Form.create()
@@ -252,21 +252,6 @@ export default class EditForm extends Component {
         }
       })
     }
-  }
-  //弹框表格数据保存(必须点击保存否则数据不予保存)
-  handleSave = ()=>{
-    const {scoreList,numList,strList} = this.props.scoreModel
-    const {varKey} = this.props
-    //右侧保存按钮点击时，把表格数据和左侧对应的变量合在一起；
-    //变量为数字类型
-    if(this.props.varType){
-      Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
-    }else{
-      //变量为字符类型
-      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
-    }
-    message.success('保存成功')
-    console.log(this.props.scoreModel)
   }
   render() {
     const {varObjRow} = this.props;

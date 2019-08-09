@@ -25,7 +25,8 @@ const FormItem = Form.Item
 @connect(({ editorFlow, loading,rule}) => ({
   editorFlow,
   rule,
-  loading: loading.effects['assetDeploy/riskSubmit']
+  loading: loading.effects['rule/queryRuleInfo'],
+  buttonLoading: loading.effects['rule/saveRuleInfo'],
 }))
 @Form.create()
 export default class SimpleRule extends PureComponent {
@@ -331,7 +332,7 @@ export default class SimpleRule extends PureComponent {
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
-              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+              <Button type="primary" loading={this.props.buttonLoading} onClick={this.handleSave}>保存并提交</Button>
             </Col>
             <Col>
               <Button type="primary">返回</Button>

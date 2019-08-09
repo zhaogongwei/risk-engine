@@ -85,6 +85,16 @@ export async function saveScoreInfo(params) {
   });
 }
 
+//是否有交集验证
+export async function verifyMixed(params) {
+  return request(`${_baseApi}/score/checkDuplicate`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
 //设置变量
 //节点数据查询
 export async function queryVarInfo(params) {

@@ -27,6 +27,7 @@ import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
   varList,
   loading:loading.effects['scoreModel/queryScoreInfo'],
   buttonLoading:loading.effects['scoreModel/saveScoreInfo'],
+  submiting:loading.effects['scoreModel/verifyMixed'],
 }))
 export default class ScoreModel extends PureComponent {
   constructor(props) {
@@ -258,12 +259,30 @@ export default class ScoreModel extends PureComponent {
     })
   }
   //编辑弹框保存事件
-  editFormSubmit=()=>{
-    this.setState({
-      editShow:false,
-    },()=>{
-      this.editForm.handleSave()
-    })
+  //弹框表格数据保存(必须点击保存否则数据不予保存)（交集验证通过保存,不通过不保存）
+  editFormSubmit=async ()=>{
+    const {scoreList,numList,strList} = this.props.scoreModel;
+    const {varKey} = this.state;
+    if(this.state.varType){
+      const res = await this.props.dispatch({
+        type:'scoreModel/verifyMixed',
+        payload:{
+          variableInfoList:numList.dataSource,
+        }
+      })
+      if(res&&res.status ===1 ){
+        message.success(res.statusDesc)
+        Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
+        this.setState({editShow:false,})
+      }else{
+        message.error(res.statusDesc)
+      }
+    }else{
+      //变量为字符类型
+      message.success('保存成功')
+      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
+      this.setState({editShow:false,})
+    }
   }
   //保存数据
   handleSave=()=>{
@@ -336,6 +355,7 @@ export default class ScoreModel extends PureComponent {
             onCancel={()=>this.setState({editShow:false})}
             okText="保存"
             width={1040}
+            confirmLoading={this.props.submiting}
           >
             <EditForm
               varType={this.state.varType}
