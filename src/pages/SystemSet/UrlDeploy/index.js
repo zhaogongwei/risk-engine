@@ -56,7 +56,7 @@ export default class UrlDeploy extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.addEditPage(2)}>
+              <Menu.Item onClick={() => this.addEditPage(true, 2)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
               <Menu.Item onClick={()=>this.deleteUrl()}>
@@ -123,12 +123,6 @@ export default class UrlDeploy extends PureComponent {
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
-    })
-  }
   //  刷新页面
   reload = () => {
     window.location.reload();
@@ -141,20 +135,11 @@ export default class UrlDeploy extends PureComponent {
       </Fragment>
     )
   }
-  addEditPage=(flag,type)=>{
+  addEditPage=(flag, type)=>{
     this.setState({
       type,
       visible: !!flag,
     })
-  }
-  //弹框点击确定事件
-  addFormSubmit=async ()=>{
-    const response = this.addForm.submitHandler();
-    if(response&&response.status === '000'){
-      this.setState({
-        visible:false
-      })
-    }
   }
   //删除接口
   deleteUrl=async() => {
@@ -179,7 +164,7 @@ export default class UrlDeploy extends PureComponent {
       addEditPage: this.addEditPage
     }
     return (
-     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
        <Card
         bordered={false}
         title={'接口配置'}
