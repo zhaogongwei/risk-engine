@@ -21,6 +21,37 @@ export async function queryVarClassList(params) {
     },
   });
 }
+
+
+
+//策略流保存
+export async function savePolicyFlow(params) {
+  return request(`${_baseApi}/strategyFlow/saveFlow`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
+//策略流导入
+export async function importPolicyFlow(params) {
+  return request(`${_baseApi}/strategyFlow/${params.strategyFlowId}`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+//查询策略名称和版本号
+export async function queryPolicyName(params) {
+  return request(`${_baseApi}/strategyFlow/${params.strategyFlowId}`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
 //简单规则
 //节点数据查询
 export async function queryRuleInfo(params) {

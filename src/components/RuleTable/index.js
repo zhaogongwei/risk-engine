@@ -26,6 +26,16 @@ export default class RuleTable extends PureComponent {
   constructor(props) {
     super(props);
   }
+  componentDidMount(){
+    this.props.getSubKey(this,'ruleTable')
+  }
+  //   获取子组件数据的方法
+  getSubKey=(ref,key)=>{
+    this[key] = ref;
+  }
+  validate=()=>{
+    this.editableCell.save()
+  }
   render() {
     const { dataSource } = this.props;
     const components = {
@@ -42,6 +52,7 @@ export default class RuleTable extends PureComponent {
         ...col,
         onCell: record => ({
           record,
+          getSubKey:this.getSubKey,
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
@@ -62,14 +73,16 @@ export default class RuleTable extends PureComponent {
         <Button onClick={this.props.handleAdd} type="primary" style={{ marginBottom: 16, float: "right", zIndex: '1',marginRight: '20px' }}>
           选择变量
         </Button>
-        <Table
-          components={components}
-          rowClassName={() => 'editable-row'}
-          bordered
-          pagination={false}
-          dataSource={dataSource}
-          columns={columns}
-        />
+        <Form>
+          <Table
+            components={components}
+            rowClassName={() => 'editable-row'}
+            bordered
+            pagination={false}
+            dataSource={dataSource}
+            columns={columns}
+          />
+        </Form>
       </div>
     );
   }

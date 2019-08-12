@@ -103,46 +103,6 @@ class DetailForm extends React.Component {
     }
     console.log(e)
   }
-  setRule = () => {
-    const { label, jump } = this.item.getModel();
-    const { form, propsAPI } = this.props;
-    const { getSelected, executeCommand, update,save } = propsAPI;
-
-    console.log(propsAPI)
-    console.log(this.item, 'sss')
-    const data = save();
-    console.log(data,'data')
-    const id = getSelected()[0].id
-    const selectedItem = getSelected()[0].getModel()
-    this.props.dispatch({
-      type:'editorFlow/fetchNotices',
-      payload:data
-    })
-    this.props.dispatch({
-      type:'editorFlow/saveId',
-      payload:id
-    })
-    this.props.dispatch({
-      type:'editorFlow/saveItem',
-      payload:selectedItem
-    })
-    this.props.dispatch({
-      type:'editorFlow/change',
-      payload:true
-    })
-    console.log(selectedItem,'666')
-    // router.push(`/editor/flow/setRule?id=${  jump}`)
-  }
-
-  readData = ()=>{
-    const { form, propsAPI } = this.props;
-    const { read,find} = propsAPI;
-    // find(this.props.editorFlow.selectId)['isSelected']=true;
-    read(this.props.editorFlow.editorData);
-
-    console.log(find(this.props.editorFlow.selectId))
-  }
-
   renderNodeDetail = () => {
     const { form } = this.props;
     const { label, jump, title } = this.item.getModel();
@@ -160,17 +120,6 @@ class DetailForm extends React.Component {
           ]
         })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        {/* <Item label="rule" {...inlineFormItemLayout}>
-          {form.getFieldDecorator('rule', {
-            initialValue: jump
-          })(<Input onBlur={this.handleSubmit} />)}
-        </Item> */}
-        {/* <Item label="title" {...inlineFormItemLayout}>
-          {form.getFieldDecorator('title', {
-            initialValue: title
-          })(<Input onBlur={this.handleSubmit} />)}
-        </Item> */}
-        {/* <Button onClick={this.setRule}>设置规则</Button> */}
       </Fragment>
     );
   };

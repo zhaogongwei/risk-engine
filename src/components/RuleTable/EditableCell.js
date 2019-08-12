@@ -38,6 +38,9 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if(this.props.getSubKey){
+        this.props.getSubKey(this,'editableCell')
+      }
     }
   
     componentWillUnmount() {
@@ -68,9 +71,10 @@ const EditableFormRow = Form.create()(EditableRow);
       record[type] = value
     }
   
-    save = () => {
+    save = (name) => {
       const { record, handleSave } = this.props;
-      this.props.form.validateFields((error, values) => {
+      this.props.form.validateFields([name],(error, values) => {
+        console.log(error,values)
         if (error) {
 
           return;
@@ -145,12 +149,14 @@ const EditableFormRow = Form.create()(EditableRow);
           </Select>;
         }else if(this.props.record['varType'] ==='date'){
           return <DatePicker
+                    onPressEnter={this.save}
                     style={{width:'100%'}}
                     onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}
                   />
         }else if(this.props.record['varType'] ==='time'){
           return <DatePicker
                     showTime
+                    onPressEnter={this.save}
                     style={{width:'100%'}}
                     onChange={(date)=>this.onTimeChange(date,this.props.record,this.props.dataIndex)}/>
         }else{
@@ -158,7 +164,6 @@ const EditableFormRow = Form.create()(EditableRow);
             ref={node => (this.input = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-            readOnly
           />;
         }
       }else{
@@ -169,6 +174,180 @@ const EditableFormRow = Form.create()(EditableRow);
         />;
       }
     };
+    createFormItem = ()=>{
+      const { getFieldDecorator } = this.props.form;
+      const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus} = this.props;
+      if(type === 'select'){
+        return(
+          <FormItem style={{ margin: 0 }}>
+            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              initialValue: record[dataIndex]?record[dataIndex]:'',
+            })(
+              <Select
+                style={{width:'100%'}}
+                onPressEnter={this.save}
+                onChange={(e) => this.changeHandler(e, record, dataIndex)}
+              >
+                {
+                  record['varType']==='num'?
+                    value&&value.map((item,index)=>{
+                      return (
+                        <Option value={item.id} key={index}>{item.name}</Option>
+                      )
+                    }):valueOther&&valueOther.map((item,index)=>{
+                    return (
+                      <Option value={item.id} key={index}>{item.name}</Option>
+                    )
+                  })
+                }
+              </Select>
+            )}
+          </FormItem>
+        )
+      }else if(type === 'input' && isFocus){
+        return(
+          <FormItem style={{ margin: 0 }}>
+            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              initialValue: record[dataIndex]?record[dataIndex]:'',
+            })(
+              <Input
+                ref={node => (this.input = node)}
+                onPressEnter={this.save}
+                onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                //onClick={(e)=>this.props.handleModify()}
+                readOnly
+              />
+            )}
+          </FormItem>
+        )
+      }else if(type==='more'){
+        if(record['varType']==='num'){
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue: record[dataIndex]?record[dataIndex]:'',
+                rules:[
+                  {
+                    pattern:pattern,
+                    message:'只能输入3位的数字!',
+                  }
+                ]
+              })(
+                <Input
+                  ref={node => (this.input = node)}
+                  onPressEnter={this.save}
+                  onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                />
+              )}
+            </FormItem>
+          )
+        }else if(record['varType']==='char'&&!record['enumFlag']){
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue: record[dataIndex]?record[dataIndex]:'',
+              })(
+                <Input
+                  ref={node => (this.input = node)}
+                  onPressEnter={this.save}
+                  onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                />
+              )}
+            </FormItem>
+          )
+        }else if(record['enumFlag']){
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue: record[dataIndex]?record[dataIndex]:'',
+              })(
+                <Select
+                  style={{width:'100%'}}
+                  onPressEnter={this.save}
+                  onChange={(e) => this.changeHandler(e, record, dataIndex)}
+                >
+                  {
+                    record['enumList']&&record['enumList'].map((item,index)=>{
+                      return (
+                        <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                      )
+                    })
+                  }
+                </Select>
+              )}
+            </FormItem>
+          )
+        }else if(record['varType'] ==='date'){
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue: moment(record[dataIndex]),
+              })(
+                <DatePicker
+                  style={{width:'100%'}}
+                  onChange={(date)=>this.onDateChange(date,record,dataIndex)}
+                />
+              )}
+            </FormItem>
+          )
+        }else if(record['varType'] ==='time'){
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue: moment(record[dataIndex]),
+              })(
+                <DatePicker
+                  showTime
+                  style={{width:'100%'}}
+                  onChange={(date)=>this.onTimeChange(date,record,dataIndex)}/>
+              )}
+            </FormItem>
+          )
+        }else{
+          return(
+            <FormItem style={{ margin: 0 }}>
+              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+                initialValue:record[dataIndex],
+                rules:[
+                  {
+                    required:true,
+                  }
+                ]
+              })(
+                <Input
+                  ref={node => (this.input = node)}
+                  onPressEnter={this.save(`dataIndex${record['key']}${cols}`)}
+                  onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                  readOnly
+                />
+              )}
+            </FormItem>
+          )
+        }
+      }else{
+        return(
+          <FormItem style={{ margin: 0 }}>
+            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              initialValue:record[dataIndex],
+              rules:[
+                {
+                  required:true,
+                }
+              ]
+            })(
+              <Input
+                ref={node => (this.input = node)}
+                onPressEnter={()=>this.save(`dataIndex${record['key']}${cols}`)}
+                onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+              />
+            )}
+          </FormItem>
+        )
+      }
+    }
+    formValidate=()=>{
+      this.props.validateFields()
+    }
     render() {
       const { editing } = this.state;
       const {
@@ -194,6 +373,9 @@ const EditableFormRow = Form.create()(EditableRow);
               {(form) => {
                 this.form = form;
                 return (
+                  this.createFormItem()
+                )
+                /*return (
                   <FormItem style={{ margin: 0 }}>
                     {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
                       initialValue: (record['varType']==='date'||record['varType']==='time')&&dataIndex==='compareValue'?moment(record[dataIndex]):record[dataIndex]?record[dataIndex]:'',
@@ -207,7 +389,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       this.getInput()
                     )}
                   </FormItem>
-                );
+                );*/
               }}
             </EditableContext.Consumer>
           ) : restProps.children}

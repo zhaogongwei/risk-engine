@@ -252,7 +252,9 @@ export default class SimpleRule extends PureComponent {
     const {ruleList} = this.props.rule;
     const {selectId} = this.props.editorFlow;
     const {query} = this.props.location;
-    this.props.dispatch({
+    console.log(this.ruleTable.props.form.getFieldsValue())
+    this.ruleTable.validate()
+    /*this.props.dispatch({
       type: 'rule/saveRuleInfo',
       payload: {
         ...formData,
@@ -260,7 +262,7 @@ export default class SimpleRule extends PureComponent {
         variables:ruleList,
         nodeId:query['id']
       }
-    })
+    })*/
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -392,6 +394,7 @@ export default class SimpleRule extends PureComponent {
           <RuleTable
             bordered
             pagination={false}
+            getSubKey={this.getSubKey}
             columns={this.state.columns}
             dataSource={this.props.rule.ruleList}
             handleAdd={()=>this.clickDialog(1)}

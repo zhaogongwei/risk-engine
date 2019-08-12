@@ -12,10 +12,10 @@ const FlowContextMenu = (props) => {
       <NodeMenu>
         <MenuItem command="copy" text="复制" />
         {(type !=='start'&&type !=='end')&&<SetMenuItem command="copy" text="编辑" />}
-        <MenuItem command="delete" />
+        <MenuItem command="delete" text="删除"/>
       </NodeMenu>
       <EdgeMenu>
-        <MenuItem command="delete" />
+        <MenuItem command="delete" text="删除"/>
       </EdgeMenu>
       <GroupMenu>
         <MenuItem command="copy" />

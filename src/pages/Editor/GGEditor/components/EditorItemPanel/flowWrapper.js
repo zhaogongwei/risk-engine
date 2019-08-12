@@ -14,6 +14,9 @@ class FlowWrapper extends React.Component{
       currentId:''
     }
   }
+  componentDidMount(){
+    this.props.getSubKey(this,'flow')
+  }
   apiAction = (command)=>{
     const {propsApI} = this.props;
     console.log(this.props)

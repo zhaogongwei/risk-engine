@@ -18,7 +18,7 @@ const change = (props) => {
   }else if(id && selectedItem.type === 'score'){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
   }else if(id && selectedItem.type === 'setVar'){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}`)
   }else if(id && selectedItem.type === 'desModel'){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}`)
   }else if(id && selectedItem.type === 'query'){
