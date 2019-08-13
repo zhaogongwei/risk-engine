@@ -142,6 +142,7 @@ export default class SimpleRule extends PureComponent {
       resultVarId:{},//输出结果
       countResult:{},//计数结果
       searchText: '',
+      ruleData: [],  //   简单规则form数据
     };
   }
  async componentDidMount () {
@@ -248,12 +249,15 @@ export default class SimpleRule extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
-    const formData = this.child.getFormValue();
-    const {ruleList} = this.props.rule;
-    const {selectId} = this.props.editorFlow;
-    const {query} = this.props.location;
-    console.log(this.ruleTable.props.form.getFieldsValue())
-    this.ruleTable.validate()
+    this.state.ruleData.map(item => {
+      item.validateFields()
+    })
+    // const formData = this.child.getFormValue();
+    // const {ruleList} = this.props.rule;
+    // const {selectId} = this.props.editorFlow;
+    // const {query} = this.props.location;
+    // console.log(this.ruleTable.props.form.getFieldsValue())
+    // this.ruleTable.validate()
     /*this.props.dispatch({
       type: 'rule/saveRuleInfo',
       payload: {
@@ -368,6 +372,14 @@ export default class SimpleRule extends PureComponent {
   compareFunction=(a,b)=>{
     return a.localeCompare(b);
   }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.ruleData
+    arr.push(form)
+    this.setState({
+      ruleData: arr
+    })
+  }
   render() {
     const { permission } = this.props
     const { getFieldDecorator } = this.props.form
@@ -398,7 +410,7 @@ export default class SimpleRule extends PureComponent {
             columns={this.state.columns}
             dataSource={this.props.rule.ruleList}
             handleAdd={()=>this.clickDialog(1)}
-            handleModify={this.clickDialog}
+            handleModify={(form) => this.handleModify(form)}
             loading={this.props.loading}
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>

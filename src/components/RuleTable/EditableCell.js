@@ -41,6 +41,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if(this.props.getSubKey){
         this.props.getSubKey(this,'editableCell')
       }
+      if (this.props.handleModify) this.props.handleModify(this.props.form)
     }
   
     componentWillUnmount() {
@@ -310,7 +311,10 @@ const EditableFormRow = Form.create()(EditableRow);
                 initialValue:record[dataIndex],
                 rules:[
                   {
-                    required:true,
+                    required: true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('命中标记不能为空')
+                    }
                   }
                 ]
               })(
@@ -332,6 +336,9 @@ const EditableFormRow = Form.create()(EditableRow);
               rules:[
                 {
                   required:true,
+                  validator: (rule, value, callback) => {
+                    if (!value) callback('命中标记不能为空')
+                  }
                 }
               ]
             })(
