@@ -87,7 +87,6 @@ export default {
   reducers: {
     //初始化规则列表处理
     InitruleListHandle(state,{payload}){
-      console.log('payload',payload)
       return {
         ...state,
         ruleList:addListKey(payload.data.variables),
@@ -96,7 +95,6 @@ export default {
     },
     //弹框规则列表处理
     ruleListHandle(state,{payload}){
-      console.log('payload',payload)
       return {
         ...state,
         ruleList:payload.ruleList,
