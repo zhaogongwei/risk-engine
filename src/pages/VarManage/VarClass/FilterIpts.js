@@ -44,6 +44,16 @@ export default class FilterIpts extends Component {
       }
     })
   }
+    //编辑变量后清空数据
+  classChangeGetSelect = ()=>{
+  	this.props.dispatch({
+      type: 'varclass/getSelectLevel1',
+      payload: {
+      	
+      }
+    })
+  	this.reset()
+  }
   componentDidMount () {
   	this.props.dispatch({
       type: 'varclass/getSelectLevel1',

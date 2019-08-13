@@ -40,7 +40,7 @@ export default class VarClass extends PureComponent {
                 <Menu.Item onClick={() => {this.clickDialog(4, record)}}>
                   <Icon type="edit"/>编辑
                 </Menu.Item>
-                <Menu.Item onClick={()=>this.deleteVar()}>
+                <Menu.Item onClick={()=>this.deleteVar(1,record)}>
                   <Icon type="delete"/>删除
                 </Menu.Item>
               </Menu>
@@ -72,7 +72,6 @@ export default class VarClass extends PureComponent {
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
-  	console.log(current)
     this.setState({
       current:current,
       currentPage:current
@@ -176,7 +175,17 @@ export default class VarClass extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+    	this.props.dispatch({
+	      type: 'varclass/delVarClass',
+	      payload: {
+	      	id:record['id']
+	      },
+	      callback:()=>{
+	      	this.props.changeDefault(1)
+	        this.child.classChangeGetSelect()
+	        this.reset()
+	      }
+	    })
     }
   }
   render() {
@@ -198,7 +207,7 @@ export default class VarClass extends PureComponent {
               <Menu.Item onClick={()=>{this.clickDialog(3,record)}}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteVar()}>
+              <Menu.Item onClick={()=>this.deleteVar(1,record)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -242,7 +251,9 @@ export default class VarClass extends PureComponent {
             getSubKey={this.getSubKey}
             type={this.state.type}
             title={this.state.title}
+            changeDefault={this.changeDefault}
             record={this.state.record}
+            resatSelect={this.child}
           /></Card>
       </PageHeaderWrapper>
     )

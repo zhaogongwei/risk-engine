@@ -20,10 +20,6 @@ export default {
         type: 'saveVarClassList',
         payload:response,
       });
-      yield put({
-        type: 'saveVarClassList',
-        payload:response,
-      });
     },
     //获取查询一级list getSelectLevel1
     *getSelectLevel1({payload}, { call, put }) {
@@ -35,19 +31,15 @@ export default {
     },
     *getSelectLevel2({payload}, { call, put }) {
       let response = yield call(api.getSelectLevel2,payload)
-      console.log(response)
       yield put({
         type: 'changeSecondSelect',
         payload:response,
       });
     },
     //添加变量(一级/二级）
-    *addVarClass({payload},{call,put}){
+    *addVarClass({payload,callback},{call,put}){
       let response = yield call(api.addVarClass,payload)
-      yield put({
-        type: 'saveVarClassList',
-        payload:response,
-      });
+      callback()
     },
     //编辑变量(一级/二级)
     *editVarClass({payload},{call,put}){
@@ -58,12 +50,9 @@ export default {
       });
     },
     //删除变量
-    *delVarClass({payload},{call,put}){
+    *delVarClass({payload,callback},{call,put}){
       let response = yield call(api.delVarClass,payload)
-      yield put({
-        type:'saveVarClassList',
-        payload
-      })
+      callback()
     },
   },
 

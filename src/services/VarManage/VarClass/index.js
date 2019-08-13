@@ -48,7 +48,7 @@ export async function editVarClass(params) {
 }
 //删除变量（一级/二级）
 export async function delVarClass(params){
-  return request(`${_baseApi}/admin/institutions/assets_elements`, {
+  return request(`${_baseApi}/varClass/deleteClass`, {
     method: 'POST',
     body: {
       ...params

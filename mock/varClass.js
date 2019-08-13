@@ -130,5 +130,13 @@ export default {
 	          },
 	      ]
 	  })
+	},
+	'POST /engine/varClass/deleteClass': (req, res) =>{
+		res.send({
+	      status: 'ok',
+	      data:[
+	      	
+	      ]
+	  })
 	}
 }

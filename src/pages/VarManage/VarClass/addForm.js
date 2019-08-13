@@ -14,7 +14,9 @@ const FormItem = Form.Item
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
-@connect()
+@connect(({ varclass }) => ({
+  varclass,
+}))
 
 @Form.create()
 
@@ -33,48 +35,134 @@ export default class AddForm extends Component {
   }
   //点击确定
   handleOk = ()=>{
-    if(!this.props.type){
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-            const formData = this.getFormValue()
-            this.props.dispatch({
-              type: 'assetDeploy/riskDeploy',
-              payload: {
-                ...formData,
-                id:this.props.id
-              },
-              callback:()=>{
-                this.setState({visible:false},()=>{
-                  this.props.onChange(this.state.visible)
-                })
-                this.props.changeDefault()
-                this.props.callback()
-                this.reset()
-              }
-            })
-        }
-      })
-    }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','projectStatus'],(err, values) => {
-          if(!err){
-              const formData = this.getFormValue()
-              this.props.dispatch({
-                type: 'assetDeploy/riskAdd',
-                payload: {
-                  ...formData
-                },
-                callback:()=>{
-                  this.setState({visible:false},()=>{
-                    this.props.onChange(this.state.visible);
-                  })
-                  this.props.changeDefault()
-                  this.props.callback()
-                  this.reset()
-                }
-              })
-          }
-      })
-    }
+//  if(!this.props.type){
+//    this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
+//      if(!err){
+//          const formData = this.getFormValue()
+//          this.props.dispatch({
+//            type: 'assetDeploy/riskDeploy',
+//            payload: {
+//              ...formData,
+//              //id:this.props.id
+//            },
+//            callback:()=>{
+//              this.setState({visible:false},()=>{
+//                this.props.onChange(this.state.visible)
+//              })
+//              this.props.changeDefault()
+//              this.props.callback()
+//              this.reset()
+//            }
+//          })
+//      }
+//    })
+//  }else{
+//    this.props.form.validateFields(['assetsTypeName','assetsTypeCode','projectStatus'],(err, values) => {
+//        if(!err){
+//            const formData = this.getFormValue()
+//            this.props.dispatch({
+//              type: 'assetDeploy/riskAdd',
+//              payload: {
+//                ...formData,
+//                
+//              },
+//              callback:()=>{
+//                this.setState({visible:false},()=>{
+//                  this.props.onChange(this.state.visible);
+//                })
+//                this.props.changeDefault()
+//                this.props.callback()
+//                this.reset()
+//              }
+//            })
+//        }
+//    })
+//  }
+
+
+		if(this.props.type==1){//添加一级分类
+			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+	      if(!err){
+		      const formData = this.getFormValue()
+		      this.props.dispatch({
+		        type: 'varclass/addVarClass',
+		        payload: {
+		          ...formData,
+		        },
+		        callback:()=>{
+		          this.setState({visible:false},()=>{
+		            this.props.onChange(this.state.visible);
+		          })
+		          this.props.changeDefault(1)
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.reset()
+		        }
+		      })
+		    }
+  		})
+		}else if(this.props.type==2){ //添加二级分类
+			this.props.form.validateFields(['assetsTypeName','assetsTypeCode','parentId'],(err, values) => {
+	      if(!err){
+		      const formData = this.getFormValue()
+		      this.props.dispatch({
+		        type: 'varclass/addVarClass',
+		        payload: {
+		          ...formData,
+		        },
+		        callback:()=>{
+		          this.setState({visible:false},()=>{
+		            this.props.onChange(this.state.visible);
+		          })
+		          this.props.changeDefault(1)
+		         this.props.resatSelect.classChangeGetSelect()
+		          this.reset()
+		        }
+		      })
+		    }
+  		})
+		}else if(this.props.type==3){//编辑一级分类
+			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+	      if(!err){
+		      const formData = this.getFormValue(1)
+		      this.props.dispatch({
+		        type: 'varclass/addVarClass',
+		        payload: {
+		          ...formData,
+		          id:this.props.record['id']
+		        },
+		        callback:()=>{
+		          this.setState({visible:false},()=>{
+		            this.props.onChange(this.state.visible);
+		          })
+		          this.props.changeDefault(1)
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.reset()
+		        }
+		      })
+		    }
+  		})
+		}else if(this.props.type==4){//编辑二级分类
+			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+	      if(!err){
+		      const formData = this.getFormValue()
+		      this.props.dispatch({
+		        type: 'varclass/addVarClass',
+		        payload: {
+		          ...formData,
+		          id:this.props.record['id']
+		        },
+		        callback:()=>{
+		          this.setState({visible:false},()=>{
+		            this.props.onChange(this.state.visible);
+		          })
+		          this.props.changeDefault()
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.reset()
+		        }
+		      })
+		    }
+  		})
+		}
   }
   //点击取消
   handleCancel =()=>{
@@ -109,7 +197,6 @@ export default class AddForm extends Component {
       labelCol:{span:6},
       wrapperCol:{span:16},
     }
-    console.log(this.props.record)
     return (
       <Modal
         title={this.props.title}
@@ -123,7 +210,7 @@ export default class AddForm extends Component {
           {this.props.type===2?<Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="选择上级" {...formItemConfig}>
-                {getFieldDecorator('projectStatus',{
+                {getFieldDecorator('parentId',{
                   initialValue:this.props.type===2?this.props.record['id']:''
                 })(
                   <Select allowClear={true} disabled>
