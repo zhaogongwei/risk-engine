@@ -28,7 +28,8 @@ class FlowPage extends React.Component {
     this.state={
       visible:false,
       updateTime:'',
-      updateTrueName:''
+      updateTrueName:'',
+      remark:''
     }
   }
   async componentDidMount(){
@@ -39,11 +40,8 @@ class FlowPage extends React.Component {
       }
     })
     if(res&&res.status===1){
-      const data = JSON.parse(res.data.nodeJson)
-      this.setState({
-        updateTime:res.data.updateTime,
-        updateTrueName:res.data.updateTrueName,
-      })
+      const {policyObj} = this.props.editorFlow
+      const data = JSON.parse(policyObj['nodeJson'])
       this.flow.myRef.graph.read(data)
     }
   }
@@ -70,26 +68,26 @@ class FlowPage extends React.Component {
     const formData = this.getFormValue();
     console.log(this.flow.myRef.graph)
     console.log(data)
-    /*this.props.form.validateFields(['variableName'],(error,value)=>{
+    this.props.form.validateFields(['remark'],(error,value)=>{
       if(!error){
         this.props.dispatch({
-          type: 'editorFlow/saveItem',
+          type: 'editorFlow/savePolicyData',
           payload: {
             strategyId:1,
             nodeJson:JSON.stringify(data),
-            remark:formData['variableName']
+            remark:formData['remark']
           }
         })
       }
-    })*/
+    })
   }
   save=()=>{
     console.log(JSON.stringify({nodeJson:JSON.stringify(this.props.editorFlow.editorData)}))
   }
   render () {
-    const { selectId, selectItem, editorData,type } = this.props.editorFlow;
+    const { selectId, selectItem, editorData,type,policyObj } = this.props.editorFlow;
     const { getFieldDecorator } = this.props.form;
-    const { updateTrueName,updateTime } = this.state;
+    const { updateTrueName,updateTime,remark } = {...policyObj};
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -114,8 +112,8 @@ class FlowPage extends React.Component {
               >
                 <Col xxl={8} md={12}>
                   <FormItem label="" {...formItemConfig}>
-                    {getFieldDecorator('variableName',{
-                      initialValue:'',
+                    {getFieldDecorator('remark',{
+                      initialValue:remark,
                       rules:[
                         {
                           required:true,
@@ -124,13 +122,13 @@ class FlowPage extends React.Component {
                         }
                       ]
                     })(
-                      <Input placeholder="请输入版本备注（必填）" allowClear/>
+                      <Input placeholder="请输入版本备注（必填）" allowClear />
                     )}
                   </FormItem>
                 </Col>
               </Form>
               <FlowWrapper getSubKey={this.getSubKey}/>
-              <p style={{color:'#FF0000',textAlign:'right'}}>最近操作时间：{updateTime} 操作人：  {updateTrueName}</p>
+              <p style={{color:'#FF0000',textAlign:'right'}}>{updateTime?`最近操作时间:${updateTime}`:null} {updateTrueName?`操作人:${updateTrueName}`:null}</p>
             </Col>
             <Col span={4} className={styles.editorSidebar}>
               <FlowDetailPanel />
@@ -149,7 +147,7 @@ class FlowPage extends React.Component {
             </Col>
           </Row>
           <FlowBird />
-          <FlowContextMenu selectId={selectId} selectItem={selectItem} type={type}/>
+          <FlowContextMenu  type={type} remark={this.getFormValue()}/>
         </GGEditor>
         <Modal
           width="360px"

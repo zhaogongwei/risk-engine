@@ -1,50 +1,58 @@
 import React from 'react';
 import { Command, withPropsAPI } from 'gg-editor';
+import {message } from 'antd';
 import upperFirst from 'lodash/upperFirst';
 import IconFont from '../../common/IconFont';
 import styles from './index.less';
 import router from 'umi/router';
 import { connect } from 'dva'
 
-const change = (props) => {
+const change =async props => {
+  console.log('props',props)
   const { getSelected, save } = props.propsAPI;
+  const { remark } = props
   const id = getSelected()[0].id
   const selectedItem = getSelected()[0].getModel()
+  const data = save();
+  const edges = data['edges'];
+  const nodefineEdges = edges.filter((item)=>!item['type'])
   console.log(selectedItem)
-  if (id && selectedItem.type === 'simple') {
+  console.log(nodefineEdges)
+  //点击编辑时进行节点保存
+  console.log(data)
+  if(!remark['remark']){
+    message.error('备注不能为空!')
+    return;
+  }else if(nodefineEdges.length){
+    message.error('edges属性没有设置!')
+    return;
+  }else{
+    var res = await props.dispatch({
+                type:'editorFlow/savePolicyData',
+                payload:{
+                  strategyId:1,
+                  nodeJson:JSON.stringify(data),
+                  remark:remark['remark']
+                }
+              })
+    props.dispatch({
+      type:'editorFlow/saveId',
+      payload:id
+    })
+  }
+  if (id && selectedItem.type === 'simple'&&res.status===1) {
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}`)
-  }else if(id && selectedItem.type === 'complex'){
+  }else if(id && selectedItem.type === 'complex'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}`)
-  }else if(id && selectedItem.type === 'score'){
+  }else if(id && selectedItem.type === 'score'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
-  }else if(id && selectedItem.type === 'setVar'){
+  }else if(id && selectedItem.type === 'setVar'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}`)
-  }else if(id && selectedItem.type === 'desModel'){
+  }else if(id && selectedItem.type === 'desModel'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}`)
-  }else if(id && selectedItem.type === 'query'){
+  }else if(id && selectedItem.type === 'query'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}`)
   }
-  const data = save();
-  props.dispatch({
-    type:'editorFlow/saveEditorData',
-    payload:data
-  })
-  props.dispatch({
-    type:'editorFlow/fetchNotices',
-    payload:data
-  })
-  props.dispatch({
-    type:'editorFlow/saveId',
-    payload:id
-  })
-  props.dispatch({
-    type:'editorFlow/saveItem',
-    payload:selectedItem
-  })
-  props.dispatch({
-    type:'editorFlow/change',
-    payload:true
-  })
 }
 
 const SetMenuItem = props => {
