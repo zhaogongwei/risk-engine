@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Button,Input,Form,Modal } from 'antd';
-import GGEditor, { Flow,RegisterNode } from 'gg-editor';
+import GGEditor, { Flow,RegisterNode,withPropsAPI } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowBird'
 import router from 'umi/router';
@@ -26,7 +26,23 @@ class FlowPage extends React.Component {
   constructor (props) {
     super(props);
     this.state={
-      visible:false
+      visible:false,
+      updateTime:'',
+      updateTrueName:'',
+      remark:''
+    }
+  }
+  async componentDidMount(){
+    const res = await this.props.dispatch({
+      type: 'editorFlow/queryItemInfo',
+      payload: {
+        strategyFlowId:21,
+      }
+    })
+    if(res&&res.status===1){
+      const {policyObj} = this.props.editorFlow
+      const data = JSON.parse(policyObj['nodeJson'])
+      this.flow.myRef.graph.read(data)
     }
   }
   //   获取子组件数据的方法
@@ -38,19 +54,40 @@ class FlowPage extends React.Component {
       visible:false
     })
   }
-  submitData = () => {
-    console.log(this.myRef.graph.save())
-    console.log(this.props.editorFlow.selectId)
+  getSubKey=(ref,key)=>{
+    this[key] = ref;
   }
-
-  componentDidMount(){
+  //   获取表单信息
+  getFormValue = () => {
+    let formQueryData = this.props.form.getFieldsValue()
+    return formQueryData;
+  }
+  //保存策略流数据
+  submitData = async () => {
+    const data = this.flow.myRef.graph.save();
+    const formData = this.getFormValue();
+    console.log(this.flow.myRef.graph)
+    console.log(data)
+    this.props.form.validateFields(['remark'],(error,value)=>{
+      if(!error){
+        this.props.dispatch({
+          type: 'editorFlow/savePolicyData',
+          payload: {
+            strategyId:1,
+            nodeJson:JSON.stringify(data),
+            remark:formData['remark']
+          }
+        })
+      }
+    })
   }
   save=()=>{
     console.log(JSON.stringify({nodeJson:JSON.stringify(this.props.editorFlow.editorData)}))
   }
   render () {
-    const { selectId, selectItem, editorData,type } = this.props.editorFlow;
-    const { getFieldDecorator } = this.props.form
+    const { selectId, selectItem, editorData,type,policyObj } = this.props.editorFlow;
+    const { getFieldDecorator } = this.props.form;
+    const { updateTrueName,updateTime,remark } = {...policyObj};
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -59,7 +96,7 @@ class FlowPage extends React.Component {
     console.log(this.props.editorFlow, 'editorFlow')
     return (
       <PageHeaderWrapper>
-        <GGEditor className={styles.editor} ref={node => (this.myRefs = node)}>
+        <GGEditor className={styles.editor} >
           <Row type="flex" className={styles.editorHd}>
             <Col span={24}>
               <FlowToolbar />
@@ -75,25 +112,29 @@ class FlowPage extends React.Component {
               >
                 <Col xxl={8} md={12}>
                   <FormItem label="" {...formItemConfig}>
-                    {getFieldDecorator('variableName',{
-                      initialValue:'',
+                    {getFieldDecorator('remark',{
+                      initialValue:remark,
                       rules:[
-                        {required:true,}
+                        {
+                          required:true,
+                          max:20,
+                          message:'最多输入20位!'
+                        }
                       ]
                     })(
-                      <Input placeholder="请输入版本备注（必填）"/>
+                      <Input placeholder="请输入版本备注（必填）" allowClear />
                     )}
                   </FormItem>
                 </Col>
               </Form>
-              <FlowWrapper />
-              <p style={{color:'#FF0000',textAlign:'right'}}>最近操作时间：2018-08-08 00:00:00 操作人：  王大大</p>
+              <FlowWrapper getSubKey={this.getSubKey}/>
+              <p style={{color:'#FF0000',textAlign:'right'}}>{updateTime?`最近操作时间:${updateTime}`:null} {updateTrueName?`操作人:${updateTrueName}`:null}</p>
             </Col>
             <Col span={4} className={styles.editorSidebar}>
               <FlowDetailPanel />
               <div>
                 <Row type="flex" justify="center" align="middle" gutter={16} style={{marginBottom:10}}>
-                  <Col><Button type="primary" onClick={this.save}>保存</Button></Col>
+                  <Col><Button type="primary" onClick={this.submitData}>保存</Button></Col>
                   <Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" gutter={16}>
@@ -106,7 +147,7 @@ class FlowPage extends React.Component {
             </Col>
           </Row>
           <FlowBird />
-          <FlowContextMenu selectId={selectId} selectItem={selectItem} type={type}/>
+          <FlowContextMenu  type={type} remark={this.getFormValue()}/>
         </GGEditor>
         <Modal
           width="360px"
@@ -122,4 +163,4 @@ class FlowPage extends React.Component {
     );
   }
 }
-export default FlowPage;
+export default FlowPage
