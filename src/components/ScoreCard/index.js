@@ -55,6 +55,7 @@ export default class ScoreCard extends PureComponent {
           value:col.value?col.value:null,
           cols:col.cols?col.cols:null,
           varObjRow:varObjRow,
+          handleModify:(form)=>this.props.handleModify(form),
         })
       };
     });

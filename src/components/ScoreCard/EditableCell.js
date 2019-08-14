@@ -37,6 +37,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if (this.props.handleModify) this.props.handleModify(this.props.form)
     }
   
     componentWillUnmount() {
@@ -159,7 +160,16 @@ const EditableFormRow = Form.create()(EditableRow);
                 return (
                   <FormItem style={{ margin: 0 }}>
                     {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
-                      initialValue: record[dataIndex]
+                      initialValue: record[dataIndex],
+                      rules:[
+                        {
+                          required:true,
+                          validator: (rule, value, callback) => {
+                            if (!value) callback('输入内容不能为空!')
+                            if (value.length>20) callback('输入内容最多20位!')
+                          }
+                        }
+                      ]
                     })(this.getInput())}
                   </FormItem>
                 );

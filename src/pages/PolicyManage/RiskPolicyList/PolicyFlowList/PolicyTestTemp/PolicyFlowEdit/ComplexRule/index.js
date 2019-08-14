@@ -149,6 +149,7 @@ export default class ComplexRule extends PureComponent {
       resultVarId:{},//输出结果
       countResult:{},//计数结果
       submiting:true,//提交状态，
+      complexData: [],  //   复杂规则form数据
     };
   }
   async componentDidMount() {
@@ -250,17 +251,33 @@ export default class ComplexRule extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
+      let count=0;
+      this.state.complexData.map(item => {
+        item.validateFieldsAndScroll((errors,value)=>{
+          if(errors)count++;
+        })
+      })
       const formData = this.child.getFormValue();
       const {complexList} = this.props.complex;
       const {selectId} = this.props.editorFlow;
       const {query} = this.props.location;
-      this.props.dispatch({
-        type: 'complex/saveComplexInfo',
-        payload: {
-          ...formData,
-          ruleType:'complex',
-          variables:complexList,
-          nodeId:query['id']
+      this.child.props.form.validateFields((errors,value)=>{
+        if(!errors){
+          if(complexList.length>0){
+            if(!count){
+              this.props.dispatch({
+                type: 'complex/saveComplexInfo',
+                payload: {
+                  ...formData,
+                  ruleType:'complex',
+                  variables:complexList,
+                  nodeId:query['id']
+                }
+              })
+            }
+          }else{
+            message.error('请选择变量!')
+          }
         }
       })
   }
@@ -317,6 +334,8 @@ export default class ComplexRule extends PureComponent {
           const records = this.addForm.submitHandler();
           const {isCount} = this.state;
           if(isCount){
+            //计数结果
+            this.child.props.form.resetFields(['countVarId'])
             this.setState({
               countResult:{
                 countVarId:records['varId'],
@@ -324,6 +343,8 @@ export default class ComplexRule extends PureComponent {
               },
             })
           }else{
+            //输出结果
+            this.child.props.form.resetFields(['resultVarId'])
             this.setState({
               resultVarId:{
                 resultVarId:records['varId'],
@@ -333,6 +354,14 @@ export default class ComplexRule extends PureComponent {
           }
         }
       })
+  }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.complexData;
+    arr.push(form)
+    this.setState({
+      complexData: arr
+    })
   }
   render() {
     const { permission } = this.props
@@ -362,7 +391,8 @@ export default class ComplexRule extends PureComponent {
             columns={this.state.columns}
             dataSource={this.props.complex.complexList}
             handleAdd={this.handleAdd}
-            handleModify={this.clickDialog}
+            handleModify={(form) => this.handleModify(form)}
+            selectVar={this.clickDialog}
             loading={this.props.loading}
             getSubKey={this.getSubKey}
           />

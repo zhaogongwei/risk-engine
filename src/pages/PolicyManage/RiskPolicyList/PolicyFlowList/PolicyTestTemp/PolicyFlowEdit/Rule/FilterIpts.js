@@ -25,8 +25,8 @@ export default class FilterIpts extends Component {
   getFormValue = () => {
     const {resultVarId,countResult} = this.props;
     let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.ruleCondition==='count'?formQueryData.countVarId=countResult['countVarId']:formQueryData.countVarId='';
     formQueryData.resultVarId=resultVarId['resultVarId'];
-    formQueryData.countVarId=countResult['countVarId'];
     return formQueryData;
   }
   //重置
@@ -57,6 +57,7 @@ export default class FilterIpts extends Component {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    console.log(resultVarId,countResult)
     return (
       <Form
         className="ant-advanced-search-form"
@@ -65,7 +66,13 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="规则条件" {...formItemConfig}>
               {getFieldDecorator('ruleCondition',{
-                initialValue:formData['ruleCondition']
+                initialValue:formData['ruleCondition'],
+                rules:[
+                  {
+                    required:true,
+                    message:'规则条件不能为空!'
+                  }
+                ]
               })(
                 <Select allowClear={true} onChange={this.changeHandle}>
                   <Option value={'or'}>命中任一规则</Option>
@@ -78,7 +85,13 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="输出结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:''
+                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:'',
+                rules:[
+                  {
+                    required:true,
+                    message:'输出结果不能为空!'
+                  }
+                ]
               })(
                 <Input
                   onClick={()=>this.props.outResult(0)}
@@ -92,7 +105,13 @@ export default class FilterIpts extends Component {
               <Col xxl={4} md={6}>
                 <FormItem label="计数结果" {...formItemConfig}>
                   {getFieldDecorator('countVarId',{
-                    initialValue:countResult['countVarValue']?countResult['countVarValue']:''
+                    initialValue:countResult['countVarValue']?countResult['countVarValue']:'',
+                    rules:[
+                      {
+                        required:true,
+                        message:'计数结果不能为空!'
+                      }
+                    ]
                   })(
                     <Input
                       onClick={()=>this.props.outResult(1)}

@@ -23,9 +23,9 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 
 const EditableFormRow = Form.create()(EditableRow);
-  
+
   @Form.create()
-  
+
   export default class EditableCell extends PureComponent {
     constructor(props){
       super(props)
@@ -37,9 +37,6 @@ const EditableFormRow = Form.create()(EditableRow);
     componentDidMount() {
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
-      }
-      if(this.props.getSubKey){
-        this.props.getSubKey(this,'editableCell')
       }
       if (this.props.handleModify) this.props.handleModify(this.props.form)
     }
@@ -72,9 +69,9 @@ const EditableFormRow = Form.create()(EditableRow);
       record[type] = value
     }
   
-    save = (name) => {
+    save = () => {
       const { record, handleSave } = this.props;
-      this.props.form.validateFields([name],(error, values) => {
+      this.props.form.validateFields((error, values) => {
         console.log(error,values)
         if (error) {
 
@@ -183,6 +180,14 @@ const EditableFormRow = Form.create()(EditableRow);
           <FormItem style={{ margin: 0 }}>
             {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
               initialValue: record[dataIndex]?record[dataIndex]:'',
+              rules:[
+                {
+                  required:true,
+                  validator: (rule, value, callback) => {
+                    if (!value) callback('输入内容不能为空!')
+                  }
+                }
+              ]
             })(
               <Select
                 style={{width:'100%'}}
@@ -210,6 +215,14 @@ const EditableFormRow = Form.create()(EditableRow);
           <FormItem style={{ margin: 0 }}>
             {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
               initialValue: record[dataIndex]?record[dataIndex]:'',
+              rules:[
+                {
+                  required:true,
+                  validator: (rule, value, callback) => {
+                    if (!value) callback('输入内容不能为空!')
+                  }
+                }
+              ]
             })(
               <Input
                 ref={node => (this.input = node)}
@@ -230,7 +243,11 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     pattern:pattern,
-                    message:'只能输入3位的数字!',
+                    required:true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('输入内容不能为空!')
+                      if (value.length>3) callback('只能输入数字且内容长度不能超过三位数!')
+                    }
                   }
                 ]
               })(
@@ -247,6 +264,14 @@ const EditableFormRow = Form.create()(EditableRow);
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
                 initialValue: record[dataIndex]?record[dataIndex]:'',
+                rules:[
+                  {
+                    required:true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('输入内容不能为空!')
+                    }
+                  }
+                ]
               })(
                 <Input
                   ref={node => (this.input = node)}
@@ -261,6 +286,14 @@ const EditableFormRow = Form.create()(EditableRow);
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
                 initialValue: record[dataIndex]?record[dataIndex]:'',
+                rules:[
+                  {
+                    required:true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('输入内容不能为空!')
+                    }
+                  }
+                ]
               })(
                 <Select
                   style={{width:'100%'}}
@@ -283,6 +316,14 @@ const EditableFormRow = Form.create()(EditableRow);
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
                 initialValue: moment(record[dataIndex]),
+                rules:[
+                  {
+                    required: true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('输入内容不能为空!')
+                    }
+                  }
+                ]
               })(
                 <DatePicker
                   style={{width:'100%'}}
@@ -296,6 +337,14 @@ const EditableFormRow = Form.create()(EditableRow);
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
                 initialValue: moment(record[dataIndex]),
+                rules:[
+                  {
+                    required: true,
+                    validator: (rule, value, callback) => {
+                      if (!value) callback('输入内容不能为空!')
+                    }
+                  }
+                ]
               })(
                 <DatePicker
                   showTime
@@ -313,14 +362,14 @@ const EditableFormRow = Form.create()(EditableRow);
                   {
                     required: true,
                     validator: (rule, value, callback) => {
-                      if (!value) callback('命中标记不能为空')
+                      if (!value) callback('输入内容不能为空!')
                     }
                   }
                 ]
               })(
                 <Input
                   ref={node => (this.input = node)}
-                  onPressEnter={this.save(`dataIndex${record['key']}${cols}`)}
+                  onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
                   readOnly
                 />
@@ -337,23 +386,20 @@ const EditableFormRow = Form.create()(EditableRow);
                 {
                   required:true,
                   validator: (rule, value, callback) => {
-                    if (!value) callback('命中标记不能为空')
+                    if (!value) callback('输入内容不能为空!')
                   }
                 }
               ]
             })(
               <Input
                 ref={node => (this.input = node)}
-                onPressEnter={()=>this.save(`dataIndex${record['key']}${cols}`)}
+                onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
               />
             )}
           </FormItem>
         )
       }
-    }
-    formValidate=()=>{
-      this.props.validateFields()
     }
     render() {
       const { editing } = this.state;

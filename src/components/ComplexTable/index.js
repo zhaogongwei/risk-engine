@@ -53,7 +53,8 @@ export default class RuleTable extends PureComponent {
           value:col.value?col.value:null,
           valueOth:col.valueOth?col.valueOth:null,
           cols:col.cols?col.cols:null,
-          handleModify:()=>this.props.handleModify(0,record,col.mold)
+          handleModify:(form) => this.props.handleModify(form),
+          selectVar:()=>this.props.selectVar(0,record,col.mold)
         })
       };
     });

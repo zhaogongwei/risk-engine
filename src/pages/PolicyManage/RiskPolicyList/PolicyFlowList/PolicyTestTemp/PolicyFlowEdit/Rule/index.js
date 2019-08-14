@@ -14,6 +14,7 @@ import {
   Modal,
   Card,
   Input,
+  message,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
@@ -192,24 +193,6 @@ export default class SimpleRule extends PureComponent {
     })
     this.change(current)
   }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
-      }
-    })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -249,24 +232,35 @@ export default class SimpleRule extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
+    let count=0;
     this.state.ruleData.map(item => {
-      item.validateFields()
+      item.validateFieldsAndScroll((errors,value)=>{
+        if(errors)count++;
+      })
     })
-    // const formData = this.child.getFormValue();
-    // const {ruleList} = this.props.rule;
-    // const {selectId} = this.props.editorFlow;
-    // const {query} = this.props.location;
-    // console.log(this.ruleTable.props.form.getFieldsValue())
-    // this.ruleTable.validate()
-    /*this.props.dispatch({
-      type: 'rule/saveRuleInfo',
-      payload: {
-        ...formData,
-        ruleType:'simple',
-        variables:ruleList,
-        nodeId:query['id']
+    const formData = this.child.getFormValue();
+    const {ruleList} = this.props.rule;
+    const {selectId} = this.props.editorFlow;
+    const {query} = this.props.location;
+    this.child.props.form.validateFields((errors,value)=>{
+      if(!errors){
+        if(ruleList.length>0){
+          if(!count){
+            this.props.dispatch({
+              type: 'rule/saveRuleInfo',
+              payload: {
+                ...formData,
+                ruleType:'simple',
+                variables:ruleList,
+                nodeId:query['id']
+              }
+            })
+          }
+        }else{
+          message.error('请选择变量!')
+        }
       }
-    })*/
+    })
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -291,6 +285,8 @@ export default class SimpleRule extends PureComponent {
           const records = this.addForm.submitHandler();
           const {isCount} = this.state;
           if(isCount){
+            //计数结果
+            this.child.props.form.resetFields(['countVarId'])
             this.setState({
               countResult:{
                 countVarId:records['varId'],
@@ -298,6 +294,8 @@ export default class SimpleRule extends PureComponent {
               },
             })
           }else{
+            //输出结果
+            this.child.props.form.resetFields(['resultVarId'])
             this.setState({
               resultVarId:{
                 resultVarId:records['varId'],
@@ -387,7 +385,6 @@ export default class SimpleRule extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
-    console.log('ruleList',this.props)
     return (
       <PageHeaderWrapper >
         <Card

@@ -45,7 +45,13 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="评分结果" {...formItemConfig}>
               {getFieldDecorator('resultVarId',{
-                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:''
+                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:'',
+                rules:[
+                  {
+                    required:true,
+                    message:'评分结果不能为空!'
+                  }
+                ]
               })(
                 <Input
                   onClick={()=>this.props.outResult()}

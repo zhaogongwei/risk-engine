@@ -245,6 +245,7 @@ export default class ScoreModel extends PureComponent {
         }
       }else{
         //输出结果值选择
+        this.child.props.form.resetFields(['resultVarId'])
         if(records['varType']!=='num'){
           message.error('此处选择弹框中只能选择数字类型变量!');
           return;
@@ -263,25 +264,43 @@ export default class ScoreModel extends PureComponent {
   editFormSubmit=async ()=>{
     const {scoreList,numList,strList} = this.props.scoreModel;
     const {varKey} = this.state;
-    if(this.state.varType){
-      const res = await this.props.dispatch({
-        type:'scoreModel/verifyMixed',
-        payload:{
-          variableInfoList:numList.dataSource,
-        }
+    let count=0;
+    this.editForm.state.scoreFormData.map(item => {
+      item.validateFieldsAndScroll((errors,value)=>{
+        if(errors)count++;
       })
-      if(res&&res.status ===1 ){
-        message.success(res.statusDesc)
-        Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
-        this.setState({editShow:false,})
+    })
+    if(this.state.varType){
+      if(numList.dataSource.length){
+        if(!count){
+          const res = await this.props.dispatch({
+            type:'scoreModel/verifyMixed',
+            payload:{
+              variableInfoList:numList.dataSource,
+            }
+          })
+          if(res&&res.status ===1 ){
+            message.success(res.statusDesc)
+            Object.assign(scoreList[varKey-1],{variableInfoList:numList.dataSource})
+            this.setState({editShow:false,})
+          }else{
+            message.error(res.statusDesc)
+          }
+        }
       }else{
-        message.error(res.statusDesc)
+        message.error('请选择变量!')
       }
     }else{
       //变量为字符类型
-      message.success('保存成功')
-      Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
-      this.setState({editShow:false,})
+      if(strList.dataSource.length){
+        if(!count){
+          message.success('保存成功')
+          Object.assign(scoreList[varKey-1],{variableInfoList:strList.dataSource})
+          this.setState({editShow:false,})
+        }
+      }else{
+        message.error('请选择变量!')
+      }
     }
   }
   //保存数据
@@ -289,13 +308,21 @@ export default class ScoreModel extends PureComponent {
     const formData = this.child.getFormValue();
     const {scoreList} = this.props.scoreModel;
     const {query} = this.props.location;
-    this.props.dispatch({
-      type: 'scoreModel/saveScoreInfo',
-      payload: {
-        ...formData,
-        ruleType:'score',
-        variables:scoreList,
-        nodeId:query['id']
+    this.child.props.form.validateFields((errors,value)=>{
+      if(!errors){
+        if(scoreList.length>0){
+          this.props.dispatch({
+            type: 'scoreModel/saveScoreInfo',
+            payload: {
+              ...formData,
+              ruleType:'score',
+              variables:scoreList,
+              nodeId:query['id']
+            }
+          })
+        }else{
+          message.error('请选择变量!')
+        }
       }
     })
   }
