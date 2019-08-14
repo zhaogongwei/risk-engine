@@ -312,10 +312,11 @@ const EditableFormRow = Form.create()(EditableRow);
             </FormItem>
           )
         }else if(record['varType'] ==='date'){
+          const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
-                initialValue: moment(record[dataIndex]),
+                initialValue: initData,
                 rules:[
                   {
                     required: true,
@@ -333,10 +334,11 @@ const EditableFormRow = Form.create()(EditableRow);
             </FormItem>
           )
         }else if(record['varType'] ==='time'){
+          const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
-                initialValue: moment(record[dataIndex]),
+                initialValue: initData,
                 rules:[
                   {
                     required: true,

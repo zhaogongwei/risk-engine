@@ -8,25 +8,19 @@ export default {
 
   state: {
     varList:[],
-    page:{
-      currentPage:1,
-      more:true,
-      pageSize:10,
-      totalNum:10,
-      totalPage:1
-    },
   },
 
   effects: {
     //设置变量节点信息查询
-    *queryVarInfo(payload, { call, put }) {
+    *queryVarInfo({payload}, { call, put }) {
       let response = yield call(api.queryVarInfo,payload)
       if(response && response.status === '000000'){
-        /*yield put({
-          type:'riskListHandle',
+        yield put({
+          type:'varListHandle',
           payload:response
-        })*/
+        })
       }
+      return response;
     },
     //设置变量节点信息保存
     *saveVarInfo({payload,callback},{call,put}){
@@ -37,6 +31,7 @@ export default {
       }else{
         message.error(response.statusDesc)
       }
+      return response;
     },
   },
 

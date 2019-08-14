@@ -153,7 +153,6 @@ export default class ComplexRule extends PureComponent {
     };
   }
   async componentDidMount() {
-    //this.change()
     const {query} = this.props.location;
     //请求变量列表
     this.props.dispatch({

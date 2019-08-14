@@ -36,7 +36,7 @@ export async function savePolicyFlow(params) {
 
 //策略流导入
 export async function importPolicyFlow(params) {
-  return request(`${_baseApi}/strategyFlow/${params.strategyFlowId}`, {
+  return request(`${_baseApi}/strategyFlow/${params.flowId}`, {
     method: 'POST',
     body: {
       ...params

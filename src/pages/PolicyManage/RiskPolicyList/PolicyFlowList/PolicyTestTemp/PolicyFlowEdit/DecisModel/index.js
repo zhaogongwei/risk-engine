@@ -8,7 +8,9 @@ import {
   Pagination,
   Icon,
   Card,
-  Modal
+  Modal,
+  Row,
+  Col,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
@@ -307,7 +309,14 @@ export default class DecisModel extends PureComponent {
                     getSubKey={this.getSubKey}
                  />
                </Modal>
-               <Button type="primary" onClick={this.formSubmitTable}>保存表格</Button>
+               <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
+                 <Col>
+                   <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+                 </Col>
+                 <Col>
+                   <Button type="primary">返回</Button>
+                 </Col>
+               </Row>
              </Card>
           </PageHeaderWrapper>
     )
