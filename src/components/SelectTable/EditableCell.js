@@ -34,6 +34,9 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if(this.props.handleModify){
+        this.props.handleModify(this.props.form)
+      }
     }
   
     componentWillUnmount() {
@@ -59,11 +62,14 @@ const EditableFormRow = Form.create()(EditableRow);
       }
     }
   
-    changeHandler(value, record, type,col,tableList) {
+    changeHandler(value, record, type,row,col,tableList) {
+      const {colList,rowList} = this.props;
       record[type] = value
       //const row =record['row']
-      console.log(value, record, type,col,tableList)
-      //this.checkVal(row,col,value,tableList)?this.changeVal(row,col,value,tableList):tableList.push({row:row,col:col,val:value,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]})
+      console.log(value, record, type,row,col,tableList)
+      this.checkVal(row,col,value,tableList)?
+      this.changeVal(row,col,value,tableList):
+      tableList.push({row:row,col:col,varValue:value,colVarInfo:colList[col-1],rowVarInfo:rowList[row-1]})
     }
     //查询当前值是否存在
     checkVal=(row,col,val,arr)=>{
@@ -78,10 +84,11 @@ const EditableFormRow = Form.create()(EditableRow);
       }
       return status;
     }
+    //生成新的table
     changeVal=(row,col,val,arr)=>{
-      arr.forEach((item,index,arrary)=>{
+      arr.forEach((item,index,array)=>{
         if(item['row']===row&&item['col']===col){
-          arrary[index] = {row:row,col:col,val:val,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]}
+          array[index] = {row:row,col:col,varValue:val,colVarInfo:this.props.colList[col-1],rowVarInfo:this.props.rowList[row-1]}
         }
       })
     }
@@ -96,16 +103,6 @@ const EditableFormRow = Form.create()(EditableRow);
         //handleSave({ ...record, ...values });
       });
     }
-    checkInput=(value, record, type)=>{
-      this.props.form.validateFields([type],(error, values) => {
-        //验证 1：不通过，2：通过
-        if(error){
-          record[type]='error'
-        }else{
-          record[type] = value
-        }
-      })
-    }
     render() {
       const { editing } = this.state;
       const {
@@ -119,6 +116,7 @@ const EditableFormRow = Form.create()(EditableRow);
         isRequired,
         pattern,
         record,
+        enumList,
         max,
         index,
         handleSave,
@@ -131,6 +129,7 @@ const EditableFormRow = Form.create()(EditableRow);
       const { getFieldDecorator } = this.props.form;
       console.log(record,dataIndex,col)
       console.log('tableList',tableList)
+      console.log('enumList',enumList)
       return (
         <td ref={node => (this.cell = node)}>
           {editable ? (
@@ -139,18 +138,21 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
-                    {getFieldDecorator(dataIndex, {
+                    {getFieldDecorator(`${dataIndex}${record['row']}${col}`, {
                       initialValue: record[dataIndex],
                     })(
                       <Select
                         style={{width:120}}
                         onPressEnter={this.save}
-                        onChange={(e) => this.changeHandler(e, this.props.record, dataIndex,col,tableList)}
+                        onChange={(e) => this.changeHandler(e, this.props.record, dataIndex,record['row'],col,tableList)}
                       >
-                        <Option value={1}>审核结果</Option>
-                        <Option value={2}>自动审核通过</Option>
-                        <Option value={3}>自动审核拒绝</Option>
-                        <Option value={4}>人工审核</Option>
+                        {
+                          enumList&&enumList.map((item,index)=>{
+                            return (
+                              <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                            )
+                          })
+                        }
                       </Select>
                     )}
                   </FormItem>

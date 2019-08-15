@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button,Input,Form,Modal,Card } from 'antd';
+import { Row, Col, Button,Input,Form,Modal,Card,message, } from 'antd';
 import GGEditor, { Flow,RegisterNode,withPropsAPI } from 'gg-editor';
 import { connect } from 'dva'
 import FlowBird from '@/pages/Editor/GGEditor/components/EditorItemPanel/flowBird'
@@ -71,12 +71,23 @@ class FlowPage extends React.Component {
   //保存策略流数据
   submitData = async () => {
     const data = this.flow.myRef.graph.save();
+    const edgesList = data['edges'];
+    const nodesList = data['nodes'];
+    const nodefineEdges = edgesList.filter((item)=>!item['type'])
     const formData = this.getFormValue();
     const {flowId,mold} = this.state;
     console.log(this.flow.myRef.graph)
     console.log(data)
     this.props.form.validateFields(['remark'],(error,value)=>{
-      if(!error){
+      if(error)return;
+      if(!nodesList.length){
+        message.error('请设置相关节点!')
+        return
+      }
+      if(edgesList.length&&nodefineEdges.length){
+        message.error('请设置连线的相关属性!')
+        return
+      }
         const res = this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {
@@ -93,7 +104,6 @@ class FlowPage extends React.Component {
             })
           }
         }
-      }
     })
   }
   save=()=>{
@@ -167,7 +177,7 @@ class FlowPage extends React.Component {
               </Col>
             </Row>
             <FlowBird />
-            <FlowContextMenu  type={type} remark={this.getFormValue()}/>
+            <FlowContextMenu  type={type} remark={this.getFormValue()} mold={this.state.mold} flowId={this.state.flowId}/>
           </GGEditor>
           <Modal
             width="360px"

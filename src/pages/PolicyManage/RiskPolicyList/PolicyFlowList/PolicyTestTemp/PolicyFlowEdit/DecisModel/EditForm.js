@@ -28,12 +28,12 @@ const CheckboxGroup = Checkbox.Group;
 
 @Form.create()
 
-export default class AddForm extends Component {
+export default class EditForm extends Component {
   constructor(props){
     super(props)
     this.state = {
       loading:false,
-      visible:false,
+      visible:this.props.showState,
       column:[
         {
           title: '序号',
@@ -42,10 +42,11 @@ export default class AddForm extends Component {
         },
         {
           title: '下限条件',
-          dataIndex: 'lowCon',
+          dataIndex: 'lowerCondition',
           editable:true,
-          key:'lowCon',
+          key:'lowerCondition',
           type:'select',
+          cols:1,
           value:[
             {
               name:'>',
@@ -55,22 +56,20 @@ export default class AddForm extends Component {
               name:'>=',
               id:'>='
             },
-            {
-              name:'=',
-              id:'='
-            }
           ]
         },{
           title: '下限值',
-          dataIndex: 'lowVal',
+          dataIndex: 'lowerValue',
           editable:true,
-          key:'lowVal',
+          cols:2,
+          key:'lowerValue',
           type:'input'
         },{
           title: '上限条件',
-          dataIndex: 'topCon',
+          dataIndex: 'highCondition',
           editable:true,
-          key:'topCon',
+          cols:3,
+          key:'highCondition',
           type:'select',
           value:[
             {
@@ -81,16 +80,13 @@ export default class AddForm extends Component {
               name:'<=',
               id:'<='
             },
-            {
-              name:'=',
-              id:'='
-            }
           ]
         },{
           title: '上限值',
-          dataIndex: 'topVal',
+          dataIndex: 'highValue',
           editable:true,
-          key:'topVal',
+          cols:4,
+          key:'highValue',
           type:'input'
         },
         {
@@ -103,58 +99,16 @@ export default class AddForm extends Component {
           }
         }
       ],
-      tableList:[]
+      tableList:[],
+      decFormData:[],//决策模型form数据
     }
-  }
-
-  //点击确定
-  handleOk = ()=>{
-    this.setState({visible:false},()=>{
-      this.props.type?this.makeCol():this.makeRow()
-      const row = this.props.decision.tableRow;
-      const col = this.props.decision.tableCol;
-      for(var i=1;i<=row.length;i++){
-        for(var j=1;j<=col.length;j++){
-          console.log(i,j)
-        }
-      }
-      console.log(this.props.decision)
-      this.props.onChange(this.state.visible)
-    })
-  }
-  deepCopy =(obj)=> {
-    // 只拷贝对象
-    if (typeof obj !== 'object') return;
-    // 根据obj的类型判断是新建一个数组还是一个对象
-    var newObj = obj instanceof Array ? [] : {};
-    for (var key in obj) {
-      // 遍历obj,并且判断是obj的属性才拷贝
-      if (obj.hasOwnProperty(key)) {
-        // 判断属性值的类型，如果是对象递归调用深拷贝
-        newObj[key] = typeof obj[key] === 'object' ? this.deepCopy(obj[key]) : obj[key];
-      }
-    }
-    return newObj;
-  }
-  handleCancel =()=>{
-    this.setState({visible:false},()=>{
-      this.props.onChange(this.state.visible)
-    })
-
-  }
-  //   获取表单信息
-  getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
-    formQueryData.assetsTypeName=formQueryData.assetsTypeName.trim()
-    formQueryData.assetsTypeCode=formQueryData.assetsTypeCode.trim()
-    return formQueryData;
   }
   //重置
   reset = () => {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'addForm')
+    this.props.getSubKey(this,'editForm')
   }
   componentWillReceiveProps(newProps){
     this.setState({
@@ -166,35 +120,35 @@ export default class AddForm extends Component {
     //判断是设置行还是设置列
     if(this.props.type){
       //列设置
-      const { count, dataSource } = this.props.decision.colList;
+      const {dataSource } = this.props.decision.colList;
       const newData = {
-        lowCon:'',
-        lowVal:'',
-        topCon:'',
-        topVal:'',
-        name:this.props.colVar
+        lowerCondition:'',
+        lowerValue:'',
+        highCondition:'',
+        highValue:'',
+        name:this.props.colVar['colVarValue'],
+        variableId:this.props.colVar['colVarId'],
       };
       this.props.dispatch({
         type: 'decision/saveColData',
         payload: {
           dataSource: addListKey(deepCopy([...dataSource, newData])),
-          count: count + 1,
         }
       })
     }else{
-      const { count, dataSource } = this.props.decision.rowList;
+      const {dataSource } = this.props.decision.rowList;
       const newData = {
-        lowCon:'',
-        lowVal:'',
-        topCon:'',
-        topVal:'',
-        name:this.props.rowVar
+        lowerCondition:'',
+        lowerValue:'',
+        highCondition:'',
+        highValue:'',
+        name:this.props.rowVar['rowVarValue'],
+        variableId:this.props.rowVar['rowVarId'],
       };
       this.props.dispatch({
         type: 'decision/saveRowData',
         payload: {
           dataSource: addListKey(deepCopy([...dataSource, newData])),
-          count: count + 1,
         }
       })
     }
@@ -203,25 +157,23 @@ export default class AddForm extends Component {
   handleDelete = (key) => {
     if(this.props.type){
       //删除列
-      const {dataSource,count} = this.props.decision.colList;
+      const {dataSource} = this.props.decision.colList;
       //   调用models的方法去删除dataSource中的数据
       const newDataSource = dataSource.filter(item => item.key !== key)
       this.props.dispatch({
         type: 'decision/saveColData',
         payload: {
           dataSource: addListKey(deepCopy(newDataSource)),
-          count:newDataSource.length === 0?1:newDataSource[newDataSource.length-1].key+1,
         }
       })
     }else{
-      const {dataSource,count} = this.props.decision.rowList;
+      const {dataSource} = this.props.decision.rowList;
       //   调用models的方法去删除dataSource中的数据
       const newDataSource = dataSource.filter(item => item.key !== key)
       this.props.dispatch({
         type: 'decision/saveRowData',
         payload: {
           dataSource: addListKey(deepCopy(newDataSource)),
-          count:newDataSource.length === 0?1:newDataSource[newDataSource.length-1].key+1,
         }
       })
     }
@@ -229,10 +181,10 @@ export default class AddForm extends Component {
   }
   //生成行
   makeRow=()=>{
-    const { count, rowList,tableRow } = this.props.decision;
+    const { rowList} = this.props.decision;
     const newRow = rowList.dataSource.map((item,index)=>{
       return {
-        tableValue0:item.lowVal+item.lowCon+item.name+item.topCon+item.topVal,
+        tableValue0:this.createRowColTitle(item),
         key:index+1,
         row:index+1,
         editable:true
@@ -242,19 +194,18 @@ export default class AddForm extends Component {
       type: 'decision/makeTableRow',
       payload: {
         tableRow: newRow,
-        count: count + 1,
       }
     })
   }
   //生成列
   makeCol=()=>{
-    const { count, colList,tableCol } = this.props.decision;
+    const { colList,} = this.props.decision;
     const newCol= colList.dataSource.map((item,index)=>{
       return {
-        title:item.lowVal+item.lowCon+item.name+item.topCon+item.topVal,
+        title:this.createRowColTitle(item),
         key:index+1,
         col:index+1,
-        dataIndex:'tableValue'+(index+1),
+        dataIndex:`tableValue${index+1}`,
         editable:true
       }
     })
@@ -271,28 +222,38 @@ export default class AddForm extends Component {
             title:'',
             dataIndex:'tableValue0'
           }, ...newCol],
-        count: count + 1,
       }
+    })
+  }
+  //行列title生成函数
+  //根据上下限条件和上下限值生成相应的title对象
+  createRowColTitle=(item)=>{
+    let title;
+    const {name,lowerCondition,lowerValue,highCondition,highValue} = item;
+    let newlowerCondition = `${lowerCondition==='>'?'<':'<='}`;
+    title=`${lowerValue}${newlowerCondition}${name}${highCondition}${highValue}`;
+    return title;
+
+  }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.decFormData;
+    arr.push(form)
+    this.setState({
+      decFormData: arr
     })
   }
   render() {
     const {visible,column} = this.state;
     const {type,decision} = this.props
     return (
-      <Modal
-        title={type?'列变量设置':'行变量设置'}
-        visible={visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-        width={1040}
-      >
       <SetRowCol
         list={type?decision.colList:decision.rowList}
         columns={column}
         handleAdd={this.handleAdd}
         handleDelete={this.handleDelete}
+        handleModify={(form)=>this.handleModify(form)}
       />
-      </Modal>
     )
   }
 }

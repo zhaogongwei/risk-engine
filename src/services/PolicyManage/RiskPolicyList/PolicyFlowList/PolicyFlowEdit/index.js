@@ -126,6 +126,27 @@ export async function verifyMixed(params) {
   });
 }
 
+//决策模型
+//节点数据查询
+export async function querydecInfo(params) {
+  return request(`${_baseApi}/decision/info/${params.nodeId}`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
+//节点数据保存
+export async function savedecInfo(params) {
+  return request(`${_baseApi}/decision/save`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
 //设置变量
 //节点数据查询
 export async function queryVarInfo(params) {

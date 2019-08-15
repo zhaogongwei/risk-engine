@@ -29,7 +29,8 @@ export default class SelectableTable extends PureComponent {
     super(props);
   }
   render() {
-    const { tableRow,colList,rowList } = this.props.list;
+    const { tableRow,colList,rowList} = this.props.list;
+    const { resultVarId} = this.props
     const components = {
       body: {
         row: EditableFormRow,
@@ -46,6 +47,7 @@ export default class SelectableTable extends PureComponent {
           record,
           colList:colList['dataSource'],
           rowList:rowList['dataSource'],
+          enumList:resultVarId['enumList'],
           col:col.col,
           tableList:this.props.tableList,
           editable: col.editable,
@@ -53,7 +55,8 @@ export default class SelectableTable extends PureComponent {
           title: col.title,
           isRequired: col.nonRequired,
           pattern:col.pattern,
-          max:col.max
+          max:col.max,
+          handleModify:(form)=>this.props.handleModify(form)
         })
       };
     });
