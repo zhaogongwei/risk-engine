@@ -40,12 +40,20 @@ const EditableFormRow = Form.create()(EditableRow);
     }
   
     componentWillUnmount() {
+      console.log(888)
       if (this.props.editable) {
         document.removeEventListener('click', this.handleClickOutside, true);
       }
     }
-    
-  
+    componentWillReceiveProps(newProps){
+      console.log(777,newProps)
+      const {record,dataIndex,tableList,col}=this.props;
+      if(!record)return;
+      const row = record['row']
+      if(!record[dataIndex])return;
+      this.changeHandler(record[dataIndex], record, dataIndex,record['row'],col,tableList)
+      tableList.filter((item,index)=>(item[row] === row || item[col]===col))
+    }
     toggleEdit = () => {
       const editing = !this.state.editing;
       this.setState({ editing }, () => {
@@ -138,13 +146,21 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
-                    {getFieldDecorator(`${dataIndex}${record['row']}${col}`, {
+                    {getFieldDecorator(dataIndex, {
                       initialValue: record[dataIndex],
+                      rules:[
+                        {
+                          required:true,
+                          validator: (rule, value, callback) => {
+                            if (!value) callback('输入内容不能为空!')
+                          }
+                        }
+                      ]
                     })(
                       <Select
                         style={{width:120}}
                         onPressEnter={this.save}
-                        onChange={(e) => this.changeHandler(e, this.props.record, dataIndex,record['row'],col,tableList)}
+                        onChange={(e) => {this.changeHandler(e, this.props.record, dataIndex,record['row'],col,tableList)}}
                       >
                         {
                           enumList&&enumList.map((item,index)=>{

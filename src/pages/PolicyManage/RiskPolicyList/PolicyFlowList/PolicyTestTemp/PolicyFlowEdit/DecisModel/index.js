@@ -20,6 +20,7 @@ import EditForm from './EditForm';
 import AddForm from '@/components/VarListModal/AddForm'
 import { findInArr,exportJudgment } from '@/utils/utils'
 import SelectableTable from '@/components/SelectTable'
+import { addListKey,deepCopy } from '@/utils/utils'
 
 @connect(({ decision,varList,loading}) => ({
     decision,
@@ -37,8 +38,6 @@ export default class DecisModel extends PureComponent {
       currentPage:1,
       current:'',
       type:0,//0:设置行变量  1：设置列变量
-      tableList:[
-      ],
       visible:false,//弹框
       inputType:0,//0:行变量，1：列变量 2：输出结果
       resultVarId:{},//输出变量
@@ -72,6 +71,10 @@ export default class DecisModel extends PureComponent {
       }
     })
     if(res&&res.status===1){
+      this.restoreColList(res.data.colVarList);
+      this.restoreTableCol(res.data.colVarList);
+      this.restoreRowList(res.data.rowVarList);
+      this.restoreTableRow(res.data.rowVarList);
       this.setState({
         resultVarId:{
           resultVarId:res.data.resultVarId,
@@ -88,6 +91,97 @@ export default class DecisModel extends PureComponent {
         }
       })
     }
+  }
+  //colList 还原函数
+  restoreColList = (arr=[])=>{
+    if(!arr.length)return;
+    let dataSource=[];
+    arr.map((item,index)=>{
+      dataSource.push({
+        lowerCondition:item['lowerCondition'],
+        lowerValue:item['lowerValue'],
+        highCondition:item['highCondition'],
+        highValue:item['highValue'],
+        name:item['variableName'],
+        id:item['id'],
+        variableId:item['variableId'],
+      })
+    })
+    this.props.dispatch({
+      type: 'decision/saveColData',
+      payload: {
+        dataSource:addListKey(dataSource)
+      }
+    })
+  }
+  //rowList 还原函数
+  restoreRowList=(arr=[])=>{
+    if(!arr.length)return;
+    let dataSource=[];
+    arr.map((item,index)=>{
+      dataSource.push({
+        lowerCondition:item['rowVarInfo']['lowerCondition'],
+        lowerValue:item['rowVarInfo']['lowerValue'],
+        highCondition:item['rowVarInfo']['highCondition'],
+        highValue:item['rowVarInfo']['highValue'],
+        name:item['rowVarInfo']['variableName'],
+        id:item['rowVarInfo']['id'],
+        variableId:item['rowVarInfo']['variableId'],
+      })
+    })
+    this.props.dispatch({
+      type: 'decision/saveRowData',
+      payload: {
+        dataSource:addListKey(dataSource)
+      }
+    })
+  }
+  //tableCol 还原
+  restoreTableCol=(arr=[])=>{
+    if(!arr.length)return;
+    let dataSource=[];
+    arr.map((item,index)=>{
+      dataSource.push({
+        title:item['showName'],
+        key:index+1,
+        col:index+1,
+        id:item['id'],
+        dataIndex:item['indexKey'],
+        editable:true
+      })
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableCol',
+      payload: {
+        tableCol: [
+          {
+            key:0,
+            col:0,
+            title:'',
+            dataIndex:'index_0'
+          }, ...dataSource],
+      }
+    })
+  }
+  //tableRow 还原
+  restoreTableRow=(arrRow=[],arrCol=[])=>{
+    const {tableCol,tableRow} = this.props.decision;
+    if(!arrRow.length)return;
+    let dataSource=[];
+    arrRow.map((item,index)=>{
+      dataSource.push({
+        index_0:item['rowVarInfo']['showName'],
+        key:index+1,
+        row:index+1,
+        ...item['resultVarMap']
+      })
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableRow',
+      payload: {
+        tableRow:dataSource,
+      }
+    })
   }
   //  刷新页面
   reload = () => {
@@ -200,22 +294,25 @@ export default class DecisModel extends PureComponent {
   //保存提交事件
   handleSave = ()=>{
     console.log(this.props.decision)
-    console.log(this.state.tableList)
+    console.log(this.props.decision.tableList)
     const formData = this.child.getFormValue();
     const {query} = this.props.location;
-    const {tableList} = this.state;
+    const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
     let count=0;
-    if(!this.state.tableList.length){
-      message.error('请添加行变量和列变量!')
+    if(!tableRow.length){
+      message.error('请添加行变量!')
+      return
+    }else if(!tableCol.length){
+      message.error('请添加列变量!')
       return
     }
-    this.editForm.state.decFormData.map(item => {
+    this.state.decFormList.map(item => {
       item.validateFieldsAndScroll((errors,value)=>{
         if(errors)count++;
       })
     })
     if(!count){
-      this.props.dispatch({
+      /*this.props.dispatch({
         type: 'decision/savedecInfo',
         payload: {
           ...formData,
@@ -223,7 +320,7 @@ export default class DecisModel extends PureComponent {
           variableInfoList:tableList,
           nodeId:query['id']
         }
-      })
+      })*/
     }
 
   }
@@ -236,7 +333,9 @@ export default class DecisModel extends PureComponent {
     })
   }
   render() {
+    console.log(this.props.decision)
     const { permission } = this.props
+    const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
     return (
            <PageHeaderWrapper>
              <Card
@@ -252,10 +351,10 @@ export default class DecisModel extends PureComponent {
                />
                <SelectableTable
                  list={this.props.decision}
-                 columns={this.props.decision.tableCol}
+                 columns={tableCol}
                  setRow={this.setRow}
                  setCol={this.setCol}
-                 tableList={this.state.tableList}
+                 tableList={tableList}
                  resultVarId={this.state.resultVarId}
                  handleModify={(form)=>this.handleModify(form)}
                />

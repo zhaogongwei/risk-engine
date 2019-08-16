@@ -20,6 +20,7 @@ export default {
     },
     tableCol:[],//拼接好的列数据集合
     tableRow:[],//拼接好的行数据集合
+    tableList:[],//table数据集合
     formData:{
       rowVarId:'',//行变量
       rowVarName:'',//行变量
@@ -88,12 +89,17 @@ export default {
     },
     //设置行
     saveRowData(state,{payload}){
-      console.log(payload)
       return {
         ...state,
         rowList:{
           dataSource:payload.dataSource,
         }
+      }
+    },
+    tableListHandle(state,{payload}){
+      return{
+        ...state,
+        tableList:payload.tableList
       }
     }
   },

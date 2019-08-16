@@ -181,13 +181,35 @@ export default class EditForm extends Component {
   }
   //生成行
   makeRow=()=>{
-    const { rowList} = this.props.decision;
+    const { rowList,colList,tableCol,tableRow} = this.props.decision;
+    let varValue={};
+    let firstVarKey;
+    let lastVarKey;
+    if(colList.dataSource.length){
+      if(colList.dataSource[0]['id']){
+        firstVarKey = colList.dataSource[0]['id']
+        lastVarKey = colList.dataSource[colList.dataSource.length-1]['id']
+      }else{
+        firstVarKey = colList.dataSource[0]['key']
+        lastVarKey = colList.dataSource[colList.dataSource.length-1]['key']
+      }
+    }else {
+      firstVarKey = 0;
+      lastVarKey = 0;
+    }
+    colList.dataSource.map((item,index)=>{
+      varValue[firstVarKey?`index_${firstVarKey+index}`:`index_${firstVarKey+index+1}`]=''
+    })
+    for(let item of tableRow){
+      console.log(item)
+    }
     const newRow = rowList.dataSource.map((item,index)=>{
       return {
-        tableValue0:this.createRowColTitle(item),
+        index_0:this.createRowColTitle(item),
         key:index+1,
         row:index+1,
-        editable:true
+        editable:true,
+        ...tableRow[index],
       }
     })
     this.props.dispatch({
@@ -196,16 +218,28 @@ export default class EditForm extends Component {
         tableRow: newRow,
       }
     })
+
   }
   //生成列
   makeCol=()=>{
-    const { colList,} = this.props.decision;
+    const { colList,tableCol} = this.props.decision;
+    let firstVarKey;
+    if(colList.dataSource.length){
+      if(colList.dataSource[0]['id']){
+        firstVarKey = colList.dataSource[0]['id']
+      }else{
+        firstVarKey = colList.dataSource[0]['key']
+      }
+    }else {
+       firstVarKey = 0;
+    }
     const newCol= colList.dataSource.map((item,index)=>{
       return {
         title:this.createRowColTitle(item),
         key:index+1,
         col:index+1,
-        dataIndex:`tableValue${index+1}`,
+        id:item['id']?item['id']:null,
+        dataIndex:firstVarKey?`index_${firstVarKey+index}`:`index_${firstVarKey+index+1}`,
         editable:true
       }
     })
@@ -220,7 +254,7 @@ export default class EditForm extends Component {
             key:0,
             col:0,
             title:'',
-            dataIndex:'tableValue0'
+            dataIndex:'index_0'
           }, ...newCol],
       }
     })
@@ -245,9 +279,10 @@ export default class EditForm extends Component {
   }
   render() {
     const {visible,column} = this.state;
-    const {type,decision} = this.props
+    const {type,decision,rowVar,colVar} = this.props
     return (
       <SetRowCol
+        title={type?colVar['colVarValue']:rowVar['rowVarValue']}
         list={type?decision.colList:decision.rowList}
         columns={column}
         handleAdd={this.handleAdd}
