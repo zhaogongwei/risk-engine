@@ -81,24 +81,15 @@ export default class VarClass extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-  	let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
   	this.props.dispatch({
       type: 'varclass/fetchVarClassList',
       payload: {
+      	...this.props.varclass.filterIpts,
       	currPage:currPage,
       	pageSize:pageSize,
-      	selectId:formData.status,
-      	selectIeamId:formData.itemStatus
       }
     })
   	
-    
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{

@@ -5,11 +5,12 @@ export default {
 
   state: {
     varClassList: [],
-    total:0,//一共多少项
+    total:100,//一共多少项
     selectId:'',
     selectItem:[],
     secondSelectItem:[],
     status:false,
+    filterIpts:{},
   },
 
   effects: {
@@ -82,5 +83,11 @@ export default {
         secondSelectItem: payload.data,
       };
     },
+    changefilterIpts(state,{payload}) {
+    	 return {
+    	 	...state,
+    	  filterIpts:payload
+    	}
+    }
   },
 };

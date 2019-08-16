@@ -1,19 +1,38 @@
 import * as api from '@/services/VarManage/VarList';
 import { addListKey } from '@/utils/utils'
 export default {
-  namespace: 'varList',
+  namespace: 'varlist',
 
   state: {
-    varLilst:[],
+    varList:[],
+    filterIpts:{},
+    selectItem:[],
+    secondSelectItem:[],
+    total:100,//一共多少项
   },
 
   effects: {
     //获取变量列表
     *fetchVarList({payload}, { call, put }) {
+    	
       let response = yield call(api.queryVarList,payload)
       yield put({
         type: 'saveVarList',
-        payload,
+        payload:response,
+      });
+    },
+     *getSelectLevel1({payload}, { call, put }) {
+      let response = yield call(api.getSelectLevel1,payload)
+      yield put({
+        type: 'changeSelect',
+        payload:response,
+      });
+    },
+    *getSelectLevel2({payload}, { call, put }) {
+      let response = yield call(api.getSelectLevel2,payload)
+      yield put({
+        type: 'changeSecondSelect',
+        payload:response,
       });
     },
     //添加变量
@@ -33,22 +52,38 @@ export default {
       });
     },
     //删除变量
-    *delVar({payload},{call,put}){
+    *delVar({payload,callback},{call,put}){
       let response = yield call(api.delVar,payload)
-      yield put({
-        type:'saveVarList',
-        payload
-      })
-    }
+      callback()
+    },
   },
 
   reducers: {
     saveVarList(state, { payload }) {
+    	let list = addListKey( payload.data)
       return {
         ...state,
-        varList: payload,
+        varList:list,
       };
     },
+     changeSelect(state, { payload }) {
+      return {
+        ...state,
+        selectItem: payload.data,
+      };
+    },
+    changeSecondSelect(state, { payload }) {
+      return {
+        ...state,
+        secondSelectItem: payload.data,
+      };
+    },
+    changefilterIpts(state,{payload}) {
+    	 return {
+    	 	...state,
+    	  filterIpts:payload
+    	}
+    }
   },
 };
 

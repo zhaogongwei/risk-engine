@@ -12,24 +12,29 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
-
+@connect(({ varlist }) => ({
+  varlist,
+}))
 @Form.create()
 
 export default class FilterIpts extends Component {
   //查询
   formSubmit = async (e) => {
-    this.props.changeDefault(1)
     const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
+    await this.props.dispatch({
+      type: 'varlist/changefilterIpts',
+      payload: formData,
+    })
+		this.props.changeDefault(1)
+		this.props.change(1)
+  }
+   selectchange = value => {
+  	this.props.dispatch({
+      type: 'varlist/getSelectLevel2',
+      payload: {
+      	id:value
       }
     })
-
   }
   //   获取表单信息
   getFormValue = () => {
@@ -41,8 +46,15 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
+  	this.props.dispatch({
+      type: 'varlist/getSelectLevel1',
+      payload: {
+      	
+      }
+    })
     this.props.getSubKey(this,'child')
   }
+ 
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -68,21 +80,23 @@ export default class FilterIpts extends Component {
               {getFieldDecorator('status',{
                 initialValue:''
               })(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
+                <Select allowClear={true} onChange={this.selectchange}>
+                  {this.props.varlist.selectItem.map((item,index)=> (
+				             <Option value={item.id} key={index}>{item.name}</Option>
+				          ))}
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col xxl={3} md={4}>
             <FormItem label="" >
-              {getFieldDecorator('status',{
+               {getFieldDecorator('itemStatus',{
                 initialValue:''
               })(
                 <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
+                 {this.props.varlist.secondSelectItem.map( (item,index) => (
+				             <Option value={item.id} key={index}>{item.name}</Option>
+				          ))}
                 </Select>
               )}
             </FormItem>
