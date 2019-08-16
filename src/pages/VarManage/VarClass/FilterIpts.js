@@ -22,10 +22,15 @@ export default class FilterIpts extends Component {
 		
 	}
   //查询
-  formSubmit = async (e) => {
-    this.props.changeDefault(1)
+  formSubmit = async(e) => {
+    
     const formData = this.getFormValue()
-    this.props.change(1)
+    await this.props.dispatch({
+      type: 'varclass/changefilterIpts',
+      payload: formData,
+    })
+	this.props.changeDefault(1)
+	this.props.change(1)
   }
   //   获取表单信息
   getFormValue = () => {
@@ -43,6 +48,16 @@ export default class FilterIpts extends Component {
       	id:value
       }
     })
+  }
+    //编辑变量后清空数据
+  classChangeGetSelect = ()=>{
+  	this.props.dispatch({
+      type: 'varclass/getSelectLevel1',
+      payload: {
+      	
+      }
+    })
+  	this.reset()
   }
   componentDidMount () {
   	this.props.dispatch({

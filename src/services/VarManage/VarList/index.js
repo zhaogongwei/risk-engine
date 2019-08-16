@@ -1,8 +1,16 @@
 import request from '@/utils/request';
-const _baseApi = '/aems'
+const _baseApi = '/engine'
 //查询变量列表信息
 export async function queryVarList(params) {
-  return request(`${_baseApi}/admin/asset/list`, {
+  return request(`${_baseApi}/varList/list`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+export async function getSelectLevel1(params) {
+  return request(`${_baseApi}/varClass/selectLevel1`, {
     method: 'POST',
     body: {
       ...params
@@ -10,6 +18,14 @@ export async function queryVarList(params) {
   });
 }
 
+export async function getSelectLevel2(params) {
+  return request(`${_baseApi}/varClass/getSelectLevel2`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
 //新增变量
 export async function addVar(params) {
   return request(`${_baseApi}/admin/asset/detail`, {
@@ -31,7 +47,7 @@ export async function editVar(params) {
 }
 //删除变量
 export async function delVar(params){
-  return request(`${_baseApi}/admin/institutions/assets_elements`, {
+  return request(`${_baseApi}/varClass/deleteClass`, {
     method: 'POST',
     body: {
       ...params

@@ -20,8 +20,8 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
+@connect(({ varlist, loading }) => ({
+  varlist,
   loading: loading.effects['assetDeploy/riskSubmit']
 }))
 export default class VarList extends PureComponent {
@@ -32,7 +32,7 @@ export default class VarList extends PureComponent {
       {
         title: '序号',
         dataIndex: 'key',
-        key:'key'
+        key:'id'
       },
       {
         title: '一级分类',
@@ -127,40 +127,6 @@ export default class VarList extends PureComponent {
 
         }
       }],
-      data:[
-        {
-          key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-          status:1,
-          updateTime:'2019-07-29'
-        },
-        {
-          key:2,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-          status:0,
-          updateTime:'2019-07-29'
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -185,21 +151,14 @@ export default class VarList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
+      type: 'varlist/fetchVarList',
+      payload: {
+      	...this.props.varlist.filterIpts,
+      	currPage:currPage,
+      	pageSize:pageSize,
       }
     })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -284,7 +243,16 @@ export default class VarList extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+			this.props.dispatch({
+	      type: 'varlist/delVar',
+	      payload: {
+	      	id:record['id']
+	      },
+	      callback:()=>{
+	      	this.props.changeDefault(1)
+	        this.reset()
+	      }
+	    })
     }
   }
   render() {
@@ -296,15 +264,14 @@ export default class VarList extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
-           loading={this.props.loading}
+           dataSource={this.props.varlist.varList}
          />
          <Pagination
            style={{ marginBottom: "50px" }}
            showQuickJumper
            defaultCurrent={1}
            current={this.state.current}
-           total={100}
+           total={this.props.varlist.total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />
