@@ -46,13 +46,14 @@ const EditableFormRow = Form.create()(EditableRow);
       }
     }
     componentWillReceiveProps(newProps){
-      console.log(777,newProps)
+      /*console.log(777,newProps)
       const {record,dataIndex,tableList,col}=this.props;
+      console.log('tableList111',tableList)
       if(!record)return;
       const row = record['row']
       if(!record[dataIndex])return;
-      this.changeHandler(record[dataIndex], record, dataIndex,record['row'],col,tableList)
-      tableList.filter((item,index)=>(item[row] === row || item[col]===col))
+      this.changeHandler(record[dataIndex], record, dataIndex,record['row'],col,tableList)*/
+
     }
     toggleEdit = () => {
       const editing = !this.state.editing;
@@ -72,12 +73,13 @@ const EditableFormRow = Form.create()(EditableRow);
   
     changeHandler(value, record, type,row,col,tableList) {
       const {colList,rowList} = this.props;
-      record[type] = value
+      record['resultVarMap'][type] = value;
+      record[type] = value;
       //const row =record['row']
-      console.log(value, record, type,row,col,tableList)
+      /*console.log(value, record, type,row,col,tableList)
       this.checkVal(row,col,value,tableList)?
       this.changeVal(row,col,value,tableList):
-      tableList.push({row:row,col:col,varValue:value,colVarInfo:colList[col-1],rowVarInfo:rowList[row-1]})
+      tableList.push({row:row,col:col,varValue:value,colVarInfo:colList[col-1],rowVarInfo:rowList[row-1]})*/
     }
     //查询当前值是否存在
     checkVal=(row,col,val,arr)=>{
@@ -146,7 +148,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
-                    {getFieldDecorator(dataIndex, {
+                    {getFieldDecorator(`dataIndex${Math.random()}`, {
                       initialValue: record[dataIndex],
                       rules:[
                         {

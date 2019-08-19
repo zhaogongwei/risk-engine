@@ -118,15 +118,18 @@ export default class EditForm extends Component {
   //添加表格数据
   handleAdd = () => {
     //判断是设置行还是设置列
+    const { rowList,colList,} = this.props.decision;
     if(this.props.type){
       //列设置
-      const {dataSource } = this.props.decision.colList;
+      const {dataSource } = colList;
+      const lastColVarId = dataSource.length?dataSource[dataSource.length-1]['id']:''
       const newData = {
         lowerCondition:'',
         lowerValue:'',
         highCondition:'',
         highValue:'',
-        name:this.props.colVar['colVarValue'],
+        id:lastColVarId+1,
+        variableName:this.props.colVar['colVarValue'],
         variableId:this.props.colVar['colVarId'],
       };
       this.props.dispatch({
@@ -136,13 +139,15 @@ export default class EditForm extends Component {
         }
       })
     }else{
-      const {dataSource } = this.props.decision.rowList;
+      const {dataSource } = rowList;
+      const lastRowVarId = dataSource.length?dataSource[dataSource.length-1]['id']:''
       const newData = {
         lowerCondition:'',
         lowerValue:'',
         highCondition:'',
         highValue:'',
-        name:this.props.rowVar['rowVarValue'],
+        id:lastRowVarId+1,
+        variableName:this.props.rowVar['rowVarValue'],
         variableId:this.props.rowVar['rowVarId'],
       };
       this.props.dispatch({
@@ -197,19 +202,37 @@ export default class EditForm extends Component {
       firstVarKey = 0;
       lastVarKey = 0;
     }
-    colList.dataSource.map((item,index)=>{
-      varValue[firstVarKey?`index_${firstVarKey+index}`:`index_${firstVarKey+index+1}`]=''
-    })
-    for(let item of tableRow){
-      console.log(item)
-    }
-    const newRow = rowList.dataSource.map((item,index)=>{
+    const newCol= colList.dataSource.map((item,index)=>{
       return {
-        index_0:this.createRowColTitle(item),
+        title:this.createRowColTitle(item),
+        key:index+1,
+        col:index+1,
+        id:item['id']?item['id']:null,
+        dataIndex:item['id']?`index_${item['id']}`:`index_${index+1}`,
+        editable:true,
+        colVarInfo:{...item,indexKey:item['id']?`index_${item['id']}`:`index_${index+1}`},
+      }
+    })
+    //重新生成resultVarMap
+    newCol.length&&newCol.map((item,index)=>{
+      if(tableRow[index]&&tableRow[index]['resultVarMap']){
+        varValue = {...varValue,...{[`${item['dataIndex']}`]:tableRow[index]['resultVarMap'][`${item['dataIndex']}`]}};
+        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:tableRow[index]['resultVarMap'][`${item['dataIndex']}`]})
+      }
+    })
+    console.log('tableCol',tableCol)
+    const newRow = rowList.dataSource.map((item,index)=>{
+      let selectObj = tableRow.find((value,index)=>item['id']===value['rowVarInfo']['id']);
+      let rowObj = selectObj?selectObj:{resultVarMap:{}}
+      console.log('keys',selectObj)
+      return {
         key:index+1,
         row:index+1,
         editable:true,
-        ...tableRow[index],
+        resultVarMap:rowObj['resultVarMap'],
+        ...rowObj['resultVarMap'],
+        index_0:this.createRowColTitle(item),
+        rowVarInfo:item,
       }
     })
     this.props.dispatch({
@@ -222,8 +245,9 @@ export default class EditForm extends Component {
   }
   //生成列
   makeCol=()=>{
-    const { colList,tableCol} = this.props.decision;
+    const { rowList,colList,tableCol,tableRow} = this.props.decision;
     let firstVarKey;
+    let varValue;
     if(colList.dataSource.length){
       if(colList.dataSource[0]['id']){
         firstVarKey = colList.dataSource[0]['id']
@@ -239,16 +263,15 @@ export default class EditForm extends Component {
         key:index+1,
         col:index+1,
         id:item['id']?item['id']:null,
-        dataIndex:firstVarKey?`index_${firstVarKey+index}`:`index_${firstVarKey+index+1}`,
-        editable:true
+        dataIndex:item['id']?`index_${item['id']}`:`index_${index+1}`,
+        editable:true,
+        colVarInfo:{...item,indexKey:item['id']?`index_${item['id']}`:`index_${index+1}`},
       }
     })
     //   要添加表格的对象
-    this.props.dispatch({
+    const res = this.props.dispatch({
       type: 'decision/makeTableCol',
       payload: {
-
-
         tableCol: [
           {
             key:0,
@@ -256,6 +279,31 @@ export default class EditForm extends Component {
             title:'',
             dataIndex:'index_0'
           }, ...newCol],
+      },
+    })
+
+    //重新生成tableRow中的 resultVarMap
+    console.log('res',colList)
+    const newRow = rowList.dataSource.map((item,num)=>{
+      //重新生成tableRow中的 resultVarMap
+      newCol.length&&newCol.map((item,index)=>{
+        console.log(index)
+        varValue = {...varValue,...{[`${item['dataIndex']}`]:tableRow[num]['resultVarMap'][`${item['dataIndex']}`]}};
+        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:tableRow[num]['resultVarMap'][`${item['dataIndex']}`]})
+      })
+      return {
+        index_0:this.createRowColTitle(item),
+        key:num+1,
+        row:num+1,
+        editable:true,
+        rowVarInfo:item,
+        ...varValue,
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableRow',
+      payload: {
+        tableRow: newRow,
       }
     })
   }
@@ -263,9 +311,9 @@ export default class EditForm extends Component {
   //根据上下限条件和上下限值生成相应的title对象
   createRowColTitle=(item)=>{
     let title;
-    const {name,lowerCondition,lowerValue,highCondition,highValue} = item;
+    const {variableName,lowerCondition,lowerValue,highCondition,highValue} = item;
     let newlowerCondition = `${lowerCondition==='>'?'<':'<='}`;
-    title=`${lowerValue}${newlowerCondition}${name}${highCondition}${highValue}`;
+    title=`${lowerValue}${newlowerCondition}${variableName}${highCondition}${highValue}`;
     return title;
 
   }

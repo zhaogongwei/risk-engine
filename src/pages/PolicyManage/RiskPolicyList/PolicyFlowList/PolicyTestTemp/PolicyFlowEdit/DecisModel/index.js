@@ -71,10 +71,10 @@ export default class DecisModel extends PureComponent {
       }
     })
     if(res&&res.status===1){
-      this.restoreColList(res.data.colVarList);
+      /*this.restoreColList(res.data.colVarList);
       this.restoreTableCol(res.data.colVarList);
       this.restoreRowList(res.data.rowVarList);
-      this.restoreTableRow(res.data.rowVarList);
+      this.restoreTableRow(res.data.rowVarList);*/
       this.setState({
         resultVarId:{
           resultVarId:res.data.resultVarId,
@@ -102,7 +102,7 @@ export default class DecisModel extends PureComponent {
         lowerValue:item['lowerValue'],
         highCondition:item['highCondition'],
         highValue:item['highValue'],
-        name:item['variableName'],
+        variableName:item['variableName'],
         id:item['id'],
         variableId:item['variableId'],
       })
@@ -124,7 +124,7 @@ export default class DecisModel extends PureComponent {
         lowerValue:item['rowVarInfo']['lowerValue'],
         highCondition:item['rowVarInfo']['highCondition'],
         highValue:item['rowVarInfo']['highValue'],
-        name:item['rowVarInfo']['variableName'],
+        variableName:item['rowVarInfo']['variableName'],
         id:item['rowVarInfo']['id'],
         variableId:item['rowVarInfo']['variableId'],
       })
@@ -146,6 +146,7 @@ export default class DecisModel extends PureComponent {
         key:index+1,
         col:index+1,
         id:item['id'],
+        colVarInfo:item,
         dataIndex:item['indexKey'],
         editable:true
       })
@@ -173,6 +174,8 @@ export default class DecisModel extends PureComponent {
         index_0:item['rowVarInfo']['showName'],
         key:index+1,
         row:index+1,
+        rowVarInfo:item['rowVarInfo'],
+        resultVarMap:item['resultVarMap'],
         ...item['resultVarMap']
       })
     })
