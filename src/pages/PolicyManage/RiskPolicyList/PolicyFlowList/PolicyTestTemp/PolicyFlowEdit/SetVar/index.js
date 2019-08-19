@@ -58,8 +58,8 @@ export default class setVar extends PureComponent {
       },
       {
         title: '值',
-        key:'compareValue',
-        dataIndex:'compareValue',
+        key:'varValue',
+        dataIndex:'varValue',
         editable:true,
         width:300,
         cols:3,
@@ -91,7 +91,7 @@ export default class setVar extends PureComponent {
       varFormData:[],//设置变量form列表
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const {query} = this.props.location;
     //请求变量列表
     this.props.dispatch({
@@ -108,6 +108,12 @@ export default class setVar extends PureComponent {
       }
     })
     //查询节点信息
+    const res = await this.props.dispatch({
+      type: 'setVar/queryVarInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
   }
 
   //   获取子组件数据的方法
@@ -142,6 +148,7 @@ export default class setVar extends PureComponent {
   handleSave = ()=>{
     let count=0;
     const {varList} = this.props.setVar;
+    const {query} = this.props.location;
     this.state.varFormData.map(item => {
       item.validateFieldsAndScroll((errors,value)=>{
         if(errors)count++;
@@ -150,6 +157,16 @@ export default class setVar extends PureComponent {
     if(!count){
       if(!varList.length){
         message.error('请选择变量!')
+      }else{
+        console.log(varList)
+        this.props.dispatch({
+          type: 'setVar/saveVarInfo',
+          payload: {
+            ruleType:'setVar',
+            variableList:varList,
+            nodeId:query['id']
+          }
+        })
       }
     }
     console.log(this.props.setVar.varList)
@@ -210,7 +227,7 @@ export default class setVar extends PureComponent {
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
-              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+              <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
             </Col>
             <Col>
               <Button type="primary">返回</Button>

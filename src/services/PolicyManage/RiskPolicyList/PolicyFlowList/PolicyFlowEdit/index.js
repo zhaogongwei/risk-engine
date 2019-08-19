@@ -150,7 +150,7 @@ export async function savedecInfo(params) {
 //设置变量
 //节点数据查询
 export async function queryVarInfo(params) {
-  return request(`${_baseApi}/score/info/${params.nodeId}`, {
+  return request(`${_baseApi}/setVar/info/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params
@@ -160,7 +160,7 @@ export async function queryVarInfo(params) {
 
 //节点数据保存
 export async function saveVarInfo(params) {
-  return request(`${_baseApi}/score/save`, {
+  return request(`${_baseApi}/setVar/save`, {
     method: 'POST',
     body: {
       ...params
