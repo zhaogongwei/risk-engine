@@ -75,32 +75,6 @@ const EditableFormRow = Form.create()(EditableRow);
       const {colList,rowList} = this.props;
       record['resultVarMap'][type] = value;
       record[type] = value;
-      //const row =record['row']
-      /*console.log(value, record, type,row,col,tableList)
-      this.checkVal(row,col,value,tableList)?
-      this.changeVal(row,col,value,tableList):
-      tableList.push({row:row,col:col,varValue:value,colVarInfo:colList[col-1],rowVarInfo:rowList[row-1]})*/
-    }
-    //查询当前值是否存在
-    checkVal=(row,col,val,arr)=>{
-      var status = ''
-      for(const item of arr){
-        if(item['row']===row&&item['col']===col){
-          status = 1
-          break;
-        }else{
-          status = 0
-        }
-      }
-      return status;
-    }
-    //生成新的table
-    changeVal=(row,col,val,arr)=>{
-      arr.forEach((item,index,array)=>{
-        if(item['row']===row&&item['col']===col){
-          array[index] = {row:row,col:col,varValue:val,colVarInfo:this.props.colList[col-1],rowVarInfo:this.props.rowList[row-1]}
-        }
-      })
     }
     save = () => {
       const { record, handleSave } = this.props;
@@ -121,7 +95,7 @@ const EditableFormRow = Form.create()(EditableRow);
         dataIndex,
         colList,
         rowList,
-        col,
+        cols,
         title,
         isRequired,
         pattern,
@@ -137,7 +111,7 @@ const EditableFormRow = Form.create()(EditableRow);
         wrapperCol:{span:16},
       }
       const { getFieldDecorator } = this.props.form;
-      console.log(record,dataIndex,col)
+      console.log(record,dataIndex,cols)
       console.log('tableList',tableList)
       console.log('enumList',enumList)
       return (
@@ -148,7 +122,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
-                    {getFieldDecorator(`dataIndex${Math.random()}`, {
+                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
                       initialValue: record[dataIndex],
                       rules:[
                         {
@@ -162,7 +136,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       <Select
                         style={{width:120}}
                         onPressEnter={this.save}
-                        onChange={(e) => {this.changeHandler(e, this.props.record, dataIndex,record['row'],col,tableList)}}
+                        onChange={(e) => {this.changeHandler(e, this.props.record, dataIndex,record['row'],cols,tableList)}}
                       >
                         {
                           enumList&&enumList.map((item,index)=>{

@@ -171,7 +171,7 @@ export async function saveVarInfo(params) {
 //三方数据查询
 //节点数据查询
 export async function queryThreeSideInfo(params) {
-  return request(`${_baseApi}/score/info/${params.nodeId}`, {
+  return request(`${_baseApi}/simple/infoThird/${params.nodeId}`, {
     method: 'POST',
     body: {
       ...params
@@ -181,7 +181,7 @@ export async function queryThreeSideInfo(params) {
 
 //节点数据保存
 export async function saveThreeSideInfo(params) {
-  return request(`${_baseApi}/score/save`, {
+  return request(`${_baseApi}/simple/saveThird`, {
     method: 'POST',
     body: {
       ...params

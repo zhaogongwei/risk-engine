@@ -122,7 +122,8 @@ export default class EditForm extends Component {
     if(this.props.type){
       //列设置
       const {dataSource } = colList;
-      const lastColVarId = dataSource.length?dataSource[dataSource.length-1]['id']:''
+      //生成id以便后面生成dataIndex
+      const lastColVarId = dataSource.length?dataSource[dataSource.length-1]['id']:0
       const newData = {
         lowerCondition:'',
         lowerValue:'',
@@ -135,12 +136,13 @@ export default class EditForm extends Component {
       this.props.dispatch({
         type: 'decision/saveColData',
         payload: {
-          dataSource: addListKey(deepCopy([...dataSource, newData])),
+          dataSource: addListKey([...dataSource, newData]),
         }
       })
     }else{
       const {dataSource } = rowList;
-      const lastRowVarId = dataSource.length?dataSource[dataSource.length-1]['id']:''
+      //生成id以便后面生成dataIndex
+      const lastRowVarId = dataSource.length?dataSource[dataSource.length-1]['id']:0
       const newData = {
         lowerCondition:'',
         lowerValue:'',
@@ -153,7 +155,7 @@ export default class EditForm extends Component {
       this.props.dispatch({
         type: 'decision/saveRowData',
         payload: {
-          dataSource: addListKey(deepCopy([...dataSource, newData])),
+          dataSource: addListKey([...dataSource, newData]),
         }
       })
     }
@@ -168,7 +170,7 @@ export default class EditForm extends Component {
       this.props.dispatch({
         type: 'decision/saveColData',
         payload: {
-          dataSource: addListKey(deepCopy(newDataSource)),
+          dataSource: addListKey(newDataSource),
         }
       })
     }else{
@@ -178,7 +180,7 @@ export default class EditForm extends Component {
       this.props.dispatch({
         type: 'decision/saveRowData',
         payload: {
-          dataSource: addListKey(deepCopy(newDataSource)),
+          dataSource: addListKey(newDataSource),
         }
       })
     }
@@ -187,41 +189,10 @@ export default class EditForm extends Component {
   //生成行
   makeRow=()=>{
     const { rowList,colList,tableCol,tableRow} = this.props.decision;
-    let varValue={};
-    let firstVarKey;
-    let lastVarKey;
-    if(colList.dataSource.length){
-      if(colList.dataSource[0]['id']){
-        firstVarKey = colList.dataSource[0]['id']
-        lastVarKey = colList.dataSource[colList.dataSource.length-1]['id']
-      }else{
-        firstVarKey = colList.dataSource[0]['key']
-        lastVarKey = colList.dataSource[colList.dataSource.length-1]['key']
-      }
-    }else {
-      firstVarKey = 0;
-      lastVarKey = 0;
-    }
-    const newCol= colList.dataSource.map((item,index)=>{
-      return {
-        title:this.createRowColTitle(item),
-        key:index+1,
-        col:index+1,
-        id:item['id']?item['id']:null,
-        dataIndex:item['id']?`index_${item['id']}`:`index_${index+1}`,
-        editable:true,
-        colVarInfo:{...item,indexKey:item['id']?`index_${item['id']}`:`index_${index+1}`},
-      }
-    })
-    //重新生成resultVarMap
-    newCol.length&&newCol.map((item,index)=>{
-      if(tableRow[index]&&tableRow[index]['resultVarMap']){
-        varValue = {...varValue,...{[`${item['dataIndex']}`]:tableRow[index]['resultVarMap'][`${item['dataIndex']}`]}};
-        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:tableRow[index]['resultVarMap'][`${item['dataIndex']}`]})
-      }
-    })
     console.log('tableCol',tableCol)
+    //循环生成行数据
     const newRow = rowList.dataSource.map((item,index)=>{
+      //从tableRow 里通过id找到对应的值，把值赋给新创的变量
       let selectObj = tableRow.find((value,index)=>item['id']===value['rowVarInfo']['id']);
       let rowObj = selectObj?selectObj:{resultVarMap:{}}
       console.log('keys',selectObj)
@@ -246,17 +217,7 @@ export default class EditForm extends Component {
   //生成列
   makeCol=()=>{
     const { rowList,colList,tableCol,tableRow} = this.props.decision;
-    let firstVarKey;
-    let varValue;
-    if(colList.dataSource.length){
-      if(colList.dataSource[0]['id']){
-        firstVarKey = colList.dataSource[0]['id']
-      }else{
-        firstVarKey = colList.dataSource[0]['key']
-      }
-    }else {
-       firstVarKey = 0;
-    }
+    //循环生成columns 以id生成对应的dataIndex（id没有的话，就以key值生成相应的dataIndex）
     const newCol= colList.dataSource.map((item,index)=>{
       return {
         title:this.createRowColTitle(item),
@@ -281,9 +242,11 @@ export default class EditForm extends Component {
           }, ...newCol],
       },
     })
-
+    //columns变化后 tableRow中的resultVarMap也需要变化(resultVarMap是存储对应dataIndex的值)
     //重新生成tableRow中的 resultVarMap
     console.log('res',colList)
+    //根据新的rowlist生成tableRow中新的resultMap 和对应dataIndex的值
+    let varValue={}
     const newRow = rowList.dataSource.map((item,num)=>{
       //重新生成tableRow中的 resultVarMap
       newCol.length&&newCol.map((item,index)=>{

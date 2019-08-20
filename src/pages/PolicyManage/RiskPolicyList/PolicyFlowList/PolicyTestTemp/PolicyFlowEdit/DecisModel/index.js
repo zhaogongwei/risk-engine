@@ -71,10 +71,10 @@ export default class DecisModel extends PureComponent {
       }
     })
     if(res&&res.status===1){
-      /*this.restoreColList(res.data.colVarList);
+      this.restoreColList(res.data.colVarList);
       this.restoreTableCol(res.data.colVarList);
       this.restoreRowList(res.data.rowVarList);
-      this.restoreTableRow(res.data.rowVarList);*/
+      this.restoreTableRow(res.data.rowVarList);
       this.setState({
         resultVarId:{
           resultVarId:res.data.resultVarId,
@@ -196,10 +196,21 @@ export default class DecisModel extends PureComponent {
   }
   //设置行
   setRow=()=>{
+    //先设置列变量，再设置行变量，不然table无法显示
     //先判断有没有设置行变量
-    const {rowVar,colVar} = this.state;
+    //必须设置输出变量不然table中的下拉框无法显示值
+    const {rowVar,colVar,resultVarId} = this.state;
+    const {rowList,colList} = this.props.decision;
+    if(!colList.dataSource.length){
+      message.error('请设置列变量!');
+      return;
+    }
     if(!Object.keys(rowVar).length){
       message.error('请选择行变量!');
+      return;
+    }
+    if(!Object.keys(resultVarId).length){
+      message.error('请选择输出变量!');
       return;
     }
     this.setState({
@@ -210,9 +221,13 @@ export default class DecisModel extends PureComponent {
   //设置列
   setCol=()=>{
     //先判断有没有设置列变量
-    const {rowVar,colVar} = this.state;
+    const {rowVar,colVar,resultVarId} = this.state;
     if(!Object.keys(colVar).length){
       message.error('请选择列变量!');
+      return;
+    }
+    if(!Object.keys(resultVarId).length){
+      message.error('请选择输出变量!');
       return;
     }
     this.setState({
@@ -302,11 +317,8 @@ export default class DecisModel extends PureComponent {
     const {query} = this.props.location;
     const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
     let count=0;
-    if(!tableRow.length){
-      message.error('请添加行变量!')
-      return
-    }else if(!tableCol.length){
-      message.error('请添加列变量!')
+    if(!tableRow.length || !tableCol.length){
+      message.error('请添加数据!')
       return
     }
     this.state.decFormList.map(item => {

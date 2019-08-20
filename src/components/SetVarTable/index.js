@@ -1,8 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import EditableCell from './EditableCell'
-import {
-  Row,
-  Col,
+import { 
   Button,
   Form,
   Popconfirm,
@@ -22,22 +20,21 @@ const EditableRow = ({ form, index, ...props }) => (
 
 const EditableFormRow = Form.create()(EditableRow);
 
-@Form.create()
-
-export default class SelectableTable extends PureComponent {
+export default class SetVarTable extends PureComponent {
   constructor(props) {
     super(props);
   }
+  componentDidMount(){
+  }
   render() {
-    const { tableRow,colList,rowList} = this.props.list;
-    const { resultVarId} = this.props
+    const { dataSource } = this.props;
     const components = {
       body: {
         row: EditableFormRow,
         cell: EditableCell,
       },
     };
-    const columns = this.props.columns.map((col,i,arr) => {
+    const columns = this.props.columns.map((col) => {
       if (!col.editable) {
         return col;
       }
@@ -45,45 +42,32 @@ export default class SelectableTable extends PureComponent {
         ...col,
         onCell: record => ({
           record,
-          colList:colList['dataSource'],
-          rowList:rowList['dataSource'],
-          enumList:resultVarId['enumList'],
-          cols:col.col,
-          tableList:this.props.tableList,
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
           isRequired: col.nonRequired,
           pattern:col.pattern,
           max:col.max,
-          handleModify:(form)=>this.props.handleModify(form)
+          isFocus:col.isFocus,
+          type:col.type,
+          value:col.value?col.value:null,
+          valueOther:col.valueOther?col.valueOther:null,
+          cols:col.cols?col.cols:null,
+          handleModify:(form) => this.props.handleModify(form)
         })
       };
     });
-
     return (
       <div>
-        <Row type="flex" align="middle" style={{marginTop:10,marginBottom: 16}}>
-          <Col>
-             输出变量设置
-          </Col>
-          <Col>
-            <Button onClick={this.props.setRow} type="primary" style={{marginLeft:10,marginRight:10}}>
-              设置行
-            </Button>
-          </Col>
-          <Col>
-            <Button onClick={this.props.setCol} type="primary">
-              设置列
-            </Button>
-          </Col>
-        </Row>
+        <Button onClick={this.props.handleAdd} type="primary" style={{ marginBottom: 16, float: "right", zIndex: '1',marginRight: '20px' }}>
+          选择变量
+        </Button>
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
-          bordered={false}
+          bordered
           pagination={false}
-          dataSource={tableRow}
+          dataSource={dataSource}
           columns={columns}
         />
       </div>

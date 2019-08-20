@@ -1,8 +1,8 @@
 import request from '@/utils/request';
-const _baseApi = '/aems'
+const _baseApi = '/merchant-admin'
 //查询策略策略测试模板列表信息
 export async function queryTestTempList(params) {
-  return request(`${_baseApi}/admin/asset/list`, {
+  return request(`${_baseApi}/strategyFlow/testTemplate/selectTestTemplatePage`, {
     method: 'POST',
     body: {
       ...params

@@ -16,7 +16,7 @@ export default {
       let response = yield call(api.queryVarInfo,payload)
       if(response && response.status === 1){
         yield put({
-          type:'varListHandle',
+          type:'InitSetVarHandle',
           payload:response
         })
       }

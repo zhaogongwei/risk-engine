@@ -17,7 +17,7 @@ import {
 import { connect } from 'dva'
 // 验证权限的组件
 import AddForm from '@/components/VarListModal/AddForm'
-import RuleTable from '@/components/RuleTable'
+import SetVarTable from '@/components/SetVarTable'
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
@@ -41,8 +41,8 @@ export default class setVar extends PureComponent {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'varName',
-        key:'varName',
+        dataIndex: 'variableName',
+        key:'variableName',
         editable:true,
         width:300,
         cols:1,
@@ -181,7 +181,7 @@ export default class setVar extends PureComponent {
       const records = this.addForm.submitHandler();
       const {varList} = this.props.setVar;
       if(Object.keys(records).length){
-        const keyList = varList.filter(item => item['varId']===records['varId'])
+        const keyList = varList.filter(item => item['variableId']===records['variableId'])
         if(varList.length&&keyList.length){
           message.error('不能添加重复变量!')
         }else{
@@ -216,7 +216,7 @@ export default class setVar extends PureComponent {
           bordered={false}
           title={'设置变量'}
         >
-          <RuleTable
+          <SetVarTable
             bordered
             pagination={false}
             columns={this.state.columns}

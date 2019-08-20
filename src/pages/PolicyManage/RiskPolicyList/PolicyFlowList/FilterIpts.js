@@ -12,7 +12,9 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({policyFlowList})=>({
+  policyFlowList
+}))
 
 @Form.create()
 
@@ -22,8 +24,8 @@ export default class FilterIpts extends Component {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
+      type: 'policyFlowList/fetchFlowList',
+      payload: {
         ...formData,
         "currPage": 1,
         "pageSize": 10
@@ -56,7 +58,7 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="策略流版本号" {...formItemConfig}>
-              {getFieldDecorator('policyEdition',{
+              {getFieldDecorator('version',{
                 initialValue:'',
                 rules:[
                   {
@@ -70,7 +72,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="版本号描述" {...formItemConfig}>
-              {getFieldDecorator('editionDes',{
+              {getFieldDecorator('remark',{
                 initialValue:'',
                 rules:[
                   {

@@ -234,7 +234,8 @@ export default class AddForm extends Component {
         records['enumFlag']=radioValue['enumFlag'];
         records['enumList']=radioValue['variableEnumList'];
       }
-
+      Object.assign(records,radioValue)
+      console.log(records)
       return records
   }
   deepCopy =(obj)=> {

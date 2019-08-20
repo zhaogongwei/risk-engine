@@ -104,20 +104,20 @@ export default class EditableCell extends PureComponent {
           })
         }
       </Select>;
-    }else if(this.props.type === 'input' || this.props.varObjRow['varType']==='num'){
+    }else if(this.props.type === 'input' || this.props.record['varType']==='num'){
       return <Input
         ref={node => (this.input = node)}
         onPressEnter={this.save}
         onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
       />;
-    }else if(this.props.varObjRow['varType']==='char'){
-      if(this.props.varObjRow['enumFlag']){
+    }else if(this.props.record['varType']==='char'){
+      if(this.props.record['enumFlag']){
         return <Select
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
         >
           {
-            this.props.varObjRow['enumList']&&this.props.varObjRow['enumList'].map((item,index)=>{
+            this.props.record['enumList']&&this.props.record['enumList'].map((item,index)=>{
               return (
                 <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
               )
@@ -133,6 +133,115 @@ export default class EditableCell extends PureComponent {
       }
     }
   };
+  createFormItem = ()=>{
+    const { getFieldDecorator } = this.props.form;
+    const { type,dataIndex,cols,record,value,pattern ,isFocus} = this.props;
+    if (type === 'select') {
+      return (
+        <FormItem style={{ margin: 0 }}>
+          {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+            initialValue: record[dataIndex],
+            rules:[
+              {
+                required:true,
+                validator: (rule, value, callback) => {
+                  if (!value) callback('输入内容不能为空!')
+                }
+              }
+            ]
+          })(
+            <Select
+              onPressEnter={this.save}
+              onChange={(e) => this.changeHandler(e, record, dataIndex)}
+            >
+              {
+                value&&value.map((item,index)=>{
+                  return (
+                    <Option value={item.id} key={index}>{item.name}</Option>
+                  )
+                })
+              }
+            </Select>
+          )}
+        </FormItem>
+      );
+    }else if(type === 'input' || record['varType']==='num'){
+      return (
+        <FormItem style={{ margin: 0 }}>
+          {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+            initialValue: record[dataIndex],
+            rules:[
+              {
+                required:true,
+                validator: (rule, value, callback) => {
+                  if (!value) callback('输入内容不能为空!')
+                }
+              }
+            ]
+          })(
+            <Input
+              ref={node => (this.input = node)}
+              onPressEnter={this.save}
+              onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+            />
+          )}
+        </FormItem>
+      );
+    }else if(record['varType']==='char'){
+      if(record['enumFlag']){
+        return (
+          <FormItem style={{ margin: 0 }}>
+            {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+              initialValue: record[dataIndex],
+              rules:[
+                {
+                  required:true,
+                  validator: (rule, value, callback) => {
+                    if (!value) callback('输入内容不能为空!')
+                  }
+                }
+              ]
+            })(
+              <Select
+                onPressEnter={this.save}
+                onChange={(e) => this.changeHandler(e, record, dataIndex)}
+              >
+                {
+                  record['enumList']&&record['enumList'].map((item,index)=>{
+                    return (
+                      <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                    )
+                  })
+                }
+              </Select>
+            )}
+          </FormItem>
+        );
+      }else{
+        return (
+          <FormItem style={{ margin: 0 }}>
+            {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+              initialValue: record[dataIndex],
+              rules:[
+                {
+                  required:true,
+                  validator: (rule, value, callback) => {
+                    if (!value) callback('输入内容不能为空!')
+                  }
+                }
+              ]
+            })(
+              <Input
+                ref={node => (this.input = node)}
+                onPressEnter={this.save}
+                onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+              />
+            )}
+          </FormItem>
+        );
+      }
+    }
+  }
   render() {
     const { editing } = this.state;
     const {
@@ -159,7 +268,7 @@ export default class EditableCell extends PureComponent {
               this.form = form;
               return (
                 <FormItem style={{ margin: 0 }}>
-                  {getFieldDecorator(`dataIndex${Math.random()}`, {
+                  {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                     initialValue: record[dataIndex],
                     rules:[
                       {
