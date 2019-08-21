@@ -1,11 +1,13 @@
 import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp';
 import { addListKey } from '@/utils/utils';
 import {message} from 'antd';
+
 export default {
   namespace: 'policyTestTemp',
 
   state: {
     tempList: [],//测试模板列表
+    userList:[],//用户列表
     tempObj:[],//测试模板集合
     formData:{
       size:10,
@@ -27,22 +29,15 @@ export default {
       }
 
     },
-    //新增模板
-    *addTemp({payload},{call,put}){
-      let response = yield call(api.addTestTemp,payload)
+    //查询用户列表
+    *fetchUserList({payload},{call,put}){
+      let response = yield call(api.queryUserList,payload)
       yield put({
-        type: 'saveTempList',
-        payload,
+        type: 'saveUserList',
+        payload:response,
       });
-    },
-    //执行测试模板(编辑）
-    *carryTemp({payload},{call,put}){
-      let response = yield call(api.carryTestTemp,payload)
-      yield put({
-        type: 'saveVarClassList',
-        payload,
-      });
-    },
+    }
+
   },
 
   reducers: {
@@ -59,5 +54,11 @@ export default {
         tempObj: payload,
       };
     },
+    saveUserList(state,{payload}){
+      return {
+        ...state,
+        userList:payload,
+      }
+    }
   },
 };

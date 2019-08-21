@@ -9,10 +9,19 @@ export async function queryTestTempList(params) {
     },
   });
 }
-
-//新增测试模板
-export async function addTestTemp(params) {
-  return request(`${_baseApi}/admin/asset/detail`, {
+//查询策略策略测试模板用户列表信息
+export async function queryUserList(params) {
+  return request(`${_baseApi}/system/user/getMerchantUserList`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+//测试模板新增
+//查询策略测试模板变量信息
+export async function queryPolicyVarInfo(params) {
+  return request(`${_baseApi}/strategyFlow/testTemplate/${params.testTemplateId}`, {
     method: 'POST',
     body: {
       ...params
@@ -20,9 +29,9 @@ export async function addTestTemp(params) {
   });
 }
 
-//执行测试模板
-export async function carryTestTemp(params) {
-  return request(`${_baseApi}/admin/asset/detail`, {
+//保存并测试测试模板
+export async function saveTest(params) {
+  return request(`${_baseApi}/strategyFlow/testTemplate/saveAndRunTestTemplate`, {
     method: 'POST',
     body: {
       ...params

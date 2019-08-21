@@ -46,7 +46,7 @@ export default class PolicyTestTemp extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goTest()}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goTest(record.id)}>测试</span>
           </div>
         )
       }],
@@ -74,7 +74,12 @@ export default class PolicyTestTemp extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    this.change();
+    //请求用户列表
+    this.props.dispatch({
+      type: 'policyTestTemp/fetchUserList',
+      payload: {}
+    })
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -124,9 +129,10 @@ export default class PolicyTestTemp extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
+    const {query} = this.props.location;
     return (
       <Fragment>
-        <Button onClick={()=>this.goTest()}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goTest(query['strategyId'])}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -135,20 +141,25 @@ export default class PolicyTestTemp extends PureComponent {
     this.props.dispatch(routerRedux.push({pathname:'/info/RiskManagement/PolicyList'}))
   }
   //跳转到测试
-  goTest = () =>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/policyFlow/test/add',
-    })
+  goTest = (testTemplateId) =>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/test/add?testTemplateId=${testTemplateId}`)
   }
   render() {
-    const {tempList,formData} = this.props.policyTestTemp
+    const {tempList,formData} = this.props.policyTestTemp;
+    const {query} = this.props.location;
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
        <Card
           bordered={false}
           title={'策略流测试模板'}
        >
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <FilterIpts
+           getSubKey={this.getSubKey}
+           change={this.onChange}
+           current={this.state.currentPage}
+           changeDefault={this.changeDefault}
+           query={query}
+         />
          <Table
            bordered
            pagination={false}

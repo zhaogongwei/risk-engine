@@ -1,51 +1,39 @@
 import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyTestTemp';
 import { addListKey } from '@/utils/utils'
+import {message} from 'antd';
+
 export default {
   namespace: 'testTemp',
 
   state: {
-    tempList: [],//测试模板列表
-    tempObj:[],//测试模板集合
+    tempVarList: [],//测试模板变量列表信息
   },
 
   effects: {
-    //获取策略测试模板列表
-    *fetchTestTempList({payload}, { call, put }) {
-      let response = yield call(api.queryTestTempList,payload)
-      yield put({
-        type: 'saveTempList',
-        payload,
-      });
+    //查询策略测试模板变量信息
+    *fetchTestTempVarList({payload}, { call, put }) {
+      let response = yield call(api.queryPolicyVarInfo,payload);
+      if(response&&response.status===1){
+        yield put({
+          type: 'saveTempVarList',
+          payload:response,
+        });
+      }else{
+        message.error(response.statusDesc)
+      }
     },
-    //新增模板
-    *addTemp({payload},{call,put}){
-      let response = yield call(api.addTestTemp,payload)
-      yield put({
-        type: 'saveTempList',
-        payload,
-      });
-    },
-    //执行测试模板(编辑）
-    *carryTemp({payload},{call,put}){
-      let response = yield call(api.carryTestTemp,payload)
-      yield put({
-        type: 'saveVarClassList',
-        payload,
-      });
+    //保存并测试策略模板
+    *saveTest({payload}, { call, put }) {
+      let response = yield call(api.saveTest,payload);
+      return response;
     },
   },
 
   reducers: {
-    saveTempList(state, { payload }) {
+    saveTempVarList(state, { payload }) {
       return {
         ...state,
-        tempList: payload,
-      };
-    },
-    saveTempObj(state, { payload }) {
-      return {
-        ...state,
-        tempObj: payload,
+        tempVarList: payload.data.inputVarList,
       };
     },
   },
