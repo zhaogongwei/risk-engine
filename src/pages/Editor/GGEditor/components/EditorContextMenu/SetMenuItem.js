@@ -10,7 +10,7 @@ import { connect } from 'dva'
 const change =async props => {
   console.log('props',props)
   const { getSelected, save } = props.propsAPI;
-  const { remark } = props
+  const { remark,flowId,mold } = props
   const id = getSelected()[0].id
   const selectedItem = getSelected()[0].getModel()
   const data = save();
@@ -32,7 +32,8 @@ const change =async props => {
                 payload:{
                   strategyId:1,
                   nodeJson:JSON.stringify(data),
-                  remark:remark['remark']
+                  remark:remark['remark'],
+                  flowId:mold?null:flowId
                 }
               })
     props.dispatch({

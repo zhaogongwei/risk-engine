@@ -153,6 +153,7 @@ export default class EditForm extends Component {
       ],
       varType:0,//变量类型 0：字符 1:数字
       varKey:0,//变量key值
+      scoreFormData:[],//评分卡编辑表单form
     }
   }
   //点击确定
@@ -253,6 +254,14 @@ export default class EditForm extends Component {
       })
     }
   }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.scoreFormData
+    arr.push(form)
+    this.setState({
+      scoreFormData: arr
+    })
+  }
   render() {
     const {varObjRow} = this.props;
     return (
@@ -263,6 +272,7 @@ export default class EditForm extends Component {
             columns={this.props.varType?this.state.columnNum:this.state.columnStr}
             handleAdd={this.handleAddRight}
             varObjRow={varObjRow}
+            handleModify={(form)=>this.handleModify(form)}
           />
         </Col>
       </Row>

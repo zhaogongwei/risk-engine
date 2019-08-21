@@ -34,15 +34,27 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if(this.props.handleModify){
+        this.props.handleModify(this.props.form)
+      }
     }
   
     componentWillUnmount() {
+      console.log(888)
       if (this.props.editable) {
         document.removeEventListener('click', this.handleClickOutside, true);
       }
     }
-    
-  
+    componentWillReceiveProps(newProps){
+      /*console.log(777,newProps)
+      const {record,dataIndex,tableList,col}=this.props;
+      console.log('tableList111',tableList)
+      if(!record)return;
+      const row = record['row']
+      if(!record[dataIndex])return;
+      this.changeHandler(record[dataIndex], record, dataIndex,record['row'],col,tableList)*/
+
+    }
     toggleEdit = () => {
       const editing = !this.state.editing;
       this.setState({ editing }, () => {
@@ -59,31 +71,10 @@ const EditableFormRow = Form.create()(EditableRow);
       }
     }
   
-    changeHandler(value, record, type,col,tableList) {
-      record[type] = value
-      //const row =record['row']
-      console.log(value, record, type,col,tableList)
-      //this.checkVal(row,col,value,tableList)?this.changeVal(row,col,value,tableList):tableList.push({row:row,col:col,val:value,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]})
-    }
-    //查询当前值是否存在
-    checkVal=(row,col,val,arr)=>{
-      var status = ''
-      for(const item of arr){
-        if(item['row']===row&&item['col']===col){
-          status = 1
-          break;
-        }else{
-          status = 0
-        }
-      }
-      return status;
-    }
-    changeVal=(row,col,val,arr)=>{
-      arr.forEach((item,index,arrary)=>{
-        if(item['row']===row&&item['col']===col){
-          arrary[index] = {row:row,col:col,val:val,colList:this.props.colList[col-1],rowList:this.props.rowList[row-1]}
-        }
-      })
+    changeHandler(value, record, type,row,col,tableList) {
+      const {colList,rowList} = this.props;
+      record['resultVarMap'][type] = value;
+      record[type] = value;
     }
     save = () => {
       const { record, handleSave } = this.props;
@@ -96,16 +87,6 @@ const EditableFormRow = Form.create()(EditableRow);
         //handleSave({ ...record, ...values });
       });
     }
-    checkInput=(value, record, type)=>{
-      this.props.form.validateFields([type],(error, values) => {
-        //验证 1：不通过，2：通过
-        if(error){
-          record[type]='error'
-        }else{
-          record[type] = value
-        }
-      })
-    }
     render() {
       const { editing } = this.state;
       const {
@@ -114,11 +95,12 @@ const EditableFormRow = Form.create()(EditableRow);
         dataIndex,
         colList,
         rowList,
-        col,
+        cols,
         title,
         isRequired,
         pattern,
         record,
+        enumList,
         max,
         index,
         handleSave,
@@ -129,8 +111,9 @@ const EditableFormRow = Form.create()(EditableRow);
         wrapperCol:{span:16},
       }
       const { getFieldDecorator } = this.props.form;
-      console.log(record,dataIndex,col)
+      console.log(record,dataIndex,cols)
       console.log('tableList',tableList)
+      console.log('enumList',enumList)
       return (
         <td ref={node => (this.cell = node)}>
           {editable ? (
@@ -139,18 +122,29 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
-                    {getFieldDecorator(dataIndex, {
+                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
                       initialValue: record[dataIndex],
+                      rules:[
+                        {
+                          required:true,
+                          validator: (rule, value, callback) => {
+                            if (!value) callback('输入内容不能为空!')
+                          }
+                        }
+                      ]
                     })(
                       <Select
                         style={{width:120}}
                         onPressEnter={this.save}
-                        onChange={(e) => this.changeHandler(e, this.props.record, dataIndex,col,tableList)}
+                        onChange={(e) => {this.changeHandler(e, this.props.record, dataIndex,record['row'],cols,tableList)}}
                       >
-                        <Option value={1}>审核结果</Option>
-                        <Option value={2}>自动审核通过</Option>
-                        <Option value={3}>自动审核拒绝</Option>
-                        <Option value={4}>人工审核</Option>
+                        {
+                          enumList&&enumList.map((item,index)=>{
+                            return (
+                              <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                            )
+                          })
+                        }
                       </Select>
                     )}
                   </FormItem>

@@ -227,13 +227,15 @@ export default class AddForm extends Component {
       const {radioValue}=this.state;
       if(Object.keys(radioValue).length){
         records['varId']=radioValue['id'];
+        records['variableId']=radioValue['id'];
         records['varCode']=radioValue['variableCode'];
         records['varName']=radioValue['variableName'];
         records['varType']=radioValue['variableType'];
         records['enumFlag']=radioValue['enumFlag'];
         records['enumList']=radioValue['variableEnumList'];
       }
-
+      Object.assign(records,radioValue)
+      console.log(records)
       return records
   }
   deepCopy =(obj)=> {

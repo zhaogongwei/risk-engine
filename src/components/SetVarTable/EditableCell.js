@@ -98,7 +98,7 @@ const EditableFormRow = Form.create()(EditableRow);
           onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
         >
           {
-            this.props.record['varType']==='num'?
+            this.props.record['variableType']==='num'?
             this.props.value&&this.props.value.map((item,index)=>{
               return (
                 <Option value={item.id} key={index}>{item.name}</Option>
@@ -119,13 +119,13 @@ const EditableFormRow = Form.create()(EditableRow);
           readOnly
         />;
       }else if(this.props.type==='more'){
-        if(this.props.record['varType']==='num'){
+        if(this.props.record['variableType']==='num'){
           return <Input
             ref={node => (this.inputNum = node)}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
           />;
-        }else if(this.props.record['varType']==='char'&&!this.props.record['enumFlag']){
+        }else if(this.props.record['variableType']==='char'&&!this.props.record['enumFlag']){
           return <Input
             ref={node => (this.input = node)}
             onPressEnter={this.save}
@@ -138,20 +138,20 @@ const EditableFormRow = Form.create()(EditableRow);
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
             {
-              this.props.record['enumList']&&this.props.record['enumList'].map((item,index)=>{
+              this.props.record['variableEnumList']&&this.props.record['variableEnumList'].map((item,index)=>{
                 return (
                   <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
                 )
               })
             }
           </Select>;
-        }else if(this.props.record['varType'] ==='date'){
+        }else if(this.props.record['variableType'] ==='date'){
           return <DatePicker
                     onPressEnter={this.save}
                     style={{width:'100%'}}
                     onChange={(date)=>this.onDateChange(date,this.props.record,this.props.dataIndex)}
                   />
-        }else if(this.props.record['varType'] ==='time'){
+        }else if(this.props.record['variableType'] ==='time'){
           return <DatePicker
                     showTime
                     onPressEnter={this.save}
@@ -195,7 +195,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 onChange={(e) => this.changeHandler(e, record, dataIndex)}
               >
                 {
-                  record['varType']==='num'?
+                  record['variableType']==='num'?
                     value&&value.map((item,index)=>{
                       return (
                         <Option value={item.id} key={index}>{item.name}</Option>
@@ -235,7 +235,7 @@ const EditableFormRow = Form.create()(EditableRow);
           </FormItem>
         )
       }else if(type==='more'){
-        if(record['varType']==='num'){
+        if(record['variableType']==='num'){
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
@@ -259,7 +259,7 @@ const EditableFormRow = Form.create()(EditableRow);
               )}
             </FormItem>
           )
-        }else if(record['varType']==='char'&&!record['enumFlag']){
+        }else if(record['variableType']==='char'&&!record['enumFlag']){
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
@@ -301,7 +301,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   onChange={(e) => this.changeHandler(e, record, dataIndex)}
                 >
                   {
-                    record['enumList']&&record['enumList'].map((item,index)=>{
+                    record['variableEnumList']&&record['variableEnumList'].map((item,index)=>{
                       return (
                         <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
                       )
@@ -311,7 +311,7 @@ const EditableFormRow = Form.create()(EditableRow);
               )}
             </FormItem>
           )
-        }else if(record['varType'] ==='date'){
+        }else if(record['variableType'] ==='date'){
           const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>
@@ -333,7 +333,7 @@ const EditableFormRow = Form.create()(EditableRow);
               )}
             </FormItem>
           )
-        }else if(record['varType'] ==='time'){
+        }else if(record['variableType'] ==='time'){
           const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>

@@ -1,3 +1,4 @@
+import * as api from '@/services/PolicyManage/RiskPolicyList/PolicyFlowList/PolicyFlowEdit';
 import { addListKey } from '@/utils/utils'
 import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
@@ -6,81 +7,64 @@ export default {
   namespace: 'decision',
 
   state: {
-    info:[],
+    decList:{
+      variableEnumList:[],//枚举值列表
+      rowVarList:[],//table list列表
+      colVarList:[],//columns列表
+    },//查询返回的table
     rowList:{
-      count:1,
-      dataSource:[]
+      dataSource:[],//弹框选择好的行数据
     },
     colList:{
-      count:1,
-      dataSource:[]
+      dataSource:[],//弹框选择好的列数据
     },
-    tableCol:[],
-    tableRow:[],
-    one:{
-      count:1,
-      dataSource:[
-      ]
-    },
-    two:{
-      count:1,
-      dataSource:[
-      ],
-    },
-    dataSet:[
-      {title:'',dataIndex: 'title',key:0}
-    ],
-    dataList:[]
+    tableCol:[],//拼接好的列数据集合
+    tableRow:[],//拼接好的行数据集合
+    tableList:[],//table数据集合
+    formData:{
+      rowVarId:'',//行变量
+      rowVarName:'',//行变量
+      colVarId:'',//列变量
+      colVarName:'',//列变量
+      resultVarId:'',//输出结果
+      resultVarName:'',//输出结果
+    }
   },
 
   effects: {
-    //修改企业信息
-    *litiCaseSubmit(payload, { call, put }) {
-      let response = yield call(changeLitigate,payload.data)
-      if(response&&response.status == '000000'){
-        yield put(routerRedux.goBack())
+    //查询决策模型信息
+    *querydecInfo({payload}, { call, put }) {
+      let response = yield call(api.querydecInfo,payload)
+      if(response&&response.status === 1){
+        yield put({
+          type:'initHandledecList',
+          payload:response
+        })
       }else{
         message.error(response.statusDesc)
       }
+      return response;
     },
-    //查看企业信息
-    *findLitiCase({payload,callback}, { call, put }){
-      let response = yield call(queryLitigate,payload)
-      if(response && response.status === '000000'){
-        response.result = addListKey(response.result)
-        response.result.length>0&&callback({value:response.result})
-        yield put({
-          type:'cpyInfoHandle',
-          payload:response.result
-        })
+    //保存决策模型信息
+    *savedecInfo({payload,callback}, { call, put }){
+      let response = yield call(api.savedecInfo,payload)
+      if(response && response.status === 1){
+        message.success(response.statusDesc)
+      }else{
+        message.error(response.statusDesc)
       }
+      return response
     }
   },
 
   reducers: {
-    cpyInfoHandle(state, { payload }) {
+    //初始化查询table
+    initHandledecList(state,{payload}){
       return {
         ...state,
-        info:payload
+        decList:{...payload.data},
+        formData:{...payload.data}
       }
-    },
-    addDataSource(state, {payload}) {
-      return {
-        ...state,
-        one:{
-          dataSource: payload.dataSource,
-          count: payload.count,
-        }
-      };
-    },
-    addDataSourceTwo(state, {payload}) {
-      return {
-        ...state,
-        two:{
-          dataSource: payload.dataSource,
-          count: payload.count,
-        }
-      };
     },
     makeTableCol(state,{payload}){
       return {
@@ -94,43 +78,28 @@ export default {
         tableRow: payload.tableRow,
       };
     },
-    changeDataSource(state, {payload}) {
-      return {
-        ...state,
-        one:{
-          dataSource: payload.dataSource,
-          count:payload.count
-        }
-      };
-    },
-    changeDataSourceRow(state,{payload}){
-      return {
-        ...state,
-        two:{
-          dataSource:payload.dataSource,
-          count:payload.count
-        }
-      }
-    },
     //设置列
     saveColData(state,{payload}){
       return {
         ...state,
         colList:{
           dataSource:payload.dataSource,
-          count:payload.count,
         }
       }
     },
     //设置行
     saveRowData(state,{payload}){
-      console.log(payload)
       return {
         ...state,
         rowList:{
           dataSource:payload.dataSource,
-          count:payload.count,
         }
+      }
+    },
+    tableListHandle(state,{payload}){
+      return{
+        ...state,
+        tableList:payload.tableList
       }
     }
   },

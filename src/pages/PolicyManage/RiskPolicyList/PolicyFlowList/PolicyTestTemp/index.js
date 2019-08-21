@@ -29,28 +29,24 @@ export default class PolicyTestTemp extends PureComponent {
         dataIndex: 'key',
         key:'key'
       },{
-        title: '策略类型',
-        dataIndex: 'policyType',
-        key:'policyType'
-      },{
         title: '策略名称',
-        dataIndex: 'policyName',
-        key:'policyName'
+        dataIndex: 'strategyName',
+        key:'strategyName'
       },{
         title: '模板名称',
-        key:'policyCode',
-        dataIndex:'policyCode'
+        key:'templateName',
+        dataIndex:'templateName'
       },{
         title: '负责人',
-        key:'leader',
-        dataIndex:'leader'
+        key:'updateTrueName',
+        dataIndex:'updateTrueName'
       },
       {
         title: '操作',
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={this.goTest}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goTest()}>测试</span>
           </div>
         )
       }],
@@ -78,7 +74,7 @@ export default class PolicyTestTemp extends PureComponent {
     };
   }
   componentDidMount() {
-    //this.change()
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -90,6 +86,7 @@ export default class PolicyTestTemp extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
+    const {query} = this.props.location;
     let formData ;
     if(this.child){
       formData = this.child.getFormValue()
@@ -98,8 +95,9 @@ export default class PolicyTestTemp extends PureComponent {
     }
     this.props.dispatch({
       type: 'policyTestTemp/fetchTestTempList',
-      data: {
+      payload: {
         ...formData,
+        ...query,
         currPage,
         pageSize
       }
@@ -143,6 +141,7 @@ export default class PolicyTestTemp extends PureComponent {
     })
   }
   render() {
+    const {tempList,formData} = this.props.policyTestTemp
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
        <Card
@@ -154,7 +153,7 @@ export default class PolicyTestTemp extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={tempList}
            loading={this.props.loading}
          />
          <Pagination
@@ -162,7 +161,7 @@ export default class PolicyTestTemp extends PureComponent {
            showQuickJumper
            defaultCurrent={1}
            current={this.state.current}
-           total={100}
+           total={formData['total']}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

@@ -51,7 +51,9 @@ export default class SetRowCol extends PureComponent {
           pattern:col.pattern,
           max:col.max,
           type:col.type,
-          value:col.value?col.value:null
+          value:col.value?col.value:null,
+          cols:col.cols?col.cols:null,
+          handleModify:(form)=>this.props.handleModify(form),
         })
       };
     });

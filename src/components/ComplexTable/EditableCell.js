@@ -37,6 +37,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if (this.props.handleModify) this.props.handleModify(this.props.form)
     }
   
     componentWillUnmount() {
@@ -74,7 +75,12 @@ const EditableFormRow = Form.create()(EditableRow);
         //handleSave({ ...record, ...values });
       });
     }
+    //清空当前输入框状态
+    reset=(name)=>{
+      this.props.form.resetFields([name])
+    }
     getInput = () => {
+      const{record,cols,dataIndex}=this.props;
       if (this.props.type === 'select') {
         if(this.props.record['varType']==='num'){
           return <Select
@@ -108,7 +114,7 @@ const EditableFormRow = Form.create()(EditableRow);
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          onClick={(e)=>this.props.handleModify()}
+          onClick={(e)=>{this.reset(`${dataIndex}${record['key']}${cols}`);this.props.selectVar()}}
           readOnly
         />;
       }else{
@@ -149,17 +155,10 @@ const EditableFormRow = Form.create()(EditableRow);
                       initialValue: record[dataIndex]?record[dataIndex]:'',
                       rules:[
                         {
-                          required: true,
-                          validator: (rule, val, cb) => {
-                            console.log('val',val)
-                            if (!val) {
-                              cb('内容不能为空！')
-                              return
-                            }
-                            if(val.length>10){
-                              cb('内容长度不能超过20位!')
-                              return
-                            }
+                          required:true,
+                          validator: (rule, value, callback) => {
+                            if (!value) callback('输入内容不能为空!')
+                            if (value.length>20) callback('输入内容不超过20位!')
                           }
                         }
                       ]

@@ -11,19 +11,23 @@ import {
   Form,
   Modal,
   Popconfirm,
-  Card
+  Card,
+  message,
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
-import AddForm from './AddForm';
-import RuleTable from '@/components/RuleTable'
+import AddForm from '@/components/VarListModal/AddForm'
+import SetVarTable from '@/components/SetVarTable'
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({setVar}) => ({
+@connect(({setVar,varList,loading}) => ({
   setVar,
+  varList,
+  loading:loading.effects['setVar/queryVarInfo'],
+  buttonLoading:loading.effects['setVar/saveVarInfo'],
 }))
 @Form.create()
 export default class setVar extends PureComponent {
@@ -33,31 +37,39 @@ export default class setVar extends PureComponent {
       columns: [{
         title: '序号',
         dataIndex: 'key',
+        width:100,
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'name',
-        key:'name',
+        dataIndex: 'variableName',
+        key:'variableName',
         editable:true,
+        width:300,
+        cols:1,
         type:'input',
         isFocus:true
       },{
         title: '条件',
-        key:'term',
-        dataIndex:'term',
-        render:()=>'=' +
-          ''
+        key:'compareCondition',
+        dataIndex:'compareCondition',
+        width:300,
+        cols:2,
+        render:()=>'='
       },
       {
         title: '值',
-        key:'compare',
-        dataIndex:'compare',
+        key:'varValue',
+        dataIndex:'varValue',
         editable:true,
-        type:'more'
+        width:300,
+        cols:3,
+        type:'more',
+        pattern:/^\d{1,3}$/,
       },
       {
         title: '操作',
         key:'action',
+        width:300,
         render: (record) => (
           <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
             <Button type="primary">删除</Button>
@@ -67,7 +79,7 @@ export default class setVar extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//0:单选按钮，1：多选按钮
+      type:0,//0:单选按钮，1：多选按钮
       number:'',
       pageSize:10,
       currentPage:1,
@@ -76,52 +88,37 @@ export default class setVar extends PureComponent {
       status:1,//状态判断 1:表格 0：输出结果
       visible:false,
       resultVarId:{},//输出结果
+      varFormData:[],//设置变量form列表
     };
   }
-  componentDidMount() {
-    this.change()
-  }
-  //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
-    })
-    this.change(current)
-  }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+  async componentDidMount() {
+    const {query} = this.props.location;
+    //请求变量列表
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
+      type: 'varList/queryVarList',
+      payload: {
       }
     })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    //查询节点信息
+    const res = await this.props.dispatch({
+      type: 'setVar/queryVarInfo',
+      payload: {
+        nodeId:query['id']
+      }
+    })
   }
+
   //   获取子组件数据的方法
   getSubKey = (ref,key) => {
     this[key]=ref;
-  }
-  //展示页码
-  showTotal = (total, range) => {
-    return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
-  }
-  //新增
-  btnAdd=()=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      type:true
-    })
   }
   //点击配置弹窗
   clickDialog=(type,record)=>{
@@ -129,48 +126,19 @@ export default class setVar extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      type:type,
       number:record?record['key']:''
-    })
-  }
-  //输出结果
-  outResult=()=>{
-    this.setState({
-      visible:true,
-      status:0,
-      type:0,
-    })
-  }
-  //监听子组件数据变化
-  handleChildChange = (newState)=>{
-    this.setState({
-      modalStatus:newState
     })
   }
   //  刷新页面
   reload = () => {
     window.location.reload();
   }
-  //查询时改变默认页数
-  changeDefault=(value)=>{
-    this.setState({
-      current:value
-    })
-  }
-  //右上角渲染
-  renderTitleBtn = () => {
-    return (
-      <Fragment>
-        {findInArr(this.props.permission, 'ADD')&&<Button onClick={this.btnAdd}><Icon type="plus" theme="outlined" />新增</Button>}
-      </Fragment>
-    )
-  }
   //删除表格数据
   handleDelete=(key)=>{
     const {varList} = this.props.setVar
     const newDataSource = varList.filter(item => item.key !== key)
     this.props.dispatch({
-      type: 'setVar/ruleListHandle',
+      type: 'setVar/varListHandle',
       payload: {
         varList:addListKey(newDataSource)
       }
@@ -178,6 +146,29 @@ export default class setVar extends PureComponent {
   }
   //保存数据
   handleSave = ()=>{
+    let count=0;
+    const {varList} = this.props.setVar;
+    const {query} = this.props.location;
+    this.state.varFormData.map(item => {
+      item.validateFieldsAndScroll((errors,value)=>{
+        if(errors)count++;
+      })
+    })
+    if(!count){
+      if(!varList.length){
+        message.error('请选择变量!')
+      }else{
+        console.log(varList)
+        this.props.dispatch({
+          type: 'setVar/saveVarInfo',
+          payload: {
+            ruleType:'setVar',
+            variableList:varList,
+            nodeId:query['id']
+          }
+        })
+      }
+    }
     console.log(this.props.setVar.varList)
   }
   //弹框按钮取消
@@ -187,35 +178,29 @@ export default class setVar extends PureComponent {
   //弹框确定
   addFormSubmit=()=>{
     this.setState({visible:false},()=>{
-      if(this.state.status){
-        const {checkedList,radioValue }= this.addForm.submitHandler();
-        console.log(checkedList)
-        if(this.state.type){
+      const records = this.addForm.submitHandler();
+      const {varList} = this.props.setVar;
+      if(Object.keys(records).length){
+        const keyList = varList.filter(item => item['variableId']===records['variableId'])
+        if(varList.length&&keyList.length){
+          message.error('不能添加重复变量!')
+        }else{
           this.props.dispatch({
             type: 'setVar/varListHandle',
             payload: {
-              varList:addListKey(deepCopy([...this.props.setVar.varList,...checkedList]))
-            }
-          })
-        }else{
-          console.log(this.state.radioValue)
-          console.log(this.props.setVar)
-          const {varList} = this.props.setVar
-          varList.splice(this.props.number-1,1,radioValue)
-          this.props.dispatch({
-            type: 'setVar/ruleListHandle',
-            payload: {
-              varList:addListKey(deepCopy(varList))
+              varList:addListKey(deepCopy([...varList,{...records}]))
             }
           })
         }
-      }else{
-        //输出结果值选择
-        const {checkedList,radioValue} = this.addForm.submitHandler();
-        this.setState({
-          resultVarId:radioValue,
-        })
       }
+    })
+  }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.varFormData;
+    arr.push(form)
+    this.setState({
+      varFormData: arr
     })
   }
   render() {
@@ -231,26 +216,18 @@ export default class setVar extends PureComponent {
           bordered={false}
           title={'设置变量'}
         >
-          <FilterIpts
-            getSubKey={this.getSubKey}
-            change={this.onChange}
-            current={this.state.currentPage}
-            changeDefault={this.changeDefault}
-            outResult={this.outResult}
-            resultVarId={this.state.resultVarId}
-          />
-          <RuleTable
+          <SetVarTable
             bordered
             pagination={false}
             columns={this.state.columns}
             dataSource={this.props.setVar.varList}
             handleAdd={()=>this.clickDialog(1)}
-            handleModify={this.clickDialog}
+            handleModify={(form)=>this.handleModify(form)}
             loading={this.props.loading}
           />
           <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
             <Col>
-              <Button type="primary" onClick={this.handleSave}>保存并提交</Button>
+              <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
             </Col>
             <Col>
               <Button type="primary">返回</Button>

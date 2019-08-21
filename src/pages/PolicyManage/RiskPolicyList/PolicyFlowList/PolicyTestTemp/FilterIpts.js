@@ -56,16 +56,7 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="模板名称" {...formItemConfig}>
-              {getFieldDecorator('policyType',{
-                initialValue:''
-              })(
-                <Input />
-              )}
-            </FormItem>
-          </Col>
-          <Col xxl={4} md={6}>
-            <FormItem label="策略名称" {...formItemConfig}>
-              {getFieldDecorator('policyName',{
+              {getFieldDecorator('templateName',{
                 initialValue:''
               })(
                 <Input />
@@ -74,7 +65,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="负责人" {...formItemConfig}>
-              {getFieldDecorator('modelName',{
+              {getFieldDecorator('updateBy',{
                 initialValue:''
               })(
                 <Select  allowClear={true}  >

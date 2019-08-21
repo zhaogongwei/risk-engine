@@ -33,24 +33,24 @@ export default class PolicyFlowList extends PureComponent {
         key:'key'
       },{
         title: '策略类型',
-        dataIndex: 'policyType',
-        key:'policyType'
+        dataIndex: 'strategyType',
+        key:'strategyType'
       },{
         title: '策略名称',
-        dataIndex: 'policyName',
-        key:'policyName'
+        dataIndex: 'strategyName',
+        key:'strategyName'
       },{
         title: '策略流版本号',
-        dataIndex: 'policyEdit',
-        key:'policyEdit'
+        dataIndex: 'version',
+        key:'version'
       },{
         title: '版本号描述',
-        key:'descEdit',
-        dataIndex:'descEdit'
+        key:'remark',
+        dataIndex:'remark'
       },{
         title: '更新时间',
-        key:'addTime',
-        dataIndex:'addTime'
+        key:'updateTime',
+        dataIndex:'updateTime'
       },{
           title: '状态',
           key:'status',
@@ -58,8 +58,8 @@ export default class PolicyFlowList extends PureComponent {
           render:(record)=>record===1?'启用':'禁用'
         },{
         title: '负责人',
-        key:'leader',
-        dataIndex:'leader'
+        key:'updateTrueName',
+        dataIndex:'updateTrueName'
       },
       {
         title: '操作',
@@ -67,10 +67,10 @@ export default class PolicyFlowList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.goEditPage(2)}>
+              <Menu.Item onClick={()=>this.goEditPage(record,2)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={this.goPolicyTest}>
+              <Menu.Item onClick={()=>this.goPolicyTest(record)}>
                 <Icon type="delete"/>测试
               </Menu.Item>
               <Menu.Item onClick={()=>this.isForbid(record)}>
@@ -87,28 +87,6 @@ export default class PolicyFlowList extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyEdit:'1.0',
-          descEdit:'是和所有策略',
-          addTime:'2016-06-06',
-          status:1,
-          leader:'王大大',
-        },
-        {
-          key:2,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyEdit:'1.0',
-          descEdit:'调整了规则',
-          addTime:'2016-06-06',
-          status:0,
-          leader:'王大大',
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -121,6 +99,7 @@ export default class PolicyFlowList extends PureComponent {
     };
   }
   componentDidMount() {
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -132,30 +111,25 @@ export default class PolicyFlowList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
+    let formList ;
     if(this.child){
-      formData = this.child.getFormValue()
+      formList = this.child.getFormValue()
     }else{
-      formData = {}
+      formList = {
+        remark:'',
+        version:''
+      }
     }
+    this.setState({current:currPage})
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
+      type: 'policyFlowList/fetchFlowList',
+      payload: {
+        ...formList,
         currPage,
         pageSize
       }
     })
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
-  }
-  confirm=(e)=>{
-    console.log(e);
-    message.success('Click on Yes');
-  }
-
-  cancel=(e) =>{
-    console.log(e);
-    message.error('Click on No');
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -166,13 +140,24 @@ export default class PolicyFlowList extends PureComponent {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
   //去编辑页面
-  goEditPage=(type)=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/policyFlow/edit',
-      state:{
-        type:type
-      }
-    })
+  goEditPage=async (record,type)=>{
+    if(record.status){
+      const confirmVal = await Swal.fire({
+        text: '启用状态的策略流无法编辑，请先禁用后再进行编辑！',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+    }else{
+      router.push({
+        pathname:'/policyManage/riskpolicylist/policyFlow/edit',
+        state:{
+          type:type
+        }
+      })
+    }
   }
   //  刷新页面
   reload = () => {
@@ -193,10 +178,8 @@ export default class PolicyFlowList extends PureComponent {
     )
   }
   //跳转策略测试模板
-  goPolicyTest = () =>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/policyFlow/test',
-    })
+  goPolicyTest = (record) =>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/test?strategyId=${record.strategyId}`)
   }
   //启用/禁用
   isForbid=async(record)=>{
@@ -209,10 +192,23 @@ export default class PolicyFlowList extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const res = await  this.props.dispatch({
+        type: 'policyFlowList/IsForbid',
+        payload: {
+          flowId:record.id,
+          status:record.status?0:1,
+        }
+      })
+      if(res&&res.status===1){
+        message.success(res.statusDesc);
+        this.change()
+      }else{
+        message.error(res.statusDesc)
+      }
     }
   }
   render() {
+    const {policyFlowList,formData} = this.props.policyFlowList
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
        <Card
@@ -224,7 +220,7 @@ export default class PolicyFlowList extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={policyFlowList}
            loading={this.props.loading}
          />
          <Pagination
@@ -232,7 +228,7 @@ export default class PolicyFlowList extends PureComponent {
            showQuickJumper
            defaultCurrent={1}
            current={this.state.current}
-           total={100}
+           total={formData['total']}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

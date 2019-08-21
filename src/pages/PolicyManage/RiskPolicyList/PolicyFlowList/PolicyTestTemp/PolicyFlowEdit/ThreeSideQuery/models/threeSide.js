@@ -7,24 +7,25 @@ export default {
   namespace: 'threeSide',
 
   state: {
-    dataList:[],
+    checkedList:[],//选中集合
   },
 
   effects: {
     //三方数据查询节点信息查询
-    *queryThreeSideInfo(payload, { call, put }) {
+    *queryThreeSideInfo({payload}, { call, put }) {
       let response = yield call(api.queryThreeSideInfo,payload)
-      if(response && response.status === '000000'){
-        /*yield put({
-          type:'riskListHandle',
+      if(response && response.status === 1){
+        yield put({
+          type:'checkedListHandle',
           payload:response
-        })*/
+        })
       }
+      return response;
     },
     //三方数据查询节点信息保存
     *saveThreeSideInfo({payload,callback},{call,put}){
       let response = yield call(api.saveThreeSideInfo,payload)
-      if(response&&response.status == '000000'){
+      if(response&&response.status == 1){
         message.success(response.statusDesc)
         callback()
       }else{
@@ -34,11 +35,11 @@ export default {
   },
 
   reducers: {
-    dataListHandle(state,{payload}){
+    checkedListHandle(state,{payload}){
       console.log('payload',payload)
       return {
         ...state,
-        dataList:payload.dataList,
+        checkedList:payload.checkedList,
       }
     },
   },

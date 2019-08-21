@@ -16,23 +16,13 @@ const FormItem = Form.Item
 @Form.create()
 
 export default class FilterIpts extends Component {
-  //查询
-  formSubmit = async (e) => {
-    this.props.changeDefault(1)
-    const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
-    })
-
-  }
   //   获取表单信息
   getFormValue = () => {
-    let formQueryData = this.props.form.getFieldsValue()
+    const { resultVarId,rowVar,colVar } = this.props
+    let formQueryData = this.props.form.getFieldsValue();
+    formQueryData.resultVarId=resultVarId['resultVarId'];
+    formQueryData.rowVarId=rowVar['rowVarId'];
+    formQueryData.colVarId=colVar['colVarId'];
     return formQueryData;
   }
   //重置
@@ -44,7 +34,7 @@ export default class FilterIpts extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { resultVarId,rowVar,colVar } = this.props
+    const { resultVarId,rowVar,colVar } = this.props;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -56,8 +46,8 @@ export default class FilterIpts extends Component {
         <Row  gutter={24} >
           <Col xxl={4} md={6}>
             <FormItem label="行变量" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
-                initialValue:rowVar['variableName']?rowVar['variableName']:''
+              {getFieldDecorator('rowVar',{
+                initialValue:rowVar['rowVarValue']?rowVar['rowVarValue']:''
               })(
                 <Input
                   onClick={()=>this.props.openDialog(0)}
@@ -68,8 +58,8 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="列变量" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
-                initialValue:colVar['variableName']?colVar['variableName']:''
+              {getFieldDecorator('colVar',{
+                initialValue:colVar['colVarValue']?colVar['colVarValue']:''
               })(
                 <Input
                   onClick={()=>this.props.openDialog(1)}
@@ -80,8 +70,8 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="输出变量" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode1',{
-                initialValue:resultVarId['variableName']?resultVarId['variableName']:''
+              {getFieldDecorator('resultVarId',{
+                initialValue:resultVarId['resultVarValue']?resultVarId['resultVarValue']:''
               })(
                 <Input
                   onClick={()=>this.props.openDialog(2)}
