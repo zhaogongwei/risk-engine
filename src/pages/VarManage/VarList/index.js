@@ -195,10 +195,16 @@ export default class VarList extends PureComponent {
   //跳转编辑/新增页面
   goAddPage = (obj={})=>{
     //this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
+    console.log(obj)
+    let query={
+    	id:obj.id||'',
+    	type:obj.type
+    }
     router.push({
       pathname:'/varManage/varlist/editPage',
-      state:obj
+      query:query
     })
+    
   }
   //去风控策略列表
   goPolicyList = async()=>{

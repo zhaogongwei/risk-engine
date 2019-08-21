@@ -9,6 +9,7 @@ import {
   Radio,
   Form,
   Popconfirm,
+  message,
   Card
 } from 'antd';
 import router from 'umi/router';
@@ -21,7 +22,7 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item
 const { TextArea } = Input;
 @connect(
-  ({varList}) => ({varList})
+  ({varlist}) => ({varlist})
 )
 @Form.create()
 export default class EditVar extends PureComponent {
@@ -107,15 +108,28 @@ export default class EditVar extends PureComponent {
     };
   }
   componentDidMount() {
+		this.props.dispatch({
+      type: 'varlist/getSelectLevel1',
+      payload: {
+      }
+    })
   }
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue();
-    formQueryData.enmuList = this.props.varList.dataSource;
+    //formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
+  selectchange = value => {
+  	this.props.dispatch({
+      type: 'varlist/getSelectLevel2',
+      payload: {
+      	id:value
+      }
+    })
+  }
   handleAdd = () => {
-    const { count, dataSource } = this.props.varList;
+    const { count, dataSource } = this.props.varlist;
     //   要添加表格的对象
     const newData = {
       enumValue:``,
@@ -125,13 +139,13 @@ export default class EditVar extends PureComponent {
     this.props.dispatch({
       type: 'varList/addData',
       payload: {
-        dataSource:addListKey(deepCopy([...dataSource, newData])),
+        
       }
     })
   }
   //   删除表格
   handleDelete = (key) => {
-    const {dataSource,count} = this.props.varList;
+    const {dataSource,count} = this.props.varlist;
     //   调用models的方法去删除dataSource中的数据
     const newData = dataSource.filter(item => item.key !== key)
     this.props.dispatch({
@@ -149,9 +163,21 @@ export default class EditVar extends PureComponent {
   goBack=()=>{
     router.goBack()
   }
-  formSubmit = ()=>{
-    console.log(this.getFormValue())
-    console.log(JSON.stringify(this.getFormValue()))
+  formSubmit = async()=>{
+  	let data=this.getFormValue()
+    await this.props.dispatch({
+      type: 'varList/delData',
+      payload: {
+        ...data
+      }
+    })
+
+    message.success('提交成功').then(() => {
+    	 router.push({
+	      pathname:'/varManage/varlist',
+	    })
+    })
+   
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -159,12 +185,12 @@ export default class EditVar extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
-    const {state}= {...this.props.location}
+    const query= {...this.props.location.query}
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
         <Card
           bordered={false}
-          title={state.type ===1?'新增变量':'编辑变量'}
+          title={query.type ===1?'新增变量':'编辑变量'}
         >
           <Form
             className="ant-advanced-search-form"
@@ -172,32 +198,32 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量分类" {...formItemConfig}>
-                  {getFieldDecorator('oneclass',{
+                  {getFieldDecorator('status',{
                     initialValue:'请选择一级分类',
                     rules:[
                       {required:true,}
                     ]
                   })(
-                    <Select allowClear={true}>
-                      <Option value={'反欺诈'}>反欺诈</Option>
-                      <Option value={'信审模块'}>信审模块</Option>
+                    <Select allowClear={true} onChange={this.selectchange}>
+                    {this.props.varlist.selectItem.map((item,index)=> (
+				             <Option value={item.id} key={index}>{item.name}{item.id}</Option>
+				          	))}
                     </Select>
                   )}
                 </FormItem>
               </Col>
               <Col xxl={3} md={4}>
                 <FormItem label="" >
-                  {getFieldDecorator('parentId',{
+                  {getFieldDecorator('itemStatus',{
                     initialValue:'请选择二级分类',
                     rules:[
                       {required:true}
                     ]
                   })(
                     <Select allowClear={true} >
-                      <Option value={1}>注册</Option>
-                      <Option value={2}>评分规则</Option>
-                      <Option value={3}>借款人信息</Option>
-                      <Option value={4}>借款人信息</Option>
+                     {this.props.varlist.secondSelectItem.map( (item,index) => (
+				             <Option value={item.id} key={index}>{item.name}</Option>
+				          	))}
                     </Select>
                   )}
                 </FormItem>
@@ -307,7 +333,7 @@ export default class EditVar extends PureComponent {
                 </Col>
                 <Col xxl={8} md={12}>
                   <EditableTable
-                    list={this.props.varList}
+                    list={this.props.varlist}
                     columns={this.columns}
                     handleAdd={this.handleAdd}
                     handleDelete={this.handleDelete}
@@ -343,7 +369,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
-                  {getFieldDecorator('status',{
+                  {getFieldDecorator('status1',{
                     initialValue:''
                   })(
                     <RadioGroup name="radiogroup">
@@ -355,14 +381,14 @@ export default class EditVar extends PureComponent {
               </Col>
               <Col style={{color:'#FF0000'}} push={10}>
                 {
-                  state.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+                  query.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
                 }
               </Col>
             </Row>
             <Row>
               <Col xxl={8} md={12}  style={{color:'#FF0000'}}>
                 {
-                  state.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
+                  query.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
                 }
               </Col>
             </Row>

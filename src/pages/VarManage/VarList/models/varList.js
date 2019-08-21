@@ -8,6 +8,8 @@ export default {
     filterIpts:{},
     selectItem:[],
     secondSelectItem:[],
+    count:'',
+    enumeration:[],
     total:100,//一共多少项
   },
 
@@ -56,6 +58,13 @@ export default {
       let response = yield call(api.delVar,payload)
       callback()
     },
+    *getEnumeration({payload},{call,put}){
+      let response = yield call(api.getEnumeration,payload)
+      yield put({
+        type: 'saveEnumeration',
+        payload,
+      });
+    },
   },
 
   reducers: {
@@ -83,7 +92,13 @@ export default {
     	 	...state,
     	  filterIpts:payload
     	}
-    }
+    },
+    saveEnumeration(state,{payload}) {
+    	 return {
+    	 	...state,
+    	  Handle:payload
+    	}
+    },
   },
 };
 
