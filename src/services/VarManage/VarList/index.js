@@ -54,3 +54,11 @@ export async function delVar(params){
     },
   });
 }
+export async function getEnumeration(params){
+  return request(`${_baseApi}/varList/getEnumeration`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
