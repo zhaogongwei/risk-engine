@@ -1,8 +1,8 @@
 import request from '@/utils/request';
-const _baseApi = '/aems'
+const _baseApi = '/merchant-admin'
 //查询风控策略列表信息
 export async function queryPolicyList(params) {
-  return request(`${_baseApi}/admin/asset/list`, {
+  return request(`${_baseApi}/strategy/selectVariablePage`, {
     method: 'POST',
     body: {
       ...params

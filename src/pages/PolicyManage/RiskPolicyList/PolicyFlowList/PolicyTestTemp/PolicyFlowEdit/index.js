@@ -35,10 +35,10 @@ class FlowPage extends React.Component {
     }
   }
   async componentDidMount(){
-    const {type} = this.state;
+    const {query} = this.props.location;
     //const {flowId} = this.props.location.query;
     const {flowId} = this.state;
-    if(type)return;
+    if(query['type'])return;
     const res = await this.props.dispatch({
       type: 'editorFlow/queryItemInfo',
       payload: {

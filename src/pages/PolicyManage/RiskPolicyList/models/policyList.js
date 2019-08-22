@@ -4,10 +4,6 @@ export default {
   namespace: 'policyList',
 
   state: {
-    editorData: {},
-    status:false,
-    tableList:[],
-    pageList:[],
     policyList:[],
     queryData: {},   //   查询数据
   },
@@ -15,7 +11,6 @@ export default {
   effects: {
     //获取策略列表
     *fetchPolicyList({ payload }, { call, put }) {
-      console.log(payload, 'payload')
       let response = yield call(api.queryPolicyList, payload)
       yield put({
         type: 'savePolicyList',
@@ -70,7 +65,7 @@ export default {
     saveQueryData(state, { payload }) {
       return {
         ...state,
-        queryData: payload
+        queryData: payload,
       }
     }
   },

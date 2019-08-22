@@ -35,24 +35,24 @@ export default class RiskPolicyList extends PureComponent {
         key:'key'
       },{
         title: '策略类型',
-        dataIndex: 'policyType',
-        key:'policyType'
+        dataIndex: 'strategyType',
+        key:'strategyType'
       },{
         title: '策略名称',
-        dataIndex: 'policyName',
-        key:'policyName'
+        dataIndex: 'strategyName',
+        key:'strategyName'
       },{
         title: '策略代码',
-        key:'policyCode',
-        dataIndex:'policyCode'
+        key:'strategyCode',
+        dataIndex:'strategyCode'
       },{
         title: '策略说明',
-        key:'policyExplain',
-        dataIndex:'policyExplain'
+        key:'remark',
+        dataIndex:'remark'
       },{
         title: '输出报告',
-        key:'creatTime',
-        dataIndex:'creatTime'
+        key:'templateName',
+        dataIndex:'templateName'
       },{
         title: '状态',
         key:'status',
@@ -60,8 +60,8 @@ export default class RiskPolicyList extends PureComponent {
         render: record => record === 1 ? '启用' : '禁用'
       },{
         title: '负责人',
-        key:'leader',
-        dataIndex:'leader'
+        key:'dutyTrueName',
+        dataIndex:'dutyTrueName'
       },
       {
         title: '操作',
@@ -92,28 +92,6 @@ export default class RiskPolicyList extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyCode:'best',
-          policyExplain:'适用于信用贷',
-          outreport:'信用贷最牛报告',
-          status:1,
-          leader:'王大大',
-        },
-        {
-          key:2,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyCode:'best',
-          policyExplain:'适用于信用贷',
-          outreport:'信用贷最牛报告',
-          status:0,
-          leader:'王大大',
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -127,7 +105,11 @@ export default class RiskPolicyList extends PureComponent {
     };
   }
   componentDidMount() {
-    //this.change()
+    this.props.dispatch({
+      type: 'policyList/saveQueryData',
+      payload:{}
+    })
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -140,17 +122,10 @@ export default class RiskPolicyList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    // let formData ;
-    // if(this.child){
-    //   formData = this.child.getFormValue()
-    // }else{
-    //   formData = {}
-    // }
-    let formData = this.props.policyList.queryData
     this.props.dispatch({
       type: 'policyList/fetchPolicyList',
       payload: {
-        ...formData,
+        ...this.props.policyList.queryData,
         currPage,
         pageSize
       }

@@ -7,6 +7,8 @@ export default {
 
   state: {
     tempVarList: [],//测试模板变量列表信息
+    templateName:'',//测试模板信息
+    resultList:[],//查询结果列表
   },
 
   effects: {
@@ -27,6 +29,19 @@ export default {
       let response = yield call(api.saveTest,payload);
       return response;
     },
+    //查询测试结果
+    *queryTestResult({payload},{call,put}){
+      let response = yield call(api.queryTestResult,payload);
+      if(response&&response.status===1){
+        yield put({
+          type: 'saveResultList',
+          payload:response,
+        });
+      }else{
+        message.error(response.statusDesc)
+      }
+      return response;
+    }
   },
 
   reducers: {
@@ -34,7 +49,14 @@ export default {
       return {
         ...state,
         tempVarList: payload.data.inputVarList,
+        templateName: payload.data.templateName,
       };
     },
+    saveResultList(state,{payload}){
+      return {
+        ...state,
+        resultList:[...state.resultList,...payload.data.list],
+      }
+    }
   },
 };

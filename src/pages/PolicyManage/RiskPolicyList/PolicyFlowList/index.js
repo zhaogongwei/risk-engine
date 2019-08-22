@@ -67,7 +67,7 @@ export default class PolicyFlowList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.goEditPage(record,2)}>
+              <Menu.Item onClick={()=>this.goEditPage(record,0)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
               <Menu.Item onClick={()=>this.goPolicyTest(record)}>
@@ -139,7 +139,7 @@ export default class PolicyFlowList extends PureComponent {
   showTotal = (total, range) => {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
-  //去编辑页面
+  //去编辑策略流页面
   goEditPage=async (record,type)=>{
     if(record.status){
       const confirmVal = await Swal.fire({
@@ -153,11 +153,20 @@ export default class PolicyFlowList extends PureComponent {
     }else{
       router.push({
         pathname:'/policyManage/riskpolicylist/policyFlow/edit',
-        state:{
+        query:{
           type:type
         }
       })
     }
+  }
+  //去新增策略流页面
+  goAddPage=async (record,type)=>{
+    router.push({
+      pathname:'/policyManage/riskpolicylist/policyFlow/edit',
+      query:{
+        type:type,
+      }
+    })
   }
   //  刷新页面
   reload = () => {
@@ -171,15 +180,16 @@ export default class PolicyFlowList extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
+    const {query} = this.props.location;
     return (
       <Fragment>
-        <Button onClick={()=>this.goEditPage(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddPage(40,1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
   //跳转策略测试模板
   goPolicyTest = (record) =>{
-    router.push(`/policyManage/riskpolicylist/policyFlow/test?strategyId=${record.strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/test?strategyId=${record.strategyId}&flowId=${record.id}`)
   }
   //启用/禁用
   isForbid=async(record)=>{
