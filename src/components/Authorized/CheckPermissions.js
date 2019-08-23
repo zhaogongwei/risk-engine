@@ -12,6 +12,10 @@ import { CURRENT } from './renderAuthorize';
  * @param { 未通过的组件 | no pass components } Exception
  */
 const checkPermissions = (authority, currentAuthority, target, Exception) => {
+  //   默认进入浏览器查找不到本地存储   视为未通过的组件   直接跳转登录页面
+  if (currentAuthority[0] === 'guest') {
+    return Exception;
+  }
   // 没有判定权限.默认查看所有
   // Retirement authority, return target;
   if (!authority) {
