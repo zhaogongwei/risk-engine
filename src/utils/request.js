@@ -84,7 +84,7 @@ export default function request(url, options) {
     })
     .then(data => {
       // 验证登录是否失效
-      if (data.status && data.status === 'EUS000010') {
+      if (data.status && data.status === 999) {
         //   登陆失效以后清除所有用户信息
         cookie().delete("hyjf-admin-id")
         window.localStorage.removeItem("permission")
