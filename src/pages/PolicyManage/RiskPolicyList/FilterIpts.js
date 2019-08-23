@@ -45,6 +45,7 @@ export default class FilterIpts extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { policyTypeList } = this.props.policyList
     const formItemConfig = {
       labelCol:{
         xs: { span: 3 },
@@ -71,8 +72,13 @@ export default class FilterIpts extends Component {
                 initialValue:''
               })(
                 <Select allowClear={true}>
-                  <Option value={1}>主策略</Option>
-                  <Option value={2}>次策略</Option>
+                  {
+                    policyTypeList&&policyTypeList.map((item,index)=>{
+                      return (
+                        <Option value={item.code} key={index}>{item.value}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>

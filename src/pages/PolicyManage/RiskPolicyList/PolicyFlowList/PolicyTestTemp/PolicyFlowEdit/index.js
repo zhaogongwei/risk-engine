@@ -17,8 +17,9 @@ import AddForm from './addForm';
 const FormItem = Form.Item
 GGEditor.setTrackable(false);
 @Form.create()
-@connect(({ editorFlow,global }) => ({
+@connect(({ editorFlow,global,loading }) => ({
   editorFlow,
+  submitLoading:loading.effects['editorFlow/savePolicyData'],
   global
 }))
 
@@ -31,18 +32,16 @@ class FlowPage extends React.Component {
       updateTrueName:'',//操作人
       remark:'',//备注
       mold:0,//0:编辑 1：新增
-      flowId:40,//编辑时从策略流列表带过来的，新增时没有
     }
   }
   async componentDidMount(){
     const {query} = this.props.location;
-    //const {flowId} = this.props.location.query;
-    const {flowId} = this.state;
-    if(query['type'])return;
+    //如果是新增页面就不请求数据；
+    if(query['type']==='1')return;
     const res = await this.props.dispatch({
       type: 'editorFlow/queryItemInfo',
       payload: {
-        flowId:flowId,
+        flowId:query['flowId'],
       }
     })
     if(res&&res.status===1){
@@ -75,10 +74,9 @@ class FlowPage extends React.Component {
     const nodesList = data['nodes'];
     const nodefineEdges = edgesList.filter((item)=>!item['type'])
     const formData = this.getFormValue();
-    const {flowId,mold} = this.state;
-    console.log(this.flow.myRef.graph)
-    console.log(data)
-    this.props.form.validateFields(['remark'],(error,value)=>{
+    const {query} = this.props.location;
+    const {flowId,strategyId,type} = query;
+    this.props.form.validateFields(['remark'],async (error,value)=>{
       if(error)return;
       if(!nodesList.length){
         message.error('请设置相关节点!')
@@ -88,31 +86,25 @@ class FlowPage extends React.Component {
         message.error('请设置连线的相关属性!')
         return
       }
-        const res = this.props.dispatch({
+        const res = await this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {
-            strategyId:1,
+            strategyId:strategyId,
             nodeJson:JSON.stringify(data),
             remark:formData['remark'],
-            flowId:mold?null:flowId
+            flowId:type==='1'?null:flowId,
           }
         })
-        if(res&&res.status===1){
-          if(!mold){
-            this.setState({
-              flowId:res.data.flowId
-            })
-          }
-        }
     })
   }
   save=()=>{
     console.log(JSON.stringify({nodeJson:JSON.stringify(this.props.editorFlow.editorData)}))
   }
   render () {
-    const { selectId, selectItem, editorData,type,policyObj } = this.props.editorFlow;
+    const { selectId, selectItem, editorData,nodeType,policyObj } = this.props.editorFlow;
     const { getFieldDecorator } = this.props.form;
-    const {mold} = this.state;
+    const {query} = this.props.location;
+    const {strategyId,flowId,type} = query;
     const { updateTrueName,updateTime,remark } = {...policyObj};
     const formItemConfig = {
       labelCol:{span:8},
@@ -124,7 +116,7 @@ class FlowPage extends React.Component {
       <PageHeaderWrapper >
         <Card
           bordered={false}
-          title={mold?'新增策略流':'编辑策略流'}
+          title={type==='1'?'新增策略流':'编辑策略流'}
         >
           <GGEditor className={styles.editor} >
             <Row type="flex" className={styles.editorHd}>
@@ -164,7 +156,7 @@ class FlowPage extends React.Component {
                 <FlowDetailPanel />
                 <div>
                   <Row type="flex" justify="center" align="middle" gutter={16} style={{marginBottom:10}}>
-                    <Col><Button type="primary" onClick={this.submitData}>保存</Button></Col>
+                    <Col><Button type="primary" loading={this.props.submitLoading} onClick={this.submitData}>保存</Button></Col>
                     <Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>
                   </Row>
                   <Row type="flex" justify="center" align="middle" gutter={16}>
@@ -177,7 +169,7 @@ class FlowPage extends React.Component {
               </Col>
             </Row>
             <FlowBird />
-            <FlowContextMenu  type={type} remark={this.getFormValue()} mold={this.state.mold} flowId={this.state.flowId}/>
+            <FlowContextMenu  nodeType={nodeType} type={type} remark={this.getFormValue()}  flowId={flowId} strategyId={strategyId}/>
           </GGEditor>
           <Modal
             width="360px"

@@ -141,6 +141,9 @@ export default class TestTemp extends Component {
       }
     })
   }
+  componentWillUnmount(){
+
+  }
   //根据变量的类型创建不同的formItem;
   createFormItem=(item,index)=>{
     const { getFieldDecorator } = this.props.form;

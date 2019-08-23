@@ -90,7 +90,7 @@ export default class PolicyFlowList extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//1:新增，2：编辑
+      type:1,//1:新增，0：编辑
       pageSize:10,
       currentPage:1,
       current:1,
@@ -111,6 +111,7 @@ export default class PolicyFlowList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
+    const {query} = this.props.location;
     let formList ;
     if(this.child){
       formList = this.child.getFormValue()
@@ -125,6 +126,7 @@ export default class PolicyFlowList extends PureComponent {
       type: 'policyFlowList/fetchFlowList',
       payload: {
         ...formList,
+        strategyId:query['id'],
         currPage,
         pageSize
       }
@@ -151,22 +153,12 @@ export default class PolicyFlowList extends PureComponent {
         cancelButtonText: '取消'
       })
     }else{
-      router.push({
-        pathname:'/policyManage/riskpolicylist/policyFlow/edit',
-        query:{
-          type:type
-        }
-      })
+      router.push(`/policyManage/riskpolicylist/policyFlow/edit?flowId=${record.id}&strategyId=${record.strategyId}&type=${type}`)
     }
   }
   //去新增策略流页面
-  goAddPage=async (record,type)=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/policyFlow/edit',
-      query:{
-        type:type,
-      }
-    })
+  goAddPage=async (strategyId,type)=>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit?strategyId=${strategyId}&type=${type}`)
   }
   //  刷新页面
   reload = () => {
@@ -183,7 +175,7 @@ export default class PolicyFlowList extends PureComponent {
     const {query} = this.props.location;
     return (
       <Fragment>
-        <Button onClick={()=>this.goAddPage(40,1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddPage(query['id'],1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -225,7 +217,13 @@ export default class PolicyFlowList extends PureComponent {
          bordered={false}
          title ={'策略流列表'}
        >
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <FilterIpts
+           getSubKey={this.getSubKey}
+           change={this.onChange}
+           current={this.state.currentPage}
+           changeDefault={this.changeDefault}
+           location={this.props.location}
+         />
          <Table
            bordered
            pagination={false}

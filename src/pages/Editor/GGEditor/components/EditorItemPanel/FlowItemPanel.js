@@ -102,7 +102,7 @@ const FlowItemPanel = () => {
               shape="flow-bird"
               model={{
                 label: '决策模型',
-                type: 'desModel',
+                type: 'decision',
                 src:desModel,
                 title:'决策模型',
                 style:[60,16]
@@ -118,7 +118,7 @@ const FlowItemPanel = () => {
               shape="flow-bird"
               model={{
                 label: '第三方数据查询',
-                type: 'query',
+                type: 'third',
                 src:query,
                 title:'第三方数据查询',
                 style:[60,16]
