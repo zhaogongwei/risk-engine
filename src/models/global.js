@@ -73,24 +73,18 @@ export default {
       // 保存权限信息到localStorage
       if (permissionList && permissionList.status === 1) localStorage.setItem('permission', JSON.stringify(permissionList))
       const response = yield call(queryMenuData);
-      /*if(response && response.data && response.status == 1) {
+      if(response && response.data && response.status == 1) {
         response.data.unshift({
-          icon: "icon-gongzuotai",
+          icon: "icon-wodegongzuotai",
           key: 0,
           title: "我的工作台",
           url: "/dashboard/default",
         })
-      }*/
-      response.data.unshift({
-        icon: "icon-wodegongzuotai",
-        key: 0,
-        title: "我的工作台",
-        url: "/dashboard/default",
-      })
-      yield put({
-        type: 'setMenuDate',
-        payload: response.data,
-      });
+        yield put({
+          type: 'setMenuDate',
+          payload: response.data,
+        });
+      }
     }
   },
 

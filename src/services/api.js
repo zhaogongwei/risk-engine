@@ -20,7 +20,7 @@ export async function changePassword(params) {
 }
 //获取菜单
 export async function queryMenuData(params){
-  return request(`/ncbx-admin/menu_data`,{
+  return request(`${_baseApi}/system/menu/tree`,{
     method:'POST',
     body:params
   })
@@ -28,7 +28,7 @@ export async function queryMenuData(params){
 
 //获取权限
 export async function queryPermission(params) {
-  return request(_baseApi + '/system/menu/perms',{
+  return request(`${_baseApi}/system/menu/perms`,{
     method: 'POST',
     body: params
   });
