@@ -6,7 +6,7 @@ import start from '@/assets/start.svg';
 import rule from '@/assets/rule.svg';
 import complex from '@/assets/complex.svg';
 import scoreModel from '@/assets/scoreModel.svg';
-import setVar from '@/assets/setvar.svg';
+import setVar from '@/assets/setVar.svg';
 import desModel from '@/assets/desModel.svg';
 import query from '@/assets/query.svg';
 
