@@ -28,7 +28,7 @@ export async function queryMenuData(params){
 
 //获取权限
 export async function queryPermission(params) {
-  return request(_baseApi + '/system/menu/perms',{
+  return request(`${_baseApi}/system/menu/perms`,{
     method: 'POST',
     body: params
   });

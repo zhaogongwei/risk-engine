@@ -7,7 +7,9 @@ import {
   Select,
   Form,
   Card,
-  DatePicker
+  DatePicker,
+  message,
+  Spin
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import moment from 'moment'
@@ -47,20 +49,72 @@ const result = [
 
 @Form.create()
 export default class TestTemp extends Component {
+  state={
+    visible:false,//控制风控报告显隐
+    completeFlag:'N',
+    loading:false,//节点加载状态
+  }
   //保存并执行测试
-  formSubmit = (e) => {
+  formSubmit = async (e) => {
     const {query} = this.props.location;
     const formData = this.getFormValue();
-    console.log(this.props.form.getFieldsError())
-    console.log(this.getFormValue())
-    this.props.dispatch({
+    const res = await this.props.dispatch({
       type: 'testTemp/saveTest',
       payload:{
-        strategyId:query['testTemplateId'],
+        id:query['id']?query['id']:null,
+        strategyId:query['strategyId'],
         inputVarList:formData,
         templateName:this.props.form.getFieldValue('templateName'),
       }
     })
+    if(res&&res.status===1){
+      message.success(res.statusDesc)
+     this.setState({
+       flowId:res.data.id,
+       assetsCode:res.data.assetCode
+     })
+     const response = await this.props.dispatch({
+        type: 'testTemp/queryTestResult',
+        payload:{
+          assetsCode:res.data.assetCode,
+          flowId:query['flowId'],
+        }
+      })
+      if(response&&response.status===1){
+          //开始加载节点
+          this.setState({
+            loading:true,
+          })
+         let queryResult = setInterval(()=>{
+           this.queryTestResult(res.data.assetCode,query['flowId'])
+         },5000)
+        if(this.state.completeFlag !== 'N'){
+            //循环结束
+            clearInterval(queryResult);
+            //显示风控报告按钮
+            this.setState({
+              visible:true,
+              loading:false,
+            })
+        }
+      }
+    }else{
+      message.error(res.statusDesc)
+    }
+  }
+  queryTestResult = (assetsCode,flowId)=>{
+    const res = this.props.dispatch({
+      type: 'testTemp/queryTestResult',
+      payload:{
+        assetsCode:assetsCode,
+        flowId:flowId
+      }
+    })
+    if(res&&res.status===1){
+      this.setState({
+        completeFlag:res.data.completeFlag
+      })
+    }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -83,9 +137,12 @@ export default class TestTemp extends Component {
     this.props.dispatch({
       type: 'testTemp/fetchTestTempVarList',
       payload:{
-        ...query,
+        testTemplateId:query['strategyId'],
       }
     })
+  }
+  componentWillUnmount(){
+
   }
   //根据变量的类型创建不同的formItem;
   createFormItem=(item,index)=>{
@@ -165,10 +222,11 @@ export default class TestTemp extends Component {
         </FormItem>
       )
     }else if(item.variableType==='date'){
+      const initData = item.variableValue?moment(item.variableValue):null
       return (
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
-            initialValue: moment(item.variableValue),
+            initialValue: initData,
             rules:[
               {
                 required:true,
@@ -186,10 +244,11 @@ export default class TestTemp extends Component {
         </FormItem>
       )
     }else if(item.variableType==='time'){
+      const initData = item.variableValue?moment(item.variableValue):null
       return (
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
-            initialValue: moment(item.variableValue),
+            initialValue: initData,
             rules:[
               {
                 required:true,
@@ -214,7 +273,7 @@ export default class TestTemp extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { tempVarList } = this.props.testTemp;
+    const { tempVarList,templateName,resultList } = this.props.testTemp;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:14},
@@ -234,7 +293,7 @@ export default class TestTemp extends Component {
                 <Row gutter={24} style={{textAlign:'center',lineHeight:'60px',fontSize:20,backgroundColor:'#F2F2F2',}}>输入变量</Row>
                 <Row type="flex" gutter={24} style={{backgroundColor:'#F2F2F2',paddingLeft:80,paddingBottom:20}}>
                   {
-                    tempVarList.length&&tempVarList.map((item,index)=>{
+                    tempVarList&&tempVarList.map((item,index)=>{
                       return(
                         <Col span={10} key={index}>
                           {
@@ -249,7 +308,7 @@ export default class TestTemp extends Component {
                   <Col span={10}>
                     <FormItem label={'模板标题'} {...formItemConfig}>
                       {getFieldDecorator('templateName',{
-                        initialValue:'',
+                        initialValue:templateName,
                         rules:[
                           {
                             required:true,
@@ -272,23 +331,31 @@ export default class TestTemp extends Component {
                 <Row type="flex" justify="center">
                   <Col span={18}>
                     {
-                      result.map((item,index)=>{
+                      resultList&&resultList.map((item,index)=>{
                         return (
                           <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
-                            <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.title}</Col>
-                            <Col>{item.content}</Col>
+                            <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</Col>
+                            <Col>{item.resultName}</Col>
                           </Row>
                         )
                       })
                     }
+                    <Row>
+                      <Col style={{lineHeight:'40px',textAlign:'center'}}>
+                        <Spin spinning={this.state.loading}/>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
                 <Row type="flex" justify="center">
-                  <Col span={18}>
-                    <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
-                      风控报告
-                    </p>
-                  </Col>
+                  {
+                    this.state.visible?
+                      <Col span={18}>
+                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
+                          风控报告
+                        </p>
+                      </Col>:null
+                  }
                 </Row>
               </Col>
             </Row>

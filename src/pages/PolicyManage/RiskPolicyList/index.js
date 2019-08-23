@@ -35,24 +35,24 @@ export default class RiskPolicyList extends PureComponent {
         key:'key'
       },{
         title: '策略类型',
-        dataIndex: 'policyType',
-        key:'policyType'
+        dataIndex: 'strategyType',
+        key:'strategyType'
       },{
         title: '策略名称',
-        dataIndex: 'policyName',
-        key:'policyName'
+        dataIndex: 'strategyName',
+        key:'strategyName'
       },{
         title: '策略代码',
-        key:'policyCode',
-        dataIndex:'policyCode'
+        key:'strategyCode',
+        dataIndex:'strategyCode'
       },{
         title: '策略说明',
-        key:'policyExplain',
-        dataIndex:'policyExplain'
+        key:'remark',
+        dataIndex:'remark'
       },{
         title: '输出报告',
-        key:'creatTime',
-        dataIndex:'creatTime'
+        key:'templateName',
+        dataIndex:'templateName'
       },{
         title: '状态',
         key:'status',
@@ -60,8 +60,8 @@ export default class RiskPolicyList extends PureComponent {
         render: record => record === 1 ? '启用' : '禁用'
       },{
         title: '负责人',
-        key:'leader',
-        dataIndex:'leader'
+        key:'dutyTrueName',
+        dataIndex:'dutyTrueName'
       },
       {
         title: '操作',
@@ -78,7 +78,7 @@ export default class RiskPolicyList extends PureComponent {
               <Menu.Item onClick={()=>this.goEditPage(2)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.goPolicyFlowList()}>
+              <Menu.Item onClick={()=>this.goPolicyFlowList(record)}>
                 <Icon type="diff" />策略流
               </Menu.Item>
             </Menu>
@@ -92,28 +92,6 @@ export default class RiskPolicyList extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyCode:'best',
-          policyExplain:'适用于信用贷',
-          outreport:'信用贷最牛报告',
-          status:1,
-          leader:'王大大',
-        },
-        {
-          key:2,
-          policyType:'主策略',
-          policyName:'信贷最牛策略',
-          policyCode:'best',
-          policyExplain:'适用于信用贷',
-          outreport:'信用贷最牛报告',
-          status:0,
-          leader:'王大大',
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -127,7 +105,18 @@ export default class RiskPolicyList extends PureComponent {
     };
   }
   componentDidMount() {
-    //this.change()
+    //查询策略类型
+    this.props.dispatch({
+      type: 'policyList/fetchPolicyTypeList',
+      payload:{}
+    })
+    //保存查询条件
+    this.props.dispatch({
+      type: 'policyList/saveQueryData',
+      payload:{}
+    })
+    //查询风控策略列表
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -140,17 +129,10 @@ export default class RiskPolicyList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    // let formData ;
-    // if(this.child){
-    //   formData = this.child.getFormValue()
-    // }else{
-    //   formData = {}
-    // }
-    let formData = this.props.policyList.queryData
     this.props.dispatch({
       type: 'policyList/fetchPolicyList',
       payload: {
-        ...formData,
+        ...this.props.policyList.queryData,
         currPage,
         pageSize
       }
@@ -208,16 +190,15 @@ export default class RiskPolicyList extends PureComponent {
     })
   }
   //跳转策略流列表
-  goPolicyFlowList=()=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/policyFlow/list'
-    })
+  goPolicyFlowList=(record)=>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/list?id=${record.id}`)
   }
   //   确定添加修改
   confirmChange = () => {
     console.log(this.edit.props.form.getFieldsValue())
   }
   render() {
+    const {policyList,pageData} = this.props.policyList
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card bordered={false}>
@@ -226,7 +207,7 @@ export default class RiskPolicyList extends PureComponent {
              bordered
              pagination={false}
              columns={this.state.columns}
-             dataSource={this.state.data}
+             dataSource={policyList}
              loading={this.props.loading}
            />
            <Pagination
@@ -234,7 +215,7 @@ export default class RiskPolicyList extends PureComponent {
              showQuickJumper
              defaultCurrent={1}
              current={this.state.current}
-             total={100}
+             total={pageData['total']}
              onChange={this.onChange}
              showTotal={(total, range) => this.showTotal(total, range)}
            />

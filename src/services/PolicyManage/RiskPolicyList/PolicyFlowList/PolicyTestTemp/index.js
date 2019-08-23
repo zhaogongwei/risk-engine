@@ -38,3 +38,14 @@ export async function saveTest(params) {
     },
   });
 }
+
+
+//查询测试资产执行结果
+export async function queryTestResult(params) {
+  return request(`${_baseApi}/strategyFlow/testTemplate/getResult`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
