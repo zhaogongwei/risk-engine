@@ -173,7 +173,7 @@ export default class IndexComponent extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="角色说明" {...formItemConfig}>
                 {getFieldDecorator('roleExplain',{
-                  initialValue: type == 2 ? roleInfo && roleInfo.remark : null,
+                  initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
                   rules:[{
                     required:true,
                     message: '请输入角色说明'

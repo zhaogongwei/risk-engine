@@ -40,17 +40,7 @@ export async function addRole(params) {
 }
 //角色删除
 export async function delRole(params){
-  return request(`${_baseApi}/admin/institutions/assets_elements`, {
-    method: 'POST',
-    body: {
-      ...params
-    },
-  });
-}
-
-//角色授权
-export async function empower(params){
-  return request(`${_baseApi}/admin/institutions/assets_elements`, {
+  return request(`${_baseApi}/system/role/delete`, {
     method: 'POST',
     body: {
       ...params

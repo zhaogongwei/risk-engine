@@ -67,7 +67,7 @@ export default class RoleManage extends PureComponent {
               <Menu.Item onClick={()=>this.isShowEdit(true, 2, record)}>
                 <Icon type="edit"/>修改
               </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteRole()}>
+              <Menu.Item onClick={()=>this.deleteRole(record.roleId)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -131,15 +131,6 @@ export default class RoleManage extends PureComponent {
       </Fragment>
     )
   }
-  //弹框点击确定事件
-  addFormSubmit=async ()=>{
-    const response = this.addForm.submitHandler();
-    if(response&&response.status === '000'){
-      this.setState({
-        visible:false
-      })
-    }
-  }
   //添加、编辑事件
   isShowEdit=(flag, type, record = {})=>{
     this.setState({
@@ -149,7 +140,7 @@ export default class RoleManage extends PureComponent {
     })
   }
   //删除角色
-  deleteRole=async()=>{
+  deleteRole=async(roleId)=>{
     const confirmVal = await Swal.fire({
       text: '确定要删除该角色吗？',
       type: 'warning',
@@ -159,7 +150,17 @@ export default class RoleManage extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const { dispatch } =  this.props;
+      let res = await dispatch({
+        type: 'role/delRole',
+        payload: {
+          roleId
+        }
+      })
+      if(res && res.status == 1) {
+        message.success(res.statusDesc);
+        this.change()
+      }
     }
   }
   render() {
