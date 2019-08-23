@@ -5,7 +5,7 @@ const _baseApi = '/engine'
 //角色管理
 //查询角色列表
 export async function queryRoleList(params) {
-  return request(`${_baseApi}/admin/asset/list`, {
+  return request(`${_baseApi}/system/interface/list`, {
     method: 'POST',
     body: params
   });

@@ -14,7 +14,7 @@ const { Link } = Anchor;
 const TabPane = Tabs.TabPane;
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
-import ReportComponent from './ReportComponent'
+import ReportComponent from './reportComponent'
 import Tab from './tab'
 import router from 'umi/router';
 @connect(({ riskReport}) => ({

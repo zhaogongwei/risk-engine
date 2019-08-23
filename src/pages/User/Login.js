@@ -6,7 +6,7 @@ import { Checkbox, Alert, Modal, Icon } from 'antd';
 import forge from 'node-forge';
 import Login from '@/components/Login';
 import styles from './Login.less';
-const _baseApi = '/ncbx-admin';
+const _baseApi = '/merchant-admin';
 const { Tab, UserName, Password, Mobile, Captcha, Submit,ImgCaptcha} = Login;
 
 @connect(({ login, loading }) => ({
@@ -101,7 +101,7 @@ class LoginPage extends Component {
               !submitting &&
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
             <UserName
-              name="userName"
+              name="username"
               placeholder="账号"
               rules={[
                 {
