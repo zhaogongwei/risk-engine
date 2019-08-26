@@ -17,14 +17,16 @@ import {
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import Dialog from './Dialog';
+import AddForm from '@/components/VarListModal/AddForm'
 import router from 'umi/router';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ policyList, loading }) => ({
+@connect(({ policyList, loading,varList }) => ({
   policyList,
+  varList
 }))
 @Form.create()
 export default class InputDeploy extends PureComponent {
@@ -57,7 +59,7 @@ export default class InputDeploy extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:true,
+      type:1,
       pageSize:10,
       currentPage:1,
       current:1,
@@ -68,6 +70,22 @@ export default class InputDeploy extends PureComponent {
     };
   }
   componentDidMount() {
+    const {query} = this.props.location;
+    //请求变量列表
+    this.props.dispatch({
+      type: 'varList/queryVarList',
+      payload: {
+        strategyId:query['strategyId']
+      }
+    })
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -160,6 +178,10 @@ export default class InputDeploy extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    const { query } = this.props.location
+    const queryData = {
+      strategyId:query['strategyId']
+    }
     const {selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -235,9 +257,11 @@ export default class InputDeploy extends PureComponent {
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >
-            <Dialog
+            <AddForm
+              type={this.state.type}
+              number={this.state.number}
               getSubKey={this.getSubKey}
-              pagination={this.pagination}
+              queryData={queryData}
             />
           </Modal>
         </Card>

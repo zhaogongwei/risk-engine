@@ -18,7 +18,9 @@ export default {
       const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: {
+          currentAuthority: payload.username,
+        },
       });
       // Login successfully
       if (response&&response.status === 1) {

@@ -168,17 +168,19 @@ export default class AddForm extends Component {
       loading:false,
     }
   }
+  componentDidMount(){
+  }
   //变量列表查询
   formSubmit=()=>{
     this.change(1)
   }
   change = async (page)=>{
-    const {exeraRequest} = this.props;
+    const {queryData} = this.props;
     const res = await  this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
         ...this.getFormValue(),
-        ...exeraRequest,
+        ...queryData,
         currPage:page,
         pageSize:this.state.pageSize,
       }
@@ -282,7 +284,6 @@ export default class AddForm extends Component {
       type: 'varList/queryTwoClassList',
       payload: {
         firstTypeId:value,
-        secondTypeId:'',
       }
     })
   }
@@ -360,7 +361,7 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    varList.map((item, index) => {
+                    varList.length>0?varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox value={item}>{item.variableName}</Checkbox>
@@ -368,7 +369,7 @@ export default class AddForm extends Component {
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.variableName}</Col>
                       </Row>
-                    })
+                    }):<Empty />
                   }
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>

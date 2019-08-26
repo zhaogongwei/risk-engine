@@ -57,7 +57,7 @@ export default {
     saveUserList(state,{payload}){
       return {
         ...state,
-        userList:payload,
+        userList:payload.data,
       }
     }
   },

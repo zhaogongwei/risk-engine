@@ -8,6 +8,11 @@ export default {
     policyList:[],
     policyTypeList:[],//策略类型集合
     queryData: {},   //   查询数据
+    userList:[],//策略负责人集合
+    policyInfo:{
+      strategyType:'',
+    },//策略信息
+    tableList:[],
     pageData:{
       current:1,
       total:0,
@@ -38,22 +43,62 @@ export default {
         });
       }
     },
+    //获取策略负责人
+    *fetchUserList({payload},{call,put}){
+      let response = yield call(api.queryUserList,payload)
+      if(response&&response.status===1){
+        yield put({
+          type: 'saveUserList',
+          payload:response,
+        })
+      }
+    },
+    //获取策略信息
+    *fetchPolicyInfo({payload},{call,put}){
+      let response = yield call(api.queryPolicyInfo,payload)
+      if(response&&response.status===1){
+        yield put({
+          type: 'savePolicyInfo',
+          payload:response,
+        })
+      }
+    },
     //新增策略
     *addPolicy({payload}, { call, put }) {
       let response = yield call(api.addPolicy,payload)
-      yield put({
-        type: 'savePolicyList',
-        payload,
-      });
+      return response;
     },
     //编辑策略
     *editPolicy({payload}, { call, put }) {
       let response = yield call(api.editPolicy,payload)
-      yield put({
-        type: 'savePolicyList',
-        payload,
-      });
+      return response;
     },
+    //校验策略名称
+    *checkPolicyName({payload},{call,put}){
+      let response = yield call(api.checkPolicyName,payload)
+      return response;
+    },
+    //校验策略代码
+    *checkPolicyCode({payload},{call,put}){
+      let response = yield call(api.checkPolicyCode,payload)
+      return response;
+    },
+    //校验策略排序
+    *checkPolicySort({payload},{call,put}){
+      let response = yield call(api.checkPolicySort,payload)
+      return response;
+    },
+    //查询策略输入输出变量
+    *queryInputVar({payload},{call,put}){
+      let response = yield call(api.queryInputVar,payload)
+      return response;
+    },
+    //保存策略输入输出变量
+    *saveInputVar({payload},{call,put}){
+      let response = yield call(api.saveInputVar,payload)
+      return response;
+    },
+
   },
 
   reducers: {
@@ -76,6 +121,26 @@ export default {
       return {
         ...state,
         policyTypeList:payload.data,
+      }
+    },
+    //保存策略负责人集合
+    saveUserList(state,{payload}){
+      return {
+        ...state,
+        userList:payload.data,
+      }
+    },
+    //获取策略信息
+    savePolicyInfo(state,{payload}){
+      return {
+        ...state,
+        policyInfo:payload.data,
+      }
+    },
+    saveTableList(state,{payload}){
+      return {
+        ...state,
+        tableList:payload
       }
     }
   },
