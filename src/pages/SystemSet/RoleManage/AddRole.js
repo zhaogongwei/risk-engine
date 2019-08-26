@@ -122,7 +122,6 @@ export default class IndexComponent extends Component {
         roleId
       }
     })
-    
   }
   onChange = value => {
     console.log('onChange ', value);
