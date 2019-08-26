@@ -59,7 +59,7 @@ export default {
 
   reducers: {
     saveVarClassList(state, { payload }) {
-    	let list = addListKeydouble( payload.data,'secList')
+    	let list = addListKeydouble( payload.data,'childTypeList')
       return {
         ...state,
         varClassList: list,
