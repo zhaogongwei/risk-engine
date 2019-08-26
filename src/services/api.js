@@ -3,7 +3,7 @@ import request from '@/utils/request';
 
 //风控引擎
 
-const _baseApi = '/ncbx-admin';
+const _baseApi = '/merchant-admin';
 // 登录接口
 export async function accountLogin(params) {
   return request(_baseApi + '/system/login?validateCode='+ params.validateCode, {
@@ -20,7 +20,7 @@ export async function changePassword(params) {
 }
 //获取菜单
 export async function queryMenuData(params){
-  return request(`${_baseApi}/menu_data`,{
+  return request(`${_baseApi}/system/menu/tree`,{
     method:'POST',
     body:params
   })
@@ -28,7 +28,7 @@ export async function queryMenuData(params){
 
 //获取权限
 export async function queryPermission(params) {
-  return request(_baseApi + '/system/menu/perms',{
+  return request(`${_baseApi}/system/menu/perms`,{
     method: 'POST',
     body: params
   });

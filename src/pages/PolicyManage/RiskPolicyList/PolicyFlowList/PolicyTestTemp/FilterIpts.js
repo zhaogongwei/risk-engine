@@ -12,7 +12,9 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({policyTestTemp})=>({
+  policyTestTemp
+}))
 
 @Form.create()
 
@@ -22,8 +24,9 @@ export default class FilterIpts extends Component {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
+      type: 'policyTestTemp/fetchTestTempList',
+      payload: {
+        ...this.props.query,
         ...formData,
         "currPage": 1,
         "pageSize": 10
@@ -44,7 +47,8 @@ export default class FilterIpts extends Component {
     this.props.getSubKey(this,'child')
   }
   render() {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator } = this.props.form;
+    const { userList } = this.props.policyTestTemp;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -69,11 +73,13 @@ export default class FilterIpts extends Component {
                 initialValue:''
               })(
                 <Select  allowClear={true}  >
-                  <Option value={'month'}>等额本息</Option>
-                  <Option value={'end'}>按月计息,到期还本还息</Option>
-                  <Option value={'endmonth'}>先息后本</Option>
-                  <Option value={'endday'}>按天计息,到期还本还息</Option>
-                  <Option value={'principal'}>等额本金</Option>
+                  {
+                    userList.length&&userList.map((item,index)=>{
+                      return (
+                        <Option value={item.id} key={index}>{item.trueName}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>

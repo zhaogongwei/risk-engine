@@ -19,11 +19,11 @@ import Swal from 'sweetalert2'
 // 验证权限的组件
 import AddForm from './addForm';
 import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
-import { findInArr,exportJudgment } from '@/utils/utils'
+import { findInArr, exportJudgment } from '@/utils/utils'
 
 @connect(({ urldeploy, loading }) => ({
   urldeploy,
-  loading: loading.effects['urldeploy/fetchUrlList']
+  loading: loading.effects['urldeploy/fetchInterfaceList']
 }))
 export default class UrlDeploy extends PureComponent {
   constructor(props) {
@@ -37,18 +37,18 @@ export default class UrlDeploy extends PureComponent {
       },
       {
         title: '接口名称',
-        dataIndex: 'urlName',
-        key:'urlName'
+        dataIndex: 'name',
+        key:'name'
       },
       {
         title: '异步通知地址',
-        dataIndex: 'asyncNoticeUrl',
-        key:'asyncNoticeUrl'
+        dataIndex: 'asyncNotifiAddress',
+        key:'asyncNotifiAddress'
       },
       {
         title: '同步跳转地址',
-        key:'syncSkipUrl',
-        dataIndex:'syncSkipUrl'
+        key:'syncJumpAddress',
+        dataIndex:'syncJumpAddress'
       },
       {
         title: '操作',
@@ -56,10 +56,10 @@ export default class UrlDeploy extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.addEditPage(true, 2)}>
+              <Menu.Item onClick={() => this.addEditPage(true, 2, record)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteUrl()}>
+              <Menu.Item onClick={()=>this.deleteUrl(record.id)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -73,17 +73,6 @@ export default class UrlDeploy extends PureComponent {
           )
         }
       }
-      ],
-      data:[
-        {
-          key:1,
-          urlName:'数据报送',
-          name:'王晓东',
-          acMenu:'角色管理',
-          acData:'修改了角色：管理员-->超级管理员',
-          acType:'修改',
-          acTime:'2018-09-10',
-        }
       ],
       checkedData: [],
       modalStatus:false,
@@ -107,8 +96,8 @@ export default class UrlDeploy extends PureComponent {
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
     this.props.dispatch({
-      type: 'urldeploy/fetchUrlList',
-      data: {
+      type: 'urldeploy/fetchInterfaceList',
+      payload: {
         currPage,
         pageSize
       }
@@ -135,14 +124,27 @@ export default class UrlDeploy extends PureComponent {
       </Fragment>
     )
   }
-  addEditPage=(flag, type)=>{
+  addEditPage=(flag, type, record = {})=>{
+    if(type == 2) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'urldeploy/viewInfo',
+        payload: {
+          id: record.id
+        }
+      })
+    }
+    
+
     this.setState({
+      id: record.id,
       type,
       visible: !!flag,
     })
   }
   //删除接口
-  deleteUrl=async() => {
+  deleteUrl = async(id) => {
+    const { dispatch } = this.props;
     const confirm = await Swal({
       text: '确定要删除该接口吗',
       type: 'warning',
@@ -153,15 +155,27 @@ export default class UrlDeploy extends PureComponent {
     })
     if (confirm.value) {
       // 请求开启/停用方法
-
+      let res = await dispatch({
+        type: 'urldeploy/delInterface',
+        payload: {
+          id
+        }
+      })
+      if(res && res.status == 1) {
+        message.success(res.statusDesc);
+        this.change()
+      }
     }
   }
   render() {
+    const { roleList } =  this.props.urldeploy
     const { type } = this.state;
     const modalParams = {
       type: this.state.type,
       visible: this.state.visible,
-      addEditPage: this.addEditPage
+      addEditPage: this.addEditPage,
+      change: this.change,
+      id: this.state.id
     }
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
@@ -173,7 +187,7 @@ export default class UrlDeploy extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={roleList.records}
            loading={this.props.loading}
          />
          <Pagination
@@ -181,7 +195,7 @@ export default class UrlDeploy extends PureComponent {
            showQuickJumper
            defaultCurrent={1}
            current={this.state.currPage}
-           total={100}
+           total={roleList.total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

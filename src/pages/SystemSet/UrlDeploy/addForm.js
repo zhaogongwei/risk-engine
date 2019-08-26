@@ -8,7 +8,8 @@ import {
   Select,
   Spin,
   TreeSelect,
-  Form
+  Form,
+  message
 } from 'antd';
 import styles from '../FilterIpts.less'
 import { connect } from 'dva'
@@ -31,9 +32,34 @@ export default class AddForm extends Component {
 
   //点击确定
   submitHandler = ()=> {
-    this.props.form.validateFields((err, values) => {
+    const { dispatch, type, id, addEditPage, change } = this.props;
+    this.props.form.validateFields(async(err, values) => {
       if(!err){
-
+        if(type == 1) {
+          let res = await dispatch({
+            type: 'urldeploy/addInterface',
+            payload: values
+          })
+          if(res && res.status === 1) {
+            message.success(res.statusDesc)
+            addEditPage(false);
+            change()
+          }
+        }
+        if(type == 2) {
+          let res = await dispatch({
+            type: 'urldeploy/updateInterface',
+            payload: {
+              ...values,
+              id
+            }
+          })
+          if(res && res.status == 1) {
+            message.success(res.statusDesc)
+            addEditPage(false)
+            change()
+          }
+        }
       }
     })
   }
@@ -55,6 +81,7 @@ export default class AddForm extends Component {
 
   render() {
     const { visible, type, addEditPage } = this.props;
+    const { Detail } =  this.props.urldeploy;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol:{ span: 6 },
@@ -62,7 +89,7 @@ export default class AddForm extends Component {
     }
     return (
       <Modal
-        title={this.state.type === 1 ? '新增接口' : '修改接口'}
+        title={this.props.type === 1 ? '新增接口' : '修改接口'}
         visible={visible}
         onOk={this.submitHandler}
         onCancel={()=> addEditPage(false)}
@@ -71,8 +98,8 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="接口名称" {...formItemConfig}>
-                {getFieldDecorator('username',{
-                  initialValue:'',
+                {getFieldDecorator('name',{
+                  initialValue: this.props.type === 2 ? Detail.name : null,
                   rules:[{
                     required:true,
                     message: '请输入接口名称'
@@ -86,8 +113,8 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="异步通知地址" {...formItemConfig}>
-                {getFieldDecorator('password',{
-                  initialValue:'',
+                {getFieldDecorator('asyncNotifiAddress',{
+                  initialValue: this.props.type === 2 ? Detail.asyncNotifiAddress : null,
                   rules:[{
                     required:true,
                     message: '请输入异步通知地址'
@@ -101,8 +128,8 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="同步跳转地址" {...formItemConfig}>
-                {getFieldDecorator('comfirmWord',{
-                  initialValue:'',
+                {getFieldDecorator('syncJumpAddress',{
+                  initialValue: this.props.type === 2 ? Detail.syncJumpAddress : null,
                   rules:[{
                     required:true,
                     message: '请输入同步跳转地址'

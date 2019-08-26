@@ -297,17 +297,17 @@ export default [
       {
         name:'systemSet',
         icon: 'highlight',
-        path: '/systemSet',
+        path: '/system',
         routes:[
           {
             //角色管理
-            path:'/systemSet/roleManage',
+            path:'/system/role',
             name:'roleManage',
             component:'./SystemSet/RoleManage'
           },
           {
             //账号管理
-            path:'/systemSet/accountManage',
+            path:'/system/user',
             name:'accountManage',
             component:'./SystemSet/AccountManage'
           },
@@ -320,7 +320,7 @@ export default [
           },
           //接口配置
           {
-            path:'/systemSet/urlDeploy',
+            path:'/system/interface',
             name:'urlDeploy',
             component:'./SystemSet/UrlDeploy'
           }

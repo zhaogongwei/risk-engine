@@ -8,7 +8,7 @@ export default {
   state: {
     selectId:'',//当前选中节点的id
     selectItem:{},//当前选中的节点信息
-    type:'',//节点类型
+    nodeType:'',//节点类型
     policyObj:{
       nodeJson: {},//策略流编辑的数据
       updateTrueName:'',
@@ -82,7 +82,7 @@ export default {
     saveNodeType(state,{payload}){
       return {
         ...state,
-        type:payload
+        nodeType:payload
       }
     }
   },

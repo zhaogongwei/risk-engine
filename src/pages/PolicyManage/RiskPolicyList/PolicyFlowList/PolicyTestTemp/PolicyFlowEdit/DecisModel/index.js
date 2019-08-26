@@ -126,6 +126,7 @@ export default class DecisModel extends PureComponent {
         highValue:item['rowVarInfo']['highValue'],
         variableName:item['rowVarInfo']['variableName'],
         id:item['rowVarInfo']['id'],
+        indexKey:item['rowVarInfo']['id'],
         variableId:item['rowVarInfo']['variableId'],
       })
     })
@@ -237,8 +238,10 @@ export default class DecisModel extends PureComponent {
   }
   //弹框确定事件
   handleOk=()=>{
+    const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
     this.setState({visible:false},()=>{
       const records = this.addForm.submitHandler();
+      //设置行
       if(this.state.inputType === 0){
         if(records['varType']!=='num'){
           message.error('此处选择弹框中只展示数字类型变量!')
@@ -249,8 +252,25 @@ export default class DecisModel extends PureComponent {
             rowVarId:records['varId'],
             rowVarValue:records['varName'],
           }
+        },()=>{
+          //重新选择行列变量时，之前的值全部置空
+          if(rowList.dataSource.length){
+            this.props.dispatch({
+              type: 'decision/saveRowData',
+              payload: {
+                dataSource: [],
+              }
+            })
+            this.props.dispatch({
+              type: 'decision/makeTableRow',
+              payload: {
+                tableRow: [],
+              }
+            })
+          }
         })
       }else if(this.state.inputType === 1){
+        //设置列
         if(records['varType']!=='num'){
           message.error('此处选择弹框中只展示数字类型变量!')
           return
@@ -260,8 +280,25 @@ export default class DecisModel extends PureComponent {
             colVarId:records['varId'],
             colVarValue:records['varName']
           }
+        },()=>{
+          //重新选择行列变量时，之前的值全部置空
+          if(colList.dataSource.length){
+            this.props.dispatch({
+              type: 'decision/saveColData',
+              payload: {
+                dataSource: [],
+              }
+            })
+            this.props.dispatch({
+              type: 'decision/makeTableCol',
+              payload: {
+                tableCol: [],
+              }
+            })
+          }
         })
       }else if(this.state.inputType === 2){
+        //设置输出结果
         if(records['varType']!=='char' || !records['enumFlag']){
           message.error('此处选择弹框中只展示有枚举值的字符类型变量!')
           return
@@ -326,16 +363,23 @@ export default class DecisModel extends PureComponent {
         if(errors)count++;
       })
     })
+    let tableColNew = deepCopy(tableCol);
+    tableColNew.shift()
+    let tableColList=[]
+    tableColNew.map((item,index)=>{
+      tableColList.push(item.colVarInfo)
+    })
     if(!count){
-      /*this.props.dispatch({
+      this.props.dispatch({
         type: 'decision/savedecInfo',
         payload: {
           ...formData,
-          ruleType:'strategy',
-          variableInfoList:tableList,
+          ruleType:'decision',
+          colVarInfoList:tableColList,
+          rowVarInfoList:tableRow,
           nodeId:query['id']
         }
-      })*/
+      })
     }
 
   }

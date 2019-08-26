@@ -22,11 +22,13 @@ export default class FilterIpts extends Component {
   //查询
   formSubmit = async (e) => {
     this.props.changeDefault(1)
+    const {query} = this.props.location;
     const formData = this.getFormValue()
     this.props.dispatch({
       type: 'policyFlowList/fetchFlowList',
       payload: {
         ...formData,
+        strategyId:query['id'],
         "currPage": 1,
         "pageSize": 10
       }

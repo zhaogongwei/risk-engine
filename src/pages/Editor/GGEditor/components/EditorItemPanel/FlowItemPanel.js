@@ -6,7 +6,7 @@ import start from '@/assets/start.svg';
 import rule from '@/assets/rule.svg';
 import complex from '@/assets/complex.svg';
 import scoreModel from '@/assets/scoreModel.svg';
-import setVar from '@/assets/setvar.svg';
+import setVar from '@/assets/setVar.svg';
 import desModel from '@/assets/desModel.svg';
 import query from '@/assets/query.svg';
 
@@ -102,7 +102,7 @@ const FlowItemPanel = () => {
               shape="flow-bird"
               model={{
                 label: '决策模型',
-                type: 'desModel',
+                type: 'decision',
                 src:desModel,
                 title:'决策模型',
                 style:[60,16]
@@ -118,7 +118,7 @@ const FlowItemPanel = () => {
               shape="flow-bird"
               model={{
                 label: '第三方数据查询',
-                type: 'query',
+                type: 'third',
                 src:query,
                 title:'第三方数据查询',
                 style:[60,16]

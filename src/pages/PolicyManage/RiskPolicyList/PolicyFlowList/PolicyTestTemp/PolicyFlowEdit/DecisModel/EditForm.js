@@ -149,6 +149,7 @@ export default class EditForm extends Component {
         highCondition:'',
         highValue:'',
         id:lastRowVarId+1,
+        indexKey:lastRowVarId+1,
         variableName:this.props.rowVar['rowVarValue'],
         variableId:this.props.rowVar['rowVarId'],
       };

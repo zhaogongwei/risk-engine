@@ -12,7 +12,9 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({policyList})=>({
+  policyList
+}))
 
 @Form.create()
 
@@ -43,6 +45,7 @@ export default class FilterIpts extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { policyTypeList } = this.props.policyList
     const formItemConfig = {
       labelCol:{
         xs: { span: 3 },
@@ -65,12 +68,17 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="策略类型" {...formItemConfig}>
-              {getFieldDecorator('policyType',{
+              {getFieldDecorator('strategyType',{
                 initialValue:''
               })(
                 <Select allowClear={true}>
-                  <Option value={1}>主策略</Option>
-                  <Option value={2}>次策略</Option>
+                  {
+                    policyTypeList&&policyTypeList.map((item,index)=>{
+                      return (
+                        <Option value={item.code} key={index}>{item.value}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>
@@ -82,7 +90,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="策略名称" {...formItemConfig}>
-              {getFieldDecorator('policyName',{
+              {getFieldDecorator('strategyName',{
                 initialValue:'',
                 rules:[
                   {max:20,message:'最多输入20位!'}
@@ -99,7 +107,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="策略代码" {...formItemConfig}>
-              {getFieldDecorator('policyCode',{
+              {getFieldDecorator('strategyCode',{
                 initialValue:'',
                 rules:[
                   {max:20,message:'最多输入20位!'}

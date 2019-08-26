@@ -10,7 +10,7 @@ import { connect } from 'dva'
 const change =async props => {
   console.log('props',props)
   const { getSelected, save } = props.propsAPI;
-  const { remark,flowId,mold } = props
+  const { strategyId,flowId,type,remark } = props
   const id = getSelected()[0].id
   const selectedItem = getSelected()[0].getModel()
   const data = save();
@@ -28,14 +28,14 @@ const change =async props => {
     return;
   }else{
     var res = await props.dispatch({
-                type:'editorFlow/savePolicyData',
-                payload:{
-                  strategyId:1,
-                  nodeJson:JSON.stringify(data),
-                  remark:remark['remark'],
-                  flowId:mold?null:flowId
-                }
-              })
+        type:'editorFlow/savePolicyData',
+        payload:{
+          strategyId:strategyId,
+          nodeJson:JSON.stringify(data),
+          remark:remark['remark'],
+          flowId:type==='1'?null:flowId,
+        }
+      })
     props.dispatch({
       type:'editorFlow/saveId',
       payload:id
@@ -49,9 +49,9 @@ const change =async props => {
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
   }else if(id && selectedItem.type === 'setVar'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}`)
-  }else if(id && selectedItem.type === 'desModel'&&res.status===1){
+  }else if(id && selectedItem.type === 'decision'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}`)
-  }else if(id && selectedItem.type === 'query'&&res.status===1){
+  }else if(id && selectedItem.type === 'third'&&res.status===1){
     router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}`)
   }
 }

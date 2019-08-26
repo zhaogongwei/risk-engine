@@ -7,7 +7,7 @@ export default {
   namespace: 'threeSide',
 
   state: {
-    checkedList:[],//选中集合
+    thirds:[],//选中集合
   },
 
   effects: {
@@ -39,7 +39,7 @@ export default {
       console.log('payload',payload)
       return {
         ...state,
-        checkedList:payload.checkedList,
+        thirds:payload.data.thirds,
       }
     },
   },

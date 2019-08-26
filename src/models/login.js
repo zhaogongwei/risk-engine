@@ -11,6 +11,8 @@ export default {
 
   state: {
     status: undefined,
+    //   用户信息
+    currentUser: {}
   },
 
   effects: {
@@ -19,6 +21,13 @@ export default {
       yield put({
         type: 'changeLoginStatus',
         payload: response,
+      });
+      yield put({
+        type: 'setUserInfo',
+        payload: {
+          name: 'admin',
+          avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
+        }
       });
       // Login successfully
       if (response&&response.status === 1) {
@@ -86,5 +95,12 @@ export default {
         type: payload.type,
       };
     },
+    setUserInfo(state, { payload }) {
+      console.log(payload, 'payload')
+      return {
+        ...state,
+        currentUser: payload
+      }
+    }
   },
 };
