@@ -37,24 +37,19 @@ export default {
       return yield call(api.addRole, payload)
     },
     //编辑角色
-    *updateRole({payload},{call,put}){
+    *updateRole({ payload },{ call,put }){
       return yield call(api.editRole,payload)
     },
     //删除角色
-    *delRole({payload},{call,put}){
+    *delRole({ payload },{ call,put }){
       let response = yield call(api.delRole,payload)
       yield put({
         type:'saveRoleList',
         payload
       })
     },
-    //角色授权
-    *empower({payload},{call,put}){
-      let response = yield call(api.empower,payload)
-      yield put({
-        type:'saveRoleList',
-        payload
-      })
+    *exportList({ payload }, { call, put}){
+      yield call(api.exportFile, payload)
     }
   },
 
