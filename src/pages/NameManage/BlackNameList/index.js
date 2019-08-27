@@ -179,7 +179,7 @@ export default class BlackNameList extends PureComponent {
   //弹框点击确定事件
   addFormSubmit=async ()=>{
     const response = this.addForm.submitHandler();
-    if(response&&response.status === '000'){
+    if(response && response.status === '000'){
       this.setState({
         visible:false
       })

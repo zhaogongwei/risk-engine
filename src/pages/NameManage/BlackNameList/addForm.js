@@ -65,24 +65,11 @@ export default class AddForm extends Component {
     }
   }
   //点击确定
-  submitHandler = ()=>new Promise((resolve,reject)=>{
-    const response = {
-      status:'000'
-    }
-    if(!this.props.type){
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-
-        }
-      })
-    }else{
-      this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-        if(!err){
-        }
-      })
-    }
-    resolve(response)
-  })
+  submitHandler = () => {
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) return
+    })
+  }
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -102,8 +89,6 @@ export default class AddForm extends Component {
       })
     },3000)
   }
-  componentWillReceiveProps(nextProps){
-  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -111,91 +96,68 @@ export default class AddForm extends Component {
       wrapperCol:{span:16},
     }
     return (
-            <Form
-              className="ant-advanced-search-form"
-            >
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="姓名" {...formItemConfig}>
-                    {getFieldDecorator('trueName',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="身份证号" {...formItemConfig}>
-                    {getFieldDecorator('idCard',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="性别" {...formItemConfig}>
-                    {getFieldDecorator('sex',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="手机号" {...formItemConfig}>
-                    {getFieldDecorator('mobile',{
-                      initialValue:'',
-                      rules:[
-                        {
-                          required:true,
-                        }
-                      ]
-                    })(
-                      <Input/>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-              <Row style={{marginBottom:10}}>
-                <Col xxl={20} md={12}>
-                  <FormItem label="状态"  {...formItemConfig}>
-                    {getFieldDecorator('status',{
-                      initialValue:'',
-                      rules: [
-                        { required: true, message: '角色状态为必选'}
-                      ],
-                    })(
-                      <RadioGroup>
-                        <Radio value={1}>启用</Radio>
-                        <Radio value={2}>禁用</Radio>
-                      </RadioGroup>
-                    )}
-                  </FormItem>
-                </Col>
-              </Row>
-            </Form>
+      <Form>
+        <FormItem label="姓名" {...formItemConfig}>
+          {getFieldDecorator('trueName', {
+            rules: [
+              {
+                required: true,
+                message: '请输入姓名'
+              }
+            ]
+          })(
+            <Input/>
+          )}
+        </FormItem>
+        <FormItem label="身份证号" {...formItemConfig}>
+          {getFieldDecorator('idCard', {
+            rules: [
+              {
+                required: true,
+                message: '请输入身份证号'
+              }
+            ]
+          })(
+            <Input/>
+          )}
+        </FormItem>
+        <FormItem label="性别" {...formItemConfig}>
+          {getFieldDecorator('sex', {
+            rules: [
+              {
+                required: true,
+                message: '请输入性别'
+              }
+            ]
+          })(
+            <Input/>
+          )}
+        </FormItem>
+        <FormItem label="手机号" {...formItemConfig}>
+          {getFieldDecorator('mobile', {
+            rules: [
+              {
+                required: true,
+                message: '请输入手机号'
+              }
+            ]
+          })(
+            <Input/>
+          )}
+        </FormItem>
+        <FormItem label="状态"  {...formItemConfig}>
+          {getFieldDecorator('status', {
+            rules: [
+              { required: true, message: '角色状态为必选'}
+            ],
+          })(
+            <RadioGroup>
+              <Radio value={1}>启用</Radio>
+              <Radio value={2}>禁用</Radio>
+            </RadioGroup>
+          )}
+        </FormItem>
+      </Form>
     )
   }
 }
