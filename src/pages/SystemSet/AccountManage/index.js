@@ -71,7 +71,7 @@ export default class AccountManage extends PureComponent {
               {/* <Menu.Item onClick={()=>{this.goPolicyPower()}}>
                 <Icon type="edit"/>策略权限
               </Menu.Item> */}
-              <Menu.Item onClick={()=>{this.addEdit(true,2,record)}}>
+              <Menu.Item onClick={()=>{ this.addEdit(true,2,record) }}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
               <Menu.Item onClick={()=>this.deleteAccount(record)}>
@@ -134,9 +134,21 @@ export default class AccountManage extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.addEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button><Icon type="export" />导出列表</Button>
+        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
       </Fragment>
     )
+  }
+  
+  //导出列表
+  exportList = async() => {
+    const formData = await this.child.getFormValue();
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'account/exportFile',
+      payload: {
+        ...formData
+      }
+    })
   }
 
   //弹框点击确定事件
@@ -161,7 +173,8 @@ export default class AccountManage extends PureComponent {
     }
     this.setState({
       modalVisible: !!flag,
-      type
+      type,
+      id: record.id
     })
   }
   //删除账号
@@ -194,6 +207,7 @@ export default class AccountManage extends PureComponent {
     const { listData } = this.props.account
     const modalParams = {
       type: this.state.type,
+      id: this.state.id,
       modalVisible: this.state.modalVisible,
       addEdit: this.addEdit,
       change: this.change
