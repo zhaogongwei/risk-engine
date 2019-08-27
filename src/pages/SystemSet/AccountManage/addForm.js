@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,Fragment } from 'react'
 import {
   Radio,
   Modal,
@@ -9,9 +9,11 @@ import {
   Spin,
   TreeSelect,
   Form,
-  message
+  message,
+  Button
 } from 'antd';
 import { connect } from 'dva'
+import forge from 'node-forge';
 const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
@@ -27,16 +29,26 @@ export default class AddForm extends Component {
   constructor(props){
     super(props)
     this.state = {
-      value:[]
+      value:[],
+      changePsw:false
     }
+  }
+
+  // MD5加密
+  MD5 = (val) => {
+    const md5 = forge.md.md5.create();
+    const psw = md5.update(val).digest().toHex();
+    return psw
   }
   //点击确定
   submitHandler = ()=> {
     const { dispatch } = this.props;
+    const { infoData }=  this.props.account;
     this.props.form.validateFields(async(err, values) => {
       if(!err){
-        console.log(values,'values')
         if(this.props.type == 1) {
+          values.password = await this.MD5(values.password);
+          values.confirmPassword = await this.MD5(values.confirmPassword);
           let res = await dispatch({
             type: 'account/addAccount',
             payload: {
@@ -51,7 +63,37 @@ export default class AddForm extends Component {
             message.error(res.statusDesc);
           }
         }
-        
+        if(this.props.type == 2) {
+          if(this.state.changePsw) {
+            let res = await dispatch({
+              type: 'account/updatePsw',
+              payload: {
+                password: await this.MD5(values.password),
+                confirmPassword: await this.MD5(values.confirmPassword),
+                id: infoData.id
+              }
+            })
+            if(res && res.status == 1){
+              message.success(res.statusDesc);
+            }else {
+              message.error(res.statusDesc);
+            }
+          }
+          let res = await dispatch({
+            type: 'account/updateAccount',
+            payload: {
+              id: infoData.id,
+              ...values
+            }
+          })
+          if(res && res.status == 1) {
+            message.success(res.statusDesc);
+            this.props.addEdit(false);
+            this.props.change()
+          }else{
+            message.error(res.statusDesc);
+          }
+        }
       }
     })
   }
@@ -78,6 +120,32 @@ export default class AddForm extends Component {
     console.log('onChange ', value);
     this.setState({ value });
   };
+   // 校验用户名
+   checkUserName = (rules, value, callback) => {
+    if (!value) {
+      callback('请输入用户名');
+      return;
+    }
+    if (!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{5,15}$/).test(value)) {
+      callback('用户名必须为5-15位数的字母+数字')
+      return;
+    }
+    callback()
+  }
+
+  // 校验确认密码
+  checkConfirmPassword = (rules, value, callback) => {
+    if (!value) {
+      callback(new Error('请输入确认密码'));
+      return;
+    }
+    if (value && value !== this.props.form.getFieldValue('password')) {
+      callback(new Error('密码不一致'))
+      return
+    }
+    callback()
+  }
+
   render() {
     const { modalVisible, type, addEdit } = this.props;
     const { userRoles } = this.props.account.initData;
@@ -102,7 +170,7 @@ export default class AddForm extends Component {
                   initialValue: type == 2 ? infoData.userName: null,
                   rules:[{
                     required:true,
-                    message: '请输入用户名'
+                    validator: this.checkUserName
                   }]
                 })(
                   <Input/>
@@ -110,34 +178,50 @@ export default class AddForm extends Component {
               </FormItem>
             </Col>
           </Row>
-          <Row style={{ marginBottom:10 }}>
+          <Row style={{ marginBottom:10, display: type == 2 ? 'block' : 'none' }}>
             <Col xxl={20} md={12}>
-              <FormItem label="密码" {...formItemConfig}>
-                {getFieldDecorator('password',{
-                  rules:[{
-                    required:true,
-                    message: '请输入密码'
-                  }]
-                })(
-                  <Input type="password"/>
-                )}
+              <FormItem label="修改密码" {...formItemConfig}>
+                <Button type="primary" onClick={()=>{
+                  this.setState({
+                    changePsw: true
+                  })
+                }}>修改</Button>
               </FormItem>
             </Col>
           </Row>
-          <Row style={{ marginBottom:10 }}>
-            <Col xxl={20} md={12}>
-              <FormItem label="确认密码" {...formItemConfig}>
-                {getFieldDecorator('confirmPassword',{
-                  rules:[{
-                    required:true,
-                    message: '请输入确认密码'
-                  }]
-                })(
-                  <Input type="password"/>
-                )}
-              </FormItem>
-            </Col>
-          </Row>
+          {
+            type == 1 || this.state.changePsw ? 
+            <Fragment>
+              <Row style={{ marginBottom:10 }}>
+                <Col xxl={20} md={12}>
+                  <FormItem label="密码" {...formItemConfig}>
+                    {getFieldDecorator('password',{
+                      rules:[{
+                        required:true,
+                        message: '请输入密码'
+                      }]
+                    })(
+                      <Input type="password"/>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row style={{ marginBottom:10 }}>
+                <Col xxl={20} md={12}>
+                  <FormItem label="确认密码" {...formItemConfig}>
+                    {getFieldDecorator('confirmPassword',{
+                      rules:[{
+                        required:true,
+                        validator: this.checkConfirmPassword
+                      }]
+                    })(
+                      <Input type="password"/>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+          </Fragment> : null
+          }
           <Row style={{ marginBottom:10 }}>
             <Col xxl={20} md={12}>
               <FormItem label="姓名" {...formItemConfig}>
@@ -160,6 +244,9 @@ export default class AddForm extends Component {
                   initialValue: type == 2 ? infoData.email: null,
                   rules:[{
                     required: false
+                  },{
+                    type: 'email',
+                    message: '应为邮箱格式'
                   }]
                 })(
                   <Input/>
@@ -174,6 +261,7 @@ export default class AddForm extends Component {
                   initialValue: type == 2 ? infoData.mobile: null,
                   rules:[{
                     required:true,
+                    pattern: /^1[34578]\d{9}$/,
                     message: '请输入手机号码'
                   }]
                 })(

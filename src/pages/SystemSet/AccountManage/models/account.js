@@ -46,9 +46,21 @@ export default {
         })
       }
     },
+    //更新账号
+    *updateAccount({ payload }, { call, put }) {
+      return yield call(api.updateAccount, payload)
+    },
+    //更新密码
+    *updatePsw({ payload }, { call, put }) {
+      return yield call(api.updatePsw, payload)
+    },
     //删除账号
-    *delAccount({ payload },{ call,put }){
+    *delAccount({ payload },{ call, put }){
       return yield call(api.delAccount,payload)
+    },
+    // 导出列表
+    *exportFile({ payload }, { call, put }) {
+      return yield call(api.exportFile,payload)
     }
   },
 

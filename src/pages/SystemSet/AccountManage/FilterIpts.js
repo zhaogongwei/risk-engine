@@ -8,8 +8,10 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import moment from 'moment';
+import styles from '../FilterIpts.less'
+
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item
@@ -34,9 +36,9 @@ export default class FilterIpts extends Component {
   //   获取表单信息
   getFormValue = () => {
     let formData = this.props.form.getFieldsValue();
-    if (formData.metaTime&&formData.metaTime.length) {
-      formData.createTimeStart = moment(formData.metaTime[0]).format('YYYY-MM-DD')
-      formData.createTimeEnd = moment(formData.metaTime[1]).format('YYYY-MM-DD')
+    if (formData.createTime && formData.createTime.length) {
+      formData.startTime = moment(formData.createTime[0]).format('YYYY-MM-DD')
+      formData.endTime = moment(formData.createTime[1]).format('YYYY-MM-DD')
     }
     return formData;
   }
