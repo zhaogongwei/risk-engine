@@ -168,8 +168,6 @@ export default class AddForm extends Component {
       loading:false,
     }
   }
-  componentDidMount(){
-  }
   //变量列表查询
   formSubmit=()=>{
     this.change(1)
@@ -226,19 +224,29 @@ export default class AddForm extends Component {
   //点击确定
   submitHandler=()=>{
       let records={};
-      const {radioValue}=this.state;
-      if(Object.keys(radioValue).length){
-        records['varId']=radioValue['id'];
-        records['variableId']=radioValue['id'];
-        records['varCode']=radioValue['variableCode'];
-        records['varName']=radioValue['variableName'];
-        records['varType']=radioValue['variableType'];
-        records['enumFlag']=radioValue['enumFlag'];
-        records['enumList']=radioValue['variableEnumList'];
+      const {radioValue,checkedList}=this.state;
+      const {type}=this.props;
+      if(type){
+        //多选
+        checkedList.forEach((item,key)=>{
+          item['variableId'] = item['id']
+        })
+        return checkedList
+      }else{
+        //单选
+        if(Object.keys(radioValue).length){
+          records['varId']=radioValue['id'];
+          records['variableId']=radioValue['id'];
+          records['varCode']=radioValue['variableCode'];
+          records['varName']=radioValue['variableName'];
+          records['varType']=radioValue['variableType'];
+          records['enumFlag']=radioValue['enumFlag'];
+          records['enumList']=radioValue['variableEnumList'];
+        }
+        Object.assign(records,radioValue)
+        console.log(records)
+        return records
       }
-      Object.assign(records,radioValue)
-      console.log(records)
-      return records
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -265,6 +273,13 @@ export default class AddForm extends Component {
   }
   componentDidMount () {
     this.props.getSubKey(this,'addForm')
+  }
+  emptyCheck=()=>{
+    this.setState({
+      checkedList:[],
+      checkAll:false,
+      radioValue:''
+    })
   }
   componentWillReceiveProps(newProps){
     this.setState({

@@ -119,3 +119,13 @@ export async function saveInputVar(params) {
     },
   });
 }
+
+//查询输出模板变量
+export async function queryMouldList(params) {
+  return request(`${_baseApi}/reportTemplate/reportTemplateList`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}

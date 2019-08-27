@@ -19,6 +19,7 @@ import { routerRedux } from 'dva/router';
 import Dialog from './Dialog';
 import AddForm from '@/components/VarListModal/AddForm'
 import router from 'umi/router';
+import Swal from 'sweetalert2';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
@@ -26,6 +27,7 @@ const FormItem = Form.Item
 
 @connect(({ policyList, loading,varList }) => ({
   policyList,
+  submitLoading:loading.effects['policyList/addPolicy'],
   varList
 }))
 @Form.create()
@@ -39,21 +41,26 @@ export default class InputDeploy extends PureComponent {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'name',
-        key:'name'
+        dataIndex: 'variableName',
+        key:'variableName'
       },{
         title: '变量代码',
-        dataIndex: 'code',
-        key:'code'
+        dataIndex: 'variableCode',
+        key:'variableCode'
       },{
         title: '长度',
-        key:'length',
-        dataIndex:'length'
+        key:'variableLength',
+        dataIndex:'variableLength'
       },
         {
           title: '类型',
-          dataIndex: 'type',
-          key:'type'
+          dataIndex: 'variableTypeStr',
+          key:'variableTypeStr'
+        },
+        {
+          title: '添加时间',
+          dataIndex: 'updateTime',
+          key:'updateTime'
         }
       ],
       checkedData: [],
@@ -69,7 +76,7 @@ export default class InputDeploy extends PureComponent {
       visible:false,
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const {query} = this.props.location;
     //请求变量列表
     this.props.dispatch({
@@ -86,6 +93,24 @@ export default class InputDeploy extends PureComponent {
         secondTypeId:'',
       }
     })
+    //查询输出模板变量
+    this.props.dispatch({
+      type: 'policyList/queryMouldList',
+      payload: {
+        pageSize:10000,
+        currPage:1,
+      }
+    })
+    //查询策略输入输出变量
+   const res = await this.props.dispatch({
+      type: 'policyList/queryInputVar',
+      payload: {
+        strategyId:query['strategyId']
+      }
+    })
+    if(res&&res.status===1){
+      this.pagination(10,1,addListKey(res.data.inputVarList))
+    }
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -100,8 +125,8 @@ export default class InputDeploy extends PureComponent {
     this.setState({ selectedRowKeys });
   }
   //   获取子组件数据的方法
-  getSubKey = (ref,name) => {
-    this[name]= ref;
+  getSubKey = (ref,key) => {
+    this[key]= ref;
   }
   //展示页码
   showTotal = (total, range) => {
@@ -136,11 +161,13 @@ export default class InputDeploy extends PureComponent {
     array.length>10?list = array.slice(offset,offset+pageSize):list = array
     this.props.dispatch({
       type: 'policyList/savePageList',
-      payload:list
+      payload:{
+        pageList:list,
+      }
     })
   }
   //删除表格数据
-  deleteList=()=>{
+  deleteList=async ()=>{
     const {selectedRowKeys} = this.state;
     const {tableList} = this.props.policyList;
     console.log(tableList,selectedRowKeys)
@@ -148,32 +175,68 @@ export default class InputDeploy extends PureComponent {
     if(!selectedRowKeys.length){
       message.error('删除失败,请勾选要删除的项目!');
     }else{
-      for(var key of selectedRowKeys){
-        tableList.forEach((item,index)=>{
-          if(item['key']===key){
-            tableList.splice(index,1)
-          }
-        })
+      const confirmVal = await Swal.fire({
+        text: '确定要删除选中的变量吗？',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+      if(confirmVal.value){
+        for(var key of selectedRowKeys){
+          tableList.forEach((item,index)=>{
+            if(item['key']===key){
+              tableList.splice(index,1)
+            }
+          })
+        }
+        message.success('删除成功!')
+        this.pagination(10,1,addListKey(tableList));
       }
     }
-    this.pagination(10,1,addListKey(tableList));
   }
   //确定事件
   handleOk=()=>{
     this.setState({ visible:false,},()=>{
-      const {checkedList} = this.dialog.submitHanler();
+      const records = this.addForm.submitHandler();
       const {tableList} = this.props.policyList;
       this.props.dispatch({
         type: 'policyList/saveTableList',
-        payload: addListKey(deepCopy([...tableList,...checkedList]))
+        payload: addListKey(deepCopy([...tableList,...records]))
       })
-      this.pagination(10,1,addListKey(deepCopy([...tableList,...checkedList])))
-      this.dialog.emptyCheck();
+      this.pagination(10,1,addListKey(deepCopy([...tableList,...records])))
+      this.addForm.emptyCheck();
+    })
+  }
+  //保存提交
+  formSubmit=()=>{
+    const {tableList} = this.props.policyList;
+    const {query} = this.props.location;
+    const formData = this.getFormValue();
+    let inputVarList=[];
+    tableList.map((item,index)=>{
+      inputVarList.push(item['variableId'])
+    })
+    this.props.form.validateFields((err,value)=>{
+      if(!err){
+        if(tableList.length){
+          this.props.dispatch({
+            type: 'policyList/saveInputVar',
+            payload:{
+              inputVarList:inputVarList,
+              strategyId:query['strategyId'],
+              ...formData,
+            }
+          })
+        }else{
+          message.error('请添加变量!')
+        }
+      }
     })
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const {state}=this.props.location
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -182,11 +245,12 @@ export default class InputDeploy extends PureComponent {
     const queryData = {
       strategyId:query['strategyId']
     }
-    const {selectedRowKeys } = this.state;
+    const {selectedRowKeys,columns,current } = this.state;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
+    const {mouldList,pageList,tableList,templateId} = this.props.policyList
     return (
       <PageHeaderWrapper>
         <Card
@@ -208,8 +272,8 @@ export default class InputDeploy extends PureComponent {
                     bordered
                     pagination={false}
                     rowSelection={rowSelection}
-                    columns={this.state.columns}
-                    dataSource={this.props.policyList.pageList}
+                    columns={columns}
+                    dataSource={pageList}
                     loading={this.props.loading}
                   />
                 </Row>
@@ -218,8 +282,8 @@ export default class InputDeploy extends PureComponent {
                     style={{ marginBottom: "50px" }}
                     showQuickJumper
                     defaultCurrent={1}
-                    current={this.state.current}
-                    total={this.props.policyList.tableList.length}
+                    current={current}
+                    total={tableList.length}
                     onChange={this.onChange}
                     showTotal={(total, range) => this.showTotal(total, range)}
                   />
@@ -229,15 +293,23 @@ export default class InputDeploy extends PureComponent {
             <Row gutter={24} type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="输出变量" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
-                    initialValue:'',
-                    rules:[{required:true}]
+                  {getFieldDecorator('templateId',{
+                    initialValue:templateId,
+                    rules:[
+                      {
+                        required:true,
+                        message:'请选择输出模板!'
+                      }
+                      ]
                   })(
                     <Select allowClear={true} style={{width:165}}>
-                      <Option value={1}>王一</Option>
-                      <Option value={2}>王二</Option>
-                      <Option value={3}>王三</Option>
-                      <Option value={4}>王四</Option>
+                      {
+                        mouldList&&mouldList.map((item,index)=>{
+                          return (
+                            <Option value={item.id} key={index}>{item.presentationName}</Option>
+                          )
+                        })
+                      }
                     </Select>
                   )}
                 </FormItem>
@@ -245,7 +317,7 @@ export default class InputDeploy extends PureComponent {
             </Row>
             <Row type="flex" justify="center">
               <Col>
-                <Button type="primary" onClick={this.formSubmit}>提交</Button>
+                <Button type="primary" onClick={this.formSubmit} loading={this.props.submitLoading}>提交</Button>
                 <Button  onClick={()=>router.goBack()}>返回</Button>
               </Col>
             </Row>
