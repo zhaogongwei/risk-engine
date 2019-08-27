@@ -13,7 +13,6 @@ export default {
     //获取灰名单列表
     *fetchGreyNameList({ payload }, { call, put }) {
       const response = yield call(api.queryGreyList, payload)
-      console.log(response, '===========>response')
       yield put({
         type: 'saveGreyNameList',
         payload: addListKey(response.data.records, payload.currentPage, payload.pageSize),

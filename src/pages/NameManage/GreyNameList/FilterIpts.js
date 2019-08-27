@@ -104,10 +104,7 @@ export default class FilterIpts extends Component {
           >
             <FormItem label="灰名单来源" {...formItemConfig}>
               {getFieldDecorator('greyType')(
-                <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
-                </Select>
+                <Input />
               )}
             </FormItem>
           </Col>
