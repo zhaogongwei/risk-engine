@@ -11,24 +11,25 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({
+  greyName
+}) => ({
+  greyName
+}))
 
 @Form.create()
 
 export default class FilterIpts extends Component {
   //查询
   formSubmit = async (e) => {
-    this.props.changeDefault(1)
+    // this.props.changeDefault(1)
     const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
-      }
+    console.log(formData, 'formData')
+    await this.props.dispatch({
+      type: 'greyName/saveQueryData',
+      payload: formData
     })
-
+    this.props.change(1)
   }
   //   获取表单信息
   getFormValue = () => {
@@ -66,9 +67,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="姓名" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
-                initialValue:''
-              })(
+              {getFieldDecorator('name')(
                 <Input />
               )}
             </FormItem>
@@ -80,9 +79,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="身份证号" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
+              {getFieldDecorator('idcard')(
                 <Input />
               )}
             </FormItem>
@@ -94,9 +91,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="手机号" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
-              })(
+              {getFieldDecorator('mobile')(
                 <Input />
               )}
             </FormItem>
@@ -108,9 +103,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="灰名单来源" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
-                initialValue:''
-              })(
+              {getFieldDecorator('greyType')(
                 <Select allowClear={true}>
                   <Option value={1}>启用</Option>
                   <Option value={2}>禁用</Option>
