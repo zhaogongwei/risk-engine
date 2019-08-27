@@ -163,11 +163,14 @@ export default class RoleManage extends PureComponent {
       }
     }
   }
-  exportList = async() =>{
+  exportList = async() => {
+    const formData = this.child.getFormValue()
     const { dispatch } = this.props;
     await dispatch({
       type: 'role/exportList',
-      payload: {}
+      payload: {
+        ...formData
+      }
     })
   }
   render() {

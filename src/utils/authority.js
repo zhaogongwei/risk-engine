@@ -26,13 +26,13 @@ export function setAuthority(authority) {
 
 //存储用户名
 export function setUserName(authority) {
-  return sessionStorage.setItem('A-EMS-username', authority);
+  return sessionStorage.setItem('risk-engine-username', authority);
 }
 export function getUserName() {
-  return sessionStorage.getItem('A-EMS-username');
+  return sessionStorage.getItem('risk-engine-username');
 }
 export function deleteUserName() {
-  return sessionStorage.removeItem('A-EMS-username');
+  return sessionStorage.removeItem('risk-engine-username');
 }
 
 //存储用户ID

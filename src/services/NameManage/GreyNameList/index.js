@@ -1,8 +1,8 @@
 import request from '@/utils/request';
-const _baseApi = '/engine'
+const _baseApi = '/merchant-admin'
 //查询灰名单列表
 export async function queryGreyList(params) {
-  return request(`${_baseApi}/admin/asset/list`, {
+  return request(`${_baseApi}/report/greyList`, {
     method: 'POST',
     body: {
       ...params

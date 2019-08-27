@@ -345,8 +345,6 @@ export default  class Arcredit extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     console.log(this.props)
     const propsData = this.props.location.state
@@ -365,8 +363,6 @@ export default  class Arcredit extends  PureComponent{
       currentime:this.props.auditAsset.arcreditDateList.length>0?this.props.auditAsset.arcreditDateList[0]['reportTime']:'',
     },()=>{
     })
-  }
-  componentWillUpdate(){
   }
   componentDidUpdate(){
   }
