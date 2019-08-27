@@ -221,8 +221,6 @@ export default  class Arfake extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     const propsData = this.props.location.state
     this.props.dispatch({
@@ -241,12 +239,6 @@ export default  class Arfake extends  PureComponent{
       reportId:this.props.auditAsset.dateList.length>0?this.props.auditAsset.dateList[0]['id']:'',
     },()=>{
     })
-  }
-  componentWillUpdate(){
-  }
-  componentDidUpdate(){
-  }
-  componentWillUnmount(){
   }
   goBack=()=>{
     this.props.dispatch(routerRedux.goBack());

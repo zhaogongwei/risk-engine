@@ -29,7 +29,6 @@ export default class FilterIpts extends Component {
       type: 'varclass/changefilterIpts',
       payload: formData,
     })
-    console.log(this.props.varclass.filterIpts)
 		this.props.changeDefault(1)
 	  this.props.change(1)
   }
@@ -51,12 +50,16 @@ export default class FilterIpts extends Component {
     })
   }
     //编辑变量后清空数据
-  classChangeGetSelect = ()=>{
+  classChangeGetSelect = async()=>{
   	this.props.dispatch({
       type: 'varclass/getSelectLevel1',
       payload: {
       	
       }
+    })
+  	await this.props.dispatch({
+      type: 'varclass/changefilterIpts',
+      payload: {},
     })
   	this.reset()
   }

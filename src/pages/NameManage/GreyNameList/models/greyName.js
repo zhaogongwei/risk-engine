@@ -5,15 +5,19 @@ export default {
 
   state: {
     greyNameList: [],//灰名单列表
+    queryData: {},   //   查询参数
+    total: 0,     //   总条数
   },
 
   effects: {
     //获取灰名单列表
-    *fetchGreyNameList({payload}, { call, put }) {
-      let response = yield call(api.queryGreyList,payload)
+    *fetchGreyNameList({ payload }, { call, put }) {
+      const response = yield call(api.queryGreyList, payload)
+      console.log(response, '===========>response')
       yield put({
         type: 'saveGreyNameList',
-        payload,
+        payload: addListKey(response.data.records, payload.currentPage, payload.pageSize),
+        total: response.data.total
       });
     },
     //禁用、启用
@@ -43,10 +47,11 @@ export default {
   },
 
   reducers: {
-    saveGreyNameList(state, { payload }) {
+    saveGreyNameList(state, { payload, total }) {
       return {
         ...state,
         greyNameList: payload,
+        total
       };
     },
     saveTempObj(state, { payload }) {

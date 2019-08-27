@@ -90,11 +90,13 @@ export default class AddForm extends Component {
 		          ...formData,
 		        },
 		        callback:()=>{
+		        	this.props.changeDefault(1)
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
 		          })
-		          this.props.changeDefault(1)
-		          this.props.resatSelect.classChangeGetSelect()
+		          
 		          this.reset()
 		        }
 		      })
@@ -115,6 +117,7 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault(1)
 		         this.props.resatSelect.classChangeGetSelect()
+		         this.props.change(1)
 		          this.reset()
 		        }
 		      })
@@ -125,7 +128,7 @@ export default class AddForm extends Component {
 	      if(!err){
 		      const formData = this.getFormValue(1)
 		      this.props.dispatch({
-		        type: 'varclass/addVarClass',
+		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
@@ -136,6 +139,7 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault(1)
 		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.reset()
 		        }
 		      })
@@ -146,7 +150,7 @@ export default class AddForm extends Component {
 	      if(!err){
 		      const formData = this.getFormValue()
 		      this.props.dispatch({
-		        type: 'varclass/addVarClass',
+		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
@@ -157,6 +161,7 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault()
 		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.reset()
 		        }
 		      })

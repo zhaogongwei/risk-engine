@@ -363,8 +363,6 @@ export default  class Dscredit extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     const propsData = this.props.location.state
     this.props.dispatch({
@@ -383,12 +381,8 @@ export default  class Dscredit extends  PureComponent{
     },()=>{
     })
   }
-  componentWillUpdate(){
-  }
   componentDidUpdate(){
     this.clearHover()
-  }
-  componentWillUnmount(){
   }
   //去除分页器弹框
   clearHover=()=>{
