@@ -1,3 +1,4 @@
+/*
 export default {
 
   // 支持自定义函数，API 参考 express@4
@@ -11,4 +12,4 @@ export default {
     data:null,
     statusDesc:"操作成功"
   }
-};
+};*/

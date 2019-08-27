@@ -69,13 +69,13 @@ export default class RiskPolicyList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={this.goDeploy}>
+              <Menu.Item onClick={()=>this.goDeploy(record.id)}>
                 <Icon type="setting" />变量设置
               </Menu.Item>
               <Menu.Item onClick={this.goLabel}>
                 <Icon type="snippets" />标签
               </Menu.Item>
-              <Menu.Item onClick={()=>this.goEditPage(2)}>
+              <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
               <Menu.Item onClick={()=>this.goPolicyFlowList(record)}>
@@ -100,14 +100,20 @@ export default class RiskPolicyList extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status: 1,
+      status: 1,//0：编辑  1：新增
       modalVisible: false,   //   新增策略状态
+      policyId: '',   //   策略id
     };
   }
   componentDidMount() {
     //查询策略类型
     this.props.dispatch({
       type: 'policyList/fetchPolicyTypeList',
+      payload:{}
+    })
+    //查询策略负责人集合
+    this.props.dispatch({
+      type: 'policyList/fetchUserList',
       payload:{}
     })
     //保存查询条件
@@ -148,22 +154,25 @@ export default class RiskPolicyList extends PureComponent {
     return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
   }
   //去编辑页面
-  goEditPage=(type)=>{
-    // router.push({
-    //   pathname:'/policyManage/riskpolicylist/list/edit',
-    //   state:{
-    //     type:type
-    //   }
-    // })
+  goEditPage=(type,id)=>{
     this.setState({
-      modalVisible: true
+      modalVisible: true,
+      status:type,
+      policyId:id,
+    },()=>{
+      if(!type){
+        this.props.dispatch({
+          type: 'policyList/fetchPolicyInfo',
+          payload: {
+            strategyId:id
+          }
+        })
+      }
     })
   }
   //去输入输出配置
-  goDeploy=()=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/list/deploy'
-    })
+  goDeploy=(strategyId,)=>{
+    router.push(`/policyManage/riskpolicylist/list/deploy?strategyId=${strategyId}`)
   }
   //  刷新页面
   reload = () => {
@@ -194,11 +203,24 @@ export default class RiskPolicyList extends PureComponent {
     router.push(`/policyManage/riskpolicylist/policyFlow/list?id=${record.id}`)
   }
   //   确定添加修改
-  confirmChange = () => {
+  confirmChange = async() => {
     console.log(this.edit.props.form.getFieldsValue())
+    try {
+      const res = await this.edit.submitHandler()
+      if (res && res.status === 1) {
+        this.setState({
+          modalVisible: false
+        })
+        this.change()
+        message.success('操作成功')
+      }else message.error(res.statusDesc)
+    } catch (err) {
+      console.log(err)
+    }
   }
   render() {
     const {policyList,pageData} = this.props.policyList
+    const {status,policyId} = this.state
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card bordered={false}>
@@ -226,10 +248,14 @@ export default class RiskPolicyList extends PureComponent {
           destroyOnClose={true}
           onCancel={() => this.setState({ modalVisible: false })}
           width={550}
-          title={'新增策略'}
+          title={status?'新增策略':'编辑策略'}
           bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
         >
-          <PolicyEdit returnSubKey={this.getSubKey} />
+          <PolicyEdit
+            returnSubKey={this.getSubKey}
+            status={status}
+            id={policyId}
+          />
         </Modal>
       </PageHeaderWrapper>
     )

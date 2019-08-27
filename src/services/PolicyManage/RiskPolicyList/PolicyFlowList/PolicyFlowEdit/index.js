@@ -14,7 +14,7 @@ export async function queryVarList(params) {
 }
 //查询变量分类
 export async function queryVarClassList(params) {
-  return request(`${_baseApi}/variable/type/variableType/${params.firstTypeId}/${params.secondTypeId}`, {
+  return request(`${_baseApi}/variable/type/variableType/${params.firstTypeId}`, {
     method: 'POST',
     body: {
       ...params

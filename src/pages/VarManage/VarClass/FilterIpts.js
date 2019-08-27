@@ -42,6 +42,18 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   selectchange = value => {
+    // 清空操作 不请求接口
+    if(!value){
+      // 清空二级分类选项 
+      // TODO: 清空二级分类的选项值  以及 整合此处逻辑
+      this.props.dispatch({
+        type: 'varclass/changeSecondSelect',
+        payload: {
+          data:[]
+        }
+      })
+      return false;
+    }
   	this.props.dispatch({
       type: 'varclass/getSelectLevel2',
       payload: {
@@ -81,6 +93,7 @@ export default class FilterIpts extends Component {
     return (
       <Form
         className="ant-advanced-search-form"
+        layout="inline" 
       >
        
         <Row className={styles.btmMargin}  type="flex" align="middle">

@@ -35,29 +35,6 @@ export default class PolicyEdit extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      columns: [{
-        title: '序号',
-        dataIndex: 'key',
-        key:'key'
-      },{
-        title: '变量名称',
-        dataIndex: 'name',
-        key:'name'
-      },{
-        title: '变量代码',
-        dataIndex: 'code',
-        key:'code'
-      },{
-        title: '长度',
-        key:'length',
-        dataIndex:'length'
-      },
-        {
-          title: '类型',
-          dataIndex: 'type',
-          key:'type'
-        }
-        ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -89,8 +66,49 @@ export default class PolicyEdit extends PureComponent {
   reset = () => {
     this.props.form.resetFields()
   }
+  //确定时间
+  submitHandler = ()=>new Promise((resolve,reject)=>{
+    const {status,id} = this.props;
+    const formData = this.getFormValue();
+    this.props.form.validateFields(async(err,values)=>{
+      if(!err){
+        let response;
+        if(status){
+          //新增策略
+          response = await this.props.dispatch({
+            type: 'policyList/addPolicy',
+            payload: {
+              ...formData,
+            }
+          })
+
+        }else{
+          //编辑策略
+          response = await this.props.dispatch({
+            type: 'policyList/editPolicy',
+            payload: {
+              id:id,
+              ...formData,
+            }
+          })
+
+        }
+        resolve(response)
+      }
+    })
+  })
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'policyList/savePolicyInfo',
+      payload: {
+        data:{}
+      }
+    })
+  }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { policyTypeList,userList,policyInfo} = this.props.policyList
+    const { status } = this.props
     const formItemConfig = {
       labelCol: { span: 6 },
       wrapperCol: { span: 16 }
@@ -100,13 +118,18 @@ export default class PolicyEdit extends PureComponent {
         <Row>
           <Col xxl={22}>
             <FormItem label="策略类型" {...formItemConfig}>
-              {getFieldDecorator('policyType',{
-                initialValue:'',
+              {getFieldDecorator('strategyType',{
+                initialValue:status?'':policyInfo['strategyType'],
                 rules:[{required:true}]
               })(
                 <Select allowClear={true}>
-                  <Option value={1}>主策略</Option>
-                  <Option value={2}>次策略</Option>
+                  {
+                    policyTypeList&&policyTypeList.map((item,index)=>{
+                      return (
+                        <Option value={item.code} key={index}>{item.value}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>
@@ -115,11 +138,37 @@ export default class PolicyEdit extends PureComponent {
         <Row>
           <Col xxl={22}>
             <FormItem label="策略名称" {...formItemConfig}>
-              {getFieldDecorator('policyName',{
-                initialValue:'',
+              {getFieldDecorator('strategyName',{
+                initialValue:status?'':policyInfo['strategyName'],
                 rules:[
-                  {required:true},
-                  {max:15,message:'最多输入15位!'}
+                  {
+                    required:true,
+                    validator: async (rule, val, cb) => {
+                      if (!val) {
+                        cb('请输入正确内容！')
+                        return;
+                      }else if(val.length>15){
+                        cb('最多输入15位！')
+                        return;
+                      }
+                      if(!status){
+                        cb();
+                        return;
+                      }
+                      const strategyName = this.props.form.getFieldValue('strategyName')
+                      const response = await this.props.dispatch({
+                        type: 'policyList/checkPolicyName',
+                        payload: {
+                          strategyName:strategyName
+                        }
+                      })
+                      if(response&&response.status===1){
+                        cb()
+                      }else{
+                        cb(response.statusDesc)
+                      }
+                    }
+                  },
                 ]
               })(
                 <Input />
@@ -130,13 +179,34 @@ export default class PolicyEdit extends PureComponent {
         <Row>
           <Col xxl={22}>
             <FormItem label="策略代码" {...formItemConfig}>
-              {getFieldDecorator('policyCode',{
-                initialValue:'',
+              {getFieldDecorator('strategyCode',{
+                initialValue:status?'':policyInfo['strategyCode'],
                 rules:[
                   {
                     required:true,
-                    pattern:/^[a-zA-Z]{1,15}$/,
-                    message:'只能输入15位的大写或小写字母!'
+                    validator: async (rule, val, cb) => {
+                      const reg = /^[a-zA-Z]{1,15}$/;
+                      if(!reg.test(val)){
+                        cb('最多只能输入15位的大写或小写字母！')
+                        return;
+                      }
+                      if(!status){
+                        cb();
+                        return;
+                      }
+                      const strategyCode = this.props.form.getFieldValue('strategyCode')
+                      const response = await this.props.dispatch({
+                        type: 'policyList/checkPolicyCode',
+                        payload: {
+                          strategyCode:strategyCode
+                        }
+                      })
+                      if(response&&response.status===1){
+                        cb()
+                      }else{
+                        cb(response.statusDesc)
+                      }
+                    }
                   },
                 ]
               })(
@@ -148,15 +218,18 @@ export default class PolicyEdit extends PureComponent {
         <Row>
           <Col xxl={22}>
             <FormItem label="策略负责人" {...formItemConfig}>
-              {getFieldDecorator('policyLeader',{
-                initialValue:'',
+              {getFieldDecorator('dutyId',{
+                initialValue:status?'':policyInfo['dutyId'],
                 rules:[{required:true}]
               })(
                 <Select allowClear={true}>
-                  <Option value={1}>王一</Option>
-                  <Option value={2}>王二</Option>
-                  <Option value={3}>王三</Option>
-                  <Option value={4}>王四</Option>
+                  {
+                    userList&&userList.map((item,index)=>{
+                      return (
+                        <Option value={item.id} key={index}>{item.trueName}</Option>
+                      )
+                    })
+                  }
                 </Select>
               )}
             </FormItem>
@@ -169,9 +242,36 @@ export default class PolicyEdit extends PureComponent {
               labelCol = {{ span: 7  }}
               wrapperCol = {{ span: 16 }}
             >
-              {getFieldDecorator('assetsTypeName',{
-                initialValue:'',
-                rules:[{required:true}]
+              {getFieldDecorator('orderNum',{
+                initialValue:status?'':policyInfo['orderNum'],
+                rules:[
+                  {
+                    required:true,
+                    validator: async (rule, val, cb) => {
+                      const reg = /^\d{1,15}$/;
+                      if(!reg.test(val)){
+                        cb('最多只能输入15位的数字!')
+                        return;
+                      }
+                      if(!status){
+                        cb();
+                        return;
+                      }
+                      const orderNum = this.props.form.getFieldValue('orderNum')
+                      const response = await this.props.dispatch({
+                        type: 'policyList/checkPolicySort',
+                        payload: {
+                          orderNum:orderNum
+                        }
+                      })
+                      if(response&&response.status===1){
+                        cb()
+                      }else{
+                        cb(response.statusDesc)
+                      }
+                    }
+                  }
+                  ]
               })(
                 <Input />
               )}
@@ -187,9 +287,9 @@ export default class PolicyEdit extends PureComponent {
           <Col xxl={22}>
             <FormItem label="变量状态" {...formItemConfig}>
               {getFieldDecorator('status',{
-                initialValue: 1
+                initialValue: status?'':policyInfo['status']
               })(
-                <RadioGroup name="radiogroup">
+                <RadioGroup name="status">
                   <Radio value={1}>启用</Radio>
                   <Radio value={0}>禁用</Radio>
                 </RadioGroup>
@@ -197,14 +297,20 @@ export default class PolicyEdit extends PureComponent {
             </FormItem>
           </Col>
         </Row>
-        <Col offset={12}>
-          <span style={{ ...spanStyle }}>
-            最后编辑时间: 2019-07-31
-          </span>
-          <span style={{ ...spanStyle }}>
-            操作人: 王大大
-          </span>
-        </Col>
+        {
+            !status?
+            <Col offset={2}>
+              <span style={{ ...spanStyle }}>
+                创建时间: {policyInfo.createTime}
+              </span>
+              <span style={{ ...spanStyle }}>
+                最后编辑时间: {policyInfo.updateTime}
+              </span>
+              <span style={{ ...spanStyle }}>
+                操作人: {policyInfo.updateTrueName}
+              </span>
+            </Col>:null
+        }
       </Form>
     )
   }

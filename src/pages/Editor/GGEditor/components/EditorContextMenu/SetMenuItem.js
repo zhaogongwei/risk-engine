@@ -15,6 +15,10 @@ const change =async props => {
   const selectedItem = getSelected()[0].getModel()
   const data = save();
   const edges = data['edges'];
+  if(!edges){
+    message.error('请先连线!')
+    return;
+  }
   const nodefineEdges = edges.filter((item)=>!item['type'])
   console.log(selectedItem)
   console.log(nodefineEdges)
@@ -42,17 +46,17 @@ const change =async props => {
     })
   }
   if (id && selectedItem.type === 'simple'&&res.status===1) {
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}&strategyId=${strategyId}`)
   }else if(id && selectedItem.type === 'complex'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}&strategyId=${strategyId}`)
   }else if(id && selectedItem.type === 'score'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}&strategyId=${strategyId}`)
   }else if(id && selectedItem.type === 'setVar'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}&strategyId=${strategyId}`)
   }else if(id && selectedItem.type === 'decision'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}&strategyId=${strategyId}`)
   }else if(id && selectedItem.type === 'third'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}&strategyId=${strategyId}`)
   }
 }
 

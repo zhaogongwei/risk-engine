@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
-import AddForm from './AddForm';
+import AddForm from '@/components/VarListModal/AddForm'
 import RuleTable from '@/components/RuleTable'
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment,addListKey,deepCopy} from '@/utils/utils'
@@ -154,6 +154,7 @@ export default class SimpleRule extends PureComponent {
     this.props.dispatch({
       type: 'rule/queryVarList',
       payload: {
+        strategyId:query['strategyId']
       }
     })
     //请求一级变量分类
@@ -380,7 +381,10 @@ export default class SimpleRule extends PureComponent {
   }
   render() {
     const { permission } = this.props
-    const { getFieldDecorator } = this.props.form
+    const { query } = this.props.location
+    const queryData = {
+      strategyId:query['strategyId']
+    }
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
@@ -429,6 +433,7 @@ export default class SimpleRule extends PureComponent {
               type={this.state.type}
               number={this.state.number}
               getSubKey={this.getSubKey}
+              queryData={query}
             />
           </Modal>
         </Card>

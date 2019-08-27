@@ -89,6 +89,7 @@ export default class ScoreModel extends PureComponent {
     this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
+        strategyId:query['strategyId']
       }
     })
     //请求一级变量分类
@@ -327,6 +328,10 @@ export default class ScoreModel extends PureComponent {
     })
   }
   render() {
+    const {query} = this.props.location;
+    const queryData = {
+      strategyId:query['strategyId']
+    }
     return (
       <PageHeaderWrapper >
         <Card
@@ -373,6 +378,7 @@ export default class ScoreModel extends PureComponent {
               type={this.state.type}
               number={this.state.number}
               getSubKey={this.getSubKey}
+              queryData={queryData}
             />
           </Modal>
           <Modal
