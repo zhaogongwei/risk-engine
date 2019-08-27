@@ -21,7 +21,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 
 @connect(({ greyName, loading }) => ({
   greyName,
-  loading: loading.effects['greyName/riskSubmit']
+  loading: loading.effects['greyName/fetchGreyNameList']
 }))
 export default class GreyNameList extends PureComponent {
   constructor(props) {
@@ -40,29 +40,30 @@ export default class GreyNameList extends PureComponent {
       },
       {
         title: '身份证号',
-        dataIndex: 'idCard',
-        key:'idCard'
+        dataIndex: 'idcard',
+        key:'idcard'
       },
       {
         title: '灰名单来源',
-        key:'source',
-        dataIndex:'source'
+        key:'greyDescribe',
+        dataIndex:'greyDescribe'
       },
       {
         title: '性别',
         key:'sex',
-        dataIndex:'sex'
+        dataIndex:'sex',
+        render: record => record == 1 ? '男' : (record == 2 ? '女' : record == 0 && '未知')
       },
       {
         title: '手机号',
-        key:'phone',
-        dataIndex:'phone'
+        key:'mobile',
+        dataIndex:'mobile'
       },
       {
         title: '状态',
-        key:'status',
-        dataIndex:'status',
-        render:(record)=>record==1?'启用':'禁用'
+        key: 'status',
+        dataIndex: 'status',
+        render: record => record == 0 ? '启用' : '禁用'
       },
       {
         title: '操作',
@@ -122,10 +123,11 @@ export default class GreyNameList extends PureComponent {
     };
   }
   componentDidMount() {
-    //this.change()
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
+    console.log(current, 'change')
     this.setState({
       current:current,
       currentPage:current
@@ -134,16 +136,10 @@ export default class GreyNameList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
+      type: 'greyName/fetchGreyNameList',
+      payload: {
+        ...this.props.greyName.queryData,
         currPage,
         pageSize
       }
@@ -227,6 +223,7 @@ export default class GreyNameList extends PureComponent {
     })
   }
   render() {
+    const { greyNameList, total } = this.props.greyName
     return (
      <PageHeaderWrapper>
        <Card
@@ -238,7 +235,7 @@ export default class GreyNameList extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={greyNameList}
            loading={this.props.loading}
          />
          <Pagination
@@ -246,7 +243,7 @@ export default class GreyNameList extends PureComponent {
            showQuickJumper
            defaultCurrent={1}
            current={this.state.current}
-           total={100}
+           total={total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

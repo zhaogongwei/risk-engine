@@ -65,8 +65,6 @@ export default  class Trreport extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     const propsData = this.props.location.state
     this.props.dispatch({
@@ -76,12 +74,6 @@ export default  class Trreport extends  PureComponent{
       }
     })
     this.ruleFilter(1,propsData)
-  }
-  componentWillUpdate(){
-  }
-  componentDidUpdate(){
-  }
-  componentWillUnmount(){
   }
   goBack=()=>{
     this.props.dispatch(routerRedux.goBack());
