@@ -127,7 +127,7 @@ export default class RoleManage extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button><Icon type="export" />导出列表</Button>
+        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
       </Fragment>
     )
   }
@@ -162,6 +162,16 @@ export default class RoleManage extends PureComponent {
         this.change()
       }
     }
+  }
+  exportList = async() => {
+    const formData = this.child.getFormValue()
+    const { dispatch } = this.props;
+    await dispatch({
+      type: 'role/exportList',
+      payload: {
+        ...formData
+      }
+    })
   }
   render() {
     const { type, updateVisible } = this.state

@@ -29,8 +29,9 @@ export default class FilterIpts extends Component {
       type: 'varclass/changefilterIpts',
       payload: formData,
     })
-	this.props.changeDefault(1)
-	this.props.change(1)
+    console.log(this.props.varclass.filterIpts)
+		this.props.changeDefault(1)
+	  this.props.change(1)
   }
   //   获取表单信息
   getFormValue = () => {
@@ -45,7 +46,7 @@ export default class FilterIpts extends Component {
   	this.props.dispatch({
       type: 'varclass/getSelectLevel2',
       payload: {
-      	id:value
+      	parentId:value
       }
     })
   }
@@ -82,12 +83,12 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="分类" {...formItemConfig}>
-              {getFieldDecorator('status',{
+              {getFieldDecorator('parentId',{
                 initialValue:''
               })(
                   <Select allowClear={true} onChange={this.selectchange}>
                   {this.props.varclass.selectItem.map((item,index)=> (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                   </Select>
               )}
@@ -96,12 +97,12 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={3} md={4}>
             <FormItem>
-              {getFieldDecorator('itemStatus',{
+              {getFieldDecorator('id',{
                 initialValue:''
               })(
                 <Select allowClear={true}>
                  {this.props.varclass.secondSelectItem.map( (item,index) => (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                 </Select>
               )}

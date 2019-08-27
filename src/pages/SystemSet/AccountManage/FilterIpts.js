@@ -60,14 +60,14 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="用户名" {...formItemConfig}>
-              {getFieldDecorator('username')(
+              {getFieldDecorator('userName')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="姓名" {...formItemConfig}>
-              {getFieldDecorator('name')(
+              {getFieldDecorator('trueName')(
                 <Input />
               )}
             </FormItem>
@@ -88,7 +88,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="添加时间" {...formItemConfig}>
-              {getFieldDecorator('metaTime')(
+              {getFieldDecorator('createTime')(
                 <RangePicker style={{width:210}}/>
               )}
             </FormItem>
@@ -97,15 +97,15 @@ export default class FilterIpts extends Component {
             <FormItem label="用户状态" {...formItemConfig}>
               {getFieldDecorator('status')(
                 <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
+                  <Option value={0}>启用</Option>
+                  <Option value={1}>禁用</Option>
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="角色" {...formItemConfig}>
-              {getFieldDecorator('role')(
+              {getFieldDecorator('roleName')(
                 <Input />
               )}
             </FormItem>

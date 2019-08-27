@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import exportExcel from '@/utils/exportExcel';
 const _baseApi = '/merchant-admin'
 
 
@@ -45,5 +46,13 @@ export async function delRole(params){
     body: {
       ...params
     },
+  });
+}
+
+// 导出列表
+export async function exportFile(params) {
+  return exportExcel(`${_baseApi}/system/role/export`, {
+    method: 'POST',
+    body: params
   });
 }

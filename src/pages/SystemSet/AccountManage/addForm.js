@@ -8,51 +8,18 @@ import {
   Select,
   Spin,
   TreeSelect,
-  Form
+  Form,
+  message
 } from 'antd';
 import { connect } from 'dva'
 const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-const { SHOW_PARENT } = TreeSelect;
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: 'Child Node1',
-        value: '0-0-0',
-        key: '0-0-0',
-      },
-    ],
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: 'Child Node3',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: 'Child Node4',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: 'Child Node5',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-];
-@connect()
+
+@connect(({ account }) => ({
+  account
+}))
 
 @Form.create()
 
@@ -60,25 +27,31 @@ export default class AddForm extends Component {
   constructor(props){
     super(props)
     this.state = {
-      value:[],
-      loading:true
+      value:[]
     }
-  }
-  //显示弹窗
-  showModal = ()=>{
-
-  }
-  //设置加载状态
-  setLoading=(status)=>{
-    this.setState({
-      loading:status
-    })
   }
   //点击确定
   submitHandler = ()=> {
-    this.props.form.validateFields((err, values) => {
+    const { dispatch } = this.props;
+    this.props.form.validateFields(async(err, values) => {
       if(!err){
-
+        console.log(values,'values')
+        if(this.props.type == 1) {
+          let res = await dispatch({
+            type: 'account/addAccount',
+            payload: {
+              ...values
+            }
+          })
+          if(res && res.status == 1) {
+            message.success(res.statusDesc);
+            this.props.addEdit(false);
+            this.props.change()
+          }else{
+            message.error(res.statusDesc);
+          }
+        }
+        
       }
     })
   }
@@ -93,7 +66,12 @@ export default class AddForm extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
-  componentDidMount () {
+  async componentDidMount () {
+    const { dispatch } = this.props;
+    await dispatch({
+      type: 'account/initData',
+      payload: {}
+    })
   }
 
   onChange = value => {
@@ -102,24 +80,26 @@ export default class AddForm extends Component {
   };
   render() {
     const { modalVisible, type, addEdit } = this.props;
-    const { getFieldDecorator } = this.props.form
+    const { userRoles } = this.props.account.initData;
+    const { infoData } = this.props.account;
+    const { getFieldDecorator } = this.props.form;
     const formItemConfig = {
-      labelCol:{ span:6 },
-      wrapperCol:{ span:16 },
+      labelCol: { span:6 },
+      wrapperCol: { span:16 },
     }
     return (
       <Modal
-        title={type === 1 ? '新增账号': '修改账号'}
+        title={ type === 1 ? '新增账号': '修改账号' }
         visible={modalVisible}
         onOk={this.submitHandler}
-        onCancel={()=>addEdit(false)}
+        onCancel={()=> addEdit(false)}
       >
         <Form className="ant-advanced-search-form" >
           <Row style={{ marginBottom:10 }}>
             <Col xxl={20} md={12}>
               <FormItem label="用户名" {...formItemConfig}>
-                {getFieldDecorator('username',{
-                  initialValue: null,
+                {getFieldDecorator('userName',{
+                  initialValue: type == 2 ? infoData.userName: null,
                   rules:[{
                     required:true,
                     message: '请输入用户名'
@@ -134,13 +114,12 @@ export default class AddForm extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="密码" {...formItemConfig}>
                 {getFieldDecorator('password',{
-                  initialValue: null,
                   rules:[{
                     required:true,
                     message: '请输入密码'
                   }]
                 })(
-                  <Input/>
+                  <Input type="password"/>
                 )}
               </FormItem>
             </Col>
@@ -148,14 +127,13 @@ export default class AddForm extends Component {
           <Row style={{ marginBottom:10 }}>
             <Col xxl={20} md={12}>
               <FormItem label="确认密码" {...formItemConfig}>
-                {getFieldDecorator('comfirmWord',{
-                  initialValue: null,
+                {getFieldDecorator('confirmPassword',{
                   rules:[{
                     required:true,
                     message: '请输入确认密码'
                   }]
                 })(
-                  <Input/>
+                  <Input type="password"/>
                 )}
               </FormItem>
             </Col>
@@ -163,8 +141,8 @@ export default class AddForm extends Component {
           <Row style={{ marginBottom:10 }}>
             <Col xxl={20} md={12}>
               <FormItem label="姓名" {...formItemConfig}>
-                {getFieldDecorator('name',{
-                  initialValue: null,
+                {getFieldDecorator('trueName',{
+                  initialValue: type == 2 ? infoData.trueName: null,
                   rules:[{
                     required:true,
                     message: '请输入姓名'
@@ -179,7 +157,7 @@ export default class AddForm extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="邮箱" {...formItemConfig}>
                 {getFieldDecorator('email',{
-                  initialValue:'',
+                  initialValue: type == 2 ? infoData.email: null,
                   rules:[{
                     required: false
                   }]
@@ -193,7 +171,7 @@ export default class AddForm extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="手机号码" {...formItemConfig}>
                 {getFieldDecorator('mobile',{
-                  initialValue:'',
+                  initialValue: type == 2 ? infoData.mobile: null,
                   rules:[{
                     required:true,
                     message: '请输入手机号码'
@@ -207,16 +185,17 @@ export default class AddForm extends Component {
           <Row style={{ marginBottom:10 }}>
             <Col xxl={20} md={12}>
               <FormItem label="角色" {...formItemConfig}>
-                {getFieldDecorator('role',{
-                  initialValue:'',
+                {getFieldDecorator('roleId',{
+                  initialValue: type == 2 ? infoData.roleId: null,
                   rules:[{
                     required:true,
                     message: '请输入角色'
                   }]
                 })(
                   <Select allowClear={true}>
-                    <Option value={1} >是</Option>
-                    <Option value={0} >否</Option>
+                    {
+                      userRoles && userRoles.map(item=> <Option key={item.code} value={item.code} >{item.value}</Option>)
+                    }
                   </Select>
                 )}
               </FormItem>
@@ -226,13 +205,13 @@ export default class AddForm extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="用户状态"  {...formItemConfig}>
                 {getFieldDecorator('status',{
-                  initialValue: null,
+                  initialValue: type == 2 ? infoData.status: null,
                   rules: [
                     { required: true, message: '用户状态为必选'}
                   ]})(
                     <RadioGroup>
-                      <Radio value={1}>启用</Radio>
-                      <Radio value={2}>禁用</Radio>
+                      <Radio value={0}>启用</Radio>
+                      <Radio value={1}>禁用</Radio>
                     </RadioGroup>
                   )}
                 </FormItem>

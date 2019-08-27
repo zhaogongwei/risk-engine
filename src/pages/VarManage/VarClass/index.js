@@ -28,9 +28,9 @@ export default class VarClass extends PureComponent {
     super(props);
     this.state = {
       columns:[
-        { title: '序号', dataIndex: 'number', key: 'key',width:'30%' },
-        { title: '分类名称', dataIndex: 'name', key: 'name',width:'9%'},
-        { title: '分类描述', dataIndex: 'classDes',key: 'classDes',width:'48%',},
+        { title: '序号', dataIndex: 'key', key: 'key',width:'30%' },
+        { title: '分类名称', dataIndex: 'typeName', key: 'typeName',width:'9%'},
+        { title: '分类描述', dataIndex: 'remark',key: 'remark',width:'48%',},
         {
           title: 'Action',
           width:100,
@@ -84,9 +84,10 @@ export default class VarClass extends PureComponent {
   	this.props.dispatch({
       type: 'varclass/fetchVarClassList',
       payload: {
-      	...this.props.varclass.filterIpts,
       	currPage:currPage,
       	pageSize:pageSize,
+      	firstTypeId:this.props.varclass.filterIpts.parentId || '',
+      	secondTypeId:this.props.varclass.filterIpts.id || ''
       }
     })
   	
@@ -132,7 +133,7 @@ export default class VarClass extends PureComponent {
         bordered={false}
         showHeader={false}
         columns={this.state.columns}
-        dataSource={record.secList}
+        dataSource={record.childTypeList}
         pagination={false}
       />
     );
@@ -181,9 +182,9 @@ export default class VarClass extends PureComponent {
   }
   render() {
     const columns = [
-      { title: '序号', dataIndex: 'number', key: 'key',width:'24%' },
-      { title: '分类名称', dataIndex: 'name', key: 'name', width:'19%'},
-      { title: '分类描述', dataIndex: 'classDes', key: 'amount', width:'36%',
+      { title: '序号', dataIndex: 'key', key: 'key',width:'24%' },
+      { title: '分类名称', dataIndex: 'typeName', key: 'typeName', width:'19%'},
+      { title: '分类描述', dataIndex: 'remark', key: 'remark', width:'36%',
         render:(record)=>(<a onClick={()=>router.push('/varManage/varlist')}>{record}</a>),
       },
       {
