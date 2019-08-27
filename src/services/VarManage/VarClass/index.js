@@ -4,7 +4,7 @@ const _baseApi = '/merchant-admin'
 const _api='/engine'
 //查询变量分类列表信息
 export async function queryClassList(params) {
-  return request(`${_baseApi}/variable/type/firstVariableType`, {
+  return request(`${_baseApi}/variable/type/selectVariableTypePage`, {
     method: 'POST',
     body: {
       ...params
@@ -50,7 +50,7 @@ export async function editVarClass(params) {
 }
 //删除变量（一级/二级）
 export async function delVarClass(params){
-  return request(`${_api}/varClass/deleteClass`, {
+  return request(`${_baseApi}/variable/type/delete`, {
     method: 'POST',
     body: {
       ...params

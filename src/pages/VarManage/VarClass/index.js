@@ -81,6 +81,7 @@ export default class VarClass extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
+  	console.log(111)
   	this.props.dispatch({
       type: 'varclass/fetchVarClassList',
       payload: {
@@ -170,11 +171,12 @@ export default class VarClass extends PureComponent {
     	this.props.dispatch({
 	      type: 'varclass/delVarClass',
 	      payload: {
-	      	id:record['id']
+	      	typeId:record['id']
 	      },
 	      callback:()=>{
-	      	this.props.changeDefault(1)
+	      	this.changeDefault(1)
 	        this.child.classChangeGetSelect()
+	        this.change(1)
 	        this.reset()
 	      }
 	    })
@@ -244,6 +246,7 @@ export default class VarClass extends PureComponent {
             type={this.state.type}
             title={this.state.title}
             changeDefault={this.changeDefault}
+            change={this.change}
             record={this.state.record}
             resatSelect={this.child}
           /></Card>
