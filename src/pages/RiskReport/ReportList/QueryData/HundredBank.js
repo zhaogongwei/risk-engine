@@ -344,20 +344,12 @@ export default  class HundredBank extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     this.setState({
       currentime:this.props.auditAsset.dateList.length>0?this.props.auditAsset.dateList[0]['reportTime']:'',
       reportId:this.props.auditAsset.dateList.length>0?this.props.auditAsset.dateList[0]['id']:'',
     },()=>{
     })
-  }
-  componentWillUpdate(){
-  }
-  componentDidUpdate(){
-  }
-  componentWillUnmount(){
   }
   goBack=()=>{
     this.props.dispatch(routerRedux.goBack());

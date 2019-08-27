@@ -2,7 +2,7 @@ import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
 import { message } from 'antd';
 import { fakeAccountLogin, getFakeCaptcha,accountLogin,changePassword } from '@/services/api';
-import { setAuthority } from '@/utils/authority';
+import { setAuthority, setUserName, getUserName } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 
@@ -11,6 +11,11 @@ export default {
 
   state: {
     status: undefined,
+    //   用户信息
+    currentUser: {
+      name: getUserName(),
+      avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
+    }
   },
 
   effects: {
@@ -23,7 +28,15 @@ export default {
         },
       });
       // Login successfully
-      if (response&&response.status === 1) {
+      if (response && response.status === 1) {
+        setUserName(response.data.userName)
+        yield put({
+          type: 'setUserInfo',
+          payload: {
+            name: response.data.userName,
+            avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
+          }
+        });
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -88,5 +101,12 @@ export default {
         type: payload.type,
       };
     },
+    setUserInfo(state, { payload }) {
+      console.log(payload, 'payload')
+      return {
+        ...state,
+        currentUser: payload
+      }
+    }
   },
 };

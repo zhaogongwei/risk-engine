@@ -33,18 +33,15 @@ export default class AccountManage extends PureComponent {
         title: '序号',
         dataIndex: 'key',
         key:'key'
-      },
-      {
+      },{
         title: '用户名',
-        dataIndex: 'username',
-        key:'username'
-      },
-      {
+        dataIndex: 'userName',
+        key:'userName'
+      },{
         title: '姓名',
-        dataIndex: 'name',
-        key:'name'
-      },
-      {
+        dataIndex: 'trueName',
+        key:'trueName'
+      },{
         title: '邮箱',
         key:'email',
         dataIndex:'email'
@@ -53,23 +50,19 @@ export default class AccountManage extends PureComponent {
         title: '手机号码',
         key:'mobile',
         dataIndex:'mobile'
-      },
-        {
-          title: '添加时间',
-          key:'addTime',
-          dataIndex:'addTime'
-        },
-        {
-          title: '用户状态',
-          key:'status',
-          dataIndex:'status'
-        },
-        {
-          title: '角色',
-          key:'role',
-          dataIndex:'role'
-        },
-      {
+      },{
+        title: '添加时间',
+        key:'createTime',
+        dataIndex:'createTime'
+      },{
+        title: '用户状态',
+        key:'statusName',
+        dataIndex:'statusName'
+      },{
+        title: '角色',
+        key:'roleName',
+        dataIndex:'roleName'
+      },{
         title: '操作',
         key:'action',
         render: (record) => {
@@ -78,10 +71,10 @@ export default class AccountManage extends PureComponent {
               {/* <Menu.Item onClick={()=>{this.goPolicyPower()}}>
                 <Icon type="edit"/>策略权限
               </Menu.Item> */}
-              <Menu.Item onClick={()=>{this.addEdit(2,record)}}>
+              <Menu.Item onClick={()=>{ this.addEdit(true,2,record) }}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteAccount()}>
+              <Menu.Item onClick={()=>this.deleteAccount(record)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -95,18 +88,6 @@ export default class AccountManage extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          username:'王德发',
-          name:'王德发',
-          email:'13636579254@163.com',
-          mobile:13636579254,
-          addTime:'20180716',
-          status:'启用',
-          role:'风控专员',
-        }
-      ],
       type:1,//1:添加 2：编辑
       pageSize:10,
       currPage:1,
@@ -127,7 +108,7 @@ export default class AccountManage extends PureComponent {
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
     this.props.dispatch({
-      type: 'account/fetchAccountList',
+      type: 'account/fetchList',
       payload: {
         ...this.props.account.queryConfig,
         currPage,
@@ -153,29 +134,51 @@ export default class AccountManage extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.addEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button><Icon type="export" />导出列表</Button>
+        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
       </Fragment>
     )
+  }
+  
+  //导出列表
+  exportList = async() => {
+    const formData = await this.child.getFormValue();
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'account/exportFile',
+      payload: {
+        ...formData
+      }
+    })
   }
 
   //弹框点击确定事件
   addFormSubmit=async ()=>{
     const response = this.addForm.submitHandler();
-    if(response&&response.status === '000'){
+    if(response && response.status === '000'){
       this.setState({
         visible:false
       })
     }
   }
   //添加、编辑事件
-  addEdit=(flag, type, record = {})=>{
+  addEdit= async(flag, type, record = {}) => {
+    if(type == 2) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'account/editAccount',
+        payload: {
+          id: record.id
+        }
+      })
+    }
     this.setState({
       modalVisible: !!flag,
-      type
+      type,
+      id: record.id
     })
   }
   //删除账号
-  deleteAccount=async(type=1,record={})=>{
+  deleteAccount = async(record)=>{
     const confirmVal = await Swal.fire({
       text: '确定要删除该账号吗？',
       type: 'warning',
@@ -185,14 +188,29 @@ export default class AccountManage extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const { dispatch } =  this.props;
+      let res = await dispatch({
+        type: 'account/delAccount',
+        payload: {
+          id: record.id
+        }
+      })
+      if(res && res.status == 1) {
+        message.success(res.statusDesc);
+        this.change()
+      }else {
+        message.error(res.statusDesc);
+      }
     }
   }
   render() {
+    const { listData } = this.props.account
     const modalParams = {
       type: this.state.type,
+      id: this.state.id,
       modalVisible: this.state.modalVisible,
-      addEdit: this.addEdit
+      addEdit: this.addEdit,
+      change: this.change
     }
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
@@ -205,7 +223,7 @@ export default class AccountManage extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={listData.records}
            loading={this.props.loading}
          />
          <Pagination
@@ -213,7 +231,7 @@ export default class AccountManage extends PureComponent {
            showQuickJumper
            defaultCurrent={1}
            current={this.state.currPage}
-           total={100}
+           total={listData.total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

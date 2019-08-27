@@ -216,8 +216,6 @@ export default  class Dsdebt extends  PureComponent{
     }
 
   }
-  componentWillMount(){
-  }
   componentDidMount(){
     const propsData = this.props.location.state
     this.props.dispatch({
@@ -234,12 +232,6 @@ export default  class Dsdebt extends  PureComponent{
       currentime:this.props.auditAsset.overdueDateList.length>0?this.props.auditAsset.overdueDateList[0]:'',
     },()=>{
     })
-  }
-  componentWillUpdate(){
-  }
-  componentDidUpdate(){
-  }
-  componentWillUnmount(){
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){

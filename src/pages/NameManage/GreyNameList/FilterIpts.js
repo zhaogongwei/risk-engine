@@ -45,15 +45,26 @@ export default class FilterIpts extends Component {
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
-      labelCol:{span:8},
-      wrapperCol:{span:16},
+      labelCol:{
+        xs: { span: 3 },
+        sm: { span: 7 }
+      },
+      wrapperCol:{
+        xs: { span: 21 },
+        sm: { span: 17 }
+      },
     }
     return (
       <Form
         className="ant-advanced-search-form"
       >
-        <Row  style={{marginBottom:20}} type="flex" align="middle">
-          <Col xxl={4} md={6}>
+        <Row  style={{ marginBottom: 20 }} gutter={16}>
+          <Col 
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="姓名" {...formItemConfig}>
               {getFieldDecorator('assetsTypeName',{
                 initialValue:''
@@ -62,7 +73,12 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="身份证号" {...formItemConfig}>
               {getFieldDecorator('status',{
                 initialValue:''
@@ -71,7 +87,12 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xxl={3} md={4} >
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="手机号" {...formItemConfig}>
               {getFieldDecorator('status',{
                 initialValue:''
@@ -80,7 +101,12 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="灰名单来源" {...formItemConfig}>
               {getFieldDecorator('assetsTypeCode',{
                 initialValue:''
@@ -92,9 +118,16 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col  xxl={{ span: 4}} md={{ span: 6}} offset={2}>
-            <Button type="primary" onClick={this.formSubmit}>查询</Button>
-            <Button type="primary" onClick={this.reset}>清空</Button>
+          <Col 
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
+            <FormItem>
+              <Button type="primary" onClick={this.formSubmit}>查询</Button>
+              <Button type="primary" onClick={this.reset}>清空</Button>
+            </FormItem>
           </Col>
         </Row>
       </Form>

@@ -8,8 +8,10 @@ import {
   Select,
   Form
 } from 'antd';
-import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import moment from 'moment';
+import styles from '../FilterIpts.less'
+
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item
@@ -34,9 +36,9 @@ export default class FilterIpts extends Component {
   //   获取表单信息
   getFormValue = () => {
     let formData = this.props.form.getFieldsValue();
-    if (formData.metaTime&&formData.metaTime.length) {
-      formData.createTimeStart = moment(formData.metaTime[0]).format('YYYY-MM-DD')
-      formData.createTimeEnd = moment(formData.metaTime[1]).format('YYYY-MM-DD')
+    if (formData.createTime && formData.createTime.length) {
+      formData.startTime = moment(formData.createTime[0]).format('YYYY-MM-DD')
+      formData.endTime = moment(formData.createTime[1]).format('YYYY-MM-DD')
     }
     return formData;
   }
@@ -60,14 +62,14 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="用户名" {...formItemConfig}>
-              {getFieldDecorator('username')(
+              {getFieldDecorator('userName')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="姓名" {...formItemConfig}>
-              {getFieldDecorator('name')(
+              {getFieldDecorator('trueName')(
                 <Input />
               )}
             </FormItem>
@@ -88,7 +90,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="添加时间" {...formItemConfig}>
-              {getFieldDecorator('metaTime')(
+              {getFieldDecorator('createTime')(
                 <RangePicker style={{width:210}}/>
               )}
             </FormItem>
@@ -97,15 +99,15 @@ export default class FilterIpts extends Component {
             <FormItem label="用户状态" {...formItemConfig}>
               {getFieldDecorator('status')(
                 <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
+                  <Option value={0}>启用</Option>
+                  <Option value={1}>禁用</Option>
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="角色" {...formItemConfig}>
-              {getFieldDecorator('role')(
+              {getFieldDecorator('roleName')(
                 <Input />
               )}
             </FormItem>

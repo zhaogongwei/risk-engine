@@ -68,8 +68,6 @@ export default class AddForm extends Component {
   componentDidMount () {
     this.props.getSubKey(this,'child')
   }
-  componentWillReceiveProps(newProps){
-  }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form

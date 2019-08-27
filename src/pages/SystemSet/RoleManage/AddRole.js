@@ -8,7 +8,8 @@ import {
   Select,
   Spin,
   TreeSelect,
-  Form
+  Form,
+  message
 } from 'antd';
 import { connect } from 'dva'
 import styles from '../FilterIpts.less'
@@ -69,9 +70,36 @@ export default class IndexComponent extends Component {
   }
   //点击确定
   submitHandler = ()=>{
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async(err, values) => {
       if(!err){
-
+        const { dispatch } = this.props;
+        if(this.props.type == 1) {
+          let res = await dispatch({
+            type: 'role/addRole',
+            payload: {
+              ...values
+            }
+          })
+          if(res && res.status == 1) {
+            message.success(res.statusDesc);
+            this.props.isShowEdit(false);
+            this.props.change()
+          }
+        }
+        if(this.props.type == 2) {
+          let res = await dispatch({
+            type: 'role/updateRole',
+            payload: {
+              ...values,
+              roleId: this.props.roleId
+            }
+          })
+          if(res && res.status == 1) {
+            message.success(res.statusDesc);
+            this.props.isShowEdit(false);
+            this.props.change()
+          }
+        }
       }
     })
   }
@@ -87,31 +115,39 @@ export default class IndexComponent extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-
+    const { dispatch, roleId } = this.props; 
+    dispatch({
+      type: 'role/fetchInitData',
+      payload: {
+        roleId
+      }
+    })
   }
   onChange = value => {
     console.log('onChange ', value);
     this.setState({ value });
   };
   render() {
-    const { updateVisible, isShowEdit } = this.props
+    const { updateVisible, isShowEdit, type } = this.props
+    const { menuTree, roleInfo, activeList } = this.props.role.infoData;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     }
     const tProps = {
-      treeData,
+      treeData: menuTree,
       onChange: this.onChange,
       treeCheckable: true,
       maxTagCount: 0,
       dropdownStyle: { maxHeight: 600, overflow: 'auto' },
       allowClear: true
     };
+   
     return (
       <div>
         <Modal
-         title={this.state.type===1?'新增角色':'修改角色'}
+         title={this.props.type === 1 ? '新增角色' : '修改角色'}
          visible={updateVisible}
          onOk={this.submitHandler}
          onCancel={() => isShowEdit(false)}
@@ -120,8 +156,8 @@ export default class IndexComponent extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="角色名称" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:'',
+                {getFieldDecorator('roleName',{
+                  initialValue: type == 2 ? roleInfo && roleInfo.roleName : null,
                     rules:[{
                       required:true,
                       message: '请输入角色名称'
@@ -135,8 +171,8 @@ export default class IndexComponent extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="角色说明" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeCode',{
-                  initialValue:'',
+                {getFieldDecorator('roleExplain',{
+                  initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
                   rules:[{
                     required:true,
                     message: '请输入角色说明'
@@ -151,12 +187,12 @@ export default class IndexComponent extends Component {
             <Col xxl={20} md={12}>
               <FormItem label="状态"  {...formItemConfig}>
                 {getFieldDecorator('status',{
-                  initialValue: null,
+                  initialValue: type == 2 ? roleInfo && roleInfo.status : null,
                   rules: [{ required: true, message: '请选择角色状态'}],
                   })(
                     <RadioGroup>
-                      <Radio value={1}>启用</Radio>
-                      <Radio value={2}>禁用</Radio>
+                      <Radio value={0}>启用</Radio>
+                      <Radio value={1}>禁用</Radio>
                     </RadioGroup>
                   )}
               </FormItem>
@@ -165,9 +201,9 @@ export default class IndexComponent extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="授权" {...formItemConfig}>
-                {getFieldDecorator('combotreeListSrch', {
+                {getFieldDecorator('menuIds', {
                   rules: [{ required: true, message: '请授权'}],
-                  // initialValue: []
+                  initialValue: type == 2 ? activeList : []
                 })(
                   <TreeSelect {...tProps} allowClear={true}/>
                 )}

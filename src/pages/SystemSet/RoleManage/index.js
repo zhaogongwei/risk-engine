@@ -37,18 +37,26 @@ export default class RoleManage extends PureComponent {
       },
       {
         title: '角色名称',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        dataIndex: 'roleName',
+        key:'roleName'
       },
       {
         title: '角色说明',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        dataIndex: 'roleExplain',
+        key:'roleExplain'
       },
       {
         title: '角色状态',
-        key:'varname',
-        dataIndex:'varname'
+        key:'status',
+        dataIndex:'status',
+        render: record => {
+          if(record - 0 === 0) {
+            return '启用'
+          }
+          if(record - 0 === 1) {
+            return '禁用'
+          }
+        }
       },
       {
         title: '操作',
@@ -59,7 +67,7 @@ export default class RoleManage extends PureComponent {
               <Menu.Item onClick={()=>this.isShowEdit(true, 2, record)}>
                 <Icon type="edit"/>修改
               </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteRole()}>
+              <Menu.Item onClick={()=>this.deleteRole(record.roleId)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -73,22 +81,6 @@ export default class RoleManage extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-        }
-      ],
       type: 1,//1:添加 2：编辑
       pageSize:10,
       currPage:1,
@@ -109,7 +101,7 @@ export default class RoleManage extends PureComponent {
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
     this.props.dispatch({
-      type: 'role/queryRoleList',
+      type: 'role/fetchList',
       payload: {
         ...this.props.role.queryConfig,
         currPage,
@@ -135,28 +127,20 @@ export default class RoleManage extends PureComponent {
     return (
       <Fragment>
         <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button><Icon type="export" />导出列表</Button>
+        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
       </Fragment>
     )
-  }
-  //弹框点击确定事件
-  addFormSubmit=async ()=>{
-    const response = this.addForm.submitHandler();
-    if(response&&response.status === '000'){
-      this.setState({
-        visible:false
-      })
-    }
   }
   //添加、编辑事件
   isShowEdit=(flag, type, record = {})=>{
     this.setState({
       updateVisible: !!flag,
-      type
+      type,
+      roleId: record.roleId
     })
   }
   //删除角色
-  deleteRole=async()=>{
+  deleteRole=async(roleId)=>{
     const confirmVal = await Swal.fire({
       text: '确定要删除该角色吗？',
       type: 'warning',
@@ -166,16 +150,39 @@ export default class RoleManage extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const { dispatch } =  this.props;
+      let res = await dispatch({
+        type: 'role/delRole',
+        payload: {
+          roleId
+        }
+      })
+      if(res && res.status == 1) {
+        message.success(res.statusDesc);
+        this.change()
+      }
     }
+  }
+  exportList = async() => {
+    const formData = this.child.getFormValue()
+    const { dispatch } = this.props;
+    await dispatch({
+      type: 'role/exportList',
+      payload: {
+        ...formData
+      }
+    })
   }
   render() {
     const { type, updateVisible } = this.state
     const modalParams = {
       updateVisible,
       type,
-      isShowEdit: this.isShowEdit
+      isShowEdit: this.isShowEdit,
+      change: this.change,
+      roleId: this.state.roleId
     }
+    const { dataList, menuTree } =  this.props.role;
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
          <Card
@@ -188,7 +195,7 @@ export default class RoleManage extends PureComponent {
           bordered
           pagination={false}
           columns={this.state.columns}
-          dataSource={this.state.data}
+          dataSource={dataList.records}
           loading={this.props.loading}
         />
         <Pagination
@@ -196,7 +203,7 @@ export default class RoleManage extends PureComponent {
           showQuickJumper
           defaultCurrent={1}
           current={this.state.currPage}
-          total={100}
+          total={dataList.total}
           onChange={this.onChange}
           showTotal={(total, range) => this.showTotal(total, range)}
         />

@@ -29,8 +29,8 @@ export default class FilterIpts extends Component {
       type: 'varclass/changefilterIpts',
       payload: formData,
     })
-	this.props.changeDefault(1)
-	this.props.change(1)
+		this.props.changeDefault(1)
+	  this.props.change(1)
   }
   //   获取表单信息
   getFormValue = () => {
@@ -42,20 +42,36 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   selectchange = value => {
+    // 清空操作 不请求接口
+    if(!value){
+      // 清空二级分类选项 
+      // TODO: 清空二级分类的选项值  以及 整合此处逻辑
+      this.props.dispatch({
+        type: 'varclass/changeSecondSelect',
+        payload: {
+          data:[]
+        }
+      })
+      return false;
+    }
   	this.props.dispatch({
       type: 'varclass/getSelectLevel2',
       payload: {
-      	id:value
+      	parentId:value
       }
     })
   }
     //编辑变量后清空数据
-  classChangeGetSelect = ()=>{
+  classChangeGetSelect = async()=>{
   	this.props.dispatch({
       type: 'varclass/getSelectLevel1',
       payload: {
       	
       }
+    })
+  	await this.props.dispatch({
+      type: 'varclass/changefilterIpts',
+      payload: {},
     })
   	this.reset()
   }
@@ -77,17 +93,18 @@ export default class FilterIpts extends Component {
     return (
       <Form
         className="ant-advanced-search-form"
+        layout="inline" 
       >
        
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="分类" {...formItemConfig}>
-              {getFieldDecorator('status',{
+              {getFieldDecorator('parentId',{
                 initialValue:''
               })(
                   <Select allowClear={true} onChange={this.selectchange}>
                   {this.props.varclass.selectItem.map((item,index)=> (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                   </Select>
               )}
@@ -96,12 +113,12 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={3} md={4}>
             <FormItem>
-              {getFieldDecorator('itemStatus',{
+              {getFieldDecorator('id',{
                 initialValue:''
               })(
                 <Select allowClear={true}>
                  {this.props.varclass.secondSelectItem.map( (item,index) => (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                 </Select>
               )}

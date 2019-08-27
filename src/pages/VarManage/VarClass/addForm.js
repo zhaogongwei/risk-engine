@@ -81,7 +81,7 @@ export default class AddForm extends Component {
 
 
 		if(this.props.type==1){//添加一级分类
-			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
 		      const formData = this.getFormValue()
 		      this.props.dispatch({
@@ -90,18 +90,20 @@ export default class AddForm extends Component {
 		          ...formData,
 		        },
 		        callback:()=>{
+		        	this.props.changeDefault(1)
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
 		          })
-		          this.props.changeDefault(1)
-		          this.props.resatSelect.classChangeGetSelect()
+		          
 		          this.reset()
 		        }
 		      })
 		    }
   		})
 		}else if(this.props.type==2){ //添加二级分类
-			this.props.form.validateFields(['assetsTypeName','assetsTypeCode','parentId'],(err, values) => {
+			this.props.form.validateFields(['remark','typeName','orderNum','parentId'],(err, values) => {
 	      if(!err){
 		      const formData = this.getFormValue()
 		      this.props.dispatch({
@@ -115,17 +117,18 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault(1)
 		         this.props.resatSelect.classChangeGetSelect()
+		         this.props.change(1)
 		          this.reset()
 		        }
 		      })
 		    }
   		})
 		}else if(this.props.type==3){//编辑一级分类
-			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
 		      const formData = this.getFormValue(1)
 		      this.props.dispatch({
-		        type: 'varclass/addVarClass',
+		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
@@ -136,17 +139,18 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault(1)
 		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.reset()
 		        }
 		      })
 		    }
   		})
 		}else if(this.props.type==4){//编辑二级分类
-			this.props.form.validateFields(['assetsTypeName','assetsTypeCode'],(err, values) => {
+			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
 		      const formData = this.getFormValue()
 		      this.props.dispatch({
-		        type: 'varclass/addVarClass',
+		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
@@ -157,6 +161,7 @@ export default class AddForm extends Component {
 		          })
 		          this.props.changeDefault()
 		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.reset()
 		        }
 		      })
@@ -174,8 +179,8 @@ export default class AddForm extends Component {
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
-    formQueryData.assetsTypeName=formQueryData.assetsTypeName.trim()
-    formQueryData.assetsTypeCode=formQueryData.assetsTypeCode.trim()
+//  formQueryData.assetsTypeName=formQueryData.assetsTypeName.trim()
+//  formQueryData.assetsTypeCode=formQueryData.assetsTypeCode.trim()
     return formQueryData;
   }
   //重置
@@ -214,7 +219,7 @@ export default class AddForm extends Component {
                   initialValue:this.props.type===2?this.props.record['id']:''
                 })(
                   <Select allowClear={true} disabled>
-                      <Option value={this.props.record['id']} key={1}>{this.props.record['name']}</Option>
+                      <Option value={this.props.record['id']} key={1}>{this.props.record['typeName']}</Option>
                   </Select>
                 )}
               </FormItem>
@@ -223,8 +228,29 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="名称" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['name']:'',
+                {getFieldDecorator('typeName',{
+                  initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['typeName']:'',
+                  rules:[
+                  {
+                  	required:true
+                  }
+                  ]
+                })(
+                  <Input/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+           <Row className={styles.btmMargin}>
+            <Col xxl={20} md={12}>
+              <FormItem label="描述" {...formItemConfig}>
+                {getFieldDecorator('remark',{
+                  initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['remark']:'',
+                  rules:[
+                  {
+                  	required:true
+                  }
+                  ]
                 })(
                   <Input/>
                 )}
@@ -234,8 +260,13 @@ export default class AddForm extends Component {
           <Row className={styles.btmMargin}>
             <Col xxl={20} md={12}>
               <FormItem label="排序" {...formItemConfig}>
-                {getFieldDecorator('assetsTypeCode',{
-                  initialValue:'',
+                {getFieldDecorator('orderNum',{
+                  initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['orderNum']:'',
+                  rules:[
+                  {
+                  	required:true
+                  }
+                  ]
                 })(
                   <Input placeholder="数字大排列表上方"/>
                 )}

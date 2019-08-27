@@ -21,6 +21,10 @@ export default {
         type: 'saveVarClassList',
         payload:response,
       });
+      yield put({
+        type: 'saveVarClassListTotal',
+        payload:response,
+      });
     },
     //获取查询一级list getSelectLevel1
     *getSelectLevel1({payload}, { call, put }) {
@@ -43,12 +47,9 @@ export default {
       callback()
     },
     //编辑变量(一级/二级)
-    *editVarClass({payload},{call,put}){
+    *editVarClass({payload,callback},{call,put}){
       let response = yield call(api.editVarClass,payload)
-      yield put({
-        type: 'saveVarClassList',
-        payload,
-      });
+      callback()
     },
     //删除变量
     *delVarClass({payload,callback},{call,put}){
@@ -59,7 +60,8 @@ export default {
 
   reducers: {
     saveVarClassList(state, { payload }) {
-    	let list = addListKeydouble( payload.data,'secList')
+    	let list = addListKeydouble( payload.data.records,'childTypeList')
+    	console.log(list)
       return {
         ...state,
         varClassList: list,
@@ -68,7 +70,7 @@ export default {
     saveVarClassListTotal(state, { payload }) {
       return {
         ...state,
-        total: 100,
+        total: payload.data.total,
       };
     },
     changeSelect(state, { payload }) {

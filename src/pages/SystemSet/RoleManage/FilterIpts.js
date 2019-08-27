@@ -56,17 +56,17 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="角色名称" {...formItemConfig}>
-              {getFieldDecorator('status')(
+              {getFieldDecorator('roleName')(
                 <Input />
               )}
             </FormItem>
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="角色状态" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode')(
+              {getFieldDecorator('status')(
                 <Select allowClear={true}>
-                  <Option value={1}>启用</Option>
-                  <Option value={2}>禁用</Option>
+                  <Option value={0}>启用</Option>
+                  <Option value={1}>禁用</Option>
                 </Select>
               )}
             </FormItem>
