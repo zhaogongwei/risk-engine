@@ -21,8 +21,8 @@ export async function isForbid(params) {
 }
 
 //新增
-export async function addBalckName(params) {
-  return request(`${_baseApi}/admin/asset/risk_detail`, {
+export async function addBlackName(params) {
+  return request(`${_baseApi}/report/insertBlack`, {
     method: 'POST',
     body: {
       ...params

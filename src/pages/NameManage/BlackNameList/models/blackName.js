@@ -34,12 +34,8 @@ export default {
       return yield call(api.isForbid, payload)
     },
     //新增黑名单
-    *addBalckName({payload},{call,put}){
-      let response = yield call(api.addBalckName,payload)
-      yield put({
-        type: 'saveBlackNameList',
-        payload,
-      });
+    *addBlackName({ payload },{ call }){
+      return yield call(api.addBlackName, payload)
     }
   },
 

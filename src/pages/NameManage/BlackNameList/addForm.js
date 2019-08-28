@@ -8,7 +8,8 @@ import {
   Select,
   Spin,
   TreeSelect,
-  Form
+  Form,
+  message
 } from 'antd';
 import { connect } from 'dva'
 const FormItem = Form.Item
@@ -16,42 +17,7 @@ const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { SHOW_PARENT } = TreeSelect;
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: 'Child Node1',
-        value: '0-0-0',
-        key: '0-0-0',
-      },
-    ],
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: 'Child Node3',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: 'Child Node4',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: 'Child Node5',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-];
+
 @connect()
 
 @Form.create()
@@ -65,11 +31,16 @@ export default class AddForm extends Component {
     }
   }
   //点击确定
-  submitHandler = () => {
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) return
+  submitHandler = () => new Promise((resolve, reject) => {
+    this.props.form.validateFieldsAndScroll( async (err, values) => {
+      if (err) return
+      const res = await this.props.dispatch({
+        type: 'blackName/addBlackName',
+        payload: values
+      })
+      resolve(res)
     })
-  }
+  })
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -98,7 +69,7 @@ export default class AddForm extends Component {
     return (
       <Form>
         <FormItem label="姓名" {...formItemConfig}>
-          {getFieldDecorator('trueName', {
+          {getFieldDecorator('name', {
             rules: [
               {
                 required: true,
@@ -110,7 +81,7 @@ export default class AddForm extends Component {
           )}
         </FormItem>
         <FormItem label="身份证号" {...formItemConfig}>
-          {getFieldDecorator('idCard', {
+          {getFieldDecorator('idcard', {
             rules: [
               {
                 required: true,
@@ -126,11 +97,14 @@ export default class AddForm extends Component {
             rules: [
               {
                 required: true,
-                message: '请输入性别'
+                message: '请选择性别'
               }
             ]
           })(
-            <Input/>
+            <RadioGroup>
+              <Radio value={1}>女</Radio>
+              <Radio value={2}>男</Radio>
+            </RadioGroup>
           )}
         </FormItem>
         <FormItem label="手机号" {...formItemConfig}>
@@ -147,13 +121,14 @@ export default class AddForm extends Component {
         </FormItem>
         <FormItem label="状态"  {...formItemConfig}>
           {getFieldDecorator('status', {
+            initialValue: 0,
             rules: [
               { required: true, message: '角色状态为必选'}
             ],
           })(
             <RadioGroup>
-              <Radio value={1}>启用</Radio>
-              <Radio value={2}>禁用</Radio>
+              <Radio value={0}>启用</Radio>
+              <Radio value={1}>禁用</Radio>
             </RadioGroup>
           )}
         </FormItem>

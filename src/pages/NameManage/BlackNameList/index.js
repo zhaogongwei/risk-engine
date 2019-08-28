@@ -23,7 +23,8 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 
 @connect(({ blackName, loading }) => ({
   blackName,
-  loading: loading.effects['blackName/fetchBlackNameList']
+  loading: loading.effects['blackName/fetchBlackNameList'],
+  addBlackLoad: loading.effects['blackName/addBlackName']
 }))
 export default class BlackNameList extends PureComponent {
   constructor(props) {
@@ -177,12 +178,16 @@ export default class BlackNameList extends PureComponent {
     }
   }
   //弹框点击确定事件
-  addFormSubmit=async ()=>{
-    const response = this.addForm.submitHandler();
-    if(response && response.status === '000'){
+  addFormSubmit = async () => {
+    const response = await this.addForm.submitHandler()
+    if (response && response.status === 1) {
+      this.onChange(1)
       this.setState({
-        visible:false
+        visible: false
       })
+      message.success(response.statusDesc)
+    } else {
+      message.error(response.statusDesc)
     }
   }
   render() {
@@ -214,10 +219,14 @@ export default class BlackNameList extends PureComponent {
            title={'新增'}
            visible={this.state.visible}
            onOk={this.addFormSubmit}
+           destroyOnClose={true}
+           maskClosable={false}
            onCancel={()=>this.setState({visible:false})}
          >
          <AddForm
            getSubKey={this.getSubKey}
+           onChange={this.onChange}
+           loading={this.props.addBlackLoad}
          />
          </Modal>
        </Card>
