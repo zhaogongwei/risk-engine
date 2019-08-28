@@ -13,19 +13,10 @@ export default {
     //获取灰名单列表
     *fetchGreyNameList({ payload }, { call, put }) {
       const response = yield call(api.queryGreyList, payload)
-      console.log(response, '===========>response')
       yield put({
         type: 'saveGreyNameList',
         payload: addListKey(response.data.records, payload.currentPage, payload.pageSize),
         total: response.data.total
-      });
-    },
-    //禁用、启用
-    *isForbid({payload},{call,put}){
-      let response = yield call(api.isForbid,payload)
-      yield put({
-        type: 'saveGreyNameList',
-        payload,
       });
     },
     //拉黑
@@ -36,14 +27,14 @@ export default {
         payload,
       });
     },
-    //删除
-    *delGreyName({payload},{call,put}){
-      let response = yield call(api.delGreyName,payload)
-      yield put({
-        type: 'saveGreyNameList',
-        payload,
-      });
+    //   启用/禁用/删除
+    *isForbid({ payload }, { call }) {
+      return yield call(api.isForbid, payload)
     },
+    //   拉黑
+    *handleInBlack({ payload }, { call }) {
+      return yield call(api.pullBlack, payload)
+    }
   },
 
   reducers: {
@@ -60,5 +51,12 @@ export default {
         tempObj: payload,
       };
     },
+    saveQueryData(state, { payload }) {
+      console.log(payload, 'change')
+      return {
+        ...state,
+        queryData: payload
+      }
+    }
   },
 };

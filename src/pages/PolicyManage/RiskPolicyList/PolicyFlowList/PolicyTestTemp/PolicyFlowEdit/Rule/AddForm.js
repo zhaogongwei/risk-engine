@@ -179,6 +179,7 @@ export default class AddForm extends Component {
         ...this.getFormValue(),
         currPage:page,
         pageSize:this.state.pageSize,
+        strategyId:this.props.queryData['strategyId'],
       }
     })
   }

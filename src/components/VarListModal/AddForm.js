@@ -173,12 +173,12 @@ export default class AddForm extends Component {
     this.change(1)
   }
   change = async (page)=>{
-    const {exeraRequest} = this.props;
+    const {queryData} = this.props;
     const res = await  this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
         ...this.getFormValue(),
-        ...exeraRequest,
+        ...queryData,
         currPage:page,
         pageSize:this.state.pageSize,
       }
@@ -224,19 +224,29 @@ export default class AddForm extends Component {
   //点击确定
   submitHandler=()=>{
       let records={};
-      const {radioValue}=this.state;
-      if(Object.keys(radioValue).length){
-        records['varId']=radioValue['id'];
-        records['variableId']=radioValue['id'];
-        records['varCode']=radioValue['variableCode'];
-        records['varName']=radioValue['variableName'];
-        records['varType']=radioValue['variableType'];
-        records['enumFlag']=radioValue['enumFlag'];
-        records['enumList']=radioValue['variableEnumList'];
+      const {radioValue,checkedList}=this.state;
+      const {type}=this.props;
+      if(type){
+        //多选
+        checkedList.forEach((item,key)=>{
+          item['variableId'] = item['id']
+        })
+        return checkedList
+      }else{
+        //单选
+        if(Object.keys(radioValue).length){
+          records['varId']=radioValue['id'];
+          records['variableId']=radioValue['id'];
+          records['varCode']=radioValue['variableCode'];
+          records['varName']=radioValue['variableName'];
+          records['varType']=radioValue['variableType'];
+          records['enumFlag']=radioValue['enumFlag'];
+          records['enumList']=radioValue['variableEnumList'];
+        }
+        Object.assign(records,radioValue)
+        console.log(records)
+        return records
       }
-      Object.assign(records,radioValue)
-      console.log(records)
-      return records
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -264,6 +274,13 @@ export default class AddForm extends Component {
   componentDidMount () {
     this.props.getSubKey(this,'addForm')
   }
+  emptyCheck=()=>{
+    this.setState({
+      checkedList:[],
+      checkAll:false,
+      radioValue:''
+    })
+  }
   componentWillReceiveProps(newProps){
     this.setState({
       visible:newProps.showState
@@ -282,7 +299,6 @@ export default class AddForm extends Component {
       type: 'varList/queryTwoClassList',
       payload: {
         firstTypeId:value,
-        secondTypeId:'',
       }
     })
   }
@@ -360,7 +376,7 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    varList.map((item, index) => {
+                    varList.length>0?varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox value={item}>{item.variableName}</Checkbox>
@@ -368,7 +384,7 @@ export default class AddForm extends Component {
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.variableName}</Col>
                       </Row>
-                    })
+                    }):<Empty />
                   }
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>

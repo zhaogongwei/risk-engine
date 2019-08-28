@@ -53,6 +53,7 @@ export default class DecisModel extends PureComponent {
     this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
+        strategyId:query['strategyId']
       }
     })
     //请求一级变量分类
@@ -394,6 +395,10 @@ export default class DecisModel extends PureComponent {
   render() {
     console.log(this.props.decision)
     const { permission } = this.props
+    const { query } = this.props.location
+    const queryData = {
+      strategyId:query['strategyId']
+    }
     const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
     return (
            <PageHeaderWrapper>
@@ -442,7 +447,8 @@ export default class DecisModel extends PureComponent {
                >
                  <AddForm
                    number={this.state.number}
-                    getSubKey={this.getSubKey}
+                   getSubKey={this.getSubKey}
+                   queryData={queryData}
                  />
                </Modal>
                <Row type="flex" gutter={24} justify="center" style={{marginTop:20}}>
