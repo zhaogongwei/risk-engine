@@ -6,11 +6,10 @@ export default {
   state: {
     varClassList: [],
     total:100,//一共多少项
-    selectId:'',
-    selectItem:[],
-    secondSelectItem:[],
+    selectItem:[],//下拉表单1数据
+    secondSelectItem:[],//下拉表单2数据
     status:false,
-    filterIpts:{},
+    filterIpts:{},//变量分类表单
   },
 
   effects: {

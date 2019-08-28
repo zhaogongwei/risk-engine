@@ -248,6 +248,7 @@ export default class VarClass extends PureComponent {
             changeDefault={this.changeDefault}
             change={this.change}
             record={this.state.record}
+            current={this.state.current}
             resatSelect={this.child}
           /></Card>
       </PageHeaderWrapper>

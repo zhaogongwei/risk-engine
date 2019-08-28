@@ -49,6 +49,7 @@ export default class FilterIpts extends Component {
       }
     })
   }
+
     //编辑变量后清空数据
   classChangeGetSelect = async()=>{
   	this.props.dispatch({
@@ -64,13 +65,16 @@ export default class FilterIpts extends Component {
   	this.reset()
   }
   componentDidMount () {
-  	this.props.dispatch({
+  	this.getSelect()
+    this.props.getSubKey(this,'child')
+  }
+  getSelect =() =>{
+    this.props.dispatch({
       type: 'varclass/getSelectLevel1',
       payload: {
       	
       }
     })
-    this.props.getSubKey(this,'child')
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -87,7 +91,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="分类" {...formItemConfig}>
               {getFieldDecorator('parentId',{
-                initialValue:''
+                initialValue:this.props.varclass.filterIpts.parentId || ''
               })(
                   <Select allowClear={true} onChange={this.selectchange}>
                   {this.props.varclass.selectItem.map((item,index)=> (
@@ -101,7 +105,7 @@ export default class FilterIpts extends Component {
           <Col xxl={3} md={4}>
             <FormItem>
               {getFieldDecorator('id',{
-                initialValue:''
+                initialValue:this.props.varclass.filterIpts.id || ''
               })(
                 <Select allowClear={true}>
                  {this.props.varclass.secondSelectItem.map( (item,index) => (
