@@ -129,15 +129,16 @@ export default class VarClass extends PureComponent {
     })
   }
   expandedRowRender = (record,index) => {
-    return (
-      <Table
-        bordered={false}
-        showHeader={false}
-        columns={this.state.columns}
-        dataSource={record.childTypeList}
-        pagination={false}
-      />
-    );
+      return (
+        <Table
+          bordered={false}
+          showHeader={false}
+          columns={this.state.columns}
+          dataSource={record.childTypeList}
+          pagination={false}
+        />
+      );
+
   }
   titleRender=(type)=>{
     let title;
@@ -186,8 +187,8 @@ export default class VarClass extends PureComponent {
     const columns = [
       { title: '序号', dataIndex: 'key', key: 'key',width:'24%' },
       { title: '分类名称', dataIndex: 'typeName', key: 'typeName', width:'19%'},
-      { title: '分类描述', dataIndex: 'remark', key: 'remark', width:'36%',
-        render:(record)=>(<a onClick={()=>router.push('/varManage/varlist')}>{record}</a>),
+      { title: '分类描述', key: 'remark', width:'36%',
+        render:(record)=>(<a onClick={()=>router.push({pathname:'/varManage/varlist',query:{parentId:record.id}})}>{record.remark}</a>),
       },
       {
         title: '操作',

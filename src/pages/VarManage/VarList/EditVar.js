@@ -107,12 +107,37 @@ export default class EditVar extends PureComponent {
       isShow:0,
     };
   }
-  componentDidMount() {
-		this.props.dispatch({
+  componentDidMount = async () => {
+		await this.props.dispatch({
       type: 'varlist/getSelectLevel1',
       payload: {
       }
     })
+    // const query={...this.props.location.query}
+    // if(query.type==2){
+    //   const res = await this.props.dispatch({
+    //     type: 'varlist/selectVariableById',
+    //     payload: {
+    //       id:query.id
+    //     }
+    //   })
+    //   if(res.status=='1'){
+    //     this.props.form.setFieldsValue({
+    //       firstTypeId:'',
+    //       defaultValue: "",
+    //       enumFlag: 0,
+    //       maxValue: 0,
+    //       minValue: 0,
+    //       parentId: 0,
+    //       remark: "string",
+    //       status: "string",
+    //       variableCode: "string",
+    //       variableLength: 0,
+    //       variableName: "string",
+    //       variableType: "string"
+    //     })
+    //   }
+    // }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -124,10 +149,11 @@ export default class EditVar extends PureComponent {
   	this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
-      	id:value
+      	parentId:value
       }
     })
   }
+  //枚举添加
   handleAdd = () => {
     const { count, dataSource } = this.props.varlist;
     //   要添加表格的对象
@@ -143,17 +169,17 @@ export default class EditVar extends PureComponent {
       }
     })
   }
-  //   删除表格
+  //   枚举删除表格
   handleDelete = (key) => {
     const {dataSource,count} = this.props.varlist;
     //   调用models的方法去删除dataSource中的数据
     const newData = dataSource.filter(item => item.key !== key)
-    this.props.dispatch({
-      type: 'varList/delData',
-      payload: {
-        dataSource: addListKey(deepCopy(newData)),
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'varList/delData',
+    //   payload: {
+    //     dataSource: addListKey(deepCopy(newData)),
+    //   }
+    // })
   }
   handleChange=(e)=>{
     this.setState({
@@ -164,13 +190,28 @@ export default class EditVar extends PureComponent {
     router.goBack()
   }
   formSubmit = async()=>{
-  	let data=this.getFormValue()
-    await this.props.dispatch({
-      type: 'varList/delData',
-      payload: {
-        ...data
-      }
-    })
+    let data=this.getFormValue()
+    const query={...this.props.location.query}
+    if(query.type==2){
+      //编辑变量
+      await this.props.dispatch({
+        type: 'varList/updateVariable',
+        payload: {
+          ...data,
+          id:query.id ,
+          enumList:this.props.varlist.enumeration
+        }
+      })
+    }else{
+      // await this.props.dispatch({
+      //   type: 'varList/delData',
+      //   payload: {
+      //     ...data
+      //   }
+      // })
+    }
+    
+    
 
     message.success('提交成功').then(() => {
     	 router.push({
@@ -198,7 +239,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量分类" {...formItemConfig}>
-                  {getFieldDecorator('status',{
+                  {getFieldDecorator('firstTypeId',{
                     initialValue:'请选择一级分类',
                     rules:[
                       {required:true,}
@@ -206,7 +247,7 @@ export default class EditVar extends PureComponent {
                   })(
                     <Select allowClear={true} onChange={this.selectchange}>
                     {this.props.varlist.selectItem.map((item,index)=> (
-				             <Option value={item.id} key={index}>{item.name}{item.id}</Option>
+				             <Option value={item.id} key={index}>{item.name}{item.typeName}</Option>
 				          	))}
                     </Select>
                   )}
@@ -214,7 +255,7 @@ export default class EditVar extends PureComponent {
               </Col>
               <Col xxl={3} md={4}>
                 <FormItem label="" >
-                  {getFieldDecorator('itemStatus',{
+                  {getFieldDecorator('parentId',{
                     initialValue:'请选择二级分类',
                     rules:[
                       {required:true}
@@ -222,7 +263,7 @@ export default class EditVar extends PureComponent {
                   })(
                     <Select allowClear={true} >
                      {this.props.varlist.secondSelectItem.map( (item,index) => (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          	))}
                     </Select>
                   )}
@@ -369,7 +410,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
-                  {getFieldDecorator('status1',{
+                  {getFieldDecorator('status',{
                     initialValue:''
                   })(
                     <RadioGroup name="radiogroup">
