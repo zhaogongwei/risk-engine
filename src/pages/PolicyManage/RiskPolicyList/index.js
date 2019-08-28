@@ -72,7 +72,7 @@ export default class RiskPolicyList extends PureComponent {
               <Menu.Item onClick={()=>this.goDeploy(record.id)}>
                 <Icon type="setting" />变量设置
               </Menu.Item>
-              <Menu.Item onClick={this.goLabel}>
+              <Menu.Item onClick={()=>this.goLabel(record.id)}>
                 <Icon type="snippets" />标签
               </Menu.Item>
               <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
@@ -193,10 +193,8 @@ export default class RiskPolicyList extends PureComponent {
     )
   }
   //跳转风控标签页面
-  goLabel = () =>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/risklabel',
-    })
+  goLabel = (strategyId) =>{
+    router.push(`/policyManage/riskpolicylist/risklabel?strategyId=${strategyId}`)
   }
   //跳转策略流列表
   goPolicyFlowList=(record)=>{

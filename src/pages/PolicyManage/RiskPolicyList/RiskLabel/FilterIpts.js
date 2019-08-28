@@ -12,7 +12,9 @@ import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect()
+@connect(({risklabel})=>({
+  risklabel
+}))
 
 @Form.create()
 
@@ -21,15 +23,13 @@ export default class FilterIpts extends Component {
   formSubmit = async (e) => {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
-        "currPage": 1,
-        "pageSize": 10
+    await this.props.dispatch({
+      type: 'risklabel/saveQueryData',
+      payload: {
+        ...formData
       }
     })
-
+    this.props.change(1, this.props.pageSize)
   }
   //   获取表单信息
   getFormValue = () => {
