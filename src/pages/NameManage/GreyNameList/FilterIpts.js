@@ -103,7 +103,7 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem label="灰名单来源" {...formItemConfig}>
-              {getFieldDecorator('greyType')(
+              {getFieldDecorator('describe')(
                 <Input />
               )}
             </FormItem>
