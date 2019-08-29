@@ -46,7 +46,7 @@ export default class PolicyTestTemp extends PureComponent {
         key:'action',
         render: (record) => (
           <div style={{color:'#6BC7FF',cursor:'pointer'}}>
-            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goTest(record.strategyId,record.flowId,record.id)}>测试</span>
+            <span style={{paddingLeft:10,paddingRight:10}} onClick={()=>this.goTest(record.strategyId,record.flowId,record.id,0)}>测试</span>
           </div>
         )
       }],
@@ -132,7 +132,7 @@ export default class PolicyTestTemp extends PureComponent {
     const {query} = this.props.location;
     return (
       <Fragment>
-        <Button onClick={()=>this.goTest(query['strategyId'],query['flowId'])}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddTest(query['strategyId'],query['flowId'],1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
@@ -141,8 +141,12 @@ export default class PolicyTestTemp extends PureComponent {
     this.props.dispatch(routerRedux.push({pathname:'/info/RiskManagement/PolicyList'}))
   }
   //跳转到测试
-  goTest = (strategyId,flowId,id='') =>{
-    router.push(`/policyManage/riskpolicylist/policyFlow/test/add?strategyId=${strategyId}&flowId=${flowId}&id=${id}`)
+  goTest = (strategyId,flowId,id='',type) =>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/test/add?strategyId=${strategyId}&flowId=${flowId}&id=${id}&type=${type}`)
+  }
+  //跳转到新增页面
+  goAddTest = (strategyId,flowId,type) =>{
+    router.push(`/policyManage/riskpolicylist/policyFlow/test/add?strategyId=${strategyId}&flowId=${flowId}&type=${type}`)
   }
   render() {
     const {tempList,formData} = this.props.policyTestTemp;
