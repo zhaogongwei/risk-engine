@@ -28,37 +28,40 @@ const { TextArea } = Input;
 export default class EditVar extends PureComponent {
   constructor(props) {
     super(props);
-    this.columns=
-      [
-        {
-          title: '序号',
-          dataIndex: 'key',
-          key:'key',
-        },
-        {
-          title: '枚举值',
-          dataIndex: 'enumValue',
-          editable: true,
-          max:20,
-          nonRequired: true,
-          key:'enumValue'
-        },
-        {
-          title: '枚举值展示',
-          dataIndex: 'enumShow',
-          key:'enumShow',
-          max:200,
-          nonRequired: true,
-          editable: true,
-        },
-        {
-          title: '操作',
-          render: (record) =>
-            <Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDelete(record.key)}>
+    this.columns=[
+      {
+        title: '序号',
+        dataIndex: 'key',
+        key:'key',
+        editable: false,
+      },
+      {
+        title: '枚举值',
+        dataIndex: 'enumValue',
+        editable: true,
+        max:20,
+        nonRequired: true,
+        key:'enumValue'
+      },
+      {
+        title: '枚举值展示',
+        dataIndex: 'enumShow',
+        key:'enumShow',
+        max:200,
+        nonRequired: true,
+        editable: true,
+      },
+      {
+        title: 'operation',
+        dataIndex: "operation",
+        editable: false,
+        render: (record) => (
+          <Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDelete(record.key)}>
             <a href="javascript:;">删除</a>
           </Popconfirm>
-
-        }]
+        )
+      }
+    ]
     this.state = {
       columns: [{
         title: '序号',
@@ -155,18 +158,17 @@ export default class EditVar extends PureComponent {
   }
   //枚举添加
   handleAdd = () => {
-    const { count, dataSource } = this.props.varlist;
+    let enumeration = this.props.varlist.enumeration
     //   要添加表格的对象
     const newData = {
-      enumValue:``,
-      enumShow:``,
-    };
+      enumValue: ``,
+      enumShow: ``
+    }
+    enumeration.push(newData)
     //   调用models中的方法改变dataSource渲染页面
     this.props.dispatch({
-      type: 'varList/addData',
-      payload: {
-        
-      }
+      type: 'varlist/addData',
+      payload: enumeration
     })
   }
   //   枚举删除表格
@@ -181,9 +183,9 @@ export default class EditVar extends PureComponent {
     //   }
     // })
   }
-  handleChange=(e)=>{
+  handleChange = (val) => {
     this.setState({
-      isShow:e
+      isShow: val
     })
   }
   goBack=()=>{
@@ -227,6 +229,7 @@ export default class EditVar extends PureComponent {
       wrapperCol:{span:16},
     }
     const query= {...this.props.location.query}
+    console.log(this.props.varlist.enumeration, 'this.props.varlist.enumeration')
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
         <Card
@@ -320,7 +323,7 @@ export default class EditVar extends PureComponent {
                       {required:true}
                     ]
                   })(
-                    <Select allowClear={true} onChange={(e)=>this.handleChange(e)}>
+                    <Select allowClear={true} onChange={(val)=>this.handleChange(val)}>
                       <Option value={1}>是</Option>
                       <Option value={0}>否</Option>
                     </Select>
@@ -366,21 +369,23 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>
             </Row>
-            {this.state.isShow?
-              <Row className={styles.btmMargin}  type="flex" align="top">
-                <Col xxl={4} md={6}>
-                  <FormItem label="枚举值配置:" {...formItemConfig}>
-                  </FormItem>
-                </Col>
-                <Col xxl={8} md={12}>
-                  <EditableTable
-                    list={this.props.varlist}
-                    columns={this.columns}
-                    handleAdd={this.handleAdd}
-                    handleDelete={this.handleDelete}
-                  />
-                </Col>
-              </Row>:null}
+            {
+              this.state.isShow ?
+                <Row className={styles.btmMargin}  type="flex" align="top">
+                  <Col xxl={4} md={6}>
+                    <FormItem label="枚举值配置:" {...formItemConfig}>
+                    </FormItem>
+                  </Col>
+                  <Col xxl={8} md={12}>
+                    <EditableTable
+                      list={{ dataSource: this.props.varlist.enumeration }}
+                      columns={this.columns}
+                      handleAdd={this.handleAdd}
+                      handleDelete={this.handleDelete}
+                    />
+                  </Col>
+                </Row> : null
+            }
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="缺省值" {...formItemConfig}>

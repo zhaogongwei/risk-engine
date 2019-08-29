@@ -85,6 +85,10 @@ export default function request(url, options) {
     .then(data => {
       // 验证登录是否失效
       if (data.status && data.status === 999) {
+        notification.warning({
+          message: `登录失效`,
+          description: `登录失效，请重新登录！`,
+        })
         //   登陆失效以后清除所有用户信息
         cookie().delete("hyjf-admin-id")
         window.localStorage.removeItem("permission")

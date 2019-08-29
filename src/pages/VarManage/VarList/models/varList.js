@@ -9,14 +9,17 @@ export default {
     selectItem:[],
     secondSelectItem:[],
     count:'',
-    enumeration:[],//枚举数组
+    enumeration:[{
+      key: '1',
+      enumValue: ``,
+      enumShow: ``
+    }],//枚举数组
     total:100,//一共多少项
   },
 
   effects: {
     //获取变量列表
     *fetchVarList({payload}, { call, put }) {
-    	
       let response = yield call(api.queryVarList,payload)
       if(response.status && response.status==1){
         yield put({
@@ -70,7 +73,7 @@ export default {
         type: 'saveEnumeration',
         payload,
       });
-    },
+    }
   },
 
   reducers: {
@@ -111,6 +114,14 @@ export default {
     	  Handle:payload
     	}
     },
+    //   枚举添加
+    addData(state, { payload }) {
+      console.log(payload, 'payload')
+      return {
+        ...state,
+        enumeration: addListKey(payload)
+      }
+    }
   },
 };
 
