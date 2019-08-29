@@ -121,7 +121,9 @@ export default class AddForm extends Component {
     this.setState({ value });
   };
    // 校验用户名
-   checkUserName = (rules, value, callback) => {
+   checkUserName = async(rules, value, callback) => {
+    const { dispatch } =  this.props;
+    const { infoData }=  this.props.account;
     if (!value) {
       callback('请输入用户名');
       return;
@@ -129,6 +131,18 @@ export default class AddForm extends Component {
     if (!(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{5,15}$/).test(value)) {
       callback('用户名必须为5-15位数的字母+数字')
       return;
+    }
+    let res = await dispatch({
+      type: 'account/checkUserName',
+      payload: {
+        userName: value,
+        id: infoData.id
+      }
+    })
+    if(res && res.status == 1) {
+      callback()
+    }else {
+      callback(res.statusDesc)
     }
     callback()
   }
