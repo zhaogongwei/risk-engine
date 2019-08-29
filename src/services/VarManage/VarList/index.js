@@ -1,8 +1,9 @@
 import request from '@/utils/request';
-const _baseApi = '/engine'
+const _baseApi = '/merchant-admin'
+const _api='/engine'
 //查询变量列表信息
 export async function queryVarList(params) {
-  return request(`${_baseApi}/varList/list`, {
+  return request(`${_baseApi}/variable/selectVariablePage`, {
     method: 'POST',
     body: {
       ...params
@@ -10,7 +11,7 @@ export async function queryVarList(params) {
   });
 }
 export async function getSelectLevel1(params) {
-  return request(`${_baseApi}/varClass/selectLevel1`, {
+  return request(`${_baseApi}/variable/type/firstVariableType`, {
     method: 'POST',
     body: {
       ...params
@@ -19,7 +20,7 @@ export async function getSelectLevel1(params) {
 }
 
 export async function getSelectLevel2(params) {
-  return request(`${_baseApi}/varClass/getSelectLevel2`, {
+  return request(`${_baseApi}/variable/type/secondVariableType`, {
     method: 'POST',
     body: {
       ...params
@@ -28,7 +29,7 @@ export async function getSelectLevel2(params) {
 }
 //新增变量
 export async function addVar(params) {
-  return request(`${_baseApi}/admin/asset/detail`, {
+  return request(`${_api}/admin/asset/detail`, {
     method: 'POST',
     body: {
       ...params
@@ -37,17 +38,25 @@ export async function addVar(params) {
 }
 
 //编辑变量
-export async function editVar(params) {
-  return request(`${_baseApi}/admin/asset/risk_detail`, {
+export async function updateVariable(params) {
+  return request(`${_baseApi}/variable/updateVariable`, {
     method: 'POST',
     body: {
       ...params
     },
   });
-}
+}  
+export async function selectVariableById(params) {
+  return request(`${_baseApi}/variable/selectVariableById`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+} 
 //删除变量
 export async function delVar(params){
-  return request(`${_baseApi}/varClass/deleteClass`, {
+  return request(`${_api}/varClass/deleteClass`, {
     method: 'POST',
     body: {
       ...params
@@ -55,7 +64,7 @@ export async function delVar(params){
   });
 }
 export async function getEnumeration(params){
-  return request(`${_baseApi}/varList/getEnumeration`, {
+  return request(`${_api}/varList/getEnumeration`, {
     method: 'POST',
     body: {
       ...params

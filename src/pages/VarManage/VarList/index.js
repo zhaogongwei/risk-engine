@@ -32,62 +32,65 @@ export default class VarList extends PureComponent {
       {
         title: '序号',
         dataIndex: 'key',
-        key:'id'
+        key:'key'
       },
       {
         title: '一级分类',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        dataIndex: 'firstTypeName',
+        key:'firstTypeName'
       },
       {
         title: '二级分类',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        dataIndex: 'secondTypeName',
+        key:'secondTypeName'
       },
       {
         title: '变量名',
-        key:'varname',
-        dataIndex:'varname'
+        key:'variableName',
+        dataIndex:'variableName'
       },
       {
         title: '变量代码',
-        key:'varcode',
-        dataIndex:'varcode'
+        key:'variableCode',
+        dataIndex:'variableCode'
       },
       {
         title: '变量类型',
-        key:'vartype',
-        dataIndex:'vartype'
+        key:'variableTypeStr',
+        dataIndex:'variableTypeStr'
       },
       {
         title: '是否枚举',
-        key:'isenmu',
-        dataIndex:'isenmu'
+        key:'enumFlag',
+        dataIndex:'enumFlag',
+        render:(val)=>{
+          return val===1?'是':'否'
+        }
       },
       {
         title: '长度',
-        key:'length',
-        dataIndex:'length'
+        key:'variableLength',
+        dataIndex:'variableLength'
       },
       {
         title: '缺省值',
-        key:'defVal',
-        dataIndex:'defVal'
+        key:'defaultValue',
+        dataIndex:'defaultValue'
       },
       {
         title: '最大值',
-        key:'max',
-        dataIndex:'max'
+        key:'maxValue',
+        dataIndex:'maxValue'
       },
       {
         title: '最小值',
-        key:'min',
-        dataIndex:'min'
+        key:'minValue',
+        dataIndex:'minValue'
       },
       {
         title: '枚举值',
-        key:'enmuval',
-        dataIndex:'enmuval'
+        key:'variableEnumStr',
+        dataIndex:'variableEnumStr'
       },
       {
         title:'状态',
@@ -138,8 +141,16 @@ export default class VarList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
-    this.change()
+  componentDidMount = async()=> {
+    const query= {...this.props.location.query}
+    await this.props.dispatch({
+      type: 'varlist/changefilterIpts',
+      payload: {
+        firstTypeId:query.parentId || '',
+        secondTypeId:query.id || '',
+      },
+    })
+    this.change(1)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -184,7 +195,7 @@ export default class VarList extends PureComponent {
       current:value
     })
   }
-  //右上角渲染
+  //右上角新增
   renderTitleBtn = () => {
     return (
       <Fragment>
@@ -195,7 +206,6 @@ export default class VarList extends PureComponent {
   //跳转编辑/新增页面
   goAddPage = (obj={})=>{
     //this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
-    console.log(obj)
     let query={
     	id:obj.id||'',
     	type:obj.type

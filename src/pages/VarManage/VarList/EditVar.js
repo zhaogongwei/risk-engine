@@ -28,37 +28,40 @@ const { TextArea } = Input;
 export default class EditVar extends PureComponent {
   constructor(props) {
     super(props);
-    this.columns=
-      [
-        {
-          title: '序号',
-          dataIndex: 'key',
-          key:'key',
-        },
-        {
-          title: '枚举值',
-          dataIndex: 'enumValue',
-          editable: true,
-          max:20,
-          nonRequired: true,
-          key:'enumValue'
-        },
-        {
-          title: '枚举值展示',
-          dataIndex: 'enumShow',
-          key:'enumShow',
-          max:200,
-          nonRequired: true,
-          editable: true,
-        },
-        {
-          title: '操作',
-          render: (record) =>
-            <Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDelete(record.key)}>
+    this.columns=[
+      {
+        title: '序号',
+        dataIndex: 'key',
+        key:'key',
+        editable: false,
+      },
+      {
+        title: '枚举值',
+        dataIndex: 'enumValue',
+        editable: true,
+        max:20,
+        nonRequired: true,
+        key:'enumValue'
+      },
+      {
+        title: '枚举值展示',
+        dataIndex: 'enumShow',
+        key:'enumShow',
+        max:200,
+        nonRequired: true,
+        editable: true,
+      },
+      {
+        title: 'operation',
+        dataIndex: "operation",
+        editable: false,
+        render: (record) => (
+          <Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDelete(record.key)}>
             <a href="javascript:;">删除</a>
           </Popconfirm>
-
-        }]
+        )
+      }
+    ]
     this.state = {
       columns: [{
         title: '序号',
@@ -107,12 +110,37 @@ export default class EditVar extends PureComponent {
       isShow:0,
     };
   }
-  componentDidMount() {
-		this.props.dispatch({
+  componentDidMount = async () => {
+		await this.props.dispatch({
       type: 'varlist/getSelectLevel1',
       payload: {
       }
     })
+    // const query={...this.props.location.query}
+    // if(query.type==2){
+    //   const res = await this.props.dispatch({
+    //     type: 'varlist/selectVariableById',
+    //     payload: {
+    //       id:query.id
+    //     }
+    //   })
+    //   if(res.status=='1'){
+    //     this.props.form.setFieldsValue({
+    //       firstTypeId:'',
+    //       defaultValue: "",
+    //       enumFlag: 0,
+    //       maxValue: 0,
+    //       minValue: 0,
+    //       parentId: 0,
+    //       remark: "string",
+    //       status: "string",
+    //       variableCode: "string",
+    //       variableLength: 0,
+    //       variableName: "string",
+    //       variableType: "string"
+    //     })
+    //   }
+    // }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -124,53 +152,68 @@ export default class EditVar extends PureComponent {
   	this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
-      	id:value
+      	parentId:value
       }
     })
   }
+  //枚举添加
   handleAdd = () => {
-    const { count, dataSource } = this.props.varlist;
+    let enumeration = this.props.varlist.enumeration
     //   要添加表格的对象
     const newData = {
-      enumValue:``,
-      enumShow:``,
-    };
+      enumValue: ``,
+      enumShow: ``
+    }
+    enumeration.push(newData)
     //   调用models中的方法改变dataSource渲染页面
     this.props.dispatch({
-      type: 'varList/addData',
-      payload: {
-        
-      }
+      type: 'varlist/addData',
+      payload: enumeration
     })
   }
-  //   删除表格
+  //   枚举删除表格
   handleDelete = (key) => {
     const {dataSource,count} = this.props.varlist;
     //   调用models的方法去删除dataSource中的数据
     const newData = dataSource.filter(item => item.key !== key)
-    this.props.dispatch({
-      type: 'varList/delData',
-      payload: {
-        dataSource: addListKey(deepCopy(newData)),
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'varList/delData',
+    //   payload: {
+    //     dataSource: addListKey(deepCopy(newData)),
+    //   }
+    // })
   }
-  handleChange=(e)=>{
+  handleChange = (val) => {
     this.setState({
-      isShow:e
+      isShow: val
     })
   }
   goBack=()=>{
     router.goBack()
   }
   formSubmit = async()=>{
-  	let data=this.getFormValue()
-    await this.props.dispatch({
-      type: 'varList/delData',
-      payload: {
-        ...data
-      }
-    })
+    let data=this.getFormValue()
+    const query={...this.props.location.query}
+    if(query.type==2){
+      //编辑变量
+      await this.props.dispatch({
+        type: 'varList/updateVariable',
+        payload: {
+          ...data,
+          id:query.id ,
+          enumList:this.props.varlist.enumeration
+        }
+      })
+    }else{
+      // await this.props.dispatch({
+      //   type: 'varList/delData',
+      //   payload: {
+      //     ...data
+      //   }
+      // })
+    }
+    
+    
 
     message.success('提交成功').then(() => {
     	 router.push({
@@ -186,6 +229,7 @@ export default class EditVar extends PureComponent {
       wrapperCol:{span:16},
     }
     const query= {...this.props.location.query}
+    console.log(this.props.varlist.enumeration, 'this.props.varlist.enumeration')
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
         <Card
@@ -198,7 +242,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量分类" {...formItemConfig}>
-                  {getFieldDecorator('status',{
+                  {getFieldDecorator('firstTypeId',{
                     initialValue:'请选择一级分类',
                     rules:[
                       {required:true,}
@@ -206,7 +250,7 @@ export default class EditVar extends PureComponent {
                   })(
                     <Select allowClear={true} onChange={this.selectchange}>
                     {this.props.varlist.selectItem.map((item,index)=> (
-				             <Option value={item.id} key={index}>{item.name}{item.id}</Option>
+				             <Option value={item.id} key={index}>{item.name}{item.typeName}</Option>
 				          	))}
                     </Select>
                   )}
@@ -214,7 +258,7 @@ export default class EditVar extends PureComponent {
               </Col>
               <Col xxl={3} md={4}>
                 <FormItem label="" >
-                  {getFieldDecorator('itemStatus',{
+                  {getFieldDecorator('parentId',{
                     initialValue:'请选择二级分类',
                     rules:[
                       {required:true}
@@ -222,7 +266,7 @@ export default class EditVar extends PureComponent {
                   })(
                     <Select allowClear={true} >
                      {this.props.varlist.secondSelectItem.map( (item,index) => (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				             <Option value={item.id} key={index}>{item.typeName}</Option>
 				          	))}
                     </Select>
                   )}
@@ -279,7 +323,7 @@ export default class EditVar extends PureComponent {
                       {required:true}
                     ]
                   })(
-                    <Select allowClear={true} onChange={(e)=>this.handleChange(e)}>
+                    <Select allowClear={true} onChange={(val)=>this.handleChange(val)}>
                       <Option value={1}>是</Option>
                       <Option value={0}>否</Option>
                     </Select>
@@ -325,21 +369,23 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>
             </Row>
-            {this.state.isShow?
-              <Row className={styles.btmMargin}  type="flex" align="top">
-                <Col xxl={4} md={6}>
-                  <FormItem label="枚举值配置:" {...formItemConfig}>
-                  </FormItem>
-                </Col>
-                <Col xxl={8} md={12}>
-                  <EditableTable
-                    list={this.props.varlist}
-                    columns={this.columns}
-                    handleAdd={this.handleAdd}
-                    handleDelete={this.handleDelete}
-                  />
-                </Col>
-              </Row>:null}
+            {
+              this.state.isShow ?
+                <Row className={styles.btmMargin}  type="flex" align="top">
+                  <Col xxl={4} md={6}>
+                    <FormItem label="枚举值配置:" {...formItemConfig}>
+                    </FormItem>
+                  </Col>
+                  <Col xxl={8} md={12}>
+                    <EditableTable
+                      list={{ dataSource: this.props.varlist.enumeration }}
+                      columns={this.columns}
+                      handleAdd={this.handleAdd}
+                      handleDelete={this.handleDelete}
+                    />
+                  </Col>
+                </Row> : null
+            }
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="缺省值" {...formItemConfig}>
@@ -369,7 +415,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
-                  {getFieldDecorator('status1',{
+                  {getFieldDecorator('status',{
                     initialValue:''
                   })(
                     <RadioGroup name="radiogroup">

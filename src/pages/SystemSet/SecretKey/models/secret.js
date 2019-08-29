@@ -11,7 +11,7 @@ export default {
   effects: {
     // 获取初始化数据
     *fetchInitData({ payload }, { call, put }) {
-      let response = yield call(api.initData,payload);
+      let response = yield call(api.queryList,payload);
       if(response && response.status == 1) {
         yield put({
           type: 'saveInitData',

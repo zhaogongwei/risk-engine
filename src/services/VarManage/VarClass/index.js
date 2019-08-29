@@ -1,7 +1,6 @@
 import request from '@/utils/request';
 //const _baseApi = '/engine'
 const _baseApi = '/merchant-admin'
-const _api='/engine'
 //查询变量分类列表信息
 export async function queryClassList(params) {
   return request(`${_baseApi}/variable/type/selectVariableTypePage`, {

@@ -14,6 +14,16 @@ export async function initData(params){
   });
 }
 
+// 检查用户名唯一性
+export async function checkUserName(params) {
+  return request(`${_baseApi}/system/user/uniquenessCheck`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
 //账号添加
 export async function addAccount(params) {
   return request(`${_baseApi}/system/user/add`, {
@@ -24,7 +34,7 @@ export async function addAccount(params) {
   });
 }
 
-//查询角色列表
+//查询账号列表
 export async function queryList(params) {
   return request(`${_baseApi}/system/user/list`, {
     method: 'POST',
@@ -32,7 +42,7 @@ export async function queryList(params) {
   });
 }
 
-//角色修改编辑
+//账号修改编辑
 export async function editAccount(params) {
   return request(`${_baseApi}/system/user/view`, {
     method: 'POST',

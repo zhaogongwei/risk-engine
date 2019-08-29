@@ -9,49 +9,58 @@ export default {
     selectItem:[],
     secondSelectItem:[],
     count:'',
-    enumeration:[],
+    enumeration:[{
+      key: '1',
+      enumValue: ``,
+      enumShow: ``
+    }],//枚举数组
     total:100,//一共多少项
   },
 
   effects: {
     //获取变量列表
     *fetchVarList({payload}, { call, put }) {
-    	
       let response = yield call(api.queryVarList,payload)
-      yield put({
-        type: 'saveVarList',
-        payload:response,
-      });
+      if(response.status && response.status==1){
+        yield put({
+          type: 'saveVarList',
+          payload:response,
+        });
+        yield put({
+          type: 'savetotal',
+          payload:response,
+        });
+      }
+      return response;
     },
      *getSelectLevel1({payload}, { call, put }) {
       let response = yield call(api.getSelectLevel1,payload)
-      yield put({
-        type: 'changeSelect',
-        payload:response,
-      });
+      if(response.status && response.status==1){
+        yield put({
+          type: 'changeSelect',
+          payload:response,
+        });
+      }
+      return response;
     },
     *getSelectLevel2({payload}, { call, put }) {
       let response = yield call(api.getSelectLevel2,payload)
-      yield put({
-        type: 'changeSecondSelect',
-        payload:response,
-      });
+      if(response.status && response.status==1){
+        yield put({
+          type: 'changeSecondSelect',
+          payload:response,
+        });
+      }
+      return response;
     },
-    //添加变量
-    *addVar({payload},{call,put}){
-      let response = yield call(api.addVar,payload)
-      yield put({
-        type: 'saveVarList',
-        payload,
-      });
+    //提交编辑变量
+    *updateVariable({payload}, { call, put }) {
+      let response = yield call(api.updateVariable,payload)
+      return response;
     },
-    //编辑变量
-    *editVar({payload},{call,put}){
-      let response = yield call(api.editVar,payload)
-      yield put({
-        type: 'saveVarList',
-        payload,
-      });
+    *selectVariableById({payload}, { call, put }) {
+      let response = yield call(api.selectVariableById,payload)
+      return response;
     },
     //删除变量
     *delVar({payload,callback},{call,put}){
@@ -64,18 +73,24 @@ export default {
         type: 'saveEnumeration',
         payload,
       });
-    },
+    }
   },
 
   reducers: {
     saveVarList(state, { payload }) {
-    	let list = addListKey( payload.data)
+    	const list = addListKey (payload.data.records)
       return {
         ...state,
         varList:list,
-      };
+      }
     },
-     changeSelect(state, { payload }) {
+    savetotal(state, { payload }) {
+      return {
+        ...state,
+        total:payload.data.total,
+      }
+    },
+    changeSelect(state, { payload }) {
       return {
         ...state,
         selectItem: payload.data,
@@ -99,6 +114,14 @@ export default {
     	  Handle:payload
     	}
     },
+    //   枚举添加
+    addData(state, { payload }) {
+      console.log(payload, 'payload')
+      return {
+        ...state,
+        enumeration: addListKey(payload)
+      }
+    }
   },
 };
 

@@ -71,13 +71,13 @@ export default class GreyNameList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.isForbid()}>
-                <Icon type="edit"/>{record.status===1?'禁用':'启用'}
+              <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
+                <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
               </Menu.Item>
-              <Menu.Item onClick={()=>this.handleInBlack()}>
-                <Icon type="delete"/>拉黑
+              <Menu.Item onClick={ () => this.handleInBlack(record.id) }>
+                <Icon type="minus-circle" />拉黑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.delName()}>
+              <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -91,26 +91,6 @@ export default class GreyNameList extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          name:'张三',
-          idCard:'160145236545632654569',
-          source:'壹钱包逾期',
-          sex:'男',
-          phone:13333333333,
-          status:0,
-        },
-        {
-          key:2,
-          name:'张三',
-          idCard:'160145236545632654569',
-          source:'壹钱包逾期',
-          sex:'男',
-          phone:13333333333,
-          status:1,
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -129,8 +109,7 @@ export default class GreyNameList extends PureComponent {
   onChange = (current) => {
     console.log(current, 'change')
     this.setState({
-      current:current,
-      currentPage:current
+      current: current
     })
     this.change(current)
   }
@@ -147,7 +126,7 @@ export default class GreyNameList extends PureComponent {
     // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
   }
   //   获取子组件数据的方法
-  getSubKey=(ref,key)=>{
+  getSubKey = (ref, key) => {
     this[key] = ref;
   }
   //展示页码
@@ -159,9 +138,9 @@ export default class GreyNameList extends PureComponent {
     window.location.reload();
   }
   //查询时改变默认页数
-  changeDefault=(value)=>{
+  changeDefault = value => {
     this.setState({
-      current:value
+      current: value
     })
   }
   //右上角渲染
@@ -172,8 +151,8 @@ export default class GreyNameList extends PureComponent {
       </Fragment>
     )
   }
-  //启用/禁用
-  isForbid=async(record)=>{
+  //   启用、禁用、删除
+  isForbid = async (id, status) => {
     const confirmVal = await Swal.fire({
       text: '确定要执行该操作吗？',
       type: 'warning',
@@ -183,25 +162,23 @@ export default class GreyNameList extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
-    }
-  }
-  //删除灰名单
-  delName=async(record)=>{
-    const confirmVal = await Swal.fire({
-      text: '确定要执行该操作吗？',
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消'
-    })
-    if(confirmVal.value){
-
+      const res = await this.props.dispatch({
+        type: 'greyName/isForbid',
+        payload: {
+          id,
+          greyType: status === 1 ? 0 : (status === 0 ? 1 : status === 2 && 2)
+        }
+      })
+      if (res && res.status === 1) {
+        message.success(res.statusDesc)
+        this.onChange(this.state.current)
+      } else {
+        message.error(res.statusDesc)
+      }
     }
   }
   //拉黑
-  handleInBlack=async(record)=>{
+  handleInBlack = async id => {
     const confirmVal = await Swal.fire({
       text: '确定要执行该操作吗？',
       type: 'warning',
@@ -211,7 +188,18 @@ export default class GreyNameList extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const res = await this.props.dispatch({
+        type: 'greyName/handleInBlack',
+        payload: {
+          id
+        }
+      })
+      if (res && res.status === 1) {
+        message.success(res.statusDesc)
+        this.onChange(this.state.current)
+      } else {
+        message.error(res.statusDesc)
+      }
     }
   }
   //跳转编辑/新增页面
@@ -230,7 +218,7 @@ export default class GreyNameList extends PureComponent {
          bordered={false}
          title={'本地灰名单库'}
        >
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.current}/>
          <Table
            bordered
            pagination={false}
