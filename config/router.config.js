@@ -323,6 +323,12 @@ export default [
             path:'/system/interface',
             name:'urlDeploy',
             component:'./SystemSet/UrlDeploy'
+          },
+          //商户密钥
+          {
+            path:'/system/secretkey',
+            name:'secretKey',
+            component:'./SystemSet/SecretKey'
           }
         ]
       },

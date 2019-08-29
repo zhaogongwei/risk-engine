@@ -12,6 +12,7 @@ export default {
   },
 
   effects: {
+    // 初始化数据
     *initData({ payload }, { call, put }) {
       let response = yield call(api.initData, payload)
       if(response && response.status == 1) {
@@ -31,6 +32,10 @@ export default {
           payload: response.data
         });
       }
+    },
+    // 检查用户名唯一性
+    *checkUserName({ payload }, { call, put }) {
+      return yield call(api.checkUserName, payload)
     },
     //添加账号
     *addAccount({ payload },{ call,put }){
