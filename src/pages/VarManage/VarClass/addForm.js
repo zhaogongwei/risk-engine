@@ -136,10 +136,10 @@ export default class AddForm extends Component {
 		        callback:()=>{
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
-		          })
-		          this.props.changeDefault(1)
-		          this.props.resatSelect.classChangeGetSelect()
-		          this.props.change(1)
+              })
+              this.props.resatSelect.getSelect()
+              this.props.resatSelect.selectchange(this.props.varclass.filterIpts.parentId || '')
+		          this.props.change(current)
 		          this.reset()
 		        }
 		      })
@@ -158,10 +158,9 @@ export default class AddForm extends Component {
 		        callback:()=>{
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
-		          })
-		          this.props.changeDefault()
-		          this.props.resatSelect.classChangeGetSelect()
-		          this.props.change(1)
+              })
+              this.props.resatSelect.selectchange(this.props.varclass.filterIpts.parentId || '')
+		          this.props.change(current)
 		          this.reset()
 		        }
 		      })

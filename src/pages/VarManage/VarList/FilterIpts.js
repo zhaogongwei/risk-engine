@@ -32,7 +32,7 @@ export default class FilterIpts extends Component {
   	this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
-      	id:value
+      	parentId:value
       }
     })
   }
@@ -45,12 +45,16 @@ export default class FilterIpts extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
-  componentDidMount () {
-  	this.props.dispatch({
+  componentDidMount = async()=> {
+  	await this.props.dispatch({
       type: 'varlist/getSelectLevel1',
       payload: {
       	
       }
+    })
+    this.props.form.setFieldsValue({
+      firstTypeId:Number(this.props.varlist.filterIpts.firstTypeId) || '',
+      secondTypeId:Number(this.props.varlist.filterIpts.secondTypeId) || '',
     })
     this.props.getSubKey(this,'child')
   }
@@ -68,7 +72,7 @@ export default class FilterIpts extends Component {
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
             <FormItem label="变量名" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeName',{
+              {getFieldDecorator('variableName',{
                 initialValue:''
               })(
                 <Input />
@@ -77,12 +81,12 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="变量分类" {...formItemConfig}>
-              {getFieldDecorator('status',{
-                initialValue:''
+              {getFieldDecorator('firstTypeId',{
+                initialValue: '',
               })(
                 <Select allowClear={true} onChange={this.selectchange}>
                   {this.props.varlist.selectItem.map((item,index)=> (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				              <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                 </Select>
               )}
@@ -90,12 +94,12 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={3} md={4}>
             <FormItem label="" >
-               {getFieldDecorator('itemStatus',{
+               {getFieldDecorator('secondTypeId',{
                 initialValue:''
               })(
                 <Select allowClear={true}>
                  {this.props.varlist.secondSelectItem.map( (item,index) => (
-				             <Option value={item.id} key={index}>{item.name}</Option>
+				              <Option value={item.id} key={index}>{item.typeName}</Option>
 				          ))}
                 </Select>
               )}
@@ -103,7 +107,7 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} md={6}>
             <FormItem label="变量代码" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode',{
+              {getFieldDecorator('variableCode',{
                 initialValue:''
               })(
                 <Input />
