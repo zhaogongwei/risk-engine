@@ -221,7 +221,10 @@ export default class RiskPolicyList extends PureComponent {
     const {status,policyId} = this.state
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-         <Card bordered={false}>
+         <Card
+           bordered={false}
+           title={'风控策略列表'}
+         >
            <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize} changeDefault={this.changeDefault}/>
            <Table
              bordered

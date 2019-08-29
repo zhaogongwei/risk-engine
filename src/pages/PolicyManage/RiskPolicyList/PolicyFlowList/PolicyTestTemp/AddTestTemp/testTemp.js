@@ -31,13 +31,11 @@ export default class TestTemp extends Component {
   }
   //保存并执行测试
   formSubmit = async (e) => {
-    this.props.form.validateFields((error,value)=>{
-      console.log(error);
-      console.log(this.props.form.getFieldsError());
+    this.props.form.validateFields(async(error,value)=>{
       if(!error){
         const {query} = this.props.location;
         const formData = this.getFormValue();
-        const res =  this.props.dispatch({
+        const res =  await this.props.dispatch({
           type: 'testTemp/saveTest',
           payload:{
             id:query['id']?query['id']:null,
@@ -48,7 +46,7 @@ export default class TestTemp extends Component {
         })
         if(res&&res.status===1){
           message.success(res.statusDesc)
-          const response =  this.props.dispatch({
+          const response =  await this.props.dispatch({
             type: 'testTemp/queryTestResult',
             payload:{
               assetsCode:res.data.assetCode,
@@ -73,8 +71,6 @@ export default class TestTemp extends Component {
               })
             }
           }
-        }else{
-          message.error(res.statusDesc)
         }
       }
     })
@@ -143,9 +139,6 @@ export default class TestTemp extends Component {
                 {
                   required:true,
                   message:'输入内容不能为空!',
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
-                  }
                 }
               ]
             })(
@@ -172,9 +165,6 @@ export default class TestTemp extends Component {
                 {
                   required:true,
                   message:'输入内容不能为空!',
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
-                  }
                 }
               ]
             })(
@@ -193,9 +183,6 @@ export default class TestTemp extends Component {
                 required:true,
                 message:'输入内容不能为空!',
                 pattern:/^\d{1,3}$/,
-                validator: (rule, value, callback) => {
-                  if (!value) callback('输入内容不能为空!')
-                }
               }
             ]
           })(
@@ -213,9 +200,6 @@ export default class TestTemp extends Component {
               {
                 required:true,
                 message:'输入内容不能为空!',
-                validator: (rule, value, callback) => {
-                  if (!value) callback('输入内容不能为空!')
-                }
               }
             ]
           })(
@@ -235,9 +219,6 @@ export default class TestTemp extends Component {
               {
                 required:true,
                 message:'输入内容不能为空!',
-                validator: (rule, value, callback) => {
-                  if (!value) callback('输入内容不能为空!')
-                }
               }
             ]
           })(
@@ -296,7 +277,28 @@ export default class TestTemp extends Component {
                           rules:[
                             {
                               required:true,
-                              message:'输入内容不能为空!'
+                              message:'输入内容不能为空!',
+                              validator: async (rule, val, cb) => {
+                                if (!val) {
+                                  cb('请输入正确内容！')
+                                  return;
+                                }else if(val.length>15){
+                                  cb('最多输入15位！')
+                                  return;
+                                }
+                                const templateName = this.props.form.getFieldValue('templateName')
+                                const response = await this.props.dispatch({
+                                  type: 'testTemp/checkTemplateName',
+                                  payload: {
+                                    templateName:templateName
+                                  }
+                                })
+                                if(response&&response.status===1){
+                                  cb()
+                                }else{
+                                  cb(response.statusDesc)
+                                }
+                              }
                             }
                           ]
                         })(
@@ -307,8 +309,12 @@ export default class TestTemp extends Component {
                   </Row>
                 </Form>
                 <Row type="flex" gutter={32} justify="center" style={{marginTop:20}}>
-                  <Button type="primary" onClick={this.formSubmit} loading={this.props.submitLoading}>保存并执行测试</Button>
-                  <Button onClick={()=>router.goBack()}>返回</Button>
+                  <Col>
+                    <Button type="primary" onClick={this.formSubmit} loading={this.props.submitLoading}>保存并执行测试</Button>
+                  </Col>
+                  <Col>
+                    <Button onClick={()=>router.goBack()}>返回</Button>
+                  </Col>
                 </Row>
               </Col>
               <Col span={6} style={{backgroundColor:'#F2F2F2',minHeight:600}}>
