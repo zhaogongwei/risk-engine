@@ -119,7 +119,7 @@ export default class IndexComponent extends Component {
 						</FormItem>
 						<FormItem {...submitFormLayout}>
 							<Button type="primary" htmlType="submit" onClick={this.submitHandler}>
-								生成新密钥
+								生成新秘钥
 							</Button>
 						</FormItem>
       	</Form>
