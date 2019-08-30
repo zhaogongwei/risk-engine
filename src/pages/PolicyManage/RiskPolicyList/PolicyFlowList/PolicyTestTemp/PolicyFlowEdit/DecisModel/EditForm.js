@@ -252,8 +252,10 @@ export default class EditForm extends Component {
       //重新生成tableRow中的 resultVarMap
       newCol.length&&newCol.map((item,index)=>{
         console.log(index)
-        varValue = {...varValue,...{[`${item['dataIndex']}`]:tableRow[num]['resultVarMap'][`${item['dataIndex']}`]}};
-        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:tableRow[num]['resultVarMap'][`${item['dataIndex']}`]})
+        //对应列(dataIndex)的值
+        let currentDataIndex = tableRow[num]?tableRow[num]['resultVarMap'][`${item['dataIndex']}`]:'';
+        varValue = {...varValue,...{[`${item['dataIndex']}`]:currentDataIndex}};
+        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:currentDataIndex})
       })
       return {
         index_0:this.createRowColTitle(item),

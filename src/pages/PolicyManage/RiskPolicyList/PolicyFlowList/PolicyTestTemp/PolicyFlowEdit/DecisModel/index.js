@@ -254,13 +254,11 @@ export default class DecisModel extends PureComponent {
             rowVarValue:records['varName'],
           }
         },()=>{
-          //重新选择行列变量时，之前的值全部置空
+          //重新选择行列变量时，只替换变量，上下限条件不变
           if(rowList.dataSource.length){
-            this.props.dispatch({
-              type: 'decision/saveRowData',
-              payload: {
-                dataSource: [],
-              }
+            rowList.dataSource.forEach((item,index)=>{
+              item['variableName']=records['varName']
+              item['variableId']=records['varId']
             })
             this.props.dispatch({
               type: 'decision/makeTableRow',
@@ -282,13 +280,12 @@ export default class DecisModel extends PureComponent {
             colVarValue:records['varName']
           }
         },()=>{
-          //重新选择行列变量时，之前的值全部置空
+          //重新选择行列变量时，只替换变量，上下限条件不变
           if(colList.dataSource.length){
-            this.props.dispatch({
-              type: 'decision/saveColData',
-              payload: {
-                dataSource: [],
-              }
+            //改造colList
+            colList.dataSource.forEach((item,index)=>{
+              item['variableName']=records['varName']
+              item['variableId']=records['varId']
             })
             this.props.dispatch({
               type: 'decision/makeTableCol',
@@ -316,10 +313,29 @@ export default class DecisModel extends PureComponent {
   }
   //弹框唤起事件
   openDialog=(type)=>{
-    this.setState({
-      visible:true,
-      inputType:type,
-    })
+    const {rowVar, colVar} = this.state;
+    if(type===1){
+      //列变量
+      if(Object.keys(colVar).length){
+        message.warning('重新选择列变量后，请重新设置列!')
+          .then(()=>{
+            this.setState({
+              visible:true,
+              inputType:type,
+            })
+          })
+      }
+    }else if(type ===0){
+      if(Object.keys(rowVar).length){
+        message.warning('重新选择行变量后，请重新设置行!')
+          .then(()=>{
+            this.setState({
+              visible:true,
+              inputType:type,
+            })
+          })
+      }
+    }
   }
   //行列设置编辑弹框确定事件
   handleFix=()=>{
