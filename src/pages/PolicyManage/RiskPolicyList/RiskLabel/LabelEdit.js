@@ -382,9 +382,13 @@ export default class LabelEdit extends PureComponent {
             </Row>
             <Row type="flex" align="middle">
               <Col xxl={12} md={8}>
-                <Row type="flex" align="middle" justify="center">
-                  <Button type="primary" onClick={this.formSubmit} loading={type==1?this.props.addsubmitLoading:this.props.editsubmitLoading}>保存并提交</Button>
-                  <Button onClick={()=>router.goBack()}>返回</Button>
+                <Row type="flex" align="middle" gutter={24} justify="center">
+                  <Col>
+                    <Button type="primary" onClick={this.formSubmit} loading={type==1?this.props.addsubmitLoading:this.props.editsubmitLoading}>保存并提交</Button>
+                  </Col>
+                  <Col>
+                    <Button onClick={()=>router.goBack()}>返回</Button>
+                  </Col>
                 </Row>
               </Col>
             </Row>
