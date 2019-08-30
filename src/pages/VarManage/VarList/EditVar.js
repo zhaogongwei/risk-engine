@@ -52,12 +52,11 @@ export default class EditVar extends PureComponent {
         editable: true,
       },
       {
-        title: 'operation',
-        dataIndex: "operation",
+        title: '操作',
         editable: false,
         render: (record) => (
           <Popconfirm title="确定要删除本行吗?" onConfirm={() => this.handleDelete(record.key)}>
-            <a href="javascript:;">删除</a>
+            <a>删除</a>
           </Popconfirm>
         )
       }
@@ -173,15 +172,13 @@ export default class EditVar extends PureComponent {
   }
   //   枚举删除表格
   handleDelete = (key) => {
-    const {dataSource,count} = this.props.varlist;
+    const { enumeration } = this.props.varlist
     //   调用models的方法去删除dataSource中的数据
-    const newData = dataSource.filter(item => item.key !== key)
-    // this.props.dispatch({
-    //   type: 'varList/delData',
-    //   payload: {
-    //     dataSource: addListKey(deepCopy(newData)),
-    //   }
-    // })
+    const newData = enumeration.filter(item => item.key !== key)
+    this.props.dispatch({
+      type: 'varlist/addData',
+      payload: newData
+    })
   }
   handleChange = (val) => {
     this.setState({

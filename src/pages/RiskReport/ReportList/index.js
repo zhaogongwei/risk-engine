@@ -18,9 +18,9 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ reportList, loading }) => ({
+  reportList,
+  loading: loading.effects['reportList/riskSubmit']
 }))
 export default class ReportList extends PureComponent {
   constructor(props) {
@@ -58,6 +58,11 @@ export default class ReportList extends PureComponent {
         dataIndex:'vartype'
       },
       {
+        title: '报告状态',
+        key:'dfa',
+        dataIndex:'fkdf'
+      },
+      {
         title: '操作',
         key:'action',
         render: (record) => {
@@ -80,22 +85,6 @@ export default class ReportList extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          oneclass:'反欺诈',
-          twoclass:'注册',
-          varname:'注册时间',
-          varcode:'变量代码',
-          vartype:'变量类型',
-          isenmu:'否',
-          length:22,
-          defVal:'男',
-          max:88,
-          min:11,
-          enmuval:'男、女',
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -119,16 +108,16 @@ export default class ReportList extends PureComponent {
     this.change(current)
   }
   // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
+  change = async (currPage = 1, pageSize = 10) => {
     let formData ;
     if(this.child){
       formData = this.child.getFormValue()
     }else{
       formData = {}
     }
-    this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
+    await this.props.dispatch({
+      type: 'reportList/listData',
+      payload: {
         ...formData,
         currPage,
         pageSize
@@ -198,6 +187,7 @@ export default class ReportList extends PureComponent {
     })
   }
   render() {
+    const { listData } = this.props.reportList;
     return (
      <PageHeaderWrapper>
        <Card
@@ -209,7 +199,7 @@ export default class ReportList extends PureComponent {
            bordered
            pagination={false}
            columns={this.state.columns}
-           dataSource={this.state.data}
+           dataSource={listData.records}
            loading={this.props.loading}
          />
          <Pagination
