@@ -34,33 +34,55 @@ export default class ReportList extends PureComponent {
       },
       {
         title: '资产编号',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        dataIndex: 'assetsCode',
+        key:'assetsCode'
       },
       {
         title: '策略名称',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        dataIndex: 'strategyName',
+        key:'strategyName'
       },
       {
         title: '报告名称',
-        key:'varname',
-        dataIndex:'varname'
+        key:'presentationName',
+        dataIndex:'presentationName'
       },
       {
         title: '添加时间',
-        key:'varcode',
-        dataIndex:'varcode'
+        key:'createTime',
+        dataIndex:'createTime'
       },
       {
         title: '审核结果',
-        key:'vartype',
-        dataIndex:'vartype'
+        key:'approvalResult',
+        dataIndex:'approvalResult',
+        render: record => {
+          if(record -0 == 1){
+            return '自动审核拒绝';
+          }
+          if(record - 0 == 2){
+            return '自动审核通过';
+          }
+        }
       },
       {
         title: '报告状态',
-        key:'dfa',
-        dataIndex:'fkdf'
+        key:'status',
+        dataIndex:'status',
+        render: record => {
+          if(record - 0 == 1) {
+            return '初始';
+          }
+          if(record - 0 == 2) {
+            return '生成中';
+          }
+          if(record - 0 == 3) {
+            return '已生成';
+          }
+          if(record - 0 == 4) {
+            return '已生成';
+          }
+        }
       },
       {
         title: '操作',
@@ -71,7 +93,7 @@ export default class ReportList extends PureComponent {
               <Menu.Item onClick={()=>this.goRiskReport()}>
                 <Icon type="edit"/>查看
               </Menu.Item>
-              <Menu.Item onClick={()=>this.goRiskReport()}>
+              <Menu.Item onClick={()=>this.goDataQuery()}>
                 <Icon type="delete"/>三方数据查询
               </Menu.Item>
             </Menu>
@@ -90,8 +112,7 @@ export default class ReportList extends PureComponent {
       code:'',
       type:1,//1:添加 2：编辑
       pageSize:10,
-      currentPage:1,
-      current:1,
+      currPage:1,
       id:'',
       status:1
     };
@@ -100,25 +121,19 @@ export default class ReportList extends PureComponent {
     this.change()
   }
   //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
+  onChange = (currPage, pageSize) => {
     this.setState({
-      current:current,
-      currentPage:current
+      currPage,
+      pageSize
     })
-    this.change(current)
+    this.change(currPage,pageSize)
   }
   // 进入页面去请求页面数据
   change = async (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     await this.props.dispatch({
       type: 'reportList/listData',
       payload: {
-        ...formData,
+        ...this.props.reportList.queryConfig,
         currPage,
         pageSize
       }
@@ -194,7 +209,7 @@ export default class ReportList extends PureComponent {
         bordered={false}
         title={'风控报告列表'}
        >
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
          <Table
            bordered
            pagination={false}
@@ -206,8 +221,8 @@ export default class ReportList extends PureComponent {
            style={{ marginBottom: "50px" }}
            showQuickJumper
            defaultCurrent={1}
-           current={this.state.current}
-           total={100}
+           current={this.state.currPage}
+           total={listData.total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

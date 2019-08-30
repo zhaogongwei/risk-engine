@@ -6,7 +6,8 @@ export default {
   namespace: 'reportList',
 
   state: {
-    listData: {}
+    listData: {},
+    queryConfig: {}
   },
 
   effects: {
@@ -27,6 +28,12 @@ export default {
       return {
         ...state,
         listData: payload
+      }
+    },
+    setQueryConfig(state, { payload }) {
+      return {
+        ...state,
+        queryConfig: payload
       }
     },
     addData(state, {payload}) {

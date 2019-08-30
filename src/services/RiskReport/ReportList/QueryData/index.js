@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-const _baseApi = '/aems'
+const _baseApi = '/merchant-admin'
 //百行风控报告日期查询
 export async function queryRiskDate(params) {
   return request(`${_baseApi}/admin/risk_management_report/time/${params.instCode}/${params.assetsCode}`, {
@@ -104,7 +104,7 @@ export async function updateDsOverduenfo(params){
 }
 //安融报告时间查询
 export async function queryArPublicDate(params){
-  return request(`${_baseApi}/admin/anrong/query_date/list`,{
+  return request(`${_baseApi}/report/selectReport`,{
     method:'POST',
     body:{
       ...params
