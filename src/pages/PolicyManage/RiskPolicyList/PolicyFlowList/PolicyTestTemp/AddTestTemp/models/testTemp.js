@@ -12,7 +12,7 @@ export default {
   },
 
   effects: {
-    //查询策略测试模板变量信息
+    //查询策略测试模板变量信息(编辑）
     *fetchTestTempVarList({payload}, { call, put }) {
       let response = yield call(api.queryPolicyVarInfo,payload);
       if(response&&response.status===1){
@@ -23,6 +23,24 @@ export default {
       }else{
         message.error(response.statusDesc)
       }
+    },
+    //查询策略测试模板变量信息(新增）
+    *fetchTestTempVarArray({payload}, { call, put }) {
+      let response = yield call(api.queryPolicyVarMsg,payload);
+      if(response&&response.status===1){
+        yield put({
+          type: 'saveTempVarList',
+          payload:response,
+        });
+      }else{
+        message.error(response.statusDesc)
+      }
+      return response
+    },
+    //校验策略测试模板名称
+    *checkTemplateName({payload},{call,put}){
+      let response = yield call(api.checkTemplateName,payload);
+      return response;
     },
     //保存并测试策略模板
     *saveTest({payload}, { call, put }) {

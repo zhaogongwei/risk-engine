@@ -19,9 +19,9 @@ import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ assetDeploy, loading }) => ({
-  assetDeploy,
-  loading: loading.effects['assetDeploy/riskSubmit']
+@connect(({ template, loading }) => ({
+  template,
+  loading: loading.effects['template/templateList']
 }))
 export default class VarList extends PureComponent {
   constructor(props) {
@@ -35,23 +35,23 @@ export default class VarList extends PureComponent {
       },
       {
         title: '报告名称',
-        dataIndex: 'oneclass',
-        key:'oneclass'
+        dataIndex: 'presentationName',
+        key:'presentationName'
       },
       {
         title: '创建时间',
-        dataIndex: 'twoclass',
-        key:'twoclass'
+        dataIndex: 'createTime',
+        key:'createTime'
       },
       {
         title: '更新时间',
-        key:'varname',
-        dataIndex:'varname'
+        key:'updateTime',
+        dataIndex:'updateTime'
       },
       {
         title: '负责人',
-        key:'varcode',
-        dataIndex:'varcode'
+        key:'createTrueName',
+        dataIndex:'createTrueName'
       },
       {
         title: '操作',
@@ -118,23 +118,17 @@ export default class VarList extends PureComponent {
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
     this.setState({
-      current:current,
-      currentPage:current
+      current: current,
+      currentPage: current
     })
     this.change(current)
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
-      type: 'assetDeploy/riskSubmit',
-      data: {
-        ...formData,
+      type: 'template/templateList',
+      payload: {
+        ...this.props.template.queryData,
         currPage,
         pageSize
       }
@@ -203,18 +197,19 @@ export default class VarList extends PureComponent {
     })
   }
   render() {
+    const { templateList, total } = this.props.template
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
         <Card
           bordered={false}
           title="风控报告模板"
         >
-          <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+          <FilterIpts getSubKey={this.getSubKey} change={this.onChange}/>
           <Table
             bordered
             pagination={false}
             columns={this.state.columns}
-            dataSource={this.state.data}
+            dataSource={templateList}
             loading={this.props.loading}
           />
           <Pagination
@@ -222,7 +217,7 @@ export default class VarList extends PureComponent {
             showQuickJumper
             defaultCurrent={1}
             current={this.state.current}
-            total={100}
+            total={total}
             onChange={this.onChange}
             showTotal={(total, range) => this.showTotal(total, range)}
           />

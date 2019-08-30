@@ -39,8 +39,8 @@ export default class RiskLabel extends PureComponent {
       },
         {
           title:'标签内容',
-          dataIndex:'labelCont',
-          key:'labelCont'
+          dataIndex:'labelContent',
+          key:'labelContent'
         },
         {
           title: '创建时间',
@@ -54,13 +54,14 @@ export default class RiskLabel extends PureComponent {
         },
         {
           title: '负责人',
-          dataIndex: 'responser',
-          key:'responser'
+          dataIndex: 'updateTrueName',
+          key:'updateTrueName'
         },
         {
           title: '状态',
           dataIndex: 'status',
-          key:'status'
+          key:'status',
+          render:(records)=>records===1?'启用':'禁用',
         },
       {
         title: '操作',
@@ -68,10 +69,10 @@ export default class RiskLabel extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.goAddEdit(2)}>
+              <Menu.Item onClick={() => this.goAddEdit(0,record.strategyId,record.id)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={() => this.delLabel()}>
+              <Menu.Item onClick={() => this.delLabel(record)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
             </Menu>
@@ -85,17 +86,6 @@ export default class RiskLabel extends PureComponent {
           )
         }
       }],
-      data:[
-        {
-          key:1,
-          labelName:'壹钱包房抵贷',
-          labelCont:'<资产来源：极速云> <资产类型：个人经营贷><期限：12月>',
-          createTime:'2018-06-06',
-          updateTime:'2018-06-06',
-          responser:'王大大',
-          status:'启用',
-        }
-      ],
       checkedData: [],
       modalStatus:false,
       code:'',
@@ -108,7 +98,14 @@ export default class RiskLabel extends PureComponent {
       visible:false
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    //保存查询条件
+    this.props.dispatch({
+      type: 'risklabel/saveQueryData',
+      payload:{}
+    })
+    //查询风控标签列表
+    this.change()
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -120,16 +117,10 @@ export default class RiskLabel extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
     this.props.dispatch({
       type: 'risklabel/fetchRiskLabelList',
-      data: {
-        ...formData,
+      payload: {
+        ...this.props.risklabel.queryData,
         currPage,
         pageSize
       }
@@ -156,20 +147,25 @@ export default class RiskLabel extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
+    const {query} = this.props.location;
     return (
       <Fragment>
-        <Button onClick={()=>this.goAddEdit(1)}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddEdit(1,query['strategyId'])}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
   //跳转新增/编辑页面
-  goAddEdit=(type)=>{
-    router.push({
-      pathname:'/policyManage/riskpolicylist/risklabel/edit',
-      query:{
-        type:type,
-      }
-    })
+  goAddEdit=(type,strategyId,id=null)=>{
+    router.push(`/policyManage/riskpolicylist/risklabel/edit?type=${type}&strategyId=${strategyId}&id=${id}`)
+    if(type==0){
+      //查询标签信息
+      this.props.dispatch({
+        type: 'risklabel/queryLabelInfo',
+        payload: {
+          labelId:id,
+        }
+      })
+    }
   }
   //删除标签
   delLabel=async (record)=>{
@@ -182,27 +178,47 @@ export default class RiskLabel extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-
+      const res = await this.props.dispatch({
+        type: 'risklabel/delRiskLabel',
+        payload: {
+          labelId:record.id,
+        }
+      })
+      if(res&&res.status===1){
+        this.change()
+        message.success(res.statusDesc)
+      }else{
+        message.error(res.statusDesc)
+      }
     }
   }
   render() {
+    const {pageData,labelList} = this.props.risklabel;
+    const {columns,current} = this.state;
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-       <Card bordered={false}>
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+       <Card
+         bordered={false}
+         title={'风控标签'}
+       >
+         <FilterIpts
+           getSubKey={this.getSubKey}
+           change={this.change}
+           current={this.state.currentPage}
+           changeDefault={this.changeDefault}/>
          <Table
            bordered
            pagination={false}
-           columns={this.state.columns}
-           dataSource={this.state.data}
+           columns={columns}
+           dataSource={labelList}
            loading={this.props.loading}
          />
          <Pagination
            style={{ marginBottom: "50px" }}
            showQuickJumper
            defaultCurrent={1}
-           current={this.state.current}
-           total={20}
+           current={current}
+           total={pageData['total']}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />

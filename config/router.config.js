@@ -324,7 +324,7 @@ export default [
             name:'urlDeploy',
             component:'./SystemSet/UrlDeploy'
           },
-          //商户密钥
+          //商户秘钥
           {
             path:'/system/secretkey',
             name:'secretKey',

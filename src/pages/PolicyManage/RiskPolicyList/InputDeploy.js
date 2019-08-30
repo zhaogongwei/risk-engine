@@ -59,8 +59,8 @@ export default class InputDeploy extends PureComponent {
         },
         {
           title: '添加时间',
-          dataIndex: 'updateTime',
-          key:'updateTime'
+          dataIndex: 'createTime',
+          key:'createTime'
         }
       ],
       checkedData: [],

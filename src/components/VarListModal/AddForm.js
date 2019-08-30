@@ -158,7 +158,7 @@ export default class AddForm extends Component {
       loading:false,
       visible:false,
       checkedList: [],
-      indeterminate: true,
+      indeterminate: false,
       checkAll: false,
       singleChecked:false,
       radioValue:'',
@@ -230,6 +230,7 @@ export default class AddForm extends Component {
         //多选
         checkedList.forEach((item,key)=>{
           item['variableId'] = item['id']
+          item['createTime'] = item['updateTime']
         })
         return checkedList
       }else{
