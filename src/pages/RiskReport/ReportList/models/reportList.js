@@ -1,36 +1,42 @@
+import * as api from '../services';
+import { addListKey } from '@/utils/utils';
+
 
 export default {
   namespace: 'reportList',
 
   state: {
-    info:[],
-    count:1,
-    dataSource:[
-    ]
+    listData: {}
   },
 
   effects: {
+    *listData({ payload }, { call, put}) {
+      let response = yield call(api.listData, payload);
+      if(response && response.status == 1) {
+        response.data.records = addListKey(response.data.records, payload.currPage, payload.pageSize)
+        yield put({
+          type: 'saveListData',
+          payload: response.data
+        })
+      }
+    }
   },
 
   reducers: {
-    riskCaseHandle(state, { payload }) {
+    saveListData(state, { payload }) {
       return {
         ...state,
-        info:payload
+        listData: payload
       }
     },
     addData(state, {payload}) {
       return {
         ...state,
-        dataSource: payload.dataSource,
-        count: payload.count,
       };
     },
     delData(state, {payload}) {
       return {
-        ...state,
-        dataSource: payload.dataSource,
-        count:payload.count
+        ...state
       };
     },
   },

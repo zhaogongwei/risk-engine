@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
-import AddForm from './AddForm';
+import AddForm from '@/components/VarListModal/AddForm'
 import RuleTable from '@/components/RuleTable';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils';
@@ -26,9 +26,11 @@ import router from 'umi/router';
 const Option = Select.Option;
 const FormItem = Form.Item
 const RadioGroup = Radio.Group;
-@connect(({ risklabel, loading }) => ({
+@connect(({ risklabel, loading,varList}) => ({
   risklabel,
-  loading: loading.effects['assetDeploy/riskSubmit']
+  varList,
+  addsubmitLoading: loading.effects['risklabel/addRiskLabel'],
+  editsubmitLoading: loading.effects['risklabel/editRiskLabel'],
 }))
 @Form.create()
 export default class LabelEdit extends PureComponent {
@@ -50,8 +52,8 @@ export default class LabelEdit extends PureComponent {
         },
         {
           title: '值',
-          key:'compareValue',
-          dataIndex:'compareValue',
+          key:'variableValue',
+          dataIndex:'variableValue',
           editable:true,
           type:'more'
         },
@@ -75,9 +77,59 @@ export default class LabelEdit extends PureComponent {
       status:1,
       selectedRowKeys: [],
       visible:false,
+      formData:[],//form集合
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    const {query} = this.props.location;
+    const {type,id,strategyId} = query;
+    const {tableList} = this.props.risklabel;
+    //查询标签信息
+    if(type ==0){
+      const res = await this.props.dispatch({
+        type: 'risklabel/queryLabelInfo',
+        payload: {
+          labelId:id,
+        }
+      })
+      if(res&&res.status===1){
+        this.props.dispatch({
+          type: 'risklabel/saveTableList',
+          payload: {
+            tableList:addListKey([...res.data.variableList,...tableList])
+          }
+        })
+      }
+    }
+    //请求变量列表
+    this.props.dispatch({
+      type: 'varList/queryVarList',
+      payload: {
+        strategyId:strategyId
+      }
+    })
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+  }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'risklabel/saveLabelInfo',
+      payload: {
+        data:{}
+      }
+    })
+    this.props.dispatch({
+      type: 'risklabel/saveTableList',
+      payload: {
+        tableList:[]
+      }
+    })
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -121,7 +173,6 @@ export default class LabelEdit extends PureComponent {
     console.log(type,record)
     this.setState({
       visible:true,
-      type:type,
       number:record?record['key']:''
     },()=>{
     })
@@ -131,24 +182,11 @@ export default class LabelEdit extends PureComponent {
     const {labelList} = this.props.risklabel
     const newDataSource = labelList.filter(item => item.key !== key)
     this.props.dispatch({
-      type: 'risklabel/labelListHandle',
+      type: 'risklabel/saveTableList',
       payload: {
-        labelList:addListKey(newDataSource)
+        tableList:addListKey(newDataSource)
       }
     })
-  }
-  //保存数据
-  handleSave = ()=>{
-    const data = {
-      nodeId:this.props.editorFlow.selectId,
-      ruleCondition:this.child.getFormValue().ruleCondition,
-      resultVarId:this.child.getFormValue().resultVarId,
-      ruleType:'simple',
-      variables:this.props.rule.ruleList,
-    }
-    console.log(this.child.getFormValue())
-    console.log(this.props.rule.ruleList)
-    console.log(JSON.stringify(data))
   }
   //弹框按钮取消
   handleCancel =()=>{
@@ -157,51 +195,127 @@ export default class LabelEdit extends PureComponent {
   //弹框按钮确定
   addFormSubmit =()=>{
     this.setState({visible:false},()=>{
-      const {checkedList,radioValue} = this.addForm.submitHandler();
-      const {labelList} = this.props.risklabel;
-      if(Object.keys(radioValue).length){
-        if(labelList.find((item)=>item['varId'] ===radioValue['varId'])){
+      const records = this.addForm.submitHandler();
+      const {tableList} = this.props.risklabel;
+      if(Object.keys(records).length){
+        if(tableList.find((item)=>item['varId'] ===records['varId'])){
           message.error('不能添加相同的变量!')
           return;
         }
-        if(labelList.length>20){
+        if(tableList.length>20){
           message.error('最多可配置20个标签')
           return;
         }
         this.props.dispatch({
-          type: 'risklabel/labelListHandle',
+          type: 'risklabel/saveTableList',
           payload: {
-            labelList:addListKey(deepCopy([...labelList,radioValue]))
+            tableList:addListKey(deepCopy([...tableList,records]))
           }
         })
       }
     })
   }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.formData;
+    arr.push(form)
+    this.setState({
+      formData: arr
+    })
+  }
+  //保存提交
+  formSubmit=()=>{
+    let count=0;
+    this.state.formData.map(item => {
+      item.validateFieldsAndScroll((errors,value)=>{
+        if(errors)count++;
+      })
+    })
+    const {tableList} = this.props.risklabel;
+    const {query} = this.props.location;
+    const {id,strategyId,type} = query;
+    const formData = this.getFormValue()
+    this.props.form.validateFields((error,value)=>{
+      if(!error){
+        if(tableList.length){
+          if(!count){
+            if(type==1){
+              //新增标签
+              this.props.dispatch({
+                type: 'risklabel/addRiskLabel',
+                payload: {
+                  strategyId:strategyId,
+                  variableList:tableList,
+                  ...formData,
+                }
+              })
+            }else{
+              //编辑标签
+              this.props.dispatch({
+                type: 'risklabel/editRiskLabel',
+                payload: {
+                  id:id,
+                  strategyId:strategyId,
+                  variableList:tableList,
+                  ...formData,
+                }
+              })
+            }
+          }
+        }else{
+          message.error('请添加相关变量!')
+        }
+      }
+    })
+  }
   render() {
     const { getFieldDecorator } = this.props.form
+    const { tableList,labelInfo } = this.props.risklabel
     const {type} = this.props.location.query;
     const formItemConfig = {
       labelCol:{span:4},
-      wrapperCol:{span:16},
+      wrapperCol:{span:18},
     }
-
     return (
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={type===1?'新增标签':'编辑标签'}
+          title={type==1?'新增标签':'编辑标签'}
         >
           <Form
-            className="ant-advanced-search-form"
+            //className="ant-advanced-search-form"
           >
-            <Row style={{marginBottom:10}} gutter={24} type="flex" align="middle">
-              <Col xxl={10} md={8}>
+            <Row style={{marginBottom:10}}>
+              <Col xxl={12} md={8}>
                 <FormItem label="标签名称" {...formItemConfig}>
-                  {getFieldDecorator('status',{
-                    initialValue:'',
+                  {getFieldDecorator('labelName',{
+                    initialValue:labelInfo['labelName'],
                     rules:[
-                      {required:true},
-                      {max:30,message:'最多输入30位!'}
+                      {
+                        required:true,
+                        validator:async(rule,val,cb) => {
+                          if (!val) {
+                            cb('请输入正确内容！')
+                            return;
+                          }else if(val.length>30){
+                            cb('最多输入30位！')
+                            return;
+                          }
+                          if(type ==0)return;
+                          const labelName = this.props.form.getFieldValue('labelName')
+                          const response = await this.props.dispatch({
+                            type: 'risklabel/checkLabelName',
+                            payload: {
+                              labelName:labelName
+                            }
+                          })
+                          if(response&&response.status===1){
+                            cb()
+                          }else{
+                            cb(response.statusDesc)
+                          }
+                        }
+                      },
                     ]
                   })(
                     <Input />
@@ -210,17 +324,17 @@ export default class LabelEdit extends PureComponent {
               </Col>
             </Row>
             <Row style={{marginBottom:10}}>
-              <Col xxl={10} md={8}>
+              <Col xxl={12} md={8}>
                 <Row>
                   <Col span={4}></Col>
-                  <Col span={16}>
+                  <Col span={18}>
                     <RuleTable
                       bordered
                       pagination={false}
                       columns={this.state.columns}
-                      dataSource={this.props.risklabel.labelList}
+                      dataSource={tableList}
                       handleAdd={()=>this.clickDialog(1)}
-                      handleModify={this.clickDialog}
+                      handleModify={(form) => this.handleModify(form)}
                       loading={this.props.loading}
                     />
                   </Col>
@@ -236,15 +350,21 @@ export default class LabelEdit extends PureComponent {
                 <AddForm
                   number={this.state.number}
                   getSubKey={this.getSubKey}
+                  type={this.state.type}
                 />
               </Modal>
             </Row>
             <Row style={{marginBottom:10}} type="flex" align="middle">
-              <Col xxl={10} md={8}>
+              <Col xxl={12} md={8}>
                 <FormItem label="状态" {...formItemConfig}>
-                  {getFieldDecorator('assetsTypeName',{
-                    initialValue:'',
-                    rules:[{required:true}]
+                  {getFieldDecorator('status',{
+                    initialValue:labelInfo['status'],
+                    rules:[
+                        {
+                          required:true,
+                          message:'请选择状态!'
+                        }
+                      ]
                   })(
                     <RadioGroup>
                       <Radio value={0}>禁用</Radio>
@@ -253,15 +373,22 @@ export default class LabelEdit extends PureComponent {
                   )}
                 </FormItem>
               </Col>
-              <Col style={{color:'#FF0000'}} push={7}>
-                最近操作时间：2018-08-08 00:00:00 操作人：  王大大
-              </Col>
+              {
+                type==1?null:
+                  <Col style={{color:'#FF0000'}} push={7}>
+                    最近操作时间：{labelInfo['createTime']} 操作人：  {labelInfo['updateTrueName']}
+                  </Col>
+              }
             </Row>
             <Row type="flex" align="middle">
-              <Col xxl={10} md={8}>
-                <Row type="flex" align="middle" justify="center">
-                  <Button type="primary">保存并提交</Button>
-                  <Button onClick={()=>router.goBack()}>取消</Button>
+              <Col xxl={12} md={8}>
+                <Row type="flex" align="middle" gutter={24} justify="center">
+                  <Col>
+                    <Button type="primary" onClick={this.formSubmit} loading={type==1?this.props.addsubmitLoading:this.props.editsubmitLoading}>保存并提交</Button>
+                  </Col>
+                  <Col>
+                    <Button onClick={()=>router.goBack()}>返回</Button>
+                  </Col>
                 </Row>
               </Col>
             </Row>

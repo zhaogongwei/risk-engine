@@ -91,8 +91,10 @@ export default {
        //target: ' http://219.147.28.242:8772', // 张云凯
       // target: 'http://10.10.3.74:8071', // 李彬
       // target: 'http://10.10.3.85:8071', // 季君君
-      //target: 'http://10.10.2.71:8072', // 温馨
-      target: 'https://testmer.hyjf.com', // 测试环境
+      // target: 'http://10.10.2.71:8072', // 温馨
+      target: 'http://10.10.3.76:8072', // 董泽杉
+      
+      // target: 'https://testmer.hyjf.com', // 测试环境
       changeOrigin: true,
       pathRewrite: { '^/merchant-admin': '/merchant-admin' },
     },

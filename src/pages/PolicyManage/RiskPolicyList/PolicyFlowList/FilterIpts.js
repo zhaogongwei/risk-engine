@@ -58,7 +58,12 @@ export default class FilterIpts extends Component {
         className="ant-advanced-search-form"
       >
         <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
-          <Col xxl={4} md={6}>
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="策略流版本号" {...formItemConfig}>
               {getFieldDecorator('version',{
                 initialValue:'',
@@ -72,7 +77,12 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
             <FormItem label="版本号描述" {...formItemConfig}>
               {getFieldDecorator('remark',{
                 initialValue:'',
