@@ -17,7 +17,6 @@ import { routerRedux } from 'dva/router';
 import { addListKey } from '@/utils/utils'
 @connect(({auditAsset,dateLoading,loading }) => ({
   auditAsset,
-  dateLoading:loading.effects['auditAsset/queryRiskTime'],
   loading: loading.effects['auditAsset/queryRiskInfo'],
 }))
 
@@ -222,16 +221,16 @@ export default  class Arfake extends  PureComponent{
 
   }
   componentDidMount(){
-    const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
-      type: 'auditAsset/queryArDateList',
+      type: 'auditAsset/queryArfakeInfo',
       payload: {
-        ...propsData,
-        creditInstCode:80000003,
-        queryType:2
+        id:id,
+        type:2
       },
       callback:(time)=>{
-        this.checkRiskInfo(time)
+        //this.checkRiskInfo(time)
       }
     })
     this.setState({

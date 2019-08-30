@@ -22,88 +22,6 @@ export default  class Dsdebt extends  PureComponent{
   constructor(props){
     super(props)
     this.state={
-      data : [
-        {
-          id:1,
-          time:'2018-01-01'
-        },
-        {
-          id:2,
-          time:'2018-01-02'
-        },
-        {
-          id:3,
-          time:'2018-01-03'
-        },
-        {
-          id:4,
-          time:'2018-01-04'
-        },
-        {
-          id:5,
-          time:'2018-01-05'
-        },
-        {
-          id:6,
-          time:'2018-01-06'
-        },
-        {
-          id:7,
-          time:'2018-01-07'
-        },
-        {
-          id:8,
-          time:'2018-01-08'
-        },
-        {
-          id:9,
-          time:'2018-01-09'
-        },
-        {
-          id:10,
-          time:'2018-01-10'
-        },
-        {
-          id:11,
-          time:'2018-01-11'
-        },
-        {
-          id:12,
-          time:'2018-01-12'
-        },
-        {
-          id:13,
-          time:'2018-01-13'
-        },
-        {
-          id:14,
-          time:'2018-01-14'
-        },
-        {
-          id:15,
-          time:'2018-01-15'
-        },
-        {
-          id:16,
-          time:'2018-01-16'
-        },{
-          id:17,
-          time:'2018-01-17'
-        },
-        {
-          id:18,
-          time:'2018-01-18'
-        },
-        {
-          id:19,
-          time:'2018-01-19'
-        },
-        {
-          id:20,
-          time:'2018-01-20'
-        },
-
-      ],
       currentime:'',
       head:[
         {
@@ -187,7 +105,7 @@ export default  class Dsdebt extends  PureComponent{
 
   }
   componentDidMount(){
-    const propsData = this.props.location.state
+    /*const propsData = this.props.location.state
     this.props.dispatch({
       type: 'auditAsset/queryDsPublicDate',
       payload: {
@@ -201,7 +119,7 @@ export default  class Dsdebt extends  PureComponent{
     this.setState({
       currentime:this.props.auditAsset.debtDateList.length>0?this.props.auditAsset.debtDateList[0]:'',
     },()=>{
-    })
+    })*/
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){

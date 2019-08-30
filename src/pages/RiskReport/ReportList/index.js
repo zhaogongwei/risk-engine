@@ -93,7 +93,7 @@ export default class ReportList extends PureComponent {
               <Menu.Item onClick={()=>this.goRiskReport()}>
                 <Icon type="edit"/>查看
               </Menu.Item>
-              <Menu.Item onClick={()=>this.goDataQuery()}>
+              <Menu.Item onClick={()=>this.goDataQuery(record)}>
                 <Icon type="delete"/>三方数据查询
               </Menu.Item>
             </Menu>
@@ -190,10 +190,8 @@ export default class ReportList extends PureComponent {
     })
   }
   //跳转三方数据查询
-  goDataQuery = ()=>{
-    router.push({
-      pathname:'/riskReport/reportList/queryData',
-    })
+  goDataQuery = (record)=>{
+    router.push(`/riskReport/reportList/queryData?id=${record.id}`)
   }
   //跳转报告模板
   goRiskReport = ()=>{
