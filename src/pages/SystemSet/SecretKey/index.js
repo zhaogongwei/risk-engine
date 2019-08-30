@@ -33,33 +33,26 @@ export default class IndexComponent extends Component {
     }
   }
   //点击确定
-  submitHandler = ()=>{
-    this.props.form.validateFields(async(err, values) => {
-      if(!err){
-				const { dispatch } = this.props;
-				const confirmVal = await Swal.fire({
-					text: '生成新秘钥会导致原秘钥失效，是否确认生成？',
-					type: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					confirmButtonText: '确定',
-					cancelButtonText: '取消'
-				})
-				if(confirmVal.value){
-					const { dispatch } =  this.props;
-					let res = await dispatch({
-						type: 'secret/delRole',
-						payload: {
-							roleId
-						}
-					})
-					if(res && res.status == 1) {
-						message.success(res.statusDesc);
-						this.change()
-					}
-				}
-      }
-    })
+  submitHandler = async()=>{
+    const { dispatch } = this.props;
+		const confirmVal = await Swal.fire({
+			text: '生成新秘钥会导致原秘钥失效，是否确认生成？',
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			confirmButtonText: '确定',
+			cancelButtonText: '取消'
+		})
+		if(confirmVal.value){
+			const { dispatch } =  this.props;
+			let res = await dispatch({
+				type: 'secret/createSecret',
+				payload: {}
+			})
+			if(res && res.status == 1) {
+				message.success(res.statusDesc);
+			}
+		}
   }
   //   获取表单信息
   getFormValue = () => {
@@ -71,10 +64,15 @@ export default class IndexComponent extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
+		const { dispatch } = this.props;
+		dispatch({
+			type: 'secret/fetchSecert',
+			payload: {}
+		})
   }
 
   render() {
-    const { updateVisible, isShowEdit, type } = this.props
+    const { infoData } = this.props.secret
 		const { getFieldDecorator } = this.props.form
 		const formItemLayout = {
       labelCol: {
@@ -98,25 +96,25 @@ export default class IndexComponent extends Component {
 			<Card bordered={false}>
 				<Form>
 					<FormItem label="priKey" {...formItemLayout}>
-						{getFieldDecorator('roleExplain',{
-							initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
+						{getFieldDecorator('pri_key',{
+							initialValue: infoData.pri_key,
 							rules:[{
-								required:true,
+								required: false,
 								message: '请输入priKey'
 							}]
 							})(
-								<TextArea rows={6} placeholder="" />
+								<TextArea rows={6} disabled/>
 							)}
 					</FormItem>
 					<FormItem label="pubKey" {...formItemLayout}>
-						{getFieldDecorator('pubKey',{
-							initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
+						{getFieldDecorator('pub_key',{
+							initialValue: infoData.pub_key,
 							rules:[{
-								required:true,
+								required: false,
 								message: '请输入pubKey'
 							}]
 							})(
-								<TextArea rows={6} placeholder="" />
+								<TextArea rows={6} disabled/>
 							)}
 						</FormItem>
 						<FormItem {...submitFormLayout}>

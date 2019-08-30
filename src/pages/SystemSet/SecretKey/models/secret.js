@@ -4,28 +4,37 @@ export default {
   namespace: 'secret',
 
   state: {
-    dataList: [],//角色列表
     infoData: {},
   },
 
   effects: {
     // 获取初始化数据
-    *fetchInitData({ payload }, { call, put }) {
-      let response = yield call(api.queryList,payload);
+    *fetchSecert({ payload }, { call, put }) {
+      let response = yield call(api.fetchSecert, payload);
       if(response && response.status == 1) {
         yield put({
-          type: 'saveInitData',
+          type: 'saveData',
           payload: response.data
         })
       }
     },
+    // 生成秘钥
+    *createSecret({ payload }, { call, put }) {
+      let response = yield call(api.createSecret, payload);
+      if(response && response.status == 1) {
+        yield put({
+          type: 'saveData',
+          payload: response.data
+        })
+      }
+    }
   },
 
   reducers: {
-    saveList(state, { payload }) {
+    saveData(state, { payload }) {
       return {
         ...state,
-        dataList: payload
+        infoData: payload
       };
     }
   },
