@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import RptTable from '@/components/RptTable/RptTable'
-import AddForm from './AddForm';
+import AddForm from '@/components/VarListModal/AddForm'
 import {
   Button,
   Table,
@@ -264,6 +264,7 @@ export default class Index extends Component {
             onCancel={() => this.setState({ addModalVisible: false })}
           >
             <AddForm
+              type={1}
               number={this.state.number}
               getSubKey={this.getSubKey}
             />
