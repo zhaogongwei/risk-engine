@@ -115,31 +115,41 @@ export default class EditVar extends PureComponent {
       payload: {
       }
     })
-    // const query={...this.props.location.query}
-    // if(query.type==2){
-    //   const res = await this.props.dispatch({
-    //     type: 'varlist/selectVariableById',
-    //     payload: {
-    //       id:query.id
-    //     }
-    //   })
-    //   if(res.status=='1'){
-    //     this.props.form.setFieldsValue({
-    //       firstTypeId:'',
-    //       defaultValue: "",
-    //       enumFlag: 0,
-    //       maxValue: 0,
-    //       minValue: 0,
-    //       parentId: 0,
-    //       remark: "string",
-    //       status: "string",
-    //       variableCode: "string",
-    //       variableLength: 0,
-    //       variableName: "string",
-    //       variableType: "string"
-    //     })
-    //   }
-    // }
+    const query={...this.props.location.query}
+    if(query.type==2){
+      const res = await this.props.dispatch({
+        type: 'varlist/selectVariableById',
+        payload: {
+          variableId:query.id
+        }
+      })
+      if(res.status=='1'){
+        const data = res.data
+
+        this.props.form.setFieldsValue({
+          firstTypeId:Number(data.firstTypeId),
+          defaultValue: data.defaultValue,
+          enumFlag: data.enumFlag,
+          maxValue: data.maxValue,
+          minValue: data.minValue,
+          remark: data.remark,
+          status: data.status,
+          variableCode: data.variableCode,
+          variableLength: data.variableLength,
+          variableName: data.variableName,
+          variableType: data.variableType
+        })
+        this.props.dispatch({
+          type: 'varlist/saveEnumeration',
+          payload: data.variableEnumList || []
+        })
+        const firstType = this.props.form.getFieldValue('firstTypeId')
+        await this.selectchange(firstType)
+        this.props.form.setFieldsValue({
+          parentId: Number(data.secondTypeId),
+        })
+      }
+    }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -147,12 +157,15 @@ export default class EditVar extends PureComponent {
     //formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
-  selectchange = value => {
-  	this.props.dispatch({
+  selectchange = async(value) => {
+  	await this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
       	parentId:value
       }
+    })
+    this.props.form.setFieldsValue({
+      parentId: ''
     })
   }
   //枚举添加
@@ -189,35 +202,65 @@ export default class EditVar extends PureComponent {
     router.goBack()
   }
   formSubmit = async()=>{
-    let data=this.getFormValue()
-    const query={...this.props.location.query}
-    if(query.type==2){
-      //编辑变量
-      await this.props.dispatch({
-        type: 'varList/updateVariable',
-        payload: {
-          ...data,
-          id:query.id ,
-          enumList:this.props.varlist.enumeration
+    this.props.form.validateFields(err => {
+      if (!err) {
+        let data=this.getFormValue()
+        const query={...this.props.location.query}
+        if(query.type==2){
+          //编辑变量
+          const updateVarRes=this.props.dispatch({
+            type: 'varlist/updateVariable',
+            payload: {
+              ...data,
+              id:query.id ,
+              enumList:this.props.varlist.enumeration
+            }
+          })
+          updateVarRes.then((value)=>{
+            if(value.status==1){
+              message.success('提交成功').then(() => {
+                router.push({
+                  pathname:'/varManage/varlist',
+                })
+              }) 
+            }else{
+              message.error(value.statusDesc || "提交失败").then(() => {
+                router.push({
+                  pathname:'/varManage/varlist',
+                })
+              })
+            }
+          })
+          
+        }else{
+        //添加变量
+          const addVarRes=this.props.dispatch({
+            type: 'varlist/addVar',
+            payload: {
+              ...data,
+              enumList:this.props.varlist.enumeration
+            }
+          })
+          addVarRes.then((value)=>{
+            if(value.status==1){
+              message.success('提交成功').then(() => {
+                router.push({
+                  pathname:'/varManage/varlist',
+                })
+              })
+            }else{
+              message.error(value.statusDesc || "提交失败").then(() => {
+                router.push({
+                  pathname:'/varManage/varlist',
+                })
+              })
+            }
+          })   
         }
-      })
-    }else{
-      // await this.props.dispatch({
-      //   type: 'varList/delData',
-      //   payload: {
-      //     ...data
-      //   }
-      // })
-    }
-    
-    
-
-    message.success('提交成功').then(() => {
-    	 router.push({
-	      pathname:'/varManage/varlist',
-	    })
-    })
-   
+        
+      }
+      
+    });
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -361,7 +404,7 @@ export default class EditVar extends PureComponent {
                       {required:true}
                     ]
                   })(
-                    <Input />
+                    <Input/>
                   )}
                 </FormItem>
               </Col>

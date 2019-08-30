@@ -11,6 +11,7 @@ import {
   Card,
   Menu,
   Dropdown,
+  Modal,
 } from 'antd';
 import Swal from 'sweetalert2'
 import { connect } from 'dva'
@@ -112,10 +113,10 @@ export default class VarList extends PureComponent {
               <Menu.Item onClick={() => this.goAddPage({ ...record, type: 2 })}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={() => this.deleteVar()}>
+              <Menu.Item onClick={() => this.deleteVar(record)}>
                 <Icon type="delete"/>删除
               </Menu.Item>
-              <Menu.Item onClick={() => this.goPolicyList()}>
+              <Menu.Item onClick={() => this.goPolicyList(record)}>
                 <Icon type="snippets" />应用策略
               </Menu.Item>
             </Menu>
@@ -138,7 +139,9 @@ export default class VarList extends PureComponent {
       currentPage:1,
       current:1,
       id:'',
-      status:1
+      status:1,
+      visible:false,
+      policyList:[],
     };
   }
   componentDidMount = async()=> {
@@ -217,39 +220,41 @@ export default class VarList extends PureComponent {
     
   }
   //去风控策略列表
-  goPolicyList = async()=>{
-    const text = [
-      {
-        msg:'信贷风控策略'
-      },
-      {
-        msg:'消费贷风控策略'
-      },
-      {
-        msg:'个人经营贷风控策略'
-      },
-    ]
-    var textHtml = ''
-      text.map((item,index)=>{
-      textHtml+=`<p>${item['msg']}</p>`
+  goPolicyList = async(record)=>{
+    const res=this.props.dispatch({
+      type: 'varlist/getStrategy',
+      payload: {
+        variableId:record['id']
+      }
     })
-    console.log(textHtml)
-    const confirm = await Swal({
-      html: textHtml,
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消'
+    res.then(value => {
+      if(value.status==1){
+        if(value.data.length != 0){
+          this.state.policyList = value.data
+          this.setState({
+            visible: true,
+          });
+        }else{
+          message.info( '无应用策略')
+        }
+        
+      }else{
+        message.error(value.statusDesc || '操作失败')
+      }
+     
     })
-    if (confirm.value) {
-      // 请求开启/停用方法
-      router.push({
-        pathname:'/policyManage/riskpolicylist/list',
-      })
-    }
   }
+  policyOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+    this.setState({
+      policyList: [],
+    });
+  };
   //删除变量
-  deleteVar=async(type=1,record={})=>{
+  deleteVar=async(record={})=>{
     const confirmVal = await Swal.fire({
       text: '确定要删除该变量吗？',
       type: 'warning',
@@ -259,18 +264,25 @@ export default class VarList extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-			this.props.dispatch({
+			const res=this.props.dispatch({
 	      type: 'varlist/delVar',
 	      payload: {
-	      	id:record['id']
-	      },
-	      callback:()=>{
-	      	this.props.changeDefault(1)
-	        this.reset()
+	      	variableId:record['id']
 	      }
-	    })
+      })
+      res.then(value => {
+        if(value.status==1){
+          message.success('操作成功').then(() => {
+            this.change(this.state.current)
+          })
+        }else{
+          message.error(value.statusDesc || "删除失败")
+        }
+        
+      })
     }
   }
+
   render() {
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
@@ -292,6 +304,17 @@ export default class VarList extends PureComponent {
            showTotal={(total, range) => this.showTotal(total, range)}
          />
        </Card>
+        <Modal
+          title="Basic Modal"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.policyOk}
+        >
+          
+          {
+            this.state.policyList.map((item,key) => <p key={key}>{item}</p>)
+          }
+        </Modal>
       </PageHeaderWrapper>
     )
   }
