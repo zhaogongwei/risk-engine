@@ -103,7 +103,7 @@ export default class IndexComponent extends Component {
 								message: '请输入priKey'
 							}]
 							})(
-								<TextArea rows={6} disabled/>
+								<TextArea rows={14}/>
 							)}
 					</FormItem>
 					<FormItem label="pubKey" {...formItemLayout}>
@@ -114,7 +114,7 @@ export default class IndexComponent extends Component {
 								message: '请输入pubKey'
 							}]
 							})(
-								<TextArea rows={6} disabled/>
+								<TextArea rows={4}/>
 							)}
 						</FormItem>
 						<FormItem {...submitFormLayout}>
