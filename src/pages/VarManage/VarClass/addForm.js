@@ -231,7 +231,8 @@ export default class AddForm extends Component {
                   initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['typeName']:'',
                   rules:[
                   {
-                  	required:true
+                    required:true,
+                    message:'请输入名称'
                   }
                   ]
                 })(
@@ -247,7 +248,9 @@ export default class AddForm extends Component {
                   initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['remark']:'',
                   rules:[
                   {
-                  	required:true
+                    required:true,
+                    message:'请输入描述'
+                    
                   }
                   ]
                 })(
@@ -263,7 +266,8 @@ export default class AddForm extends Component {
                   initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['orderNum']:'',
                   rules:[
                   {
-                  	required:true
+                    required:true,
+                    message:'请输入排序'
                   }
                   ]
                 })(
