@@ -18,42 +18,6 @@ const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: 'Child Node1',
-        value: '0-0-0',
-        key: '0-0-0',
-      },
-    ],
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: 'Child Node3',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: 'Child Node4',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: 'Child Node5',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-];
 
 @connect(({ role }) => ({
   role
@@ -72,7 +36,7 @@ export default class IndexComponent extends Component {
   submitHandler = ()=>{
     this.props.form.validateFields(async(err, values) => {
       if(!err){
-        const { dispatch } = this.props;
+        const { dispatch, currPage, pageSize } = this.props;
         if(this.props.type == 1) {
           let res = await dispatch({
             type: 'role/addRole',
@@ -97,7 +61,7 @@ export default class IndexComponent extends Component {
           if(res && res.status == 1) {
             message.success(res.statusDesc);
             this.props.isShowEdit(false);
-            this.props.change()
+            this.props.change(currPage, pageSize)
           }
         }
       }

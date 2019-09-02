@@ -154,17 +154,28 @@ export default class UrlDeploy extends PureComponent {
       cancelButtonText: '取消'
     })
     if (confirm.value) {
-      // 请求开启/停用方法
-      let res = await dispatch({
-        type: 'urldeploy/delInterface',
-        payload: {
-          id
+      new Promise(async(resolve, reject) => {
+        // 请求删除方法
+        let res = await dispatch({
+          type: 'urldeploy/delInterface',
+          payload: {
+            id
+          }
+        })
+        if(res && res.status == 1) {
+          message.success(res.statusDesc);
+          let roleList = this.props.urldeploy.roleList
+          resolve(roleList)
+        }else{
+          message.error(res.statusDesc);
         }
-      })
-      if(res && res.status == 1) {
-        message.success(res.statusDesc);
-        this.change()
-      }
+      }).then((roleList)=>{
+        if(roleList.records.length === 1 && this.state.currPage !== 1) {
+          this.change(--this.state.currPage, this.state.pageSize);
+        }else {
+          this.change(this.state.currPage, this.state.pageSize);
+        }
+      }) 
     }
   }
   render() {
@@ -175,7 +186,9 @@ export default class UrlDeploy extends PureComponent {
       visible: this.state.visible,
       addEditPage: this.addEditPage,
       change: this.change,
-      id: this.state.id
+      id: this.state.id,
+      currPage: this.state.currPage,
+      pageSize: this.state.pageSize
     }
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
