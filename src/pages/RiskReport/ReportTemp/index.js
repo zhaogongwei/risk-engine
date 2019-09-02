@@ -65,12 +65,12 @@ export default class VarList extends PureComponent {
               <Menu.Item onClick={()=>this.goPreview()}>
                 <Icon type="zoom-in" />查看
               </Menu.Item>
-              <Menu.Item onClick={()=>
+              {/* <Menu.Item onClick={()=>
                 router.push({
                   pathname:'/policyManage/riskpolicylist/list'
                 })}>
                 <Icon type="delete"/>策略
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item >
                 <Icon type="unordered-list" />资产
               </Menu.Item>

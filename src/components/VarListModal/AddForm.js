@@ -307,6 +307,15 @@ export default class AddForm extends Component {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const { varList,page,oneClassList,twoClassList } = this.props.varList
+    const { pageList } = this.props
+    let handleVarList = varList
+    handleVarList.forEach(item => {
+      pageList.forEach(pageItem => {
+        if (item.id === pageItem.id) item.disabled = true
+          else item.disabled = false
+      })
+    })
+    console.log(handleVarList, pageList, 'handleVarList')
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},

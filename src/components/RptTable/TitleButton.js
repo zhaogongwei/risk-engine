@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from 'antd'
 import  './index.less'
 
 export default class TitleButton extends Component {
@@ -7,11 +8,9 @@ export default class TitleButton extends Component {
   }
 
   render() {
-    const { children, title, records,num,selectKey,handleTab} = this.props
+    const { children, title, records, num, selectKey, handleTab} = this.props
     return (
-      <div className={`titleButton ${num===selectKey?"active":null}`} onClick={handleTab}>
-        {title}
-      </div>
+      <Button onClick={ handleTab } type={ num === selectKey ? 'primary' : '' }>{ title }</Button>
     )
   }
 }

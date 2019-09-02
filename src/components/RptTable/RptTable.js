@@ -16,6 +16,7 @@ import {
 } from 'antd';
 import  './index.less'
 import { connect } from 'dva'
+import Swal from 'sweetalert2';
 
 const FormItem = Form.Item;
 
@@ -61,18 +62,28 @@ export default class RptTable extends Component {
     })
   }
   //删除子标题
-  delTitle=(index)=>{
-    const {titleList} = this.props;
-    titleList.splice(this.state.selectKey,1);
-    this.props.dispatch({
-      type: 'tempEdit/titleListHandle',
-      payload: {
-        titleList:titleList
-      }
+  delTitle = async (index) => {
+    const confirmVal = await Swal.fire({
+      text: '确定要执行该操作吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
     })
-    this.setState({
-      selectKey:0
-    })
+    if(confirmVal.value){
+      const {titleList} = this.props;
+      titleList.splice(this.state.selectKey,1);
+      this.props.dispatch({
+        type: 'tempEdit/titleListHandle',
+        payload: {
+          titleList:titleList
+        }
+      })
+      this.setState({
+        selectKey:0
+      })
+    }
   }
   componentDidMount(){
   }
@@ -153,10 +164,10 @@ export default class RptTable extends Component {
           </Row>
           <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
             <Col>
-              <Button type="primary" onClick={()=>this.setState({visible:true})}>新增子标题</Button>
+              <Button onClick={()=>this.setState({visible:true})}>新增子标题</Button>
             </Col>
             <Col>
-              <Button type="primary" onClick={this.delTitle}>删除子标题</Button>
+              <Button type="danger" onClick={this.delTitle}>删除子标题</Button>
             </Col>
           </Row>
           <Row type="flex" align="middle" gutter={24} style={{marginBottom:20}}>
