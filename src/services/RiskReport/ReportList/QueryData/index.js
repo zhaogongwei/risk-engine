@@ -14,7 +14,7 @@ export async function queryDsCreditInfo(params){
 
 //大圣信用风控报告信息更新
 export async function updateDsCreditnfo(params){
-  return request(`${_baseApi}/report/reportUpdate`,{
+  return request(`${_baseApi}/report/updatexyCreditReport`,{
     method:'POST',
     body:{
       ...params
@@ -56,7 +56,7 @@ export async function queryArfakeInfo(params){
 
 //安融个人报告更新
 export async function updateArReport(params){
-  return request(`${_baseApi}/report/updatexyCreditReport`,{
+  return request(`${_baseApi}/report/reportUpdate`,{
     method:'POST',
     body:{
       ...params

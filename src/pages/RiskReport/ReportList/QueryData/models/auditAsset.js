@@ -1,6 +1,8 @@
 import * as api from '@/services/RiskReport/ReportList/QueryData';
 import { addListKey } from '@/utils/utils'
+import moment from 'moment'
 import { notification,message} from 'antd'
+const dateFormat = 'YYYY-MM-DD'
 
 export default {
   namespace: 'auditAsset',
@@ -8,20 +10,41 @@ export default {
   state: {
     assetList:[],
     formData:{},
-    dateList:[],
-    creditDateList:[],
-    debtDateList:[],
-    overdueDateList:[],
-    creditInfoList:[],
-    debtInfoList:[],
-    overdueInfoList:[],
-    arcreditDateList:[],
-    arfakeDateList:[],
+    creditInfoList:[
+      {
+        createTime:'',
+        threeMonkeyCredit:{
+          creditRow1:[],
+          creditRow2:[],
+          creditRow3:[],
+          creditRow4:[],
+          creditRow5:[],
+          creditRow6:[],
+        }
+      }
+    ],
+    debtInfoList:[
+      {}
+    ],
     arfakeInfoList:{
       idcardVerif:{},
       nongovCredit:{},
       judicialInfo:{},
     },
+    arfakeInfo:[
+      {
+        createTime:'',
+        antiFraudResult:{
+          idcardVerif:[],
+          antiFraudList:[],
+          validSifa:{
+            anliInfoList:[],
+            shiXinInfoList:[],
+            zhiXingInfoList:[],
+          }
+        }
+      }
+    ],
     info:{
       assetsNumber:'',
       borrowNid:'',
@@ -39,15 +62,19 @@ export default {
 
   effects: {
     //大圣信用报告信息查询
-    *queryDsCreditInfo(payload, { call, put }){
-      let response = yield call (api.queryDsCreditInfo,payload.data)
-      if(response && response.status === '000000'){
-        addListKey(response.result['creditRow1'])
-        addListKey(response.result['creditRow2'])
-        addListKey(response.result['creditRow3'])
-        addListKey(response.result['creditRow4'])
-        addListKey(response.result['creditRow5'])
-        addListKey(response.result['creditRow6'])
+    *queryDsCreditInfo({payload}, { call, put }){
+      let response = yield call (api.queryDsCreditInfo,payload)
+      if(response && response.status === 1){
+        response.data.forEach((item,index)=>{
+          item.createTime=item.createTime.slice(0,10);
+          addListKey(item['threeMonkeyCredit']['creditRow1'])
+          addListKey(item['threeMonkeyCredit']['creditRow2'])
+          addListKey(item['threeMonkeyCredit']['creditRow3'])
+          addListKey(item['threeMonkeyCredit']['creditRow4'])
+          addListKey(item['threeMonkeyCredit']['creditRow5'])
+          addListKey(item['threeMonkeyCredit']['creditRow6'])
+        })
+
         yield put ({
           type:'creditListHandle',
           payload:response
@@ -57,18 +84,28 @@ export default {
     //大圣信用报告信息更新
     *updateDsCreditInfo({payload,callback}, { call, put }){
       let response = yield call(api.updateDsCreditnfo,payload)
-      if(response && response.status === '000000'){
+      if(response && response.status === 1){
         message.success(response.statusDesc);
-        callback()
       }else{
         message.error(response.statusDesc)
       }
+      return response;
     },
 
     //大圣共债报告信息查询
-    *queryDsDebtInfo(payload, { call, put }){
-      let response = yield call (api.queryDsDebtInfo,payload.data)
-      if(response && response.status === '000000'){
+    *queryDsDebtInfo({payload}, { call, put }){
+      let response = yield call (api.queryDsDebtInfo,payload)
+      if(response && response.status === 1){
+        response.data.forEach((item,index)=>{
+          addListKey(item['creditDebtResult']['detail'])
+          item.debtInfo[
+              {
+                orderNum:item,
+                repayOrderAmt:orderNum,
+                curInstNum:orderNum,
+              }
+            ]
+        })
         addListKey(response.result['head'])
         addListKey(response.result['body'])
         yield put ({
@@ -80,68 +117,69 @@ export default {
     //大圣共债报告信息更新
     *updateDsDebtInfo({payload,callback}, { call, put }){
       let response = yield call(api.updateDsDebtInfo,payload)
-      if(response && response.status === '000000'){
+      if(response && response.status === 1){
         message.success(response.statusDesc);
-        callback()
       }else{
         message.error(response.statusDesc)
       }
+      return response;
     },
     //安融个人反欺诈报告查询
     *queryArfakeInfo({payload}, { call, put }){
       let response = yield call (api.queryArfakeInfo,payload)
-      if(response && response.status === '000000'){
-        addListKey(response.result['antiFraud'])
-        addListKey(response.result['judicialInfo']['caseList'])
-        addListKey(response.result['judicialInfo']['breakList'])
-        addListKey(response.result['judicialInfo']['implementList'])
+      if(response && response.status === 1){
+        response.data.forEach((item,index)=>{
+          addListKey(item.antiFraudResult.antiFraudList);
+          addListKey(item.antiFraudResult.validSifa.anliInfoList);
+          addListKey(item.antiFraudResult.validSifa.shiXinInfoList);
+          addListKey(item.antiFraudResult.validSifa.zhiXingInfoList);
+          item.createTime=item.createTime.slice(0,10)
+          item.antiFraudResult.idcardVerif=[
+            {
+              validIdentity:item.antiFraudResult.validIdentity,
+              validCard:item.antiFraudResult.validCard,
+              queryTimes:item.antiFraudResult.queryTimes,
+            }
+          ]
+          addListKey(item.antiFraudResult.idcardVerif);
+        })
         yield put ({
           type:'arfakeInfoHandle',
           payload:response
         })
-      }else{
-        const res = {
-          result: {
-            idcardVerif:{},
-            nongovCredit:{},
-            judicialInfo:{},
-          }
-        }
-        yield put ({
-          type:'arfakeInfoHandle',
-          payload:res
-        })
       }
+      return response;
     },
     //安融报告更新
     *updateArReport({payload,callback}, { call, put }){
       let response = yield call(api.updateArReport,payload)
-      if(response && response.status === '000000'){
+      if(response && response.status === 1){
         message.success(response.statusDesc);
-        callback()
       }else{
         message.error(response.statusDesc)
       }
+      return response;
     },
   },
 
   reducers: {
     arfakeInfoHandle(state,{payload}){
+      console.log(payload)
       return {
         ...state,
-        arfakeInfoList:payload.result
+        arfakeInfo:payload.data
       }
     },
     creditListHandle(state,{payload}){
       return {
         ...state,
-        creditInfoList:payload.result
+        creditInfoList:payload.data
       }
     },
     debtListHandle(state,{payload}){
       return {
         ...state,
-        debtInfoList:payload.result
+        debtInfoList:payload.data
       }
     },
   },

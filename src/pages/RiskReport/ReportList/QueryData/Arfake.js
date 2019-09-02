@@ -64,9 +64,9 @@ export default  class Arfake extends  PureComponent{
       caseList:[
         {
           title:'ID号',
-          dataIndex:'idNo',
+          dataIndex:'id',
           align:'center',
-          key:'idNo',
+          key:'id',
           className:'thead'
         },
         {
@@ -78,9 +78,9 @@ export default  class Arfake extends  PureComponent{
         },
         {
           title:'身份证',
-          dataIndex:'idCard',
+          dataIndex:'paperNum',
           align:'center',
-          key:'idCard',
+          key:'paperNum',
           className:'thead'
         },
         {
@@ -92,23 +92,23 @@ export default  class Arfake extends  PureComponent{
         },
         {
           title:'当事人类型',
-          dataIndex:'partyType',
+          dataIndex:'dangshirenType',
           align:'center',
-          key:'partyType',
+          key:'dangshirenType',
           className:'thead'
         },
         {
           title:'案列标题',
-          dataIndex:'caseTitle',
+          dataIndex:'anjianTitle',
           align:'center',
-          key:'caseTitle',
+          key:'anjianTitle',
           className:'thead'
         },
         {
           title:'案件类型',
-          dataIndex:'caseType',
+          dataIndex:'anjianType',
           align:'center',
-          key:'caseType',
+          key:'anjianType',
           className:'thead'
         },
         {
@@ -120,8 +120,8 @@ export default  class Arfake extends  PureComponent{
         },
         {
           title:'案件字号',
-          dataIndex:'caseNum',
-          key:'caseNum',
+          dataIndex:'anjianNum',
+          key:'anjianNum',
           align:'center',
           className:'thead'
         }
@@ -130,15 +130,15 @@ export default  class Arfake extends  PureComponent{
       breakList:[
         {
           title:'执行法院',
-          dataIndex:'implementCourt',
-          key:'implementCourt',
+          dataIndex:'zhixingCourt',
+          key:'zhixingCourt',
           align:'center',
           className:'thead'
         },
         {
           title:'案号',
-          dataIndex:'caseNo',
-          key:'caseNo',
+          dataIndex:'anliNum',
+          key:'anliNum',
           align:'center',
           className:'thead'
         },
@@ -151,8 +151,8 @@ export default  class Arfake extends  PureComponent{
         },
         {
           title:'被执行人履行情况',
-          dataIndex:'executorStatus',
-          key:'executorStatus',
+          dataIndex:'beizhixingrenlvxingStatus',
+          key:'beizhixingrenlvxingStatus',
           align:'center',
           className:'thead'
         },
@@ -172,8 +172,8 @@ export default  class Arfake extends  PureComponent{
         },
         {
           title:'立案时间',
-          dataIndex:'filingTime',
-          key:'filingTime',
+          dataIndex:'lianTime',
+          key:'lianTime',
           align:'center',
           className:'thead'
         },
@@ -181,36 +181,36 @@ export default  class Arfake extends  PureComponent{
       implementList:[
         {
           title:'执行法院',
-          dataIndex:'implementCourt',
-          key:'implementCourt',
+          dataIndex:'zhixingCourt',
+          key:'zhixingCourt',
           align:'center',
           className:'thead'
         },
         {
           title:'案号',
-          dataIndex:'caseNo',
-          key:'caseNo',
+          dataIndex:'anliNum',
+          key:'anliNum',
           align:'center',
           className:'thead'
         },
         {
           title:'案件状态',
-          dataIndex:'caseStatus',
-          key:'caseStatus',
+          dataIndex:'anjianState',
+          key:'anjianState',
           align:'center',
           className:'thead'
         },
         {
           title:'执行标的',
-          dataIndex:'implementTaget',
-          key:'implementTaget',
+          dataIndex:'zhixingTaget',
+          key:'zhixingTaget',
           align:'center',
           className:'thead'
         },
         {
           title:'立案时间',
-          dataIndex:'filingTime',
-          key:'filingTime',
+          dataIndex:'lianTime',
+          key:'lianTime',
           align:'center',
           className:'thead'
         },
@@ -229,14 +229,9 @@ export default  class Arfake extends  PureComponent{
         id:id,
         type:2
       },
-      callback:(time)=>{
-        //this.checkRiskInfo(time)
-      }
     })
     this.setState({
-      currentime:this.props.auditAsset.dateList.length>0?this.props.auditAsset.dateList[0]['reportTime']:'',
-      reportId:this.props.auditAsset.dateList.length>0?this.props.auditAsset.dateList[0]['id']:'',
-    },()=>{
+      currentime:this.props.auditAsset.arfakeInfo.length>0?this.props.auditAsset.arfakeInfo[0]['createTime']:'',
     })
   }
   goBack=()=>{
@@ -244,8 +239,8 @@ export default  class Arfake extends  PureComponent{
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      if(this.props.auditAsset.arfakeDateList.length){
-        return <a>{this.props.auditAsset.arcreditDateList[current-1]['reportTime']}</a>
+      if(this.props.auditAsset.arfakeInfo.length){
+        return <a>{this.props.auditAsset.arfakeInfo[current-1]['createTime']}</a>
       }else{
         return null
       }
@@ -254,11 +249,10 @@ export default  class Arfake extends  PureComponent{
   }
   onChange=(current)=>{
     this.setState({
-      currentime:this.props.auditAsset.arfakeDateList[current-1]['reportTime'],
+      currentime:this.props.auditAsset.arfakeInfo[current-1]['createTime'],
       currentPage:current
-    },()=>{
-      this.checkRiskInfo(this.state.currentime)
     })
+    console.log(current)
   }
   //更新风控报告信息
   updateRiskInfo=()=>{
@@ -280,33 +274,15 @@ export default  class Arfake extends  PureComponent{
     });
   }
   //风控信息查询
-  checkRiskInfo = (time)=>{
-    const propsData = this.props.location.state
+  checkRiskInfo = ()=>{
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
       type: 'auditAsset/queryArfakeInfo',
-      data: {
-        ...propsData,
-        creditInstCode:80000003,
-        reportTime:time,
-      }
-    })
-  }
-  //风控报告页面时间获取
-  queryRiskDate=()=>{
-    const propsData = this.props.location.state
-    this.props.dispatch({
-      type: 'auditAsset/queryArDateList',
       payload: {
-        ...propsData,
-        creditInstCode:80000003,
-        queryType:2
+        id:id,
+        type:2
       },
-      callback:(time)=>{
-        this.setState({
-          currentPage:1
-        })
-        this.checkRiskInfo(time)
-      }
     })
   }
   //更新风控报告信息
@@ -316,19 +292,22 @@ export default  class Arfake extends  PureComponent{
   handleOk = (e) => {
     this.setState({
       visible: false,
-    },()=>{
-      const propsData = this.props.location.state
-      this.props.dispatch({
+    },async()=>{
+      const {query} = this.props.location;
+      const {id,assetsCode} = query;
+      const res = await this.props.dispatch({
         type: 'auditAsset/updateArReport',
         payload: {
-          ...propsData,
-          adminUserID:getUserId(),
-          reportFlag:5,
+          ...query,
+          type:2,
         },
-        callback:()=>{
-          this.queryRiskDate()
-        }
       })
+      if(res&&res.status===1){
+        this.checkRiskInfo()
+        this.setState({
+          currentPage:1,
+        })
+      }
     });
   }
   showModal = () => {
@@ -405,25 +384,28 @@ export default  class Arfake extends  PureComponent{
       borderLeft: '1px solid #ced3d4',
       borderRight:'1px solid #ced3d4'
     }
-    const {arfakeInfoList} = {...this.props.auditAsset}
+    const {arfakeInfoList,arfakeInfo} = {...this.props.auditAsset}
+    const {currentPage} = this.state;
+    let currentArfakeInfo = arfakeInfo[currentPage-1]
+    console.log(arfakeInfo)
     return(
       <PageTableTitle title={'风控报告'}>
         <Row type="flex" justify="center">
-          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={this.props.auditAsset.arfakeDateList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
+          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={this.props.auditAsset.arfakeInfo.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
         </Row>
         <Row type="flex" align="middle" justify="space-between" style={{paddingLeft:10,paddingRight:10,paddingTop:5,paddingBottom:5,marginTop:10,background:'#dbeef3'}}>
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{arfakeInfoList['reportCode']}</span>
+            <span>{currentArfakeInfo['id']}</span>
           </Col>
           <Col>
             <span>报告时间</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{arfakeInfoList['createTime']}</span>
+            <span>{currentArfakeInfo['createTime']}</span>
           </Col>
           <Col>
-            <span>操作人:{arfakeInfoList['createBy']}</span>
+            <span>操作人:{currentArfakeInfo['createBy']}</span>
             <span style={{display:'inline-block',width:10}}></span>
             <Button type="primary" onClick={this.updateRiskInfo} style={{backgroundColor:'#AEAEAE',borderColor:'#AEAEAE'}}>更新数据</Button>
           </Col>
@@ -435,7 +417,7 @@ export default  class Arfake extends  PureComponent{
             bordered
             pagination={false}
             columns={this.state.idcardVerif}
-            dataSource={addListKey([arfakeInfoList['idcardVerif']?arfakeInfoList['idcardVerif']:{}])}
+            dataSource={currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['idcardVerif']:[]}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -451,8 +433,8 @@ export default  class Arfake extends  PureComponent{
                   <Row style={gridStyle}>申请总金额区间</Row>
                 </Col>
                 <Col>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspApplyCount']:null}</Row>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspApplyMoney']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspApplyCount']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspApply']:null}</Row>
                 </Col>
               </Row>
               <Row type="flex" style={{flexWrap:'noWrap'}}>
@@ -462,8 +444,8 @@ export default  class Arfake extends  PureComponent{
                   <Row style={gridStyle}>已结清合同总金额区间</Row>
                 </Col>
                 <Col>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspEndContractCount']:null}</Row>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspEndContractMoney']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspEndContractCount']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspEndContract']:null}</Row>
                 </Col>
               </Row>
               <Row type="flex" style={{flexWrap:'noWrap'}}>
@@ -473,8 +455,8 @@ export default  class Arfake extends  PureComponent{
                   <Row style={gridStyle}>未结清合同总金额区间</Row>
                 </Col>
                 <Col>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspContractCount']:null}</Row>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspContractMoney']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspContractCount']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspContract']:null}</Row>
                 </Col>
               </Row>
               <Row type="flex" style={{flexWrap:'noWrap'}}>
@@ -484,8 +466,8 @@ export default  class Arfake extends  PureComponent{
                   <Row style={gridStyle}>违约风险总金额区间</Row>
                 </Col>
                 <Col>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspBlacklistCount']:null}</Row>
-                  <Row style={constyle}>{arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspBlacklistMoney']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspBlacklistCount']:null}</Row>
+                  <Row style={constyle}>{currentArfakeInfo['antiFraudResult']?currentArfakeInfo['antiFraudResult']['mspBlacklist']:null}</Row>
                 </Col>
               </Row>
               <Row style={{paddingLeft:'70px',backgroundColor:'#fff',fontSize:'12px',borderBottom: '1px solid #ced3d4',borderRight: '1px solid #ced3d4', borderLeft: '1px solid #ced3d4'}}>
@@ -497,7 +479,7 @@ export default  class Arfake extends  PureComponent{
             <Col style={{flexGrow:1}}>
               <Row style={{textAlign: 'center',fontSize:'12px',lineHeight:'50px',backgroundColor:'#dbeef3',border: '1px solid #ced3d4',}}>民间信贷交易行为评分</Row>
               <Row type="flex" style={{flexWrap:'noWrap',justifyContent:'center',padding:'15px 0',borderRight:'1px solid #ced3d4',borderLeft:'1px solid #ced3d4',}}>
-                  <Progress type="circle" percent={parseInt(arfakeInfoList['nongovCredit']?arfakeInfoList['nongovCredit']['mspScore']:'0')} format={percent => `${percent} 分`}
+                  <Progress type="circle" percent={parseInt(currentArfakeInfo['antiFraudResult']['mspScore']?currentArfakeInfo['antiFraudResult']['mspScore']:'0')} format={percent => `${percent} 分`}
                     strokeColor="#76c5d3"/>
               </Row>
               <Row type="flex" style={{flexWrap:'noWrap'}}>
@@ -535,7 +517,7 @@ export default  class Arfake extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.anti_fraud}
-            dataSource={arfakeInfoList['antiFraud']}
+            dataSource={currentArfakeInfo['antiFraudResult']['antiFraudList']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -552,7 +534,7 @@ export default  class Arfake extends  PureComponent{
               bordered={false}
               pagination={false}
               columns={this.state.caseList}
-              dataSource={arfakeInfoList['judicialInfo']['caseList']}
+              dataSource={currentArfakeInfo['antiFraudResult']['validSifa']['anliInfoList']}
             />
           </Col>
         </Row>
@@ -566,7 +548,7 @@ export default  class Arfake extends  PureComponent{
               bordered={false}
               pagination={false}
               columns={this.state.breakList }
-              dataSource={arfakeInfoList['judicialInfo']['breakList']}
+              dataSource={currentArfakeInfo['antiFraudResult']['validSifa']['shiXinInfoList']}
             />
           </Col>
         </Row>
@@ -580,7 +562,7 @@ export default  class Arfake extends  PureComponent{
               bordered={false}
               pagination={false}
               columns={this.state.implementList}
-              dataSource={arfakeInfoList['judicialInfo']['implementList']}
+              dataSource={currentArfakeInfo['antiFraudResult']['validSifa']['zhiXingInfoList']}
             />
           </Col>
         </Row>

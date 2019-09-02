@@ -282,74 +282,43 @@ export default  class Dscredit extends  PureComponent{
 
   }
   componentDidMount(){
-    /*const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
+      type: 'auditAsset/queryDsCreditInfo',
       payload: {
-        ...propsData,
-        reportFlag:1
+        id:id,
+        type:3
       },
-      callback:(time)=>{
-        this.checkRiskInfo(time)
-      }
     })
     this.setState({
-      currentime:this.props.auditAsset.creditDateList.length>0?this.props.auditAsset.creditDateList[0]:'',
-      reportId:this.props.auditAsset.creditDateList.length>0?this.props.auditAsset.creditDateList[0]:'',
+      currentime:this.props.auditAsset.arfakeInfo.length>0?this.props.auditAsset.arfakeInfo[0]['createTime']:'',
     },()=>{
-    })*/
-  }
-  componentDidUpdate(){
-    this.clearHover()
-  }
-  //去除分页器弹框
-  clearHover=()=>{
-    var bar = document.getElementsByClassName('ant-pagination-item');
-    for(var i=0;i<bar.length;i++){
-      bar[i].setAttribute('title','');
-    }
+    })
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      return <a>{this.props.auditAsset.creditDateList[current-1]}</a>
+      return <a>{this.props.auditAsset.creditInfoList[current-1]['createTime']}</a>
     }
     return originalElement;
   }
   onChange=(current)=>{
     console.log(current)
     this.setState({
-      currentime:this.props.auditAsset.creditDateList[current-1],
+      currentime:this.props.auditAsset.creditInfoList[current-1]['createTime'],
       currentPage:current
-    },()=>{
-      this.checkRiskInfo(this.state.currentime)
-    })
-  }
-  //风控报告页面时间获取
-  queryRiskDate=()=>{
-    const propsData = this.props.location.state
-    this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
-      payload: {
-        ...propsData,
-        reportFlag:1
-      },
-      callback:(time)=>{
-        this.setState({
-          currentPage:1
-        })
-        this.checkRiskInfo(time)
-      }
     })
   }
   //风控信息查询
   checkRiskInfo = (time)=>{
-    const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
       type: 'auditAsset/queryDsCreditInfo',
-      data: {
-        reportTime:time,
-        ...propsData
-      }
+      payload: {
+        id:id,
+        type:3
+      },
     })
   }
   //更新风控报告信息
@@ -359,18 +328,18 @@ export default  class Dscredit extends  PureComponent{
   handleOk = (e) => {
     this.setState({
       visible: false,
-    },()=>{
-      const propsData = this.props.location.state
-      this.props.dispatch({
+    },async()=>{
+      const {query} = this.props.location;
+      const {id} = query;
+      const res = await this.props.dispatch({
         type: 'auditAsset/updateDsCreditInfo',
         payload: {
-          adminUserID:getUserId(),
-          ...propsData,
+          ...query,
         },
-        callback:()=>{
-          this.queryRiskDate()
-        }
       })
+      if(res&&res.status===1){
+        this.checkRiskInfo()
+      }
     });
   }
   showModal = () => {
@@ -393,24 +362,27 @@ export default  class Dscredit extends  PureComponent{
     return null;
   }
   render(){
+    const {creditInfoList} = this.props.auditAsset;
+    const {currentPage} = this.state;
+    let currentCreditInfo = creditInfoList[currentPage-1]
     return(
       <PageTableTitle title={'风控报告'}>
         <Row type="flex" justify="center">
-          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={this.props.auditAsset.creditDateList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
+          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={creditInfoList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
         </Row>
         <Row type="flex" align="middle" justify="space-between" style={{paddingLeft:10,paddingRight:10,paddingTop:5,paddingBottom:5,marginTop:10,background:'#dbeef3'}}>
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.creditInfoList['reportCode']}</span>
+            <span>{currentCreditInfo['id']}</span>
           </Col>
           <Col>
             <span>报告时间</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.creditInfoList['reportTime']}</span>
+            <span>{currentCreditInfo['createTime']}</span>
           </Col>
           <Col>
-            <span>操作人:{this.props.auditAsset.creditInfoList['operator']}</span>
+            <span>操作人:{currentCreditInfo['createBy']}</span>
             <span style={{display:'inline-block',width:10}}></span>
             <Button type="primary" onClick={this.updateRiskInfo} style={{backgroundColor:'#AEAEAE',borderColor:'#AEAEAE'}}>更新数据</Button>
           </Col>
@@ -422,7 +394,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow1}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow1']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow1']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -432,7 +404,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow2}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow2']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow2']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -442,7 +414,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow3}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow3']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow3']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -452,7 +424,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow4}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow4']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow4']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -462,7 +434,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow5}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow5']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow5']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -472,7 +444,7 @@ export default  class Dscredit extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.creditRow6}
-            dataSource={this.props.auditAsset.creditInfoList['creditRow6']}
+            dataSource={currentCreditInfo['threeMonkeyCredit']['creditRow6']}
           />
         </Row>
         <Modal

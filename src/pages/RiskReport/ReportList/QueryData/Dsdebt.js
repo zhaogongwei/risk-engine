@@ -105,65 +105,44 @@ export default  class Dsdebt extends  PureComponent{
 
   }
   componentDidMount(){
-    /*const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
+      type: 'auditAsset/queryDsDebtInfo',
       payload: {
-        ...propsData,
-        reportFlag:2
+        id:id,
+        type:4
       },
-      callback:(time)=>{
-        this.checkRiskInfo(time)
-      }
     })
     this.setState({
-      currentime:this.props.auditAsset.debtDateList.length>0?this.props.auditAsset.debtDateList[0]:'',
+      currentime:this.props.auditAsset.debtInfoList.length>0?this.props.auditAsset.debtInfoList[0]['createTime']:'',
     },()=>{
-    })*/
+    })
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      return <a>{this.props.auditAsset.debtDateList[current-1]}</a>
+      return <a>{this.props.auditAsset.debtInfoList[current-1]['createTime']}</a>
     }
     return originalElement;
   }
   onChange=(current)=>{
     this.setState({
-      currentime:this.props.auditAsset.debtDateList[current-1],
+      currentime:this.props.auditAsset.debtInfoList[current-1]['createTime'],
       currentPage:current
-    },()=>{
-      this.checkRiskInfo(this.state.currentime)
-    })
-  }
-  //风控报告页面时间获取
-  queryRiskDate=()=>{
-    const propsData = this.props.location.state
-    this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
-      payload: {
-        ...propsData,
-        reportFlag:2
-      },
-      callback:(time)=>{
-        this.setState({
-          currentPage:1
-        })
-        this.checkRiskInfo(time)
-      }
     })
   }
   //风控信息查询
   checkRiskInfo = (time)=>{
-    const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
       type: 'auditAsset/queryDsDebtInfo',
-      data: {
-        reportTime:time,
-        ...propsData
-      }
+      payload: {
+        id:id,
+        type:4
+      },
     })
   }
-  //更新风控报告信息
   //更新风控报告信息
   updateRiskInfo=()=>{
     this.showModal()
@@ -171,19 +150,20 @@ export default  class Dsdebt extends  PureComponent{
   handleOk = (e) => {
     this.setState({
       visible: false,
-    },()=>{
-      const propsData = this.props.location.state
-      this.props.dispatch({
+    },async()=>{
+      const {query} = this.props.location;
+      const {id} = query;
+      const res = await this.props.dispatch({
         type: 'auditAsset/updateDsDebtInfo',
         payload: {
-          adminUserID:getUserId(),
-          ...propsData,
+          ...query
         },
-        callback:()=>{
-          this.queryRiskDate()
-        }
       })
+      if(res&&res.status===1){
+        this.checkRiskInfo()
+      }
     });
+
   }
   showModal = () => {
     this.setState({
@@ -205,10 +185,12 @@ export default  class Dsdebt extends  PureComponent{
     return null;
   }
   render(){
+    const {debtInfoList} = this.props.auditAsset;
+    const {currentPage} = this.state;
     return(
       <PageTableTitle title={'风控报告'}>
         <Row type="flex" justify="center">
-          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={this.props.auditAsset.debtDateList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
+          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={debtInfoList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
         </Row>
         <Row type="flex" align="middle" justify="space-between" style={{paddingLeft:10,paddingRight:10,paddingTop:5,paddingBottom:5,marginTop:10,background:'#dbeef3'}}>
           <Col>
