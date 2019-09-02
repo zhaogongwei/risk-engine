@@ -32,7 +32,7 @@ export default class AddForm extends Component {
 
   //点击确定
   submitHandler = ()=> {
-    const { dispatch, type, id, addEditPage, change } = this.props;
+    const { dispatch, type, id, addEditPage, change, currPage, pageSize } = this.props;
     this.props.form.validateFields(async(err, values) => {
       if(!err){
         if(type == 1) {
@@ -57,7 +57,7 @@ export default class AddForm extends Component {
           if(res && res.status == 1) {
             message.success(res.statusDesc)
             addEditPage(false)
-            change()
+            change(currPage, pageSize)
           }
         }
       }

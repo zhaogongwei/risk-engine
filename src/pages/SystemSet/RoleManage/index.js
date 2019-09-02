@@ -150,17 +150,28 @@ export default class RoleManage extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-      const { dispatch } =  this.props;
-      let res = await dispatch({
-        type: 'role/delRole',
-        payload: {
-          roleId
+      new Promise(async(resolve, reject) => {
+        const { dispatch } =  this.props;
+        let res = await dispatch({
+          type: 'role/delRole',
+          payload: {
+            roleId
+          }
+        })
+        if(res && res.status == 1) {
+          message.success(res.statusDesc);
+          let dataList = this.props.role.dataList
+          resolve(dataList)
+        }else{
+          message.error(res.statusDesc);
+        }
+      }).then((res)=>{
+        if(res.records.length === 1 && this.state.currPage !== 1) {
+          this.change(--this.state.currPage, this.state.pageSize);
+        }else {
+          this.change(this.state.currPage, this.state.pageSize);
         }
       })
-      if(res && res.status == 1) {
-        message.success(res.statusDesc);
-        this.change()
-      }
     }
   }
   exportList = async() => {
@@ -180,7 +191,9 @@ export default class RoleManage extends PureComponent {
       type,
       isShowEdit: this.isShowEdit,
       change: this.change,
-      roleId: this.state.roleId
+      roleId: this.state.roleId,
+      currPage: this.state.currPage,
+      pageSize: this.state.pageSize
     }
     const { dataList, menuTree } =  this.props.role;
     return (
