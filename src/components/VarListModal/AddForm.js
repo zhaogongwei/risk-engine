@@ -207,12 +207,20 @@ export default class AddForm extends Component {
   }
 
   onCheckAllChange = (e) => {
-    const {varList} = this.props.varList
+    const { varList } = this.props.varList
+    const { pageList } = this.props
+    let handleVarList = [ ...varList, ...pageList ]
+    let allList = []
+    this.duplicateRemoval(handleVarList).map(item => {
+      if (!item.disabled) {
+        allList.push(item)
+      }
+    })
     this.setState({
-      checkedList: e.target.checked ? varList : [],
+      checkedList: e.target.checked ? allList : [],
       indeterminate: false,
       checkAll: e.target.checked,
-    });
+    })
   }
   //单选按钮onChange事件
   onRadioChange = (e)=>{
@@ -303,14 +311,10 @@ export default class AddForm extends Component {
       }
     })
   }
-  render() {
-    const {visible,loading} = this.state;
-    const { getFieldDecorator } = this.props.form
-    const { varList,page,oneClassList,twoClassList } = this.props.varList
-    const { pageList } = this.props
-    let handleVarList = [ ...varList, ...pageList ]
+  //   将已经选择的变量禁止重新选择一遍
+  duplicateRemoval(list = []) {
     let obj = {}
-    handleVarList.forEach(item => {
+    list.forEach(item => {
       if( obj[item.id] ) {
         obj[item.id].disabled = true
       } else {
@@ -318,7 +322,15 @@ export default class AddForm extends Component {
         obj[item.id].disabled = false
       }
     })
-    let result = Object.values(obj)
+    const result = Object.values(obj)
+    return result
+  }
+  render() {
+    const {visible,loading} = this.state;
+    const { getFieldDecorator } = this.props.form
+    const { varList,page,oneClassList,twoClassList } = this.props.varList
+    const { pageList } = this.props
+    let handleVarList = [ ...varList, ...pageList ]
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -389,7 +401,7 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    result.length>0?result.map((item, index) => {
+                    this.duplicateRemoval(handleVarList).length > 0 ? this.duplicateRemoval(handleVarList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox disabled={item.disabled} value={item}>{item.variableName}</Checkbox>
@@ -402,7 +414,7 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    result.length>0?result.map((item, index) => {
+                    varList.length > 0 ? varList.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Radio  value={item}>{item.variableName}</Radio >
