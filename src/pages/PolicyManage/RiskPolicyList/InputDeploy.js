@@ -211,6 +211,7 @@ export default class InputDeploy extends PureComponent {
   }
   //保存提交
   formSubmit=()=>{
+    console.log(this.props.policyList)
     const {tableList} = this.props.policyList;
     const {query} = this.props.location;
     const formData = this.getFormValue();

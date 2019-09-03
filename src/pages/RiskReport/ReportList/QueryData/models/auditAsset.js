@@ -24,7 +24,13 @@ export default {
       }
     ],
     debtInfoList:[
-      {}
+      {
+        createTime:'',
+        creditDebtResult:{
+          detail:[],
+          debtInfo:[],
+        }
+      }
     ],
     arfakeInfoList:{
       idcardVerif:{},
@@ -97,17 +103,17 @@ export default {
       let response = yield call (api.queryDsDebtInfo,payload)
       if(response && response.status === 1){
         response.data.forEach((item,index)=>{
+          item.createTime=item.createTime.slice(0,10);
           addListKey(item['creditDebtResult']['detail'])
-          item.debtInfo[
+          item['creditDebtResult'].debtInfo = [
               {
-                orderNum:item,
-                repayOrderAmt:orderNum,
-                curInstNum:orderNum,
+                current_order_count:item['creditDebtResult']['current_order_count'],
+                current_order_amt:item['creditDebtResult']['current_order_amt'],
+                current_org_count:item['creditDebtResult']['current_org_count'],
               }
             ]
+          addListKey(item['creditDebtResult']['debtInfo'])
         })
-        addListKey(response.result['head'])
-        addListKey(response.result['body'])
         yield put ({
           type:'debtListHandle',
           payload:response

@@ -26,20 +26,20 @@ export default  class Dsdebt extends  PureComponent{
       head:[
         {
           title: '当前共债订单数',
-          dataIndex: 'orderNum',
-          key:'orderNum',
+          dataIndex: 'current_order_count',
+          key:'current_order_count',
           className:'thead'
         },
         {
           title: '当前共债订单已还款⾦额',
-          dataIndex: 'repayOrderAmt',
-          key:'repayOrderAmt',
+          dataIndex: 'current_order_amt',
+          key:'current_order_amt',
           className:'thead'
         },
         {
           title: '当前共债机构数',
-          dataIndex: 'curInstNum',
-          key:'curInstNum',
+          dataIndex: 'current_org_count',
+          key:'current_org_count',
           className:'thead'
         },
       ],
@@ -69,32 +69,32 @@ export default  class Dsdebt extends  PureComponent{
       body:[
         {
           title: '共债统计时间',
-          dataIndex: 'statisticsTime',
-          key:'statisticsTime',
+          dataIndex: 'totaldebt_date',
+          key:'totaldebt_date',
           className:'thead'
         },
         {
           title: '共债机构数',
-          dataIndex: 'instNum',
-          key:'instNum',
+          dataIndex: 'totaldebt_org_count',
+          key:'totaldebt_org_count',
           className:'thead'
         },
         {
           title: '共债订单数',
-          dataIndex: 'orderNum',
-          key:'orderNum',
+          dataIndex: 'totaldebt_order_count',
+          key:'totaldebt_order_count',
           className:'thead'
         },
         {
           title: '共债订单已还款⾦额',
-          dataIndex: 'repayOrderAmt',
-          key:'repayOrderAmt',
+          dataIndex: 'totaldebt_order_amt',
+          key:'totaldebt_order_amt',
           className:'thead'
         },
         {
           title: '疑似借新还旧',
-          dataIndex: 'borrowNewRepayOld',
-          key:'borrowNewRepayOld',
+          dataIndex: 'new_or_old',
+          key:'new_or_old',
           className:'thead'
         },
       ],
@@ -187,6 +187,9 @@ export default  class Dsdebt extends  PureComponent{
   render(){
     const {debtInfoList} = this.props.auditAsset;
     const {currentPage} = this.state;
+    let currentDebtInfo=debtInfoList[currentPage-1];
+    console.log(debtInfoList)
+    console.log(currentDebtInfo)
     return(
       <PageTableTitle title={'风控报告'}>
         <Row type="flex" justify="center">
@@ -196,15 +199,15 @@ export default  class Dsdebt extends  PureComponent{
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.debtInfoList['reportCode']}</span>
+            <span>{currentDebtInfo['id']}</span>
           </Col>
           <Col>
             <span>报告时间</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.debtInfoList['reportTime']}</span>
+            <span>{currentDebtInfo['createTime']}</span>
           </Col>
           <Col>
-            <span>操作人:{this.props.auditAsset.debtInfoList['operator']}</span>
+            <span>操作人:{currentDebtInfo['createBy']}</span>
             <span style={{display:'inline-block',width:10}}></span>
             <Button type="primary" onClick={this.updateRiskInfo} style={{backgroundColor:'#AEAEAE',borderColor:'#AEAEAE'}}>更新数据</Button>
           </Col>
@@ -216,7 +219,7 @@ export default  class Dsdebt extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.head}
-            dataSource={this.props.auditAsset.debtInfoList['head']}
+            dataSource={currentDebtInfo['creditDebtResult']['debtInfo']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -226,7 +229,7 @@ export default  class Dsdebt extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.body}
-            dataSource={this.props.auditAsset.debtInfoList['body']}
+            dataSource={currentDebtInfo['creditDebtResult']['detail']}
           />
         </Row>
         <Modal
