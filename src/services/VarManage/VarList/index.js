@@ -29,7 +29,7 @@ export async function getSelectLevel2(params) {
 }
 //新增变量
 export async function addVar(params) {
-  return request(`${_api}/admin/asset/detail`, {
+  return request(`${_baseApi}/variable/insertVariable`, {
     method: 'POST',
     body: {
       ...params
@@ -46,6 +46,7 @@ export async function updateVariable(params) {
     },
   });
 }  
+//查询变量信息
 export async function selectVariableById(params) {
   return request(`${_baseApi}/variable/selectVariableById`, {
     method: 'POST',
@@ -56,7 +57,16 @@ export async function selectVariableById(params) {
 } 
 //删除变量
 export async function delVar(params){
-  return request(`${_api}/varClass/deleteClass`, {
+  return request(`${_baseApi}/variable/delete`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+//应用策略
+export async function getStrategy(params){
+  return request(`${_baseApi}/variable/getStrategyName`, {
     method: 'POST',
     body: {
       ...params

@@ -192,6 +192,7 @@ export default class InputDeploy extends PureComponent {
           })
         }
         message.success('删除成功!')
+        this.setState({ selectedRowKeys: [] });
         this.pagination(10,1,addListKey(tableList));
       }
     }
@@ -335,6 +336,7 @@ export default class InputDeploy extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
+              pageList={pageList}
             />
           </Modal>
         </Card>

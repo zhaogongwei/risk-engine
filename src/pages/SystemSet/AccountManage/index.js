@@ -188,19 +188,29 @@ export default class AccountManage extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-      const { dispatch } =  this.props;
-      let res = await dispatch({
-        type: 'account/delAccount',
-        payload: {
-          id: record.id
+      new Promise(async(resolve, reject) => {
+        // 请求方法
+        const { dispatch } =  this.props;
+        let res = await dispatch({
+          type: 'account/delAccount',
+          payload: {
+            id: record.id
+          }
+        })
+        if(res && res.status === 1) {
+          message.success(res.statusDesc);
+          let listData = this.props.account.listData
+          resolve(listData)
+        }else {
+          message.error(res.statusDesc);
+        }
+      }).then((listData)=>{
+        if(listData.records.length === 1 && this.state.currPage !== 1) {
+          this.change(--this.state.currPage, this.state.pageSize);
+        }else {
+          this.change(this.state.currPage, this.state.pageSize);
         }
       })
-      if(res && res.status == 1) {
-        message.success(res.statusDesc);
-        this.change()
-      }else {
-        message.error(res.statusDesc);
-      }
     }
   }
   render() {
@@ -210,7 +220,9 @@ export default class AccountManage extends PureComponent {
       id: this.state.id,
       modalVisible: this.state.modalVisible,
       addEdit: this.addEdit,
-      change: this.change
+      change: this.change,
+      currPage: this.state.currPage,
+      pageSize: this.state.pageSize
     }
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>

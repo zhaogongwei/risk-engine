@@ -42,11 +42,7 @@ export default {
     },
     //删除角色
     *delRole({ payload },{ call,put }){
-      let response = yield call(api.delRole,payload)
-      yield put({
-        type:'saveRoleList',
-        payload
-      })
+      return yield call(api.delRole,payload)
     },
     *exportList({ payload }, { call, put}){
       yield call(api.exportFile, payload)

@@ -89,7 +89,7 @@ export default class AddForm extends Component {
           if(res && res.status == 1) {
             message.success(res.statusDesc);
             this.props.addEdit(false);
-            this.props.change()
+            this.props.change(this.props.currPage, this.props.pageSize);
           }else{
             message.error(res.statusDesc);
           }

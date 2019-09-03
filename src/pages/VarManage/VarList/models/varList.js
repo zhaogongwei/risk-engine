@@ -9,11 +9,7 @@ export default {
     selectItem:[],
     secondSelectItem:[],
     count:'',
-    enumeration:[{
-      key: '1',
-      enumValue: ``,
-      enumShow: ``
-    }],//枚举数组
+    enumeration:[],//枚举数组
     total:100,//一共多少项
   },
 
@@ -62,10 +58,20 @@ export default {
       let response = yield call(api.selectVariableById,payload)
       return response;
     },
+    //添加变量
+    *addVar({payload,callback},{call,put}){
+      let response = yield call(api.addVar,payload)
+      return response;
+    },
     //删除变量
-    *delVar({payload,callback},{call,put}){
+    *delVar({payload},{call,put}){
       let response = yield call(api.delVar,payload)
-      callback()
+      return response;
+    },
+    //应用策略
+    *getStrategy({payload},{call,put}){
+      let response = yield call(api.getStrategy,payload)
+      return response;
     },
     *getEnumeration({payload},{call,put}){
       let response = yield call(api.getEnumeration,payload)
@@ -111,7 +117,7 @@ export default {
     saveEnumeration(state,{payload}) {
     	 return {
     	 	...state,
-    	  Handle:payload
+         enumeration:payload
     	}
     },
     //   枚举添加
