@@ -107,6 +107,9 @@ export default class EditVar extends PureComponent {
       id:'',
       status:1,
       isShow:0,
+      disable:false,
+      updateTime:'',
+      updateTrueName:'',
     };
   }
   componentDidMount = async () => {
@@ -125,7 +128,6 @@ export default class EditVar extends PureComponent {
       })
       if(res.status=='1'){
         const data = res.data
-
         this.props.form.setFieldsValue({
           firstTypeId:Number(data.firstTypeId),
           defaultValue: data.defaultValue,
@@ -139,6 +141,10 @@ export default class EditVar extends PureComponent {
           variableName: data.variableName,
           variableType: data.variableType
         })
+        
+        this.state.disable = true;
+        this.state.updateTime = data.updateTime
+        this.state.updateTrueName = data.updateTrueName
         this.props.dispatch({
           type: 'varlist/saveEnumeration',
           payload: data.variableEnumList || []
@@ -244,9 +250,9 @@ export default class EditVar extends PureComponent {
           addVarRes.then((value)=>{
             if(value.status==1){
               message.success('提交成功').then(() => {
-                router.push({
-                  pathname:'/varManage/varlist',
-                })
+                // router.push({
+                //   pathname:'/varManage/varlist',
+                // })
               })
             }else{
               message.error(value.statusDesc || "提交失败").then(() => {
@@ -332,7 +338,7 @@ export default class EditVar extends PureComponent {
                       {required:true,message:'请输入变量代码'}
                     ]
                   })(
-                    <Input />
+                    <Input disabled={this.state.disable}/>
                   )}
                 </FormItem>
               </Col>
@@ -344,9 +350,9 @@ export default class EditVar extends PureComponent {
                       {required:true,message:'请选择变量类型'}
                     ]
                   })(
-                    <Select allowClear={true}>
+                    <Select allowClear={true} disabled={this.state.disable} disabled={this.state.disable}>
                       <Option value={'num'}>数字</Option>
-                      <Option value={'character'}>字符</Option>
+                      <Option value={'char'}>字符</Option>
                       <Option value={'date'}>日期</Option>
                       <Option value={'time'}>时间</Option>
                     </Select>
@@ -363,7 +369,7 @@ export default class EditVar extends PureComponent {
                       {required:true,message:'请选择是否枚举'}
                     ]
                   })(
-                    <Select allowClear={true} onChange={(val)=>this.handleChange(val)}>
+                    <Select allowClear={true} onChange={(val)=>this.handleChange(val)} disabled={this.state.disable}>
                       <Option value={1}>是</Option>
                       <Option value={0}>否</Option>
                     </Select>
@@ -385,26 +391,26 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>
               <Col xxl={4} md={6}>
-                <FormItem label="最小值" {...formItemConfig}>
+                <FormItem label="最小值" {...formItemConfig} >
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
                      
                     ]
                   })(
-                    <Input />
+                    <Input disabled={this.state.disable}/>
                   )}
                 </FormItem>
               </Col>
               <Col xxl={4} md={6}>
-                <FormItem label="最大值" {...formItemConfig}>
+                <FormItem label="最大值" {...formItemConfig} >
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
                       
                     ]
                   })(
-                    <Input/>
+                    <Input disabled={this.state.disable}/>
                   )}
                 </FormItem>
               </Col>
@@ -467,7 +473,7 @@ export default class EditVar extends PureComponent {
               </Col>
               <Col style={{color:'#FF0000'}} push={10}>
                 {
-                  query.type===1?null:'最近操作时间：2018-08-08 00:00:00 操作人：  王大大'
+                  query.type===1?null:`最近操作时间：${this.state.updateTime} 操作人：  ${this.state.updateTrueName}`
                 }
               </Col>
             </Row>

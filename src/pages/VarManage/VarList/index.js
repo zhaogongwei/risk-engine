@@ -305,9 +305,9 @@ export default class VarList extends PureComponent {
          />
        </Card>
         <Modal
-          title="Basic Modal"
+          title="应用策略"
           visible={this.state.visible}
-          onOk={this.handleOk}
+          onOk={this.policyOk}
           onCancel={this.policyOk}
         >
           
