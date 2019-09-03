@@ -2,7 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
-import { getAuthority, setAuthority } from './authority';
+import { getAuthority, setAuthority, deleteUserName } from './authority';
 import { cookie } from '../utils/utils';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -89,10 +89,8 @@ export default function request(url, options) {
           message: `登录失效`,
           description: `登录失效，请重新登录！`,
         })
-        //   登陆失效以后清除所有用户信息
-        cookie().delete("hyjf-admin-id")
-        window.localStorage.removeItem("permission")
-        window.localStorage.removeItem("userInfo")
+        // 登录失效后，清除session中的用户名
+        deleteUserName()
         //   登陆失效以后记录失效之前的路径    以便登陆成功以后定位失效页面
         if (location.pathname !== '/user/login') {
           localStorage.setItem('last-visit-url', location.pathname)

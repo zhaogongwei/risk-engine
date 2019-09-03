@@ -136,8 +136,6 @@ export default class VarList extends PureComponent {
       code:'',
       type:1,//1:添加 2：编辑
       pageSize:10,
-      currentPage:1,
-      current:1,
       id:'',
       status:1,
       visible:false,
@@ -146,20 +144,24 @@ export default class VarList extends PureComponent {
   }
   componentDidMount = async()=> {
     const query= {...this.props.location.query}
-    await this.props.dispatch({
-      type: 'varlist/changefilterIpts',
-      payload: {
-        firstTypeId:query.parentId || '',
-        secondTypeId:query.id || '',
-      },
-    })
-    this.change(1)
+    if(query.parentId && query.parentId!=""){
+      await this.props.dispatch({
+        type: 'varlist/changefilterIpts',
+        payload: {
+          firstTypeId:query.parentId || '',
+          secondTypeId:query.id || '',
+        },
+      })
+    }
+    this.change(this.props.varlist.current)
   }
   //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
+  onChange = async(current) => {
+    await this.props.dispatch({
+      type: 'varlist/changeCurrent',
+      payload: {
+        current:current
+      }
     })
     this.change(current)
   }
@@ -194,8 +196,11 @@ export default class VarList extends PureComponent {
   }
   //查询时改变默认页数
   changeDefault=(value)=>{
-    this.setState({
-      current:value
+    this.props.dispatch({
+      type: 'varlist/changeCurrent',
+      payload: {
+        current:value
+      }
     })
   }
   //右上角新增
@@ -273,7 +278,7 @@ export default class VarList extends PureComponent {
       res.then(value => {
         if(value.status==1){
           message.success('操作成功').then(() => {
-            this.change(this.state.current)
+            this.change(this.props.varlist.current)
           })
         }else{
           message.error(value.statusDesc || "删除失败")
@@ -287,7 +292,7 @@ export default class VarList extends PureComponent {
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
        <Card bordered={false}>
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.props.varlist.current} changeDefault={this.changeDefault}/>
          <Table
            bordered
            pagination={false}
@@ -298,16 +303,16 @@ export default class VarList extends PureComponent {
            style={{ marginBottom: "50px" }}
            showQuickJumper
            defaultCurrent={1}
-           current={this.state.current}
+           current={this.props.varlist.current}
            total={this.props.varlist.total}
            onChange={this.onChange}
            showTotal={(total, range) => this.showTotal(total, range)}
          />
        </Card>
         <Modal
-          title="Basic Modal"
+          title="应用策略"
           visible={this.state.visible}
-          onOk={this.handleOk}
+          onOk={this.policyOk}
           onCancel={this.policyOk}
         >
           

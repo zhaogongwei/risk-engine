@@ -328,6 +328,8 @@ export default class InputDeploy extends PureComponent {
             title={'选择变量'}
             visible={this.state.visible}
             onOk={this.handleOk}
+            destroyOnClose={true}
+            maskClosable={false}
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >
@@ -336,7 +338,7 @@ export default class InputDeploy extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
-              pageList={pageList}
+              pageList={tableList}
             />
           </Modal>
         </Card>

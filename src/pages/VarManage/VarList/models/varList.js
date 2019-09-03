@@ -11,6 +11,8 @@ export default {
     count:'',
     enumeration:[],//枚举数组
     total:100,//一共多少项
+    currentPage:1,
+    current:1,//页数
   },
 
   effects: {
@@ -84,7 +86,7 @@ export default {
 
   reducers: {
     saveVarList(state, { payload }) {
-    	const list = addListKey (payload.data.records)
+    	const list = addListKey (payload.data.records,payload.data.current,10)
       return {
         ...state,
         varList:list,
@@ -120,9 +122,14 @@ export default {
          enumeration:payload
     	}
     },
+    changeCurrent(state,{payload}) {
+      return {
+        ...state,
+        current:payload.current
+     }
+   },
     //   枚举添加
     addData(state, { payload }) {
-      console.log(payload, 'payload')
       return {
         ...state,
         enumeration: addListKey(payload)
