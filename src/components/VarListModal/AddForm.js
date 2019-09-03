@@ -308,14 +308,17 @@ export default class AddForm extends Component {
     const { getFieldDecorator } = this.props.form
     const { varList,page,oneClassList,twoClassList } = this.props.varList
     const { pageList } = this.props
-    let handleVarList = varList
+    let handleVarList = [ ...varList, ...pageList ]
+    let obj = {}
     handleVarList.forEach(item => {
-      pageList.forEach(pageItem => {
-        if (item.id === pageItem.id) item.disabled = true
-          else item.disabled = false
-      })
+      if( obj[item.id] ) {
+        obj[item.id].disabled = true
+      } else {
+        obj[item.id] = item
+        obj[item.id].disabled = false
+      }
     })
-    console.log(handleVarList, pageList, 'handleVarList')
+    let result = Object.values(obj)
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -386,10 +389,10 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    varList.length>0?varList.map((item, index) => {
+                    result.length>0?result.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Checkbox value={item}>{item.variableName}</Checkbox>
+                          <Checkbox disabled={item.disabled} value={item}>{item.variableName}</Checkbox>
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.variableName}</Col>
@@ -399,7 +402,7 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    varList.length>0?varList.map((item, index) => {
+                    result.length>0?result.map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Radio  value={item}>{item.variableName}</Radio >
