@@ -337,7 +337,7 @@ export default class InputDeploy extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
-              pageList={pageList}
+              pageList={tableList}
             />
           </Modal>
         </Card>

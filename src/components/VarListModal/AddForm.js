@@ -211,7 +211,7 @@ export default class AddForm extends Component {
     const { pageList } = this.props
     let handleVarList = [ ...varList, ...pageList ]
     let allList = []
-    this.duplicateRemoval(handleVarList).map(item => {
+    this.duplicateRemoval(varList, pageList).map(item => {
       if (!item.disabled) {
         allList.push(item)
       }
@@ -312,25 +312,30 @@ export default class AddForm extends Component {
     })
   }
   //   将已经选择的变量禁止重新选择一遍
-  duplicateRemoval(list = []) {
-    let obj = {}
-    list.forEach(item => {
-      if( obj[item.id] ) {
-        obj[item.id].disabled = true
-      } else {
-        obj[item.id] = item
-        obj[item.id].disabled = false
-      }
+  duplicateRemoval(varList = [], pageList = []) {
+    varList.forEach((n)=>{
+      let aaa = []
+      n.disabled = false
+      pageList.forEach(( m ) => {
+        var tt=n.id.toString()
+        var kk=m.id.toString()
+        if(tt.indexOf(kk)!=-1){
+          n.disabled = true
+          aaa.push(n)
+        } else {
+          aaa.push(n)
+        }
+      })
+      return aaa
     })
-    const result = Object.values(obj)
-    return result
+    console.log(varList, 'varList')
+    return varList
   }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const { varList,page,oneClassList,twoClassList } = this.props.varList
     const { pageList } = this.props
-    let handleVarList = [ ...varList, ...pageList ]
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -401,7 +406,7 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    this.duplicateRemoval(handleVarList).length > 0 ? this.duplicateRemoval(handleVarList).map((item, index) => {
+                    this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox disabled={item.disabled} value={item}>{item.variableName}</Checkbox>
