@@ -52,6 +52,7 @@ export default class FilterIpts extends Component {
       	
       }
     })
+    console.log(this.props.varlist.filterIpts)
     this.props.form.setFieldsValue({
       firstTypeId:Number(this.props.varlist.filterIpts.firstTypeId) || '',
       secondTypeId:Number(this.props.varlist.filterIpts.secondTypeId) || '',
