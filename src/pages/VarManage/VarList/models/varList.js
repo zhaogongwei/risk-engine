@@ -86,7 +86,7 @@ export default {
 
   reducers: {
     saveVarList(state, { payload }) {
-    	const list = addListKey (payload.data.records)
+    	const list = addListKey (payload.data.records,payload.data.current,10)
       return {
         ...state,
         varList:list,
@@ -130,7 +130,6 @@ export default {
    },
     //   枚举添加
     addData(state, { payload }) {
-      console.log(payload, 'payload')
       return {
         ...state,
         enumeration: addListKey(payload)
