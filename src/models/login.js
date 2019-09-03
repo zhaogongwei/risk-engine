@@ -2,7 +2,7 @@ import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
 import { message } from 'antd';
 import { fakeAccountLogin, getFakeCaptcha,accountLogin,changePassword } from '@/services/api';
-import { setAuthority, setUserName, getUserName } from '@/utils/authority';
+import { setAuthority, setUserName, getUserName, deleteUserName } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 
@@ -74,6 +74,7 @@ export default {
       });
       reloadAuthorized();
       const { redirect } = getPageQuery();
+      deleteUserName()
       // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
         yield put(
@@ -102,7 +103,6 @@ export default {
       };
     },
     setUserInfo(state, { payload }) {
-      console.log(payload, 'payload')
       return {
         ...state,
         currentUser: payload

@@ -285,7 +285,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('firstTypeId',{
                     initialValue:'请选择一级分类',
                     rules:[
-                      {required:true,}
+                      {required:true, message:'请选择一级分类'}
                     ]
                   })(
                     <Select allowClear={true} onChange={this.selectchange}>
@@ -301,7 +301,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('parentId',{
                     initialValue:'请选择二级分类',
                     rules:[
-                      {required:true}
+                      {required:true,message:'请选择二级分类'}
                     ]
                   })(
                     <Select allowClear={true} >
@@ -317,7 +317,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableName',{
                     initialValue:'',
                     rules:[
-                      {required:true,}
+                      {required:true,message:'请输入变量名'}
                     ]
                   })(
                     <Input />
@@ -329,7 +329,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableCode',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                      {required:true,message:'请输入变量代码'}
                     ]
                   })(
                     <Input />
@@ -341,7 +341,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableType',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                      {required:true,message:'请选择变量类型'}
                     ]
                   })(
                     <Select allowClear={true}>
@@ -360,7 +360,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('enumFlag',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                      {required:true,message:'请选择是否枚举'}
                     ]
                   })(
                     <Select allowClear={true} onChange={(val)=>this.handleChange(val)}>
@@ -377,7 +377,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableLength',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                      {required:true,message:'请输入长度'}
                     ]
                   })(
                     <Input />
@@ -389,7 +389,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                     
                     ]
                   })(
                     <Input />
@@ -401,7 +401,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      {required:true}
+                      
                     ]
                   })(
                     <Input/>
