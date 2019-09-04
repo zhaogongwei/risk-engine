@@ -280,8 +280,40 @@ export default class AddForm extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
+  componentWillMount(){
+    const {queryData} = this.props;
+    //请求变量列表
+    this.props.dispatch({
+      type: 'varList/queryVarList',
+      payload: {
+        ...queryData,
+      }
+    })
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+  }
   componentDidMount () {
     this.props.getSubKey(this,'addForm')
+  }
+  componentWillUnmount(){
+    //清空数据
+    this.props.dispatch({
+      type: 'varList/varListHandle',
+      payload: {
+       data:{
+         records:[],
+         current:1,
+         size:10,
+         total:0,
+       }
+      }
+    })
   }
   emptyCheck=()=>{
     this.setState({
@@ -344,7 +376,7 @@ export default class AddForm extends Component {
         <Form
           className="ant-advanced-search-form"
         >
-          <Row style={{marginBottom:'32px'}} gutter={0} type="flex" align="middle">
+          <Row style={{marginBottom:'32px'}} gutter={16} type="flex" align="middle">
             <Col xxl={6} md={10}>
               <FormItem label="变量分类"  wrapperCol={{span:8}}>
                 {getFieldDecorator('firstTypeId',{
@@ -419,10 +451,10 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    varList.length > 0 ? varList.map((item, index) => {
+                    this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio  value={item}>{item.variableName}</Radio >
+                          <Radio  disabled={item.disabled} value={item}>{item.variableName}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark}</Col>

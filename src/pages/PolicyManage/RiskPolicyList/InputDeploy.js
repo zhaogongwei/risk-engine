@@ -105,7 +105,7 @@ export default class InputDeploy extends PureComponent {
    const res = await this.props.dispatch({
       type: 'policyList/queryInputVar',
       payload: {
-        strategyId:query['strategyId']
+        strategyId:query['id']
       }
     })
     if(res&&res.status===1){
@@ -329,7 +329,6 @@ export default class InputDeploy extends PureComponent {
             visible={this.state.visible}
             onOk={this.handleOk}
             destroyOnClose={true}
-            maskClosable={false}
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >

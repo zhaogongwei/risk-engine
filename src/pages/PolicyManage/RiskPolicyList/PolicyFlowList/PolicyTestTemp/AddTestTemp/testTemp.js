@@ -148,7 +148,7 @@ export default class TestTemp extends Component {
                 {
                   item['enumList']&&item['enumList'].map((item,index)=>{
                     return (
-                      <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                      <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
                     )
                   })
                 }

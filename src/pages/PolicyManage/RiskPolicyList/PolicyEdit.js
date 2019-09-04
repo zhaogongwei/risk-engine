@@ -120,7 +120,12 @@ export default class PolicyEdit extends PureComponent {
             <FormItem label="策略类型" {...formItemConfig}>
               {getFieldDecorator('strategyType',{
                 initialValue:status?'':policyInfo['strategyType'],
-                rules:[{required:true}]
+                rules:[
+                  {
+                    required:true,
+                    message:'策略类型不能为空!'
+                  }
+                  ]
               })(
                 <Select allowClear={true}>
                   {
@@ -220,7 +225,12 @@ export default class PolicyEdit extends PureComponent {
             <FormItem label="策略负责人" {...formItemConfig}>
               {getFieldDecorator('dutyId',{
                 initialValue:status?'':policyInfo['dutyId'],
-                rules:[{required:true}]
+                rules:[
+                  {
+                    required:true,
+                    message:'策略负责人不能为空!'
+                  }
+                  ]
               })(
                 <Select allowClear={true}>
                   {
