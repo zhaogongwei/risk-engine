@@ -20,131 +20,6 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
 
-const plainOptions = [
-  {
-    variableName:'年龄',
-    variableType:'num',
-    value:'年龄',
-    variableCode:'age',
-    length:1,
-    order:1,
-    varId:3,
-    kind:'num'
-  },
-  {
-    variableName:'注册时间',
-    variableType:'time',
-    value:'注册时间',
-    variableCode:'sign',
-    length:1,
-    order:1,
-    varId:2,
-    kind:'str',
-    isenum:0,
-    option:[
-      {
-        id:1,
-        name:'111'
-      },
-      {
-        id:2,
-        name:'222'
-      },
-      {
-        id:3,
-        name:'333'
-      },
-    ]
-  },
-  {
-    name:'评分卡得分',
-    type:'数字',
-    value:'通过评分模型得出的得龄',
-    code:'33',
-    length:1,
-    order:1,
-    id:3,
-    kind:'num'
-  },
-  {
-    name:'拒绝原因编码',
-    type:'字符',
-    value:'拒绝原因编码合集',
-    code:'44',
-    length:1,
-    order:1,
-    id:4,
-    kind:'str',
-  },
-  {
-    name:'日期',
-    type:'日期',
-    value:'---',
-    code:'55',
-    length:1,
-    order:1,
-    id:5,
-    kind:'date',
-    isenum:0,
-  },
-  {
-    name:'性别',
-    type:'字符',
-    value:'---',
-    code:'66',
-    length:1,
-    order:1,
-    id:5,
-    kind:'str',
-    isenum:0,
-  },
-  {
-    name:'姓名',
-    type:'数字',
-    value:'---',
-    code:'77',
-    length:1,
-    order:1,
-    id:6,
-    kind:'num'
-  },
-  {
-    name:'高风险规则触发数',
-    type:'数字',
-    value:'---',
-    code:'88',
-    length:1,
-    order:1,
-    id:7,
-    kind:'num',
-    option:[
-      {
-        id:1,
-        name:'111'
-      },
-      {
-        id:2,
-        name:'222'
-      },
-      {
-        id:3,
-        name:'333'
-      },
-    ]
-  },
-  {
-    name:'银行卡认证',
-    type:'数字',
-    value:'---',
-    kind:'num',
-    code:'99',
-    length:1,
-    order:1,
-    id:8,
-    kind:'num'
-  },
-];
-const defaultCheckedList = ['Apple', 'Orange'];
 @connect(({varList})=>({
   varList,
 }))
@@ -280,17 +155,17 @@ export default class AddForm extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
-  componentWillMount(){
+ async componentWillMount(){
     const {queryData} = this.props;
     //请求变量列表
-    this.props.dispatch({
+   await this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
         ...queryData,
       }
     })
     //请求一级变量分类
-    this.props.dispatch({
+   await this.props.dispatch({
       type: 'varList/queryOneClassList',
       payload: {
         firstTypeId:0,
@@ -302,6 +177,7 @@ export default class AddForm extends Component {
     this.props.getSubKey(this,'addForm')
   }
   componentWillUnmount(){
+    console.log('componentWillUnMount')
     //清空数据
     this.props.dispatch({
       type: 'varList/varListHandle',
@@ -314,6 +190,7 @@ export default class AddForm extends Component {
        }
       }
     })
+    this.emptyCheck()
   }
   emptyCheck=()=>{
     this.setState({
@@ -360,7 +237,6 @@ export default class AddForm extends Component {
       })
       return aaa
     })
-    console.log(varList, 'varList')
     return varList
   }
   render() {

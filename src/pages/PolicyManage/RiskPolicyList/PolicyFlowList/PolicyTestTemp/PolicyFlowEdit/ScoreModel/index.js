@@ -371,6 +371,7 @@ export default class ScoreModel extends PureComponent {
             title={'选择变量'}
             visible={this.state.visible}
             onOk={this.addFormSubmit}
+            destroyOnClose={true}
             onCancel={this.handleCancel}
             width={1040}
           >
@@ -379,6 +380,7 @@ export default class ScoreModel extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
+              pageList={this.props.scoreModel.scoreList}
             />
           </Modal>
           <Modal
