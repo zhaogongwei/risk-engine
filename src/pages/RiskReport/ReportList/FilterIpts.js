@@ -11,6 +11,19 @@ import styles from '../FilterIpts.less'
 import { connect } from 'dva'
 const Option = Select.Option;
 const FormItem = Form.Item
+const Status = [{
+  key: 1,
+  value: '初始'
+},{
+  key: 2,
+  value: '生成中',
+},{
+  key: 3,
+  value: '已生成'
+},{
+  key: 4,
+  value: '异常'
+}]
 
 @connect(({ reportList }) => ({
   reportList
@@ -86,8 +99,12 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="报告状态" {...formItemConfig}>
-              {getFieldDecorator('assetsTypeCode')(
-                <Input />
+              {getFieldDecorator('status')(
+                <Select>
+                  {
+                    Status.map(item => <Option key={item.key} value={item.value}>{item.value}</Option>)
+                  }
+                </Select>
               )}
             </FormItem>
           </Col>
