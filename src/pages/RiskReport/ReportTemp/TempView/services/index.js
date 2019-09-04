@@ -3,14 +3,6 @@ import request from '@/utils/request';
 //    风控报告模板
 
 const _baseApi = '/merchant-admin';
-//   列表接口
-export async function templateList(params) {
-  return request(`${_baseApi}/reportTemplate/reportTemplateList`, {
-    method: 'POST',
-    body: params,
-  });
-}
-
 //风控报告模板新增/编辑页面保存
 export async function saveTemplate(params) {
   return request(`${_baseApi}/reportTemplate/insetReportTemplate`, {

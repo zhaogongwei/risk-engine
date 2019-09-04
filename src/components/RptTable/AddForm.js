@@ -39,7 +39,15 @@ export default class AddForm extends Component {
 
   //点击确定回调函数
   submitHandler = ()=>{
-    return this.getFormValue();
+    let formData
+    this.props.form.validateFields((errors,value)=>{
+      if(!errors){
+        formData = this.getFormValue();
+      }else{
+        formData = {}
+      }
+    })
+    return formData
   }
   deepCopy =(obj)=> {
     // 只拷贝对象
@@ -79,11 +87,26 @@ export default class AddForm extends Component {
         <Form
           className="ant-advanced-search-form"
         >
-          <Row gutter={0} type="flex" align="middle" justify="center">
+          <Row  type="flex" align="middle" justify="center">
             <Col xxl={16} md={12}>
               <FormItem label="标题名称"  {...formItemConfig}>
                 {getFieldDecorator('title',{
                   initialValue:'',
+                  rules:[
+                    {
+                      required:true,
+                      validator:async(rule, val, cb)=>{
+                        if(!val){
+                          cb('标题内容不能为空!')
+                          return
+                        }
+                        if(val.length>20){
+                          cb('标题长度最多20位!')
+                          return
+                        }
+                      }
+                    }
+                  ]
                 })(
                   <Input/>
                 )}

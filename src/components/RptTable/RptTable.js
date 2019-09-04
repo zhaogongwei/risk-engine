@@ -31,7 +31,7 @@ export default class RptTable extends Component {
     super(props);
     this.state={
       visible:false,
-      selectKey:0,
+      selectKey:0,//当前选中标题
     }
   }
   changeHandler(value, record, type) {
@@ -54,12 +54,15 @@ export default class RptTable extends Component {
   }
   //添加子标题
   addFormSubmit=async ()=>{
-    const title = await this.child.submitHandler();
+    const title = this.child.submitHandler();
     const {titleList} = this.props;
-    titleList.push({...title,tableList:[]})
-    this.setState({
-      visible:false
-    })
+    console.log(title)
+    if(title && Object.keys(title).length){
+      titleList.push({...title,variable:[]})
+      this.setState({
+        visible:false
+      })
+    }
   }
   //删除子标题
   delTitle = async (index) => {
@@ -74,6 +77,7 @@ export default class RptTable extends Component {
     if(confirmVal.value){
       const {titleList} = this.props;
       titleList.splice(this.state.selectKey,1);
+      this.props.setNumber(0)
       this.props.dispatch({
         type: 'tempEdit/titleListHandle',
         payload: {
@@ -86,13 +90,20 @@ export default class RptTable extends Component {
     }
   }
   componentDidMount(){
+    this.props.getSubKey(this,'rptable')
   }
+  componentDidUpdate(){}
   //tab切换
   handleTab=(index)=>{
       this.setState({
         selectKey:index
       })
+    this.props.setNumber(index)
     console.log(index)
+  }
+  getFormValue = () => {
+    let formQueryData = this.props.form.getFieldsValue()
+    return formQueryData;
   }
   render() {
     const {columns,dataSource,loading} = this.props;
@@ -102,7 +113,7 @@ export default class RptTable extends Component {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
-    const formItem = titleList.map((item,index)=>
+    const formItem = titleList&&titleList.map((item,index)=>
       (
         <div style={{marginBottom:20,paddingTop:20,paddingBottom:20,border:'1px solid #E4E4E4'}}
              key={index}
@@ -111,18 +122,23 @@ export default class RptTable extends Component {
           <Row style={{marginBottom:20}}  gutter={24} type="flex" align="top" justify="space-between">
             <Col xxl={6} md={12}>
               <FormItem label="标题" {...formItemConfig} >
-                {getFieldDecorator(`names${Math.random()}`,{
-                  initialValue:item.title,
+                {getFieldDecorator(`table-title-${index}`,{
+                  initialValue:item.title?item.title:'',
                   rules:[
-                    {min:3,message:'最少输入3位!'},
-                    {max:20,message:'最多输入20位!'}
-                  ],
-                  validator:(rule,val,cb)=>{
-                    if(!val){
-                      cb('请输入内容!');
-                      return;
+                    {
+                      required:true,
+                      validator:async (rule,val,cb)=>{
+                        if(!val){
+                          cb('请输入内容!');
+                          return;
+                        }
+                        if(val.length>20){
+                          cb('最多输入20位!')
+                          return;
+                        }
+                      }
                     }
-                  }
+                  ],
                 })(
                   <Input placeholder="passenger name" onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
                 )}
@@ -133,7 +149,7 @@ export default class RptTable extends Component {
             <Editable
               key={index}
               columns={columns}
-              dataSource={item['tableList']}
+              dataSource={item['variable']}
               loading={loading}
               index={index}
               handleDelete={()=>this.props.handleDelete(index)}
@@ -141,6 +157,7 @@ export default class RptTable extends Component {
               addVar={()=>this.props.addVar(index,this.child.emptySelect)}
               deleteVar={()=>this.props.deleteVar(index,this.child.state.selectedRowKeys,this.child.emptySelect)}
               getSubKey={this.getSubKey}
+              handleModify={(form)=>this.props.handleModify(form)}
               saveSelectVar={this.props.saveSelectVar}
             />
           </Row>
@@ -153,9 +170,23 @@ export default class RptTable extends Component {
           <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
             <Col xxl={6} md={12}>
               <FormItem label="报告模板名称" {...formItemConfig} labelAlign="left">
-                {getFieldDecorator('assetsTypeName',{
-                  initialValue:'',
-                  rules:[{required:true}]
+                {getFieldDecorator('name ',{
+                  initialValue:this.props.presentationName,
+                  rules:[
+                    {
+                      required:true,
+                      validator:async(rule, val, cb)=>{
+                        if(!val){
+                          cb('报告模板名称内容不能为空!')
+                          return
+                        }
+                        if(val.length>20){
+                          cb('报告模板名称长度最多20位!')
+                          return
+                        }
+                      }
+                    }
+                    ]
                   })(
                     <Input />
                 )}
@@ -187,12 +218,12 @@ export default class RptTable extends Component {
               })
             }
           </Row>
-          {formItem}
+            {formItem}
         </Form>
         <Modal
           className={'ant-modal-sm'}
           title={'新增标题'}
-          width={400}
+          width={500}
           visible={this.state.visible}
           onOk={this.addFormSubmit}
           destroyOnClose={true}

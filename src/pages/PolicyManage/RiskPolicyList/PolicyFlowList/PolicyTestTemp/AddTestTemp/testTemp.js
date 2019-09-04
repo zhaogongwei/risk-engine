@@ -277,7 +277,6 @@ export default class TestTemp extends Component {
                           rules:[
                             {
                               required:true,
-                              message:'输入内容不能为空!',
                               validator: async (rule, val, cb) => {
                                 if (!val) {
                                   cb('请输入正确内容！')

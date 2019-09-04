@@ -17,15 +17,17 @@ import {
   Card,
 } from 'antd';
 import { connect } from 'dva'
-import { routerRedux } from 'dva/router';
+import router from 'umi/router';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
+import error from '../../../Exception/models/error';
 const Option = Select.Option;
 const FormItem = Form.Item
 
-@connect(({ tempEdit, loading }) => ({
+@connect(({ tempEdit, loading,varList }) => ({
   tempEdit,
-  loading: loading.effects['tempEdit/riskSubmit']
+  varList,
+  submitLoading: loading.effects['tempEdit/saveTemplate']
 }))
 @Form.create()
 export default class Index extends Component {
@@ -38,28 +40,29 @@ export default class Index extends Component {
         key:'key'
       },{
         title: '变量名称',
-        dataIndex: 'name',
-        key:'name'
+        dataIndex: 'variableName',
+        key:'variableName'
       },{
         title: '变量代码',
-        dataIndex: 'code',
-        key:'code'
+        dataIndex: 'variableCode',
+        key:'variableCode'
       },{
         title: '长度',
-        key:'length',
-        dataIndex:'length'
+        key:'variableLength',
+        dataIndex:'variableLength'
       },
-        {
-          title: '类型',
-          dataIndex: 'type',
-          key:'type'
-        },
-        {
-          title: '排序',
-          key:'order',
-          dataIndex:'order',
-          editable:true
-        }
+      {
+        title: '类型',
+        dataIndex: 'variableTypeStr',
+        key:'variableTypeStr'
+      },
+      {
+        title: '排序',
+        key:'orderNum',
+        dataIndex:'orderNum',
+        editable:true,
+        pattern:/^\d{1,10}$/,
+      }
       ],
       checkedData: [],
       modalStatus:false,
@@ -72,55 +75,60 @@ export default class Index extends Component {
       status:1,
       selectedRowKeys: [],
       tableList:[{key:0,checkList:[]}],
-      number:0,
-      addModalVisible:false
+      number:0,//表格序号
+      addModalVisible:false,//表格显隐
+      tableVarKey:0,//表格内变量序号，
+      cellFormData:[],//表格form
+      titleFormData:[],//表格标题form
     };
   }
   componentDidMount() {
-    this.change()
-  }
-  //  分页器改变页数的时候执行的方法
-  onChange = (current) => {
-    this.setState({
-      current:current,
-      currentPage:current
-    })
-    this.change(current)
-  }
-  // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+    const {query} = this.props.location;
+    const {type,id} = query;
+    //请求变量列表
     this.props.dispatch({
-      type: 'tempEdit/riskSubmit',
-      data: {
-        ...formData,
-        currPage,
-        pageSize
+      type: 'varList/queryVarList',
+      payload: {
+        strategyId:query['strategyId']
       }
     })
-    // this.refs.paginationTable && this.refs.paginationTable.setPagiWidth()
+    //请求一级变量分类
+    this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+    if(type*1)return;
+    //请求风控报告模板信息
+    this.props.dispatch({
+      type: 'tempEdit/queryTemplate',
+      payload: {
+        id:query['id']
+      }
+    })
+  }
+  componentWillUnmount(){
+    //清空表格数据
+    this.props.dispatch({
+      type: 'tempEdit/InittitleListHandle',
+      payload: {
+        data:{
+          presentationName:'',
+          reportTemplate:[
+            {
+              title:'标题一',
+              variable:[],//table数据
+            }
+          ]
+        }
+      }
+    })
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
-  }
-  //展示页码
-  showTotal = (total, range) => {
-    console.log(total,range)
-    return <span style={{ fontSize: '12px', color: '#ccc' }}>{`显示第${range[0]}至第${range[1]}项结果，共 ${total}项`}</span>
-  }
-  //新增
-  btnAdd=()=>{
-    this.childDeploy.reset()
-    this.setState({
-      modalStatus:true,
-      type:true
-    })
   }
   //表格新增变量
   addVar=(index)=>{
@@ -128,30 +136,16 @@ export default class Index extends Component {
     //this.child.reset()
     this.setState({
       addModalVisible:true,
-      number:index
+    })
+  }
+  setNumber=(index)=>{
+    this.setState({
+      number:index,
     })
   }
   //  刷新页面
   reload = () => {
     window.location.reload();
-  }
-  //查询时改变默认页数
-  changeDefault=(value)=>{
-    this.setState({
-      current:value
-    })
-  }
-  //右上角渲染
-  renderTitleBtn = () => {
-    return (
-      <Fragment>
-        <Button onClick={this.goAddPage}><Icon type="plus" theme="outlined" />新增</Button>
-      </Fragment>
-    )
-  }
-  //跳转编辑/新增页面
-  goAddPage = ()=>{
-    this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
   }
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue()
@@ -160,13 +154,13 @@ export default class Index extends Component {
 // 按钮点击确定事件执行的方法
   addFormSubmit=async ()=>{
     //选择的变量集合
-    const checkedList = this.child.submitHandler();
+    const checkedList = this.addForm.submitHandler();
     console.log(checkedList)
     //table数据集合
     let {titleList} =this.props.tempEdit
-    let newlist =[...titleList[this.state.number]['tableList'],...checkedList];
+    let newlist =[...titleList[this.state.number]['variable'],...checkedList];
     const newData = addListKey(deepCopy(newlist))
-    titleList.splice(this.state.number,1,{...titleList[this.state.number],...{tableList:newData}})
+    titleList.splice(this.state.number,1,{...titleList[this.state.number],...{variable:newData}})
     this.props.dispatch({
       type: 'tempEdit/titleListHandle',
       payload: {
@@ -187,7 +181,7 @@ export default class Index extends Component {
     const {titleList}= this.props.tempEdit;
     const selectVar= titleList[key]['selectVar'];
     //对应表格的数据
-    let checkList = titleList[key]['tableList'];
+    let checkList = titleList[key]['variable'];
     if(selectVar.length>0){
       for(var i of selectVar){
         checkList.forEach((item,index)=>{
@@ -196,7 +190,7 @@ export default class Index extends Component {
           }
         })
       }
-      addListKey(titleList[key]['tableList'])
+      addListKey(titleList[key]['variable'])
       /*console.log(newlist)
       reportList.splice(this.state.number,1,{key:this.state.number,title:reportList[this.state.number]['title'],checkList:newlist})*/
       this.props.dispatch({
@@ -217,41 +211,98 @@ export default class Index extends Component {
     const {titleList}= this.props.tempEdit;
     titleList[index]['selectVar']=list;
   }
-  saveData=()=>{
-    console.log(this.props.tempEdit)
+  //存储表格form
+  handleModify = form => {
+    let arr = this.state.cellFormData
+    arr.push(form)
+    this.setState({
+      cellFormData: arr
+    })
   }
-  renderBtn = () => {
-    return (
-      <Fragment>
-        <Button onClick={()=>this.clickDialog(1)}><Icon type="plus" />新增</Button>
-      </Fragment>
-    )
+  //存储标题form
+  handleTitle = form => {
+    let arr = this.state.titleFormData
+    arr.push(form)
+    this.setState({
+      titleFormData: arr
+    })
+  }
+  saveData=async()=>{
+    let count =0 ;
+    this.state.cellFormData.map((item)=>{
+      item.validateFieldsAndScroll((errors,values)=>{
+        if(errors)count++;
+      })
+    })
+    this.rptable.props.form.validateFields((errors,value)=>{
+      if(!errors){
+        if(!count){
+          let varStatus = true;//变量列表是否为空
+          const formData = this.rptable.getFormValue();
+          const {titleList} = this.props.tempEdit;
+          const {query} = this.props.location;
+          for(let item of titleList){
+            if(!item['variable'].length){
+              varStatus = false;
+              break;
+            }
+          }
+          if(varStatus){
+            this.props.dispatch({
+              type: 'tempEdit/saveTemplate',
+              payload: {
+                name :formData['name '],
+                reportTemplate:titleList,
+                id:query['id']
+              }
+            })
+          }else{
+            message.error('变量列表不能为空!')
+          }
+        }else{
+          message.error('输入内容不能为空!')
+        }
+      }else{
+        message.error('输入内容不能为空!')
+      }
+    })
+  }
+  //去预览页面
+  goPreview=(id)=>{
+    router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { titleList } = this.props.tempEdit
-    const { state } = this.props.location
+    const { titleList,presentationName } = this.props.tempEdit
+    const { number } = this.state
+    const { query } = this.props.location
+    const {id,type} = query
+    console.log('titleList',titleList)
+    //console.log('number',number)
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
     return (
-      <PageHeaderWrapper renderBtn={this.renderBtn}>
+      <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={state.type===1?'新增风控报告模板':'编辑风控报告模板'}
+          title={type*1===1?'新增风控报告模板':'编辑风控报告模板'}
         >
           <RptTable
             loading={this.props.loading}
             columns={this.state.columns}
-            dataSource={this.props.tempEdit.reportList}
-            tableList={this.props.tempEdit.reportList}
             handleDelete={this.handleDelete}
             handleAdd={this.handleAdd}
             addVar={this.addVar}
             deleteVar={this.deleteVar}
             saveSelectVar={this.saveSelectVar}
             titleList={titleList}
+            setNumber={(index)=>this.setNumber(index)}
+            handleModify={(form)=>{this.handleModify(form)}}
+            handleTitle={(form)=>{this.handleTitle(form)}}
+            getSubKey={this.getSubKey}
+            presentationName={presentationName}
           />
           <Modal
             className={'ant-modal-sm'}
@@ -267,17 +318,21 @@ export default class Index extends Component {
               type={1}
               number={this.state.number}
               getSubKey={this.getSubKey}
+              pageList={titleList[number]['variable']}
             />
           </Modal>
           <Row type="flex" gutter={16} align="middle" justify="center">
             <Col col={8}>
-              <Button type="primary" onClick={this.saveData}>保存</Button>
+              <Button type="primary" onClick={this.saveData} loading={this.props.submitLoading}>保存</Button>
             </Col>
+            {
+              type*1===1?null:
+                <Col col={8}>
+                  <Button type="primary" onClick={()=>this.goPreview(id)}>预览</Button>
+                </Col>
+            }
             <Col col={8}>
-              <Button type="primary">预览</Button>
-            </Col>
-            <Col col={8}>
-              <Button type="primary">取消</Button>
+              <Button type="primary" onClick={()=>router.goBack()}>取消</Button>
             </Col>
           </Row>
         </Card>
