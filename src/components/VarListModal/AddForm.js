@@ -330,7 +330,7 @@ export default class AddForm extends Component {
                     this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio  disabled={item.disabled} value={item}>{item.variableName}</Radio >
+                          <Radio value={item}>{item.variableName}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark}</Col>
