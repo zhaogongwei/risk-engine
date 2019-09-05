@@ -71,7 +71,10 @@ export default class VarList extends PureComponent {
       {
         title: '长度',
         key:'variableLength',
-        dataIndex:'variableLength'
+        dataIndex:'variableLength',
+        render:(val)=>{
+          return val==null?'不限':val
+        }
       },
       {
         title: '缺省值',
@@ -145,6 +148,7 @@ export default class VarList extends PureComponent {
   componentDidMount = async()=> {
     const query= {...this.props.location.query}
     if(query.parentId && query.parentId!=""){
+      //判断如果存在parentId赋值
       await this.props.dispatch({
         type: 'varlist/changefilterIpts',
         payload: {

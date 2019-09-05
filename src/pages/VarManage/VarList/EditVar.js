@@ -10,7 +10,10 @@ import {
   Form,
   Popconfirm,
   message,
-  Card
+  Card,
+  InputNumber,
+  TimePicker,
+  DatePicker 
 } from 'antd';
 import router from 'umi/router';
 import styles from '../FilterIpts.less'
@@ -110,6 +113,8 @@ export default class EditVar extends PureComponent {
       disable:false,
       updateTime:'',
       updateTrueName:'',
+      defaultVal:'',
+      emDelFlag:true,
     };
   }
   componentDidMount = async () => {
@@ -120,6 +125,7 @@ export default class EditVar extends PureComponent {
     })
     const query={...this.props.location.query}
     if(query.type==2){
+      //获取变量信息
       const res = await this.props.dispatch({
         type: 'varlist/selectVariableById',
         payload: {
@@ -128,9 +134,9 @@ export default class EditVar extends PureComponent {
       })
       if(res.status=='1'){
         const data = res.data
-        this.props.form.setFieldsValue({
+        //设置input值
+        await this.props.form.setFieldsValue({
           firstTypeId:Number(data.firstTypeId),
-          defaultValue: data.defaultValue,
           enumFlag: data.enumFlag,
           maxValue: data.maxValue,
           minValue: data.minValue,
@@ -141,14 +147,37 @@ export default class EditVar extends PureComponent {
           variableName: data.variableName,
           variableType: data.variableType
         })
-        
+        //设置缺省值和显示枚举flag
+        this.setState({
+          defaultVal:data.defaultValue,
+          isShow:data.enumFlag
+        })
+        //设置不可更改,修改人，日期
         this.state.disable = true;
         this.state.updateTime = data.updateTime
         this.state.updateTrueName = data.updateTrueName
+        //获取枚举列表
         this.props.dispatch({
           type: 'varlist/saveEnumeration',
           payload: data.variableEnumList || []
         })
+        //获取应用策略列表如果不为空则禁止删除枚举
+        const strategy=this.props.dispatch({
+          type: 'varlist/getStrategy',
+          payload: {
+            variableId:query.id
+          }
+        })
+        strategy.then(value => {
+          if(value.status==1){
+            if(value.data.length != 0){
+              this.setState({
+                emDelFlag: false,
+              });
+            }
+          }
+        })
+        //获取二级变量类型
         const firstType = this.props.form.getFieldValue('firstTypeId')
         await this.selectchange(firstType)
         this.props.form.setFieldsValue({
@@ -163,7 +192,7 @@ export default class EditVar extends PureComponent {
     //formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
-  selectchange = async(value) => {
+  selectchange = async(value) => {//选择变量一级分类触发事件
   	await this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
@@ -176,38 +205,49 @@ export default class EditVar extends PureComponent {
   }
   //枚举添加
   handleAdd = () => {
-    let enumeration = this.props.varlist.enumeration
-    //   要添加表格的对象
-    const newData = {
-      enumValue: ``,
-      enumShow: ``
+    if(this.state.emDelFlag){
+      let enumeration = this.props.varlist.enumeration
+      //   要添加表格的对象
+      const newData = {
+        enumValue: ``,
+        enumShow: ``
+      }
+      enumeration.push(newData)
+      //   调用models中的方法改变dataSource渲染页面
+      this.props.dispatch({
+        type: 'varlist/addData',
+        payload: enumeration
+      })
+    }else{
+      message.error('已绑定应用策略')
     }
-    enumeration.push(newData)
-    //   调用models中的方法改变dataSource渲染页面
-    this.props.dispatch({
-      type: 'varlist/addData',
-      payload: enumeration
-    })
   }
   //   枚举删除表格
   handleDelete = (key) => {
     const { enumeration } = this.props.varlist
     //   调用models的方法去删除dataSource中的数据
-    const newData = enumeration.filter(item => item.key !== key)
-    this.props.dispatch({
-      type: 'varlist/addData',
-      payload: newData
-    })
-  }
-  handleChange = (val) => {
-    this.setState({
-      isShow: val
-    })
-  }
+    if(this.state.emDelFlag){
+      const newData = enumeration.filter(item => item.key !== key)
+        this.props.dispatch({
+          type: 'varlist/addData',
+          payload: newData
+        })
+        handleChange = (val) => {
+          this.setState({
+            isShow: val
+          })
+        }
+      }else{
+        message.error('已绑定应用策略')
+      }
+     
+    }
+
   goBack=()=>{
     router.goBack()
   }
   formSubmit = async()=>{
+    //提交
     this.props.form.validateFields(err => {
       if (!err) {
         let data=this.getFormValue()
@@ -250,9 +290,9 @@ export default class EditVar extends PureComponent {
           addVarRes.then((value)=>{
             if(value.status==1){
               message.success('提交成功').then(() => {
-                // router.push({
-                //   pathname:'/varManage/varlist',
-                // })
+                router.push({
+                  pathname:'/varManage/varlist',
+                })
               })
             }else{
               message.error(value.statusDesc || "提交失败").then(() => {
@@ -275,7 +315,6 @@ export default class EditVar extends PureComponent {
       wrapperCol:{span:16},
     }
     const query= {...this.props.location.query}
-    console.log(this.props.varlist.enumeration, 'this.props.varlist.enumeration')
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
         <Card
@@ -382,9 +421,6 @@ export default class EditVar extends PureComponent {
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
                     initialValue:'',
-                    rules:[
-                      {required:true,message:'请输入长度'}
-                    ]
                   })(
                     <Input />
                   )}
@@ -428,19 +464,74 @@ export default class EditVar extends PureComponent {
                       columns={this.columns}
                       handleAdd={this.handleAdd}
                       handleDelete={this.handleDelete}
+                      emDelFlag={this.state.emDelFlag}
                     />
                   </Col>
                 </Row> : null
             }
+            
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
-                <FormItem label="缺省值" {...formItemConfig}>
+                {
+                  this.props.form.getFieldValue('enumFlag') ==1?
+                  <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
-                    initialValue:''
+                    initialValue:this.state.defaultVal,
+                  })(
+                      <Select allowClear={true} >
+                        {this.props.varlist.enumeration.map( (item,index) => (
+                          <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                        ))}
+                      </Select> 
+                  )}
+                  </FormItem>:null
+
+                }
+                {
+                  this.props.form.getFieldValue('variableType') == 'char' && this.props.form.getFieldValue('enumFlag') !=1?
+                  <FormItem label="缺省值" {...formItemConfig}>
+                  {getFieldDecorator('defaultValue',{
+                    initialValue:this.state.defaultVal,
                   })(
                     <Input />
                   )}
-                </FormItem>
+                  </FormItem>:null
+                    
+                }
+                {
+                  this.props.form.getFieldValue('variableType') == 'num' && this.props.form.getFieldValue('enumFlag') !=1?
+                  <FormItem label="缺省值" {...formItemConfig}>
+                  {getFieldDecorator('defaultValue',{
+                    initialValue:this.state.defaultVal,
+                  })(
+                    <InputNumber />
+                  )}
+                  </FormItem>:null
+                  
+                }
+                {
+                  this.props.form.getFieldValue('variableType') == 'date' && this.props.form.getFieldValue('enumFlag') !=1?
+                  <FormItem label="缺省值" {...formItemConfig}>
+                  {getFieldDecorator('defaultValue',{
+                    initialValue:this.state.defaultVal,
+                  })(
+                    <DatePicker />
+                  )}
+                  </FormItem>:null
+                }
+                {
+                   this.props.form.getFieldValue('variableType') == 'time' && this.props.form.getFieldValue('enumFlag') !=1?
+                   <FormItem label="缺省值" {...formItemConfig}>
+                   {getFieldDecorator('defaultValue',{
+                     initialValue:this.state.defaultVal,
+                   })(
+                    <TimePicker />
+                   )}
+                   </FormItem>:null
+                }
+                
+              
+                
               </Col>
             </Row>
             <Row className={styles.btmMargin}  type="flex" align="top">
