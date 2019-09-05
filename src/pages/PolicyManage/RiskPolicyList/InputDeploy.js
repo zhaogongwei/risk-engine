@@ -227,7 +227,7 @@ export default class InputDeploy extends PureComponent {
             type: 'policyList/saveInputVar',
             payload:{
               inputVarList:inputVarList,
-              strategyId:query['strategyId'],
+              strategyId:query['id'],
               ...formData,
             }
           })
