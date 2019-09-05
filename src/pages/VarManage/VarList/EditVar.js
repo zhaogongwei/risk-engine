@@ -10,7 +10,10 @@ import {
   Form,
   Popconfirm,
   message,
-  Card
+  Card,
+  InputNumber,
+  TimePicker,
+  DatePicker 
 } from 'antd';
 import router from 'umi/router';
 import styles from '../FilterIpts.less'
@@ -268,6 +271,10 @@ export default class EditVar extends PureComponent {
       
     });
   }
+  defaultValueRender=()=>{
+      
+    
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -435,9 +442,37 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('defaultValue',{
                     initialValue:''
                   })(
-                    <Input />
+                    <div>
+                    {
+                      this.props.form.getFieldValue('enumFlag') ==1?
+                      <Select allowClear={true} >
+                        {this.props.varlist.enumeration.map( (item,index) => (
+                          <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                        ))}
+                      </Select>:null
+                    }
+
+                    {  this.props.form.getFieldValue('variableType') == 'char' && this.props.form.getFieldValue('enumFlag') !=1?
+                      <Input />:null
+                    }
+                    { 
+                      this.props.form.getFieldValue('variableType') == 'num' && this.props.form.getFieldValue('enumFlag') !=1?
+                      <InputNumber />:null
+                    }
+                    {
+                      this.props.form.getFieldValue('variableType') == 'date' && this.props.form.getFieldValue('enumFlag') !=1?
+                      <DatePicker />:null
+                    }
+                    {
+                      this.props.form.getFieldValue('variableType') == 'time' && this.props.form.getFieldValue('enumFlag') !=1?
+                      <TimePicker />:null
+                    } 
+                    
+                    </div>
+                      
                   )}
                 </FormItem>
+                
               </Col>
             </Row>
             <Row className={styles.btmMargin}  type="flex" align="top">
