@@ -148,6 +148,7 @@ export default class VarList extends PureComponent {
   componentDidMount = async()=> {
     const query= {...this.props.location.query}
     if(query.parentId && query.parentId!=""){
+      //判断如果存在parentId赋值
       await this.props.dispatch({
         type: 'varlist/changefilterIpts',
         payload: {
