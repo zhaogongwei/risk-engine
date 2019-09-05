@@ -382,9 +382,6 @@ export default class EditVar extends PureComponent {
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
                     initialValue:'',
-                    rules:[
-                      {required:true,message:'请输入长度'}
-                    ]
                   })(
                     <Input />
                   )}
