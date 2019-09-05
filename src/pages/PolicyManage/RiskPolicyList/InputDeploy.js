@@ -105,7 +105,7 @@ export default class InputDeploy extends PureComponent {
    const res = await this.props.dispatch({
       type: 'policyList/queryInputVar',
       payload: {
-        strategyId:query['strategyId']
+        strategyId:query['id']
       }
     })
     if(res&&res.status===1){
@@ -212,6 +212,7 @@ export default class InputDeploy extends PureComponent {
   }
   //保存提交
   formSubmit=()=>{
+    console.log(this.props.policyList)
     const {tableList} = this.props.policyList;
     const {query} = this.props.location;
     const formData = this.getFormValue();
@@ -328,7 +329,6 @@ export default class InputDeploy extends PureComponent {
             visible={this.state.visible}
             onOk={this.handleOk}
             destroyOnClose={true}
-            maskClosable={false}
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >
@@ -337,7 +337,7 @@ export default class InputDeploy extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
-              pageList={pageList}
+              pageList={tableList}
             />
           </Modal>
         </Card>

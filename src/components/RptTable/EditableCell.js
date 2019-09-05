@@ -32,6 +32,8 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if (this.props.handleModify) this.props.handleModify(this.props.form)
+      console.log(this.props)
     }
   
     componentWillUnmount() {
@@ -39,7 +41,12 @@ const EditableFormRow = Form.create()(EditableRow);
         document.removeEventListener('click', this.handleClickOutside, true);
       }
     }
-    
+    componentDidUpdate(){
+      if(this.props&&this.props.record&&this.props.dataIndex){
+        const {record,dataIndex} = this.props;
+        record[dataIndex]?record[dataIndex]=record[dataIndex]:record[dataIndex]=record['key']
+      }
+    }
   
     toggleEdit = () => {
       const editing = !this.state.editing;
@@ -107,12 +114,12 @@ const EditableFormRow = Form.create()(EditableRow);
                   <FormItem style={{ margin: 0 }}>
                     {getFieldDecorator(dataIndex, {
                       rules: [{
-                        required: !isRequired ? true : false,
+                        required: true,
                         message: `请填写正确的格式.`,
                         pattern:pattern?pattern:'',
                         max:max?max:''
                       }],
-                      initialValue: record[dataIndex],
+                      initialValue: record[dataIndex]?record[dataIndex]:record['key'],
                     })(
                       <Input
                         ref={node => (this.input = node)}

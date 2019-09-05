@@ -59,10 +59,10 @@ export default class VarList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.goAddPage({type:2})}>
+              <Menu.Item onClick={() => this.goAddPage(0,record.id)}>
                 <Icon type="edit"/>编辑
               </Menu.Item>
-              <Menu.Item onClick={()=>this.goPreview()}>
+              <Menu.Item onClick={()=>this.goPreview(record.id)}>
                 <Icon type="zoom-in" />查看
               </Menu.Item>
               {/* <Menu.Item onClick={()=>
@@ -104,7 +104,7 @@ export default class VarList extends PureComponent {
       checkedData: [],
       modalStatus:false,
       code:'',
-      type:1,//1:添加 2：编辑
+      type:0,//0:编辑  1：添加
       pageSize:10,
       currentPage:1,
       current:1,
@@ -172,23 +172,18 @@ export default class VarList extends PureComponent {
   renderTitleBtn = () => {
     return (
       <Fragment>
-        <Button onClick={()=>this.goAddPage({type:1})}><Icon type="plus" theme="outlined" />新增</Button>
+        <Button onClick={()=>this.goAddPage(1)}><Icon type="plus" theme="outlined" />新增</Button>
       </Fragment>
     )
   }
   //跳转编辑/新增页面
-  goAddPage = (obj={})=>{
+  goAddPage = (type=0,id='')=>{
     //this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
-    router.push({
-      pathname:'/riskReport/reportList/mould/edit',
-      state:obj
-    })
+    router.push(`/riskReport/reportList/mould/edit?id=${id}&type=${type}`)
   }
   //去报告预览
-  goPreview=()=>{
-    router.push({
-      pathname:'/riskReport/reportList/mould/preview',
-    })
+  goPreview=(id)=>{
+    router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
   //去风控策略列表
   goPolicyList = ()=>{

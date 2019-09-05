@@ -243,6 +243,7 @@ export default class setVar extends PureComponent {
             visible={this.state.visible}
             onOk={this.addFormSubmit}
             onCancel={this.handleCancel}
+            destroyOnClose={true}
             width={1040}
           >
             <AddForm
@@ -250,6 +251,7 @@ export default class setVar extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
+              pageList={this.props.setVar.varList}
             />
           </Modal>
         </Card>

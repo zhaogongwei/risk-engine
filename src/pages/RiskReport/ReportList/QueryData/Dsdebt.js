@@ -26,20 +26,20 @@ export default  class Dsdebt extends  PureComponent{
       head:[
         {
           title: '当前共债订单数',
-          dataIndex: 'orderNum',
-          key:'orderNum',
+          dataIndex: 'current_order_count',
+          key:'current_order_count',
           className:'thead'
         },
         {
           title: '当前共债订单已还款⾦额',
-          dataIndex: 'repayOrderAmt',
-          key:'repayOrderAmt',
+          dataIndex: 'current_order_amt',
+          key:'current_order_amt',
           className:'thead'
         },
         {
           title: '当前共债机构数',
-          dataIndex: 'curInstNum',
-          key:'curInstNum',
+          dataIndex: 'current_org_count',
+          key:'current_org_count',
           className:'thead'
         },
       ],
@@ -69,32 +69,32 @@ export default  class Dsdebt extends  PureComponent{
       body:[
         {
           title: '共债统计时间',
-          dataIndex: 'statisticsTime',
-          key:'statisticsTime',
+          dataIndex: 'totaldebt_date',
+          key:'totaldebt_date',
           className:'thead'
         },
         {
           title: '共债机构数',
-          dataIndex: 'instNum',
-          key:'instNum',
+          dataIndex: 'totaldebt_org_count',
+          key:'totaldebt_org_count',
           className:'thead'
         },
         {
           title: '共债订单数',
-          dataIndex: 'orderNum',
-          key:'orderNum',
+          dataIndex: 'totaldebt_order_count',
+          key:'totaldebt_order_count',
           className:'thead'
         },
         {
           title: '共债订单已还款⾦额',
-          dataIndex: 'repayOrderAmt',
-          key:'repayOrderAmt',
+          dataIndex: 'totaldebt_order_amt',
+          key:'totaldebt_order_amt',
           className:'thead'
         },
         {
           title: '疑似借新还旧',
-          dataIndex: 'borrowNewRepayOld',
-          key:'borrowNewRepayOld',
+          dataIndex: 'new_or_old',
+          key:'new_or_old',
           className:'thead'
         },
       ],
@@ -105,65 +105,44 @@ export default  class Dsdebt extends  PureComponent{
 
   }
   componentDidMount(){
-    /*const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
+      type: 'auditAsset/queryDsDebtInfo',
       payload: {
-        ...propsData,
-        reportFlag:2
+        id:id,
+        type:4
       },
-      callback:(time)=>{
-        this.checkRiskInfo(time)
-      }
     })
     this.setState({
-      currentime:this.props.auditAsset.debtDateList.length>0?this.props.auditAsset.debtDateList[0]:'',
+      currentime:this.props.auditAsset.debtInfoList.length>0?this.props.auditAsset.debtInfoList[0]['createTime']:'',
     },()=>{
-    })*/
+    })
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      return <a>{this.props.auditAsset.debtDateList[current-1]}</a>
+      return <a>{this.props.auditAsset.debtInfoList[current-1]['createTime']}</a>
     }
     return originalElement;
   }
   onChange=(current)=>{
     this.setState({
-      currentime:this.props.auditAsset.debtDateList[current-1],
+      currentime:this.props.auditAsset.debtInfoList[current-1]['createTime'],
       currentPage:current
-    },()=>{
-      this.checkRiskInfo(this.state.currentime)
-    })
-  }
-  //风控报告页面时间获取
-  queryRiskDate=()=>{
-    const propsData = this.props.location.state
-    this.props.dispatch({
-      type: 'auditAsset/queryDsPublicDate',
-      payload: {
-        ...propsData,
-        reportFlag:2
-      },
-      callback:(time)=>{
-        this.setState({
-          currentPage:1
-        })
-        this.checkRiskInfo(time)
-      }
     })
   }
   //风控信息查询
   checkRiskInfo = (time)=>{
-    const propsData = this.props.location.state
+    const {query} = this.props.location;
+    const {id} = query;
     this.props.dispatch({
       type: 'auditAsset/queryDsDebtInfo',
-      data: {
-        reportTime:time,
-        ...propsData
-      }
+      payload: {
+        id:id,
+        type:4
+      },
     })
   }
-  //更新风控报告信息
   //更新风控报告信息
   updateRiskInfo=()=>{
     this.showModal()
@@ -171,19 +150,20 @@ export default  class Dsdebt extends  PureComponent{
   handleOk = (e) => {
     this.setState({
       visible: false,
-    },()=>{
-      const propsData = this.props.location.state
-      this.props.dispatch({
+    },async()=>{
+      const {query} = this.props.location;
+      const {id} = query;
+      const res = await this.props.dispatch({
         type: 'auditAsset/updateDsDebtInfo',
         payload: {
-          adminUserID:getUserId(),
-          ...propsData,
+          ...query
         },
-        callback:()=>{
-          this.queryRiskDate()
-        }
       })
+      if(res&&res.status===1){
+        this.checkRiskInfo()
+      }
     });
+
   }
   showModal = () => {
     this.setState({
@@ -205,24 +185,29 @@ export default  class Dsdebt extends  PureComponent{
     return null;
   }
   render(){
+    const {debtInfoList} = this.props.auditAsset;
+    const {currentPage} = this.state;
+    let currentDebtInfo=debtInfoList[currentPage-1];
+    console.log(debtInfoList)
+    console.log(currentDebtInfo)
     return(
       <PageTableTitle title={'风控报告'}>
         <Row type="flex" justify="center">
-          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={this.props.auditAsset.debtDateList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
+          <Pagination style={{zIndex:99}} defaultCurrent={1} current={this.state.currentPage} total={debtInfoList.length*10} itemRender={this.itemRender} onChange={this.onChange}/>
         </Row>
         <Row type="flex" align="middle" justify="space-between" style={{paddingLeft:10,paddingRight:10,paddingTop:5,paddingBottom:5,marginTop:10,background:'#dbeef3'}}>
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.debtInfoList['reportCode']}</span>
+            <span>{currentDebtInfo['id']}</span>
           </Col>
           <Col>
             <span>报告时间</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{this.props.auditAsset.debtInfoList['reportTime']}</span>
+            <span>{currentDebtInfo['createTime']}</span>
           </Col>
           <Col>
-            <span>操作人:{this.props.auditAsset.debtInfoList['operator']}</span>
+            <span>操作人:{currentDebtInfo['createBy']}</span>
             <span style={{display:'inline-block',width:10}}></span>
             <Button type="primary" onClick={this.updateRiskInfo} style={{backgroundColor:'#AEAEAE',borderColor:'#AEAEAE'}}>更新数据</Button>
           </Col>
@@ -234,7 +219,7 @@ export default  class Dsdebt extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.head}
-            dataSource={this.props.auditAsset.debtInfoList['head']}
+            dataSource={currentDebtInfo['creditDebtResult']['debtInfo']}
           />
         </Row>
         <Row style={{height:40}}></Row>
@@ -244,7 +229,7 @@ export default  class Dsdebt extends  PureComponent{
             bordered={false}
             pagination={false}
             columns={this.state.body}
-            dataSource={this.props.auditAsset.debtInfoList['body']}
+            dataSource={currentDebtInfo['creditDebtResult']['detail']}
           />
         </Row>
         <Modal

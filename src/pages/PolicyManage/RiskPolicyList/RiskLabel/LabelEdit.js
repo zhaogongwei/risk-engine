@@ -272,6 +272,7 @@ export default class LabelEdit extends PureComponent {
     const { getFieldDecorator } = this.props.form
     const { tableList,labelInfo } = this.props.risklabel
     const {type} = this.props.location.query;
+    console.log(tableList)
     const formItemConfig = {
       labelCol:{span:4},
       wrapperCol:{span:18},
@@ -351,6 +352,7 @@ export default class LabelEdit extends PureComponent {
                   number={this.state.number}
                   getSubKey={this.getSubKey}
                   type={this.state.type}
+                  pageList={tableList}
                 />
               </Modal>
             </Row>

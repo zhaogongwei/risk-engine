@@ -20,131 +20,6 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
 
-const plainOptions = [
-  {
-    variableName:'年龄',
-    variableType:'num',
-    value:'年龄',
-    variableCode:'age',
-    length:1,
-    order:1,
-    varId:3,
-    kind:'num'
-  },
-  {
-    variableName:'注册时间',
-    variableType:'time',
-    value:'注册时间',
-    variableCode:'sign',
-    length:1,
-    order:1,
-    varId:2,
-    kind:'str',
-    isenum:0,
-    option:[
-      {
-        id:1,
-        name:'111'
-      },
-      {
-        id:2,
-        name:'222'
-      },
-      {
-        id:3,
-        name:'333'
-      },
-    ]
-  },
-  {
-    name:'评分卡得分',
-    type:'数字',
-    value:'通过评分模型得出的得龄',
-    code:'33',
-    length:1,
-    order:1,
-    id:3,
-    kind:'num'
-  },
-  {
-    name:'拒绝原因编码',
-    type:'字符',
-    value:'拒绝原因编码合集',
-    code:'44',
-    length:1,
-    order:1,
-    id:4,
-    kind:'str',
-  },
-  {
-    name:'日期',
-    type:'日期',
-    value:'---',
-    code:'55',
-    length:1,
-    order:1,
-    id:5,
-    kind:'date',
-    isenum:0,
-  },
-  {
-    name:'性别',
-    type:'字符',
-    value:'---',
-    code:'66',
-    length:1,
-    order:1,
-    id:5,
-    kind:'str',
-    isenum:0,
-  },
-  {
-    name:'姓名',
-    type:'数字',
-    value:'---',
-    code:'77',
-    length:1,
-    order:1,
-    id:6,
-    kind:'num'
-  },
-  {
-    name:'高风险规则触发数',
-    type:'数字',
-    value:'---',
-    code:'88',
-    length:1,
-    order:1,
-    id:7,
-    kind:'num',
-    option:[
-      {
-        id:1,
-        name:'111'
-      },
-      {
-        id:2,
-        name:'222'
-      },
-      {
-        id:3,
-        name:'333'
-      },
-    ]
-  },
-  {
-    name:'银行卡认证',
-    type:'数字',
-    value:'---',
-    kind:'num',
-    code:'99',
-    length:1,
-    order:1,
-    id:8,
-    kind:'num'
-  },
-];
-const defaultCheckedList = ['Apple', 'Orange'];
 @connect(({varList})=>({
   varList,
 }))
@@ -211,7 +86,7 @@ export default class AddForm extends Component {
     const { pageList } = this.props
     let handleVarList = [ ...varList, ...pageList ]
     let allList = []
-    this.duplicateRemoval(handleVarList).map(item => {
+    this.duplicateRemoval(varList, pageList).map(item => {
       if (!item.disabled) {
         allList.push(item)
       }
@@ -280,8 +155,42 @@ export default class AddForm extends Component {
   reset = () => {
     this.props.form.resetFields()
   }
+ async componentWillMount(){
+    const {queryData} = this.props;
+    //请求变量列表
+   await this.props.dispatch({
+      type: 'varList/queryVarList',
+      payload: {
+        ...queryData,
+      }
+    })
+    //请求一级变量分类
+   await this.props.dispatch({
+      type: 'varList/queryOneClassList',
+      payload: {
+        firstTypeId:0,
+        secondTypeId:'',
+      }
+    })
+  }
   componentDidMount () {
     this.props.getSubKey(this,'addForm')
+  }
+  componentWillUnmount(){
+    console.log('componentWillUnMount')
+    //清空数据
+    this.props.dispatch({
+      type: 'varList/varListHandle',
+      payload: {
+       data:{
+         records:[],
+         current:1,
+         size:10,
+         total:0,
+       }
+      }
+    })
+    this.emptyCheck()
   }
   emptyCheck=()=>{
     this.setState({
@@ -312,25 +221,29 @@ export default class AddForm extends Component {
     })
   }
   //   将已经选择的变量禁止重新选择一遍
-  duplicateRemoval(list = []) {
-    let obj = {}
-    list.forEach(item => {
-      if( obj[item.id] ) {
-        obj[item.id].disabled = true
-      } else {
-        obj[item.id] = item
-        obj[item.id].disabled = false
-      }
+  duplicateRemoval(varList = [], pageList = []) {
+    varList.forEach((n)=>{
+      let aaa = []
+      n.disabled = false
+      pageList.forEach(( m ) => {
+        var tt=n.id.toString()
+        var kk=m.id.toString()
+        if(tt.indexOf(kk)!=-1){
+          n.disabled = true
+          aaa.push(n)
+        } else {
+          aaa.push(n)
+        }
+      })
+      return aaa
     })
-    const result = Object.values(obj)
-    return result
+    return varList
   }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
     const { varList,page,oneClassList,twoClassList } = this.props.varList
     const { pageList } = this.props
-    let handleVarList = [ ...varList, ...pageList ]
     const formItemConfig = {
       labelCol:{span:6},
       wrapperCol:{span:16},
@@ -339,7 +252,7 @@ export default class AddForm extends Component {
         <Form
           className="ant-advanced-search-form"
         >
-          <Row style={{marginBottom:'32px'}} gutter={0} type="flex" align="middle">
+          <Row style={{marginBottom:'32px'}} gutter={16} type="flex" align="middle">
             <Col xxl={6} md={10}>
               <FormItem label="变量分类"  wrapperCol={{span:8}}>
                 {getFieldDecorator('firstTypeId',{
@@ -401,7 +314,7 @@ export default class AddForm extends Component {
               this.props.type?
                 <Checkbox.Group style={{ width: '100%' }} value={this.state.checkedList} onChange={this.onChange}>
                   {
-                    this.duplicateRemoval(handleVarList).length > 0 ? this.duplicateRemoval(handleVarList).map((item, index) => {
+                    this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
                           <Checkbox disabled={item.disabled} value={item}>{item.variableName}</Checkbox>
@@ -414,10 +327,10 @@ export default class AddForm extends Component {
                 </Checkbox.Group>:
                 <RadioGroup style={{ width: '100%' }} value={this.state.radioValue} onChange={this.onRadioChange}>
                   {
-                    varList.length > 0 ? varList.map((item, index) => {
+                    this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio  value={item}>{item.variableName}</Radio >
+                          <Radio  disabled={item.disabled} value={item}>{item.variableName}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark}</Col>

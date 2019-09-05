@@ -1,5 +1,5 @@
+import * as api from '../services';
 import { addListKey } from '@/utils/utils'
-import { routerRedux } from 'dva/router';
 import { notification,message} from 'antd'
 
 export default {
@@ -15,12 +15,12 @@ export default {
         selectVar:[],
       }
     ],
+    presentationName:'',//报告模板名称
     //子标题列表
     titleList:[
       {
         title:'标题一',
-        tableList:[],//table数据
-        selectVar:[],//table中选中要删除的变量
+        variable:[],//table数据
       }
     ],
     page:{
@@ -33,50 +33,37 @@ export default {
   },
 
   effects: {
-    *riskSubmit(payload, { call, put }) {
-      let response = yield call(queryRiskList,payload.data)
-      if(response && response.status === '000000'){
-        response.resultList = addListKey(response.resultList,payload.data.currPage,payload.data.pageSize)
-        yield put({
-          type:'riskListHandle',
-          payload:response
+    //风控报告模板保存
+    *saveTemplate({payload}, { call, put }) {
+      let response = yield call(api.saveTemplate,payload)
+      if(response && response.status === 1){
+        message.success(response.statusDesc)
+      }else{
+        message.error(response.statusDesc)
+      }
+    },
+    //风控报告模板查询
+    *queryTemplate({payload,callback},{call,put}){
+      let response = yield call(api.queryTemplate,payload)
+      if(response&&response.status === 1){
+        response.data.reportTemplate&&response.data.reportTemplate.forEach((item,index)=>{
+          addListKey(item['variable'])
         })
-      }
-    },
-    //配置
-    *riskDeploy({payload,callback},{call,put}){
-      let response = yield call(deployRisk,payload)
-      if(response&&response.status == '000000'){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
-    },
-    //新增
-    *riskAdd({payload,callback},{call,put}){
-      let response = yield call(addRisk,payload)
-      if(response&&response.status == '000000'){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
+        yield put({
+          type: 'InittitleListHandle',
+          payload: response
+        })
       }
     },
   },
 
   reducers: {
-    riskListHandle(state, { payload }) {
-      return {
+    //风控报告模板初始化
+    InittitleListHandle(state,{payload}){
+      return{
         ...state,
-        riskList:payload.resultList,
-        page:payload.page
-      }
-    },
-    rptListHandle(state,{payload}){
-      return {
-        ...state,
-        reportList:payload.reportList,
+        presentationName:payload.data.presentationName,
+        titleList:payload.data.reportTemplate,
       }
     },
     titleListHandle(state,{payload}){

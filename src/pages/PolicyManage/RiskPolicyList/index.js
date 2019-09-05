@@ -35,8 +35,8 @@ export default class RiskPolicyList extends PureComponent {
         key:'key'
       },{
         title: '策略类型',
-        dataIndex: 'strategyType',
-        key:'strategyType'
+        dataIndex: 'strategyTypeName',
+        key:'strategyTypeName'
       },{
         title: '策略名称',
         dataIndex: 'strategyName',
@@ -171,8 +171,8 @@ export default class RiskPolicyList extends PureComponent {
     })
   }
   //去输入输出配置
-  goDeploy=(strategyId,)=>{
-    router.push(`/policyManage/riskpolicylist/list/deploy?strategyId=${strategyId}`)
+  goDeploy=(id)=>{
+    router.push(`/policyManage/riskpolicylist/list/deploy?id=${id}`)
   }
   //  刷新页面
   reload = () => {

@@ -31,7 +31,7 @@ export default class Editable extends Component {
     super(props);
     this.state={
       selectedRowKeys: [],
-      current:1,
+      current:1,//当前页码
       tableList:[],
       pageList:[]
     }
@@ -41,7 +41,7 @@ export default class Editable extends Component {
     this.setState({
       tableList:newProps.dataSource
     })
-    this.pagination(10,1,newProps.dataSource);
+    this.pagination(10,this.state.current,newProps.dataSource);
 
   }
   onSelectChange = (selectedRowKeys) => {
@@ -65,11 +65,11 @@ export default class Editable extends Component {
       current:current,
       currentPage:current
     })
-    this.pagination(10,current,this.state.tableList)
+    console.log('current',current)
+    this.pagination(10,current,this.props.dataSource)
   }
   //前端分页
   pagination=(pageSize=10,currentPage=1,array=[])=>{
-    console.log(array)
     if(array.length>0){
       //起始位置
       this.setState({
@@ -117,7 +117,8 @@ export default class Editable extends Component {
           title: col.title,
           isRequired: col.nonRequired,
           pattern:col.pattern,
-          max:col.max
+          max:col.max,
+          handleModify:(form)=>this.props.handleModify(form)
         })
       };
     });
@@ -127,7 +128,6 @@ export default class Editable extends Component {
       onChange: this.onSelectChange,
     };
     const {loading} = this.props
-    console.log(this.state)
     return (
       <div>
         <Row style={{marginBottom:20}} gutter={16} type="flex" align="middle">

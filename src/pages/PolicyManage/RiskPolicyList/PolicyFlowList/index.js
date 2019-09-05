@@ -33,8 +33,8 @@ export default class PolicyFlowList extends PureComponent {
         key:'key'
       },{
         title: '策略类型',
-        dataIndex: 'strategyType',
-        key:'strategyType'
+        dataIndex: 'strategyTypeName',
+        key:'strategyTypeName'
       },{
         title: '策略名称',
         dataIndex: 'strategyName',

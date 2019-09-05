@@ -90,7 +90,7 @@ export default class ReportList extends PureComponent {
         render: (record) => {
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.goRiskReport()}>
+              <Menu.Item onClick={()=>this.goRiskReport(record.id)}>
                 <Icon type="edit"/>查看
               </Menu.Item>
               <Menu.Item onClick={()=>this.goDataQuery(record)}>
@@ -191,13 +191,11 @@ export default class ReportList extends PureComponent {
   }
   //跳转三方数据查询
   goDataQuery = (record)=>{
-    router.push(`/riskReport/reportList/queryData?id=${record.id}`)
+    router.push(`/riskReport/reportList/queryData?id=${record.id}&assetsCode=${record.assetsCode}`)
   }
   //跳转报告模板
-  goRiskReport = ()=>{
-    router.push({
-      pathname:'/riskReport/reportList/mould/preview',
-    })
+  goRiskReport = (id)=>{
+    router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
   render() {
     const { listData } = this.props.reportList;

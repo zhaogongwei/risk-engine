@@ -9,12 +9,14 @@ import './report.less'
 export default class ReportComponent extends Component{
 
   render(){
-    for(let item of this.props.list){
-      for(let j of item['list']){
-        var num = 6-item['list'].length%6;
-        if(item['list'].length%6 !==0){
-          for(var a=0;a<num;a++){
-            item['list'].push({name:'',value:''})
+    if(this.props.list&&this.props.list.length){
+      for(let item of this.props.list){
+        for(let j of item['variable']){
+          var num = 6-item['variable'].length%6;
+          if(item['variable'].length%6 !==0){
+            for(var a=0;a<num;a++){
+              item['variable'].push({variableName:'',variableValue:''})
+            }
           }
         }
       }
@@ -46,12 +48,12 @@ export default class ReportComponent extends Component{
                   <Row type="flex">
                     <Col span={20}>
                       {
-                        item['list']&&item['list'].map((con,num)=>{
+                        item['variable']&&item['variable'].map((con,num)=>{
                           return <Col span={4} key={num}>
-                            <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['name']?con['name']:'-----'}</p>
+                            <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['variableName']?con['variableName']:'-----'}</p>
                             <div className={'conStyle'}>
                               <Tooltip title={con['value']}>
-                                <span>{con['value']?con['value']:'-----'}</span>
+                                <span>{con['variableValue']?con['variableValue']:'-----'}</span>
                               </Tooltip>
                             </div>
                           </Col>

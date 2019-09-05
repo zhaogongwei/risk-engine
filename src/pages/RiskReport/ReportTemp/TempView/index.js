@@ -8,7 +8,8 @@ import {
   Tabs,
   Anchor,
   List,
-  Card
+  Card,
+  Empty,
 } from 'antd';
 const { Link } = Anchor;
 const TabPane = Tabs.TabPane;
@@ -17,8 +18,8 @@ import { routerRedux } from 'dva/router';
 import ReportComponent from './reportComponent'
 import Tab from './tab'
 import router from 'umi/router';
-@connect(({ riskReport}) => ({
-  riskReport,
+@connect(({ preView}) => ({
+  preView,
 }))
 
 export default  class Index extends  PureComponent{
@@ -31,6 +32,13 @@ export default  class Index extends  PureComponent{
   }
   //初始化信息
   componentDidMount(){
+    const {query} = this.props.location;
+    this.props.dispatch({
+      type: 'preView/queryTemplate',
+      payload: {
+        ...query,
+      }
+    })
   }
   //返回
   goBack=()=>{
@@ -42,197 +50,42 @@ export default  class Index extends  PureComponent{
     })
   }
   render(){
-    const data = [
-      {
-        title:'综合决策报告',
-        createTime:'2018-09-12',
-        list:[
-          {
-            name:'风控决策结果',
-            value:'通过',
-          },
-          {
-            name:'评分卡得分',
-            value:780,
-          },
-          {
-            name:'风险拒绝原因编码',
-            value:'000、001 、002、003 、004、005、006、007',
-          },
-          {
-            name:'姓名',
-            value:'王**',
-          },
-          {
-            name:'手机号码',
-            value:'139***64998',
-          },
-          {
-            name:'身份证号',
-            value:'12345678909876',
-          },
-          {
-            name:'年龄',
-            value:'34',
-          },
-          {
-            name:'姓名',
-            value:'',
-          },
-        ]
-      },
-      {
-        title:'基本信息认证',
-        createTime:'',
-        list:[
-          {
-            name:'身份证信息认证',
-            value:'通过',
-          },
-          {
-            name:'手机实名验证',
-            value:'通过',
-          },
-          {
-            name:'银行卡三要素验证',
-            value:'通过',
-          },
-          {
-            name:'蚂蚁信用认证',
-            value:'已认证',
-          },
-          {
-            name:'职业认证',
-            value:'已认证',
-          },
-          {
-            name:'学历认证',
-            value:'已认证',
-          },
-          {
-            name:'运营商认证',
-            value:'已认证',
-          },
-          {
-            name:'联系人认证',
-            value:'已认证',
-          },
-          {
-            name:'银行卡认证',
-            value:'已认证',
-          },
-        ]
-      },
-      {
-        title:'信用评估',
-        createTime:'',
-        list:[
-          {
-            name:'芝麻信用分',
-            value:'780',
-          },
-          {
-            name:'信用报告认证',
-            value:'已认证',
-          },
-          {
-            name:'历史逾期次数',
-            value:0,
-          },
-          {
-            name:'法院黑名单',
-            value:'未命中',
-          },
-          {
-            name:'被执行人名单',
-            value:'未命中',
-          },
-          {
-            name:'共享风险名单',
-            value:'未命中',
-          },
-          {
-            name:'年龄',
-            value:34,
-          },
-          {
-            name:'本地黑名单库',
-            value:'未命中',
-          },
-          {
-            name:'本地灰名单',
-            value:'未命中',
-          },
-        ]
-      },
-      {
-        title:'反欺诈报告',
-        createTime:'',
-        list:[
-          {
-            name:'使用代理登录',
-            value:'未使用',
-          },
-          {
-            name:'登录设备标识确实异常',
-            value:'未命中',
-          },
-          {
-            name:'登录发生在凌晨1到5点之间',
-            value:'未命中',
-          },
-          {
-            name:'设备登录关联信息较多',
-            value:'未命中',
-          },
-          {
-            name:'借款时设备标识异常',
-            value:'未命中',
-          },
-          {
-            name:'24小时内设备借款次数超过3次',
-            value:'未命中',
-          },
-          {
-            name:'使用代理借款',
-            value:'未命中',
-          },
-          {
-            name:'借款手机归属地与IP城市不匹配',
-            value:'未命中',
-          },
-          {
-            name:'借款时间发生在凌晨1点到5点之间',
-            value:34,
-          },
-        ]
-      },
-    ]
     const titleWrapper=
      <div>
-       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号199208223418</span>
+       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
      </div>;
+     const {titleList} = this.props.preView;
     return(
       <PageHeaderWrapper >
-        <Card
-          bordered={false}
-          title={titleWrapper}
-          extra={'报告编号 180630304040333'}
-          headStyle={{fontSize:14}}
-        >
-        </Card>
-        <Row>
-          <Tab
-            selectKey={this.state.selectKey}
-            tabList={data}
-            handleTab={this.handleTab}
-          />
-        </Row>
-        <Row>
+        {
+          titleList&&titleList.length?
+            <div>
+              <Card
+                bordered={false}
+                title={titleWrapper}
+                extra={'报告编号'}
+                headStyle={{fontSize:14}}
+              >
+              </Card>
+              <Row>
+                <Tab
+                  selectKey={this.state.selectKey}
+                  tabList={titleList}
+                  handleTab={this.handleTab}
+                />
+              </Row>
+              <Row>
+                <Col>
+                  <ReportComponent
+                    list={titleList}
+                  />
+                </Col>
+              </Row>
+            </div>
+            :<Empty style={{height:400,paddingTop:100}}/>
+        }
+        <Row type="flex" justify="center">
           <Col>
-            <ReportComponent
-              list={data}
-            />
             <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
           </Col>
         </Row>
