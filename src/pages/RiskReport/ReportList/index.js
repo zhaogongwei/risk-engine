@@ -14,10 +14,13 @@ import {
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
+import Swal from 'sweetalert2';
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ reportList, loading }) => ({
   reportList,
   loading: loading.effects['reportList/riskSubmit']
@@ -80,7 +83,7 @@ export default class ReportList extends PureComponent {
             return '已生成';
           }
           if(record - 0 == 4) {
-            return '已生成';
+            return '异常';
           }
         }
       },
@@ -88,18 +91,32 @@ export default class ReportList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const action = (
+          const {permission} = this.props;
+          const actionA = (
             <Menu>
-              <Menu.Item onClick={()=>this.goRiskReport(record.id)}>
-                <Icon type="edit"/>查看
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.goDataQuery(record)}>
-                <Icon type="delete"/>三方数据查询
-              </Menu.Item>
+              {
+                permission.includes('re:merchanRiskReport:check')?
+                <Menu.Item onClick={()=>this.goRiskReport(record.id)}>
+                  <Icon type="edit"/>查看
+                </Menu.Item>:null
+              }
+              {
+                permission.includes('re:merchanRiskReport:queryData')?
+                <Menu.Item onClick={()=>this.goDataQuery(record)}>
+                  <Icon type="delete"/>三方数据查询
+                </Menu.Item>:null
+              }
+            </Menu>
+          )
+          const actionB = (
+            <Menu>
+                <Menu.Item onClick={()=>this.updateStatus(record.id)}>
+                  <Icon type="edit"/>更新状态
+                </Menu.Item>
             </Menu>
           )
           return (
-            <Dropdown overlay={action}>
+            <Dropdown overlay={record.status-0==4?actionB:actionA}>
               <a className="ant-dropdown-link" href="#">
                 操作<Icon type="down"/>
               </a>
@@ -197,32 +214,59 @@ export default class ReportList extends PureComponent {
   goRiskReport = (id)=>{
     router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
+  //更新报告
+  updateStatus=async (id)=>{
+    const confirmVal = await Swal.fire({
+      text: '确定要执行该操作吗？',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    if(confirmVal.value){
+      const res = await this.props.dispatch({
+        type: 'reportList/updateStatus',
+        payload: {
+          id:id
+        }
+      })
+      if(res&&res.status===1){
+        this.change()
+        message.success(res.statusDesc)
+      }else{
+        message.error(res.statusDesc)
+      }
+    }
+  }
   render() {
     const { listData } = this.props.reportList;
+    const {permission}=this.props;
     return (
      <PageHeaderWrapper>
-       <Card
-        bordered={false}
-        title={'风控报告列表'}
-       >
-         <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={listData.records}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.currPage}
-           total={listData.total}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+         <Card
+           bordered={false}
+           title={'风控报告列表'}
+         >
+           <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
+           <Table
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={listData.records}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.currPage}
+             total={listData.total}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
+       }
       </PageHeaderWrapper>
     )
   }

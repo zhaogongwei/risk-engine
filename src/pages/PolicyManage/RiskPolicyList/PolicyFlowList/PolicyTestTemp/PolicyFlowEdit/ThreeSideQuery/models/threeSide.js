@@ -25,12 +25,7 @@ export default {
     //三方数据查询节点信息保存
     *saveThreeSideInfo({payload,callback},{call,put}){
       let response = yield call(api.saveThreeSideInfo,payload)
-      if(response&&response.status == 1){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
+      return response;
     },
   },
 

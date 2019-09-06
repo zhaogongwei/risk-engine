@@ -32,12 +32,7 @@ export default {
     //复杂规则节点信息保存
     *saveComplexInfo({payload,callback},{call,put}){
       let response = yield call(api.saveComplexInfo,payload)
-      if(response&&response.status == 1){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
+      return response
     },
   },
 

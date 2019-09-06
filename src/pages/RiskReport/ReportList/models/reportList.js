@@ -20,7 +20,13 @@ export default {
           payload: response.data
         })
       }
+    },
+    //更新状态
+    *updateStatus({ payload }, { call, put}) {
+      let response = yield call(api.updateStatus, payload);
+      return response
     }
+
   },
 
   reducers: {

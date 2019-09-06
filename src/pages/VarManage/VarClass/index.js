@@ -14,11 +14,14 @@ import {
 } from 'antd';
 import { connect } from 'dva'
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import AddForm from './addForm';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
 import Swal from 'sweetalert2';
+
+@permission
 @connect(({ varclass, loading }) => ({
   varclass,
   loading: loading.effects['assetDeploy/riskSubmit']
@@ -35,14 +38,23 @@ export default class VarClass extends PureComponent {
           title: 'Action',
           width:100,
           render: (record) => {
+            const {permission} = this.props
             const action = (
               <Menu>
-                <Menu.Item onClick={() => {this.clickDialog(4, record)}}>
-                  <Icon type="edit"/>编辑
-                </Menu.Item>
-                <Menu.Item onClick={()=>this.deleteVar(1,record)}>
-                  <Icon type="delete"/>删除
-                </Menu.Item>
+                {
+                  permission.includes('re:merchanVarClass:update') ?
+                    <Menu.Item onClick={() => {
+                      this.clickDialog(4, record)
+                    }}>
+                      <Icon type="edit"/>编辑
+                    </Menu.Item>:null
+                }
+                {
+                  permission.includes('re:merchanVarClass:delete') ?
+                    <Menu.Item onClick={() => this.deleteVar(1, record)}>
+                      <Icon type="delete"/>删除
+                    </Menu.Item>:null
+                }
               </Menu>
             )
             return (
@@ -194,11 +206,17 @@ export default class VarClass extends PureComponent {
         title: '操作',
         key: 'action',
         render: (record) => {
+          const {permission} = this.props
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>{this.clickDialog(2,record)}}>
-                <Icon type="plus"/>添加二级分类
-              </Menu.Item>
+              {
+                permission.includes('re:merchanVarClass:add') ?
+                  <Menu.Item onClick={() => {
+                    this.clickDialog(2, record)
+                  }}>
+                    <Icon type="plus"/>添加二级分类
+                  </Menu.Item>:null
+              }
               <Menu.Item onClick={()=>{this.clickDialog(3,record)}}>
                 <Icon type="edit"/>编辑
               </Menu.Item>

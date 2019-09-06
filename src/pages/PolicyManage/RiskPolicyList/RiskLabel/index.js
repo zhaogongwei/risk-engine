@@ -15,13 +15,10 @@ import {
 import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 // 验证权限的组件
-import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import router from 'umi/router';
 import Swal from 'sweetalert2';
-
-@permission
 
 @connect(({ risklabel, loading }) => ({
   risklabel,
@@ -70,21 +67,14 @@ export default class RiskLabel extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const { permission } =  this.props;
           const action = (
             <Menu>
-              {
-                permission.includes('re:merchanRiskLabel:update')?
-                  <Menu.Item onClick={() => this.goAddEdit(0,record.strategyId,record.id)}>
-                    <Icon type="edit"/>编辑
-                  </Menu.Item>:null
-              }
-              {
-                permission.includes('re:merchanRiskLabel:delete')?
-                  <Menu.Item onClick={() => this.delLabel(record)}>
-                    <Icon type="delete"/>删除
-                  </Menu.Item>:null
-              }
+              <Menu.Item onClick={() => this.goAddEdit(0,record.strategyId,record.id)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
+              <Menu.Item onClick={() => this.delLabel(record)}>
+                <Icon type="delete"/>删除
+              </Menu.Item>
             </Menu>
           )
           return (
@@ -205,37 +195,34 @@ export default class RiskLabel extends PureComponent {
   render() {
     const {pageData,labelList} = this.props.risklabel;
     const {columns,current} = this.state;
-    const { permission } =  this.props;
     return (
-     <PageHeaderWrapper  renderBtn={permission.includes('re:merchanRiskLabel:add')?this.renderTitleBtn:null}>
-       {
-         permission.includes('re:merchanRiskLabel:list')?
-           <Card
-             bordered={false}
-             title={'风控标签'}
-           >
-             <FilterIpts
-               getSubKey={this.getSubKey}
-               change={this.change}
-               current={this.state.currentPage}
-               changeDefault={this.changeDefault}/>
-             <Table
-               bordered
-               pagination={false}
-               columns={columns}
-               dataSource={labelList}
-               loading={this.props.loading}
-             />
-             <Pagination
-               style={{ marginBottom: "50px" }}
-               showQuickJumper
-               defaultCurrent={1}
-               current={current}
-               total={pageData['total']}
-               onChange={this.onChange}
-               showTotal={(total, range) => this.showTotal(total, range)}
-             />
-           </Card>:null
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+         <Card
+           bordered={false}
+           title={'风控标签'}
+         >
+           <FilterIpts
+             getSubKey={this.getSubKey}
+             change={this.change}
+             current={this.state.currentPage}
+             changeDefault={this.changeDefault}/>
+           <Table
+             bordered
+             pagination={false}
+             columns={columns}
+             dataSource={labelList}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={current}
+             total={pageData['total']}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
        }
       </PageHeaderWrapper>
     )

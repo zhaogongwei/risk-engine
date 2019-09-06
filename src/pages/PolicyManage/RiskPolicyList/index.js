@@ -78,12 +78,9 @@ export default class RiskPolicyList extends PureComponent {
               <Menu.Item onClick={()=>this.goLabel(record.id)}>
                 <Icon type="snippets" />标签
               </Menu.Item>
-              {
-                permission.includes('re:merchanRiskPolicy:update')?
-                  <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
-                    <Icon type="edit"/>编辑
-                  </Menu.Item>:null
-              }
+              <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
               <Menu.Item onClick={()=>this.goPolicyFlowList(record)}>
                 <Icon type="diff" />策略流
               </Menu.Item>
@@ -227,9 +224,7 @@ export default class RiskPolicyList extends PureComponent {
     const {status,policyId} = this.state
     const { permission } =  this.props;
     return (
-     <PageHeaderWrapper  renderBtn={permission.includes('re:merchanRiskPolicy:add')?this.renderTitleBtn:null}>
-       {
-         permission.includes('re:merchanRiskPolicy:list')?
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
            <Card
              bordered={false}
              title={'风控策略列表'}
@@ -266,8 +261,7 @@ export default class RiskPolicyList extends PureComponent {
                  id={policyId}
                />
              </Modal>
-           </Card>:null
-       }
+           </Card>
       </PageHeaderWrapper>
     )
   }
