@@ -157,11 +157,8 @@ class FlowPage extends React.Component {
                 <div>
                   <Row type="flex" justify="center" align="middle" gutter={16} style={{marginBottom:10}}>
                     <Col><Button type="primary" loading={this.props.submitLoading} onClick={this.submitData}>保存</Button></Col>
-                    <Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>
-                  </Row>
-                  <Row type="flex" justify="center" align="middle" gutter={16}>
+                    {/*<Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>*/}
                     <Col><Button onClick={()=>router.goBack()}>返回</Button></Col>
-                    <Col span={6}></Col>
                   </Row>
                 </div>
                 <FlowBird/>

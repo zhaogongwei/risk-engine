@@ -27,7 +27,8 @@ const FormItem = Form.Item
 
 @connect(({ policyList, loading,varList }) => ({
   policyList,
-  submitLoading:loading.effects['policyList/addPolicy'],
+  loading:loading.effects['policyList/queryInputVar'],
+  submitLoading:loading.effects['policyList/saveInputVar'],
   varList
 }))
 @Form.create()

@@ -29,6 +29,7 @@ const RadioGroup = Radio.Group;
 @connect(({ risklabel, loading,varList}) => ({
   risklabel,
   varList,
+  loading:loading.effects['risklabel/queryLabelInfo'],
   addsubmitLoading: loading.effects['risklabel/addRiskLabel'],
   editsubmitLoading: loading.effects['risklabel/editRiskLabel'],
 }))

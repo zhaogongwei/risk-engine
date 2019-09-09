@@ -102,8 +102,9 @@ export default class TestTemp extends Component {
   }
   componentDidMount () {
     const {query} = this.props.location;
-    const {strategyId,type} = query
+    const {strategyId,type,id} = query
     if(type==1){
+      //新增
       this.props.dispatch({
         type: 'testTemp/fetchTestTempVarArray',
         payload:{
@@ -111,10 +112,11 @@ export default class TestTemp extends Component {
         }
       })
     }else{
+      //编辑
       this.props.dispatch({
         type: 'testTemp/fetchTestTempVarList',
         payload:{
-          testTemplateId:strategyId,
+          testTemplateId:id,
         }
       })
     }

@@ -25,7 +25,9 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 @permission
 @connect(({ policyList, loading }) => ({
   policyList,
-  loading: loading.effects['policyList/fetchPolicyList']
+  loading: loading.effects['policyList/fetchPolicyList'],
+  addLoading:loading.effects['policyList/addPolicy'],
+  updateLoading:loading.effects['policyList/editPolicy'],
 }))
 export default class RiskPolicyList extends PureComponent {
   constructor(props) {
@@ -270,6 +272,7 @@ export default class RiskPolicyList extends PureComponent {
                width={550}
                title={status ? '新增策略' : '编辑策略'}
                bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
+               confirmLoading={status?this.props.addLoading:this.props.updateLoading}
              >
                <PolicyEdit
                  returnSubKey={this.getSubKey}
