@@ -78,13 +78,13 @@ export default class BlackNameList extends PureComponent {
           const action = (
             <Menu>
               {
-                permission.includes('re:merchanBlackRoster:disable')?
+                permission.includes('re:black:update')?
                   <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
                     <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
                   </Menu.Item>:null
               }
               {
-                permission.includes('re:merchanBlackRoster:delete')?
+                permission.includes('re:black:delete')?
                   <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
                     <Icon type="delete"/>删除
                   </Menu.Item>:null
@@ -203,9 +203,9 @@ export default class BlackNameList extends PureComponent {
     const { blackNameList, total } = this.props.blackName
     const {permission} = this.props
     return (
-     <PageHeaderWrapper renderBtn={permission.includes('re:merchanBlackRoster:add')?this.renderTitleBtn:null}>
+     <PageHeaderWrapper renderBtn={permission.includes('re:black:add')?this.renderTitleBtn:null}>
        {
-         permission.includes('re:merchanBlackRoster:list')?
+         permission.includes('re:black:view')?
            <Card
              bordered={false}
              title={'本地黑名单库'}

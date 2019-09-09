@@ -15,12 +15,13 @@ import {
   message
 } from 'antd';
 import { connect } from 'dva'
-
+import permission from '@/utils/PermissionWrapper';
 const FormItem = Form.Item
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
+@permission
 @connect(({ secret }) => ({
   secret
 }))
@@ -93,39 +94,46 @@ export default class IndexComponent extends Component {
         sm: { span: 10, offset: 7 },
       },
     };
+    const { permission } =  this.props;
     return (
       <PageHeaderWrapper>
-        <Card bordered={false}>
-          <Form>
-            <FormItem label="priKey" {...formItemLayout}>
-              {getFieldDecorator('pri_key',{
-                initialValue: infoData.pri_key,
-                rules:[{
-                  required: false,
-                  message: '请输入priKey'
-                }]
-              })(
-                <TextArea rows={14}/>
-              )}
-            </FormItem>
-            <FormItem label="pubKey" {...formItemLayout}>
-              {getFieldDecorator('pub_key',{
-                initialValue: infoData.pub_key,
-                rules:[{
-                  required: false,
-                  message: '请输入pubKey'
-                }]
-              })(
-                <TextArea rows={4}/>
-              )}
-            </FormItem>
-            <FormItem {...submitFormLayout}>
-              <Button type="primary" htmlType="submit" onClick={this.submitHandler}>
-                生成新秘钥
-              </Button>
-            </FormItem>
-          </Form>
-        </Card>
+        {
+          permission.includes('re:merchantRSA:view')?
+            <Card bordered={false}>
+              <Form>
+                <FormItem label="priKey" {...formItemLayout}>
+                  {getFieldDecorator('pri_key',{
+                    initialValue: infoData.pri_key,
+                    rules:[{
+                      required: false,
+                      message: '请输入priKey'
+                    }]
+                  })(
+                    <TextArea rows={14}/>
+                  )}
+                </FormItem>
+                <FormItem label="pubKey" {...formItemLayout}>
+                  {getFieldDecorator('pub_key',{
+                    initialValue: infoData.pub_key,
+                    rules:[{
+                      required: false,
+                      message: '请输入pubKey'
+                    }]
+                  })(
+                    <TextArea rows={4}/>
+                  )}
+                </FormItem>
+                <FormItem {...submitFormLayout}>
+                    {
+                      permission.includes('re:merchantRSA:add')?
+                      <Button type="primary" htmlType="submit" onClick={this.submitHandler}>
+                        生成新秘钥
+                      </Button>:null
+                    }
+                </FormItem>
+              </Form>
+            </Card>:null
+        }
       </PageHeaderWrapper>
     )
   }

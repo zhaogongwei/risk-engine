@@ -140,7 +140,7 @@ export default class RoleManage extends PureComponent {
           <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>:null
         }
         {
-          permission.includes('re:merchantRole:export') ?
+          permission.includes('re:merchantRole:export')?
             <Button onClick={() => this.exportList()}><Icon type="export"/>导出列表</Button> : null
         }
       </Fragment>
@@ -215,7 +215,7 @@ export default class RoleManage extends PureComponent {
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
        {
-         permission.includes('re:merchantRole:list') ?
+         permission.includes('re:merchantRole:view')?
            <Card
              bordered={false}
              title={'角色管理'}

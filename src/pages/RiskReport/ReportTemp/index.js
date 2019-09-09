@@ -63,13 +63,13 @@ export default class VarList extends PureComponent {
           const action = (
             <Menu>
               {
-                permission.includes('re:merchanReportTemp:update')?
+                permission.includes('re:reportTemplate:update')?
                 <Menu.Item onClick={() => this.goAddPage(0,record.id)}>
                   <Icon type="edit"/>编辑
                 </Menu.Item>:null
               }
               {
-                permission.includes('re:merchanReportTemp:check')?
+                permission.includes('re:reportTemplate:info')?
                 <Menu.Item onClick={()=>this.goPreview(record.id)}>
                   <Icon type="zoom-in" />查看
                 </Menu.Item>:null
@@ -80,12 +80,9 @@ export default class VarList extends PureComponent {
                 })}>
                 <Icon type="delete"/>策略
               </Menu.Item> */}
-              {
-                permission.includes('re:merchanReportTemp:asset')?
                 <Menu.Item onClick={()=>this.goRiskReport()}>
                   <Icon type="unordered-list" />资产
                 </Menu.Item>:null
-              }
             </Menu>
           )
           return (
@@ -211,9 +208,9 @@ export default class VarList extends PureComponent {
     const { templateList, total } = this.props.template
     const {permission} = this.props;
     return (
-     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+     <PageHeaderWrapper renderBtn={permission.includes('re:reportTemplate:add')?this.renderTitleBtn:null}>
        {
-         permission.includes('re:merchanReportTemp:list')?
+         permission.includes('re:reportTemplate:view')?
            <Card
              bordered={false}
              title="风控报告模板"

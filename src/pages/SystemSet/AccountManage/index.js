@@ -248,7 +248,7 @@ export default class AccountManage extends PureComponent {
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
        {
-         permission.includes('re:merchantUser:list')?
+         permission.includes('re:merchantUser:view')?
            <Card
              bordered={false}
              title={'账号管理'}

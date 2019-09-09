@@ -203,7 +203,7 @@ export default class UrlDeploy extends PureComponent {
     return (
      <PageHeaderWrapper renderBtn={permission.includes('re:merchantInterface:add')?this.renderTitleBtn:null}>
        {
-         permission.includes('re:merchantInterface:list')?
+         permission.includes('re:merchantInterface:view')?
            <Card
              bordered={false}
              title={'接口配置'}

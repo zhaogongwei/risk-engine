@@ -42,7 +42,7 @@ export default class VarClass extends PureComponent {
             const action = (
               <Menu>
                 {
-                  permission.includes('re:merchanVarClass:update') ?
+                  permission.includes('re:variableType:update') ?
                     <Menu.Item onClick={() => {
                       this.clickDialog(4, record)
                     }}>
@@ -50,7 +50,7 @@ export default class VarClass extends PureComponent {
                     </Menu.Item>:null
                 }
                 {
-                  permission.includes('re:merchanVarClass:delete') ?
+                  permission.includes('re:variableType:delete') ?
                     <Menu.Item onClick={() => this.deleteVar(1, record)}>
                       <Icon type="delete"/>删除
                     </Menu.Item>:null
@@ -210,19 +210,27 @@ export default class VarClass extends PureComponent {
           const action = (
             <Menu>
               {
-                permission.includes('re:merchanVarClass:add') ?
+                permission.includes('re:variableType:add')?
                   <Menu.Item onClick={() => {
                     this.clickDialog(2, record)
                   }}>
                     <Icon type="plus"/>添加二级分类
                   </Menu.Item>:null
               }
-              <Menu.Item onClick={()=>{this.clickDialog(3,record)}}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteVar(1,record)}>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:variableType:update')?
+                  <Menu.Item onClick={() => {
+                    this.clickDialog(3, record)
+                  }}>
+                    <Icon type="edit"/>编辑
+                  </Menu.Item> : null
+              }
+              {
+                permission.includes('re:variableType:delete')?
+                  <Menu.Item onClick={() => this.deleteVar(1, record)}>
+                    <Icon type="delete"/>删除
+                  </Menu.Item> : null
+              }
             </Menu>
           )
           return (
@@ -237,39 +245,43 @@ export default class VarClass extends PureComponent {
     ];
     const { permission } = this.props
     return (
-      <PageHeaderWrapper  renderBtn={this.renderBtn}>
-        <Card bordered={false}>
-          <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage} changeDefault={this.changeDefault}/>
-          <Table
-            style={{border: "1px solid #e8e8e8"}}
-            bordered={false}
-            columns={columns}
-            expandedRowRender={(record,index)=>this.expandedRowRender(record,index)}
-            defaultExpandAllRows={true}
-            dataSource={this.props.varclass.varClassList}
-            pagination={false}
-          />
-          <Pagination
-            style={{ marginBottom: "50px" }}
-            showQuickJumper
-            defaultCurrent={1}
-            current={this.state.current}
-            total={this.props.varclass.total}
-            onChange={this.onChange}
-            showTotal={(total, range) => this.showTotal(total, range)}
-          />
-          <AddForm
-            showState={this.state.modalStatus}
-            onChange={this.handleChildChange}
-            getSubKey={this.getSubKey}
-            type={this.state.type}
-            title={this.state.title}
-            changeDefault={this.changeDefault}
-            change={this.change}
-            record={this.state.record}
-            current={this.state.current}
-            resatSelect={this.child}
-          /></Card>
+      <PageHeaderWrapper  renderBtn={permission.includes('re:variableType:add')?this.renderBtn:null}>
+        {
+          permission.includes('re:variableType:view') ?
+            <Card bordered={false}>
+              <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage}
+                          changeDefault={this.changeDefault}/>
+              <Table
+                style={{ border: "1px solid #e8e8e8" }}
+                bordered={false}
+                columns={columns}
+                expandedRowRender={(record, index) => this.expandedRowRender(record, index)}
+                defaultExpandAllRows={true}
+                dataSource={this.props.varclass.varClassList}
+                pagination={false}
+              />
+              <Pagination
+                style={{ marginBottom: "50px" }}
+                showQuickJumper
+                defaultCurrent={1}
+                current={this.state.current}
+                total={this.props.varclass.total}
+                onChange={this.onChange}
+                showTotal={(total, range) => this.showTotal(total, range)}
+              />
+              <AddForm
+                showState={this.state.modalStatus}
+                onChange={this.handleChildChange}
+                getSubKey={this.getSubKey}
+                type={this.state.type}
+                title={this.state.title}
+                changeDefault={this.changeDefault}
+                change={this.change}
+                record={this.state.record}
+                current={this.state.current}
+                resatSelect={this.child}
+              /></Card> : null
+        }
       </PageHeaderWrapper>
     )
   }

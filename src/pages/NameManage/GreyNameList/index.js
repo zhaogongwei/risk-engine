@@ -75,19 +75,19 @@ export default class GreyNameList extends PureComponent {
           const action = (
             <Menu>
               {
-                permission.includes('re:merchanGreyRoster:disable')?
+                permission.includes('re:grey:update')?
                   <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
                     <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
                   </Menu.Item>:null
               }
               {
-                permission.includes('re:merchanGreyRoster:black')?
+                permission.includes('re:grey:inblack')?
                   <Menu.Item onClick={ () => this.handleInBlack(record.id) }>
                     <Icon type="minus-circle" />拉黑
                   </Menu.Item>:null
               }
               {
-                permission.includes('re:merchanGreyRoster:delete')?
+                permission.includes('re:grey:delete')?
                   <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
                     <Icon type="delete"/>删除
                   </Menu.Item>:null
@@ -228,7 +228,7 @@ export default class GreyNameList extends PureComponent {
     return (
      <PageHeaderWrapper>
        {
-         permission.includes('re:merchanGreyRoster:list')?
+         permission.includes('re:grey:view')?
            <Card
              bordered={false}
              title={'本地灰名单库'}

@@ -72,18 +72,30 @@ export default class RiskPolicyList extends PureComponent {
           const { permission } =  this.props;
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.goDeploy(record.id)}>
-                <Icon type="setting" />变量设置
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.goLabel(record.id)}>
-                <Icon type="snippets" />标签
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.goPolicyFlowList(record)}>
-                <Icon type="diff" />策略流
-              </Menu.Item>
+              {
+                permission.includes('re:strategyVariable:operator')?
+                  <Menu.Item onClick={()=>this.goDeploy(record.id)}>
+                    <Icon type="setting" />变量设置
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:strategyLabel:operator')?
+                  <Menu.Item onClick={()=>this.goLabel(record.id)}>
+                    <Icon type="snippets" />标签
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:strategy:update')?
+                  <Menu.Item onClick={()=>this.goEditPage(0,record.id)}>
+                    <Icon type="edit"/>编辑
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:strategyFlow:operator')?
+                  <Menu.Item onClick={() => this.goPolicyFlowList(record)}>
+                    <Icon type="diff"/>策略流
+                  </Menu.Item> : null
+              }
             </Menu>
           )
           return (
@@ -224,12 +236,15 @@ export default class RiskPolicyList extends PureComponent {
     const {status,policyId} = this.state
     const { permission } =  this.props;
     return (
-     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+     <PageHeaderWrapper  renderBtn={permission.includes('re:strategy:add')?this.renderTitleBtn:null}>
+       {
+         permission.includes('re:strategy:view') ?
            <Card
              bordered={false}
              title={'风控策略列表'}
            >
-             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize} changeDefault={this.changeDefault}/>
+             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}
+                         changeDefault={this.changeDefault}/>
              <Table
                bordered
                pagination={false}
@@ -252,7 +267,7 @@ export default class RiskPolicyList extends PureComponent {
                destroyOnClose={true}
                onCancel={() => this.setState({ modalVisible: false })}
                width={550}
-               title={status?'新增策略':'编辑策略'}
+               title={status ? '新增策略' : '编辑策略'}
                bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
              >
                <PolicyEdit
@@ -261,7 +276,8 @@ export default class RiskPolicyList extends PureComponent {
                  id={policyId}
                />
              </Modal>
-           </Card>
+           </Card> : null
+       }
       </PageHeaderWrapper>
     )
   }

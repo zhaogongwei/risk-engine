@@ -109,7 +109,7 @@ export default function request(url, options) {
         });
         return;
       }
-      if (status === 403) {
+      if (status === 403 || status === 909) {
         router.push('/exception/403');
         return;
       }

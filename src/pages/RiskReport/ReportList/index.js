@@ -95,13 +95,13 @@ export default class ReportList extends PureComponent {
           const actionA = (
             <Menu>
               {
-                permission.includes('re:merchanRiskReport:check')?
+                permission.includes('re:reportReturn:info')?
                 <Menu.Item onClick={()=>this.goRiskReport(record.id)}>
                   <Icon type="edit"/>查看
                 </Menu.Item>:null
               }
               {
-                permission.includes('re:merchanRiskReport:queryData')?
+                permission.includes('re:reportReturn:info')?
                 <Menu.Item onClick={()=>this.goDataQuery(record)}>
                   <Icon type="delete"/>三方数据查询
                 </Menu.Item>:null
@@ -110,9 +110,12 @@ export default class ReportList extends PureComponent {
           )
           const actionB = (
             <Menu>
-                <Menu.Item onClick={()=>this.updateStatus(record.id)}>
-                  <Icon type="edit"/>更新状态
-                </Menu.Item>
+              {
+                permission.includes('re:reportReturn:update')?
+                  <Menu.Item onClick={()=>this.updateStatus(record.id)}>
+                    <Icon type="edit"/>更新状态
+                  </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -190,14 +193,6 @@ export default class ReportList extends PureComponent {
       current:value
     })
   }
-  //右上角渲染
-  renderTitleBtn = () => {
-    return (
-      <Fragment>
-        <Button onClick={()=>this.goAddPage({type:1})}><Icon type="plus" theme="outlined" />新增</Button>
-      </Fragment>
-    )
-  }
   //跳转编辑/新增页面
   goAddPage = (obj={})=>{
     //this.props.dispatch(routerRedux.push({pathname:'/children/RiskManagement/VarList'}))
@@ -244,28 +239,31 @@ export default class ReportList extends PureComponent {
     const {permission}=this.props;
     return (
      <PageHeaderWrapper>
-         <Card
-           bordered={false}
-           title={'风控报告列表'}
-         >
-           <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
-           <Table
-             bordered
-             pagination={false}
-             columns={this.state.columns}
-             dataSource={listData.records}
-             loading={this.props.loading}
-           />
-           <Pagination
-             style={{ marginBottom: "50px" }}
-             showQuickJumper
-             defaultCurrent={1}
-             current={this.state.currPage}
-             total={listData.total}
-             onChange={this.onChange}
-             showTotal={(total, range) => this.showTotal(total, range)}
-           />
-         </Card>
+       {
+         permission.includes('re:reportReturn:view')?
+           <Card
+             bordered={false}
+             title={'风控报告列表'}
+           >
+             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={listData.records}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.currPage}
+               total={listData.total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+           </Card>:null
+       }
        }
       </PageHeaderWrapper>
     )

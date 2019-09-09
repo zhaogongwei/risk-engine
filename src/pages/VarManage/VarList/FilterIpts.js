@@ -9,9 +9,11 @@ import {
 } from 'antd';
 import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import permission from '@/utils/PermissionWrapper';
 const Option = Select.Option;
 const FormItem = Form.Item
 
+@permission
 @connect(({ varlist }) => ({
   varlist,
 }))
@@ -66,6 +68,7 @@ export default class FilterIpts extends Component {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    const { permission } =  this.props;
     return (
       <Form
         className="ant-advanced-search-form"
@@ -116,7 +119,10 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={2}>
-            <Button type="primary" onClick={this.formSubmit}>查询</Button>
+            {
+              permission.includes('re:variable:list')?
+                <Button type="primary" onClick={this.formSubmit}>查询</Button> : null
+            }
             <Button type="primary" onClick={this.reset}>清空</Button>
           </Col>
         </Row>
