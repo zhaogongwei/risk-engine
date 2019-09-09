@@ -29,12 +29,17 @@ export default class ThreeSideQuery extends Component {
   }
   async componentDidMount () {
     const {query} = this.props.location;
-    const res = this.props.dispatch({
+    const res = await this.props.dispatch({
       type: 'threeSide/queryThreeSideInfo',
       payload: {
         nodeId:query['id']
       }
     })
+    if(res&&res.status === 1){
+      this.setState({
+        checkedList:res.data.thirds,
+      })
+    }
   }
   onChange=(checkedValues)=>{
     console.log('checked = ', checkedValues);

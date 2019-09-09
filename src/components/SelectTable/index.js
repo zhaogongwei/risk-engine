@@ -29,7 +29,7 @@ export default class SelectableTable extends PureComponent {
     super(props);
   }
   render() {
-    const { tableRow,colList,rowList} = this.props.list;
+    const { tableRow,colList,rowList,loading} = this.props.list;
     const { resultVarId} = this.props
     const components = {
       body: {
@@ -85,6 +85,7 @@ export default class SelectableTable extends PureComponent {
           pagination={false}
           dataSource={tableRow}
           columns={columns}
+          loading={loading}
         />
       </div>
     );

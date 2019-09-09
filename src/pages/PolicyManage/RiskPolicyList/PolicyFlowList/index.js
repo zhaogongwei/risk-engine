@@ -21,7 +21,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 
 @connect(({ policyFlowList, loading }) => ({
   policyFlowList,
-  loading: loading.effects['policyFlowList/riskSubmit']
+  loading: loading.effects['policyFlowList/fetchFlowList']
 }))
 export default class PolicyFlowList extends PureComponent {
   constructor(props) {

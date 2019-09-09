@@ -27,7 +27,7 @@ export default class SetVarTable extends PureComponent {
   componentDidMount(){
   }
   render() {
-    const { dataSource } = this.props;
+    const { dataSource,loading} = this.props;
     const components = {
       body: {
         row: EditableFormRow,
@@ -69,6 +69,7 @@ export default class SetVarTable extends PureComponent {
           pagination={false}
           dataSource={dataSource}
           columns={columns}
+          loading={loading}
         />
       </div>
     );
