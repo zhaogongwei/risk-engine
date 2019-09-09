@@ -179,8 +179,8 @@ export default class LabelEdit extends PureComponent {
   }
   //删除表格数据
   handleDelete=(key)=>{
-    const {labelList} = this.props.risklabel
-    const newDataSource = labelList.filter(item => item.key !== key)
+    const {tableList} = this.props.risklabel
+    const newDataSource = tableList.filter(item => item.key !== key)
     this.props.dispatch({
       type: 'risklabel/saveTableList',
       payload: {
@@ -343,6 +343,8 @@ export default class LabelEdit extends PureComponent {
               </Col>
               <Modal
                 title={'选择变量'}
+                destroyOnClose={true}
+                maskClosable={false}
                 visible={this.state.visible}
                 onOk={this.addFormSubmit}
                 onCancel={this.handleCancel}

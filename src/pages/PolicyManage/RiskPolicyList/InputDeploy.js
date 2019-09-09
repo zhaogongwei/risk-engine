@@ -72,7 +72,8 @@ export default class InputDeploy extends PureComponent {
       current:1,
       id:'',
       status:1,
-      selectedRowKeys: [],
+      selectedRowKeys: [],//选中变量的key值
+      selectedRows:[],//选中的变量
       visible:false,
     };
   }
@@ -82,7 +83,8 @@ export default class InputDeploy extends PureComponent {
     this.props.dispatch({
       type: 'varList/queryVarList',
       payload: {
-        strategyId:query['strategyId']
+        strategyId:query['strategyId'],
+        status:1,
       }
     })
     //请求一级变量分类
@@ -120,9 +122,12 @@ export default class InputDeploy extends PureComponent {
     })
     this.pagination(10,current,this.props.policyList.tableList)
   }
-  onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+  onSelectChange = (selectedRowKeys,selectedRows) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys,selectedRows);
+    this.setState({
+      selectedRowKeys:selectedRowKeys,
+      selectedRows:selectedRows
+    });
   }
   //   获取子组件数据的方法
   getSubKey = (ref,key) => {
@@ -168,9 +173,9 @@ export default class InputDeploy extends PureComponent {
   }
   //删除表格数据
   deleteList=async ()=>{
-    const {selectedRowKeys} = this.state;
+    const {query} = this.props.location;
+    const {selectedRowKeys,selectedRows} = this.state;
     const {tableList} = this.props.policyList;
-    console.log(tableList,selectedRowKeys)
     let list = []
     if(!selectedRowKeys.length){
       message.error('删除失败,请勾选要删除的项目!');
@@ -184,16 +189,34 @@ export default class InputDeploy extends PureComponent {
         cancelButtonText: '取消'
       })
       if(confirmVal.value){
-        for(var key of selectedRowKeys){
-          tableList.forEach((item,index)=>{
-            if(item['key']===key){
-              tableList.splice(index,1)
+        let deleteList=[]
+        selectedRows.map((item,index)=>{
+          deleteList.push(item['variableId'])
+        })
+        //删除之前先进行接口调用，判断能否删除
+        const res = await this.props.dispatch({
+          type: 'policyList/checkMouldList',
+          payload:{
+            deleteVarIdList:deleteList,
+            strategyId:query['id'],
+          }
+        })
+        if(res&&res.status===1){
+          if(res.data&&res.data.length>0){
+            message.error('选中的变量已应用到策略,不能删除!')
+          }else{
+            for(var key of selectedRowKeys){
+              tableList.forEach((item,index)=>{
+                if(item['key']===key){
+                  tableList.splice(index,1)
+                }
+              })
             }
-          })
+            this.setState({ selectedRowKeys: [],selectedRows:[] });
+            this.pagination(10,1,addListKey(tableList));
+            message.success('删除成功!')
+          }
         }
-        message.success('删除成功!')
-        this.setState({ selectedRowKeys: [] });
-        this.pagination(10,1,addListKey(tableList));
       }
     }
   }
@@ -245,12 +268,12 @@ export default class InputDeploy extends PureComponent {
     }
     const { query } = this.props.location
     const queryData = {
-      strategyId:query['strategyId']
+      strategyId:query['strategyId'],
+      status:1,
     }
-    const {selectedRowKeys,columns,current } = this.state;
+    const {selectedRowKeys,selectedRows,columns,current } = this.state;
     const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: (selectedRowKeys,selectedRows)=>this.onSelectChange(selectedRowKeys,selectedRows),
     };
     const {mouldList,pageList,tableList,templateId} = this.props.policyList
     return (
@@ -329,6 +352,7 @@ export default class InputDeploy extends PureComponent {
             visible={this.state.visible}
             onOk={this.handleOk}
             destroyOnClose={true}
+            maskClosable={false}
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >

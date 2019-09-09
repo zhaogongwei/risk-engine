@@ -16,9 +16,11 @@ import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 import Swal from 'sweetalert2';
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ greyName, loading }) => ({
   greyName,
   loading: loading.effects['greyName/fetchGreyNameList']
@@ -69,17 +71,27 @@ export default class GreyNameList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const {permission} = this.props;
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
-                <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
-              </Menu.Item>
-              <Menu.Item onClick={ () => this.handleInBlack(record.id) }>
-                <Icon type="minus-circle" />拉黑
-              </Menu.Item>
-              <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:grey:update')?
+                  <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
+                    <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:grey:inblack')?
+                  <Menu.Item onClick={ () => this.handleInBlack(record.id) }>
+                    <Icon type="minus-circle" />拉黑
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:grey:delete')?
+                  <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
+                    <Icon type="delete"/>删除
+                  </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -212,30 +224,34 @@ export default class GreyNameList extends PureComponent {
   }
   render() {
     const { greyNameList, total } = this.props.greyName
+    const {permission} = this.props
     return (
      <PageHeaderWrapper>
-       <Card
-         bordered={false}
-         title={'本地灰名单库'}
-       >
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.current}/>
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={greyNameList}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.current}
-           total={total}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+       {
+         permission.includes('re:grey:view')?
+           <Card
+             bordered={false}
+             title={'本地灰名单库'}
+           >
+             <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.current}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={greyNameList}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.current}
+               total={total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+           </Card>:null
+       }
       </PageHeaderWrapper>
     )
   }

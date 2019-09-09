@@ -213,34 +213,35 @@ export default class PolicyFlowList extends PureComponent {
     const {policyFlowList,formData} = this.props.policyFlowList
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-       <Card
-         bordered={false}
-         title ={'策略流列表'}
-       >
-         <FilterIpts
-           getSubKey={this.getSubKey}
-           change={this.onChange}
-           current={this.state.currentPage}
-           changeDefault={this.changeDefault}
-           location={this.props.location}
-         />
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={policyFlowList}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.current}
-           total={formData['total']}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+         <Card
+           bordered={false}
+           title ={'策略流列表'}
+         >
+           <FilterIpts
+             getSubKey={this.getSubKey}
+             change={this.onChange}
+             current={this.state.currentPage}
+             changeDefault={this.changeDefault}
+             location={this.props.location}
+           />
+           <Table
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={policyFlowList}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.current}
+             total={formData['total']}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
+       }
       </PageHeaderWrapper>
     )
   }

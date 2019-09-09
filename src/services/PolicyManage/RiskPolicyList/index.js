@@ -129,3 +129,14 @@ export async function queryMouldList(params) {
     },
   });
 }
+
+
+//删除输入变量时进行校验
+export async function checkMouldList(params) {
+  return request(`${_baseApi}/strategy/getVariableName`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}

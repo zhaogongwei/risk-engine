@@ -18,9 +18,11 @@ import router from 'umi/router';
 import Swal from 'sweetalert2';
 import AddForm from './addForm';
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ blackName, loading }) => ({
   blackName,
   loading: loading.effects['blackName/fetchBlackNameList'],
@@ -72,14 +74,21 @@ export default class BlackNameList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const {permission} = this.props
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
-                <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
-              </Menu.Item>
-              <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:black:update')?
+                  <Menu.Item onClick={()=>this.isForbid(record.id, record.status)}>
+                    <Icon type="edit"/>{ record.status === 0 ? '禁用' : '启用' }
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:black:delete')?
+                  <Menu.Item onClick={ () => this.isForbid(record.id, 2) }>
+                    <Icon type="delete"/>删除
+                  </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -192,6 +201,7 @@ export default class BlackNameList extends PureComponent {
   }
   render() {
     const { blackNameList, total } = this.props.blackName
+    const {permission} = this.props
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
        <Card

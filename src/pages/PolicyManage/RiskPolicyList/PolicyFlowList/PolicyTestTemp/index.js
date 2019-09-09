@@ -15,7 +15,6 @@ import router from 'umi/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
-
 @connect(({ policyTestTemp, loading }) => ({
   policyTestTemp,
   loading: loading.effects['policyTestTemp/fetchTestTempList']
@@ -153,34 +152,35 @@ export default class PolicyTestTemp extends PureComponent {
     const {query} = this.props.location;
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-       <Card
-          bordered={false}
-          title={'策略流测试模板'}
-       >
-         <FilterIpts
-           getSubKey={this.getSubKey}
-           change={this.onChange}
-           current={this.state.currentPage}
-           changeDefault={this.changeDefault}
-           query={query}
-         />
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={tempList}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.current}
-           total={formData['total']}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+         <Card
+           bordered={false}
+           title={'策略流测试模板'}
+         >
+           <FilterIpts
+             getSubKey={this.getSubKey}
+             change={this.onChange}
+             current={this.state.currentPage}
+             changeDefault={this.changeDefault}
+             query={query}
+           />
+           <Table
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={tempList}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.current}
+             total={formData['total']}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
+       }
       </PageHeaderWrapper>
     )
   }

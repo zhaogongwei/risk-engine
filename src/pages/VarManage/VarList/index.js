@@ -18,9 +18,11 @@ import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ varlist, loading }) => ({
   varlist,
   loading: loading.effects['assetDeploy/riskSubmit']
@@ -111,17 +113,27 @@ export default class VarList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const { permission } =  this.props;
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.goAddPage({ ...record, type: 2 })}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={() => this.deleteVar(record)}>
-                <Icon type="delete"/>删除
-              </Menu.Item>
-              <Menu.Item onClick={() => this.goPolicyList(record)}>
-                <Icon type="snippets" />应用策略
-              </Menu.Item>
+              {
+                permission.includes('re:variable:update')?
+                  <Menu.Item onClick={() => this.goAddPage({ ...record, type: 2 })}>
+                    <Icon type="edit"/>编辑
+                  </Menu.Item> : null
+              }
+              {
+                permission.includes('re:variable:delete')?
+                  <Menu.Item onClick={() => this.deleteVar(record)}>
+                    <Icon type="delete"/>删除
+                  </Menu.Item> : null
+              }
+              {
+                permission.includes('re:variable:inStrategy')?
+                  <Menu.Item onClick={() => this.goPolicyList(record)}>
+                    <Icon type="snippets"/>应用策略
+                  </Menu.Item> : null
+              }
             </Menu>
           )
           return (
@@ -157,7 +169,8 @@ export default class VarList extends PureComponent {
         },
       })
     }
-    this.change(this.props.varlist.current)
+    this.change(this.props.varlist.current);
+    this.child.selectchange(this.props.varlist.filterIpts.firstTypeId)
   }
   //  分页器改变页数的时候执行的方法
   onChange = async(current) => {
@@ -293,26 +306,31 @@ export default class VarList extends PureComponent {
   }
 
   render() {
+    const { permission } =  this.props;
     return (
-     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
-       <Card bordered={false}>
-         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.props.varlist.current} changeDefault={this.changeDefault}/>
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={this.props.varlist.varList}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.props.varlist.current}
-           total={this.props.varlist.total}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+     <PageHeaderWrapper renderBtn={permission.includes('re:variable:add')?this.renderTitleBtn:null}>
+       {
+         permission.includes('re:variable:view')?
+           <Card bordered={false}>
+             <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.props.varlist.current}
+                         changeDefault={this.changeDefault}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={this.props.varlist.varList}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.props.varlist.current}
+               total={this.props.varlist.total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+           </Card> : null
+       }
         <Modal
           title="应用策略"
           visible={this.state.visible}

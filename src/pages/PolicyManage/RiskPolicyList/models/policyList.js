@@ -124,6 +124,11 @@ export default {
       }
       return response;
     },
+    //删除输入变量时进行校验
+    *checkMouldList({payload},{call,put}){
+      let response = yield call(api.checkMouldList,payload)
+      return response;
+    },
   },
 
   reducers: {

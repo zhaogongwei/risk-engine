@@ -18,8 +18,10 @@ import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
+import permission from '@/utils/PermissionWrapper';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ account, loading }) => ({
   account,
   loading: loading.effects['account/fetchAccountList']
@@ -66,17 +68,24 @@ export default class AccountManage extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const {permission} = this.props;
           const action = (
             <Menu>
               {/* <Menu.Item onClick={()=>{this.goPolicyPower()}}>
                 <Icon type="edit"/>策略权限
               </Menu.Item> */}
-              <Menu.Item onClick={()=>{ this.addEdit(true,2,record) }}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteAccount(record)}>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:merchantUser:update')?
+                <Menu.Item onClick={()=>{ this.addEdit(true,2,record) }}>
+                  <Icon type="edit"/>编辑
+                </Menu.Item>:null
+              }
+              {
+                permission.includes('re:merchantUser:delete')?
+                <Menu.Item onClick={()=>this.deleteAccount(record)}>
+                  <Icon type="delete"/>删除
+                </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -131,10 +140,21 @@ export default class AccountManage extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
+    const {permission} = this.props
     return (
       <Fragment>
-        <Button onClick={()=>this.addEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
+        {
+          permission.includes('re:merchantUser:add')?
+            <Button onClick={()=>this.addEdit(true, 1)}>
+              <Icon type="plus" theme="outlined" />新增
+            </Button>:null
+        }
+        {
+          permission.includes('re:merchantUser:export')?
+            <Button onClick={()=>this.exportList()}>
+              <Icon type="export" />导出列表
+            </Button>:null
+        }
       </Fragment>
     )
   }
@@ -224,33 +244,37 @@ export default class AccountManage extends PureComponent {
       currPage: this.state.currPage,
       pageSize: this.state.pageSize
     }
+    const {permission} = this.props
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-       <Card
-        bordered={false}
-        title={'账号管理'}
-       >
-         <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={listData.records}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.currPage}
-           total={listData.total}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-         {
-           this.state.modalVisible ? <AddForm {...modalParams} /> : null
-         }
-       </Card>
+       {
+         permission.includes('re:merchantUser:view')?
+           <Card
+             bordered={false}
+             title={'账号管理'}
+           >
+             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={listData.records}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.currPage}
+               total={listData.total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+               {
+                 this.state.modalVisible ? <AddForm {...modalParams} /> : null
+               }
+           </Card>:null
+       }
       </PageHeaderWrapper>
     )
   }

@@ -18,6 +18,7 @@ import { connect } from 'dva'
 // 验证权限的组件
 import AddForm from '@/components/VarListModal/AddForm'
 import SetVarTable from '@/components/SetVarTable'
+import router from 'umi/router';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
 const Option = Select.Option;
@@ -146,12 +147,12 @@ export default class setVar extends PureComponent {
     })
   }
   //保存数据
-  handleSave = ()=>{
+  handleSave = async()=>{
     let count=0;
     const {varList} = this.props.setVar;
     const {query} = this.props.location;
     this.state.varFormData.map(item => {
-      item.validateFieldsAndScroll((errors,value)=>{
+      item.validateFieldsAndScroll(async(errors,value)=>{
         if(errors)count++;
       })
     })
@@ -160,7 +161,7 @@ export default class setVar extends PureComponent {
         message.error('请选择变量!')
       }else{
         console.log(varList)
-        this.props.dispatch({
+       const response = await this.props.dispatch({
           type: 'setVar/saveVarInfo',
           payload: {
             ruleType:'setVar',
@@ -168,6 +169,14 @@ export default class setVar extends PureComponent {
             nodeId:query['id']
           }
         })
+        if(response&&response.status ===1){
+          message.success(response.statusDesc)
+            .then(()=>{
+              router.goBack()
+            })
+        }else{
+          message.error(response.statusDesc)
+        }
       }
     }
     console.log(this.props.setVar.varList)
@@ -235,7 +244,7 @@ export default class setVar extends PureComponent {
               <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
             </Col>
             <Col>
-              <Button type="primary">返回</Button>
+              <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
             </Col>
           </Row>
           <Modal

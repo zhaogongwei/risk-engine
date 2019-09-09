@@ -197,32 +197,33 @@ export default class RiskLabel extends PureComponent {
     const {columns,current} = this.state;
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
-       <Card
-         bordered={false}
-         title={'风控标签'}
-       >
-         <FilterIpts
-           getSubKey={this.getSubKey}
-           change={this.change}
-           current={this.state.currentPage}
-           changeDefault={this.changeDefault}/>
-         <Table
-           bordered
-           pagination={false}
-           columns={columns}
-           dataSource={labelList}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={current}
-           total={pageData['total']}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-       </Card>
+         <Card
+           bordered={false}
+           title={'风控标签'}
+         >
+           <FilterIpts
+             getSubKey={this.getSubKey}
+             change={this.change}
+             current={this.state.currentPage}
+             changeDefault={this.changeDefault}/>
+           <Table
+             bordered
+             pagination={false}
+             columns={columns}
+             dataSource={labelList}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={current}
+             total={pageData['total']}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
+       }
       </PageHeaderWrapper>
     )
   }

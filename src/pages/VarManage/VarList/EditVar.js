@@ -228,21 +228,20 @@ export default class EditVar extends PureComponent {
     //   调用models的方法去删除dataSource中的数据
     if(this.state.emDelFlag){
       const newData = enumeration.filter(item => item.key !== key)
-        this.props.dispatch({
-          type: 'varlist/addData',
-          payload: newData
-        })
-        handleChange = (val) => {
-          this.setState({
-            isShow: val
-          })
-        }
-      }else{
-        message.error('已绑定应用策略')
-      }
-     
+      this.props.dispatch({
+        type: 'varlist/addData',
+        payload: newData
+      })
+    }else{
+      message.error('已绑定应用策略')
     }
-
+     
+  }
+  handleChange = (val) => {
+    this.setState({
+      isShow: val
+    })
+  }
   goBack=()=>{
     router.goBack()
   }

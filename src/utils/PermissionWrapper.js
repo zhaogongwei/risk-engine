@@ -16,7 +16,7 @@ export default WrapperComponent => {
         }
         render() {
             return (
-                <WrapperComponent permission= {this.state.permission}></WrapperComponent>
+                <WrapperComponent permission= {this.state.permission} { ...this.props }></WrapperComponent>
             )
         }
     }

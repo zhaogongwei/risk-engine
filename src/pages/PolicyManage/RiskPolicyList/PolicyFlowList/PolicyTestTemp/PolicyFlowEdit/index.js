@@ -174,6 +174,8 @@ class FlowPage extends React.Component {
           <Modal
             width="360px"
             visible={this.state.visible}
+            destroyOnClose={true}
+            maskClosable={false}
             onOk={this.handleOk}
             onCancel={()=>this.setState({visible:false})}
           >
