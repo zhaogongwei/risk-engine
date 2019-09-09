@@ -219,6 +219,7 @@ export default class BlackNameList extends PureComponent {
            title={'新增'}
            visible={this.state.visible}
            onOk={this.addFormSubmit}
+           confirmLoading={this.props.addBlackLoad}
            destroyOnClose={true}
            maskClosable={false}
            onCancel={()=>this.setState({visible:false})}
@@ -226,7 +227,6 @@ export default class BlackNameList extends PureComponent {
          <AddForm
            getSubKey={this.getSubKey}
            onChange={this.onChange}
-           loading={this.props.addBlackLoad}
          />
          </Modal>
        </Card>
