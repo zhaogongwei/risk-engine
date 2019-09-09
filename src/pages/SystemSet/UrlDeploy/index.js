@@ -17,10 +17,12 @@ import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 import Swal from 'sweetalert2'
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import AddForm from './addForm';
 import DropdownDetail from '@/components/DropdownDetail/DropdownDetail'
 import { findInArr, exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ urldeploy, loading }) => ({
   urldeploy,
   loading: loading.effects['urldeploy/fetchInterfaceList']
@@ -54,14 +56,21 @@ export default class UrlDeploy extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const {permission} = this.props
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.addEditPage(true, 2, record)}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteUrl(record.id)}>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:merchantInterface:update')?
+                  <Menu.Item onClick={() => this.addEditPage(true, 2, record)}>
+                    <Icon type="edit"/>编辑
+                  </Menu.Item>:null
+              }
+              {
+                permission.includes('re:merchantInterface:delete')?
+                <Menu.Item onClick={()=>this.deleteUrl(record.id)}>
+                  <Icon type="delete"/>删除
+                </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -190,36 +199,40 @@ export default class UrlDeploy extends PureComponent {
       currPage: this.state.currPage,
       pageSize: this.state.pageSize
     }
+    const {permission} = this.props
     return (
-     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
-       <Card
-        bordered={false}
-        title={'接口配置'}
-       >
-         <Table
-           bordered
-           pagination={false}
-           columns={this.state.columns}
-           dataSource={roleList.records}
-           loading={this.props.loading}
-         />
-         <Pagination
-           style={{ marginBottom: "50px" }}
-           showQuickJumper
-           defaultCurrent={1}
-           current={this.state.currPage}
-           total={roleList.total}
-           onChange={this.onChange}
-           showTotal={(total, range) => this.showTotal(total, range)}
-         />
-         {
-           this.state.visible ? 
-           <AddForm
-            getSubKey={this.getSubKey}
-            {...modalParams}
-          /> : null
-         }
-       </Card>
+     <PageHeaderWrapper renderBtn={permission.includes('re:merchantInterface:add')?this.renderTitleBtn:null}>
+       {
+         permission.includes('re:merchantInterface:view')?
+           <Card
+             bordered={false}
+             title={'接口配置'}
+           >
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={roleList.records}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.currPage}
+               total={roleList.total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+             {
+               this.state.visible ?
+                 <AddForm
+                   getSubKey={this.getSubKey}
+                   {...modalParams}
+                 /> : null
+             }
+           </Card>:null
+       }
       </PageHeaderWrapper>
     )
   }

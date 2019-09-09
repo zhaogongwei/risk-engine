@@ -17,10 +17,11 @@ import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 import { findInArr,exportJudgment } from '@/utils/utils'
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import AddForm from './AddRole';
 
-
+@permission
 @connect(({ role, loading }) => ({
   role,
   loading: loading.effects['role/queryRoleList']
@@ -62,14 +63,21 @@ export default class RoleManage extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) =>{
+          const { permission } =  this.props;
           const action = (
             <Menu>
-              <Menu.Item onClick={()=>this.isShowEdit(true, 2, record)}>
-                <Icon type="edit"/>修改
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.deleteRole(record.roleId)}>
-                <Icon type="delete"/>删除
-              </Menu.Item>
+              {
+                permission.includes('re:merchantRole:update')?
+                <Menu.Item onClick={()=>this.isShowEdit(true, 2, record)}>
+                  <Icon type="edit"/>修改
+                </Menu.Item>:null
+              }
+              {
+                permission.includes('re:merchantRole:delete')?
+                <Menu.Item onClick={()=>this.deleteRole(record.roleId)}>
+                  <Icon type="delete"/>删除
+                </Menu.Item>:null
+              }
             </Menu>
           )
           return (
@@ -124,10 +132,17 @@ export default class RoleManage extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
+    const {permission} = this.props;
     return (
       <Fragment>
-        <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>
-        <Button onClick={()=>this.exportList()}><Icon type="export" />导出列表</Button>
+        {
+          permission.includes('re:merchantRole:add')?
+          <Button onClick={()=>this.isShowEdit(true, 1)}><Icon type="plus" theme="outlined" />新增</Button>:null
+        }
+        {
+          permission.includes('re:merchantRole:export')?
+            <Button onClick={() => this.exportList()}><Icon type="export"/>导出列表</Button> : null
+        }
       </Fragment>
     )
   }
@@ -203,34 +218,38 @@ export default class RoleManage extends PureComponent {
       pageSize: this.state.pageSize
     }
     const { dataList, menuTree } =  this.props.role;
+    const {permission} = this.props;
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
-         <Card
-            bordered={false}
-            title={'角色管理'}
-         >
-         </Card>
-        <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currPage} pageSize={this.state.pageSize}/>
-        <Table
-          bordered
-          pagination={false}
-          columns={this.state.columns}
-          dataSource={dataList.records}
-          loading={this.props.loading}
-        />
-        <Pagination
-          style={{ marginBottom: "50px" }}
-          showQuickJumper
-          defaultCurrent={1}
-          current={this.state.currPage}
-          total={dataList.total}
-          onChange={this.onChange}
-          showTotal={(total, range) => this.showTotal(total, range)}
-        />
-         { this.state.updateVisible ? 
-         <AddForm
-           {...modalParams}
-         /> : null}
+       {
+         permission.includes('re:merchantRole:view')?
+           <Card
+             bordered={false}
+             title={'角色管理'}
+           >
+             <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currPage} pageSize={this.state.pageSize}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={dataList.records}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.currPage}
+               total={dataList.total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+             { this.state.updateVisible ?
+               <AddForm
+                 {...modalParams}
+               /> : null}
+           </Card>:null
+       }
       </PageHeaderWrapper>
     )
   }

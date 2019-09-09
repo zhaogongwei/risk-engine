@@ -9,9 +9,11 @@ import {
 } from 'antd';
 import styles from '../FilterIpts.less'
 import { connect } from 'dva'
+import permission from '@/utils/PermissionWrapper';
 const Option = Select.Option;
 const FormItem = Form.Item
 
+@permission
 @connect()
 
 @Form.create()
@@ -51,6 +53,7 @@ export default class FilterIpts extends Component {
         sm: { span: 17 }
       },
     }
+    const { permission } =  this.props;
     return (
       <Form
         className="ant-advanced-search-form"
@@ -87,7 +90,10 @@ export default class FilterIpts extends Component {
             md = { 10 }
           >
             <FormItem>
-              <Button type="primary" onClick={this.formSubmit}>查询</Button>
+              {
+                permission.includes('re:reportTemplate:list') ?
+                  <Button type="primary" onClick={this.formSubmit}>查询</Button>:null
+              }
               <Button type="primary" onClick={this.reset}>清空</Button>
             </FormItem>
           </Col>

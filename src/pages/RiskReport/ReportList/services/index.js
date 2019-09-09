@@ -9,3 +9,11 @@ export async function listData(params) {
     body: params
   });
 }
+
+//更新状态
+export async function updateStatus(params) {
+  return request(`${_baseApi}/report/updateReportList`, {
+    method: 'POST',
+    body: params
+  });
+}

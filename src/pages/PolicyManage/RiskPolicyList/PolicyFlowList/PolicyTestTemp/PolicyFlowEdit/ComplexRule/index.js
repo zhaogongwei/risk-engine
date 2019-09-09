@@ -20,6 +20,7 @@ import { connect } from 'dva'
 import ComplexTable from '@/components/ComplexTable'
 import AddForm from '@/components/VarListModal/AddForm'
 import FilterIpts from './FilterIpts';
+import router from 'umi/router';
 import { findInArr,exportJudgment,addListKey,deepCopy} from '@/utils/utils'
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -261,11 +262,11 @@ export default class ComplexRule extends PureComponent {
       const {complexList} = this.props.complex;
       const {selectId} = this.props.editorFlow;
       const {query} = this.props.location;
-      this.child.props.form.validateFields((errors,value)=>{
+      this.child.props.form.validateFields(async(errors,value)=>{
         if(!errors){
           if(complexList.length>0){
             if(!count){
-              this.props.dispatch({
+              const res = await this.props.dispatch({
                 type: 'complex/saveComplexInfo',
                 payload: {
                   ...formData,
@@ -274,6 +275,14 @@ export default class ComplexRule extends PureComponent {
                   nodeId:query['id']
                 }
               })
+              if(res&&res.status===1){
+                message.success(res.statusDesc)
+                  .then(()=>{
+                    router.goBack()
+                  })
+              }else{
+                message.error(res.statusDesc)
+              }
             }
           }else{
             message.error('请选择变量!')
@@ -404,11 +413,13 @@ export default class ComplexRule extends PureComponent {
               <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
             </Col>
             <Col>
-              <Button type="primary">返回</Button>
+              <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
             </Col>
           </Row>
           <Modal
             title={'选择变量'}
+            destroyOnClose={true}
+            maskClosable={false}
             visible={this.state.visible}
             onOk={this.addFormSubmit}
             onCancel={this.handleCancel}

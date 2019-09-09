@@ -16,9 +16,11 @@ import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
+import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
+@permission
 @connect(({ template, loading }) => ({
   template,
   loading: loading.effects['template/templateList']
@@ -57,23 +59,30 @@ export default class VarList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
+          const { permission } =  this.props;
           const action = (
             <Menu>
-              <Menu.Item onClick={() => this.goAddPage(0,record.id)}>
-                <Icon type="edit"/>编辑
-              </Menu.Item>
-              <Menu.Item onClick={()=>this.goPreview(record.id)}>
-                <Icon type="zoom-in" />查看
-              </Menu.Item>
+              {
+                permission.includes('re:reportTemplate:update')?
+                <Menu.Item onClick={() => this.goAddPage(0,record.id)}>
+                  <Icon type="edit"/>编辑
+                </Menu.Item>:null
+              }
+              {
+                permission.includes('re:reportTemplate:info')?
+                <Menu.Item onClick={()=>this.goPreview(record.id)}>
+                  <Icon type="zoom-in" />查看
+                </Menu.Item>:null
+              }
               {/* <Menu.Item onClick={()=>
                 router.push({
                   pathname:'/policyManage/riskpolicylist/list'
                 })}>
                 <Icon type="delete"/>策略
               </Menu.Item> */}
-              <Menu.Item >
-                <Icon type="unordered-list" />资产
-              </Menu.Item>
+                <Menu.Item onClick={()=>this.goRiskReport()}>
+                  <Icon type="unordered-list" />资产
+                </Menu.Item>:null
             </Menu>
           )
           return (
@@ -191,32 +200,40 @@ export default class VarList extends PureComponent {
       pathname:'/riskManage/riskpolicylist/list',
     })
   }
+  //去风控报告列表
+  goRiskReport = ()=>{
+    router.push(`/riskReport/reportList/list`)
+  }
   render() {
     const { templateList, total } = this.props.template
+    const {permission} = this.props;
     return (
-     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
-        <Card
-          bordered={false}
-          title="风控报告模板"
-        >
-          <FilterIpts getSubKey={this.getSubKey} change={this.onChange}/>
-          <Table
-            bordered
-            pagination={false}
-            columns={this.state.columns}
-            dataSource={templateList}
-            loading={this.props.loading}
-          />
-          <Pagination
-            style={{ marginBottom: "50px" }}
-            showQuickJumper
-            defaultCurrent={1}
-            current={this.state.current}
-            total={total}
-            onChange={this.onChange}
-            showTotal={(total, range) => this.showTotal(total, range)}
-          />
-        </Card>
+     <PageHeaderWrapper renderBtn={permission.includes('re:reportTemplate:add')?this.renderTitleBtn:null}>
+       {
+         permission.includes('re:reportTemplate:view')?
+           <Card
+             bordered={false}
+             title="风控报告模板"
+           >
+             <FilterIpts getSubKey={this.getSubKey} change={this.onChange}/>
+             <Table
+               bordered
+               pagination={false}
+               columns={this.state.columns}
+               dataSource={templateList}
+               loading={this.props.loading}
+             />
+             <Pagination
+               style={{ marginBottom: "50px" }}
+               showQuickJumper
+               defaultCurrent={1}
+               current={this.state.current}
+               total={total}
+               onChange={this.onChange}
+               showTotal={(total, range) => this.showTotal(total, range)}
+             />
+           </Card>:null
+       }
       </PageHeaderWrapper>
     )
   }

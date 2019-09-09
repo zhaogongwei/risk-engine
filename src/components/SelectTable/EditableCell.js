@@ -141,7 +141,7 @@ const EditableFormRow = Form.create()(EditableRow);
                         {
                           enumList&&enumList.map((item,index)=>{
                             return (
-                              <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                              <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
                             )
                           })
                         }
