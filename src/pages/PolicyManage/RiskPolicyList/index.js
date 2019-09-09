@@ -265,6 +265,7 @@ export default class RiskPolicyList extends PureComponent {
                visible={this.state.modalVisible}
                onOk={this.confirmChange}
                destroyOnClose={true}
+               maskClosable={false}
                onCancel={() => this.setState({ modalVisible: false })}
                width={550}
                title={status ? '新增策略' : '编辑策略'}

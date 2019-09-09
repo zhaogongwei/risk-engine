@@ -434,6 +434,8 @@ export default class SimpleRule extends PureComponent {
           </Row>
           <Modal
             title={'选择变量'}
+            destroyOnClose={true}
+            maskClosable={false}
             visible={this.state.visible}
             onOk={this.addFormSubmit}
             onCancel={this.handleCancel}
