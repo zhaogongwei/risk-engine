@@ -98,6 +98,15 @@ export default function request(url, options) {
         router.push('/user/login')
         return data
       }
+      //验证是否具有权限
+      if(data.status&&data.status===909){
+        notification.warning({
+          message: `暂无权限`,
+          description: `${data.statusDesc}`,
+        })
+        router.push('/exception/403');
+        return data;
+      }
       return data
     })
     .catch(e => {
@@ -109,7 +118,7 @@ export default function request(url, options) {
         });
         return;
       }
-      if (status === 403 || status === 909) {
+      if (status === 403) {
         router.push('/exception/403');
         return;
       }
