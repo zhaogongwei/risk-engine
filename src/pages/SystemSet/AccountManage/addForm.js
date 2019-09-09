@@ -252,7 +252,7 @@ export default class AddForm extends Component {
                     message: '请输入姓名'
                   }]
                 })(
-                  <Input/>
+                  <Input maxLength={15}/>
                 )}
               </FormItem>
             </Col>
@@ -285,7 +285,7 @@ export default class AddForm extends Component {
                     message: '请输入手机号码'
                   }]
                 })(
-                  <Input/>
+                  <Input maxLength={11}/>
                 )}
               </FormItem>
             </Col>

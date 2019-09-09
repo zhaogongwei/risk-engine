@@ -141,7 +141,7 @@ export default class IndexComponent extends Component {
                   message: '请输入角色名称'
                 }]
               })(
-                <Input />
+                <Input maxLength={15}/>
               )}
           </FormItem>
           <FormItem label="角色说明" {...formItemConfig}>
@@ -152,7 +152,7 @@ export default class IndexComponent extends Component {
                 message: '请输入角色说明'
               }]
               })(
-                <TextArea rows={4} placeholder="" />
+                <TextArea rows={4} maxLength={15}/>
               )}
           </FormItem>
           <FormItem label="状态"  {...formItemConfig}>
