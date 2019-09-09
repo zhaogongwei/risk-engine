@@ -203,46 +203,43 @@ export default class BlackNameList extends PureComponent {
     const { blackNameList, total } = this.props.blackName
     const {permission} = this.props
     return (
-     <PageHeaderWrapper renderBtn={permission.includes('re:black:add')?this.renderTitleBtn:null}>
-       {
-         permission.includes('re:black:view')?
-           <Card
-             bordered={false}
-             title={'本地黑名单库'}
-           >
-             <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.current}/>
-             <Table
-               bordered
-               pagination={false}
-               columns={this.state.columns}
-               dataSource={blackNameList}
-               loading={this.props.loading}
-             />
-             <Pagination
-               style={{ marginBottom: "50px" }}
-               showQuickJumper
-               defaultCurrent={1}
-               current={this.state.current}
-               total={total}
-               onChange={this.onChange}
-               showTotal={(total, range) => this.showTotal(total, range)}
-             />
-             <Modal
-               title={'新增'}
-               visible={this.state.visible}
-               onOk={this.addFormSubmit}
-               destroyOnClose={true}
-               maskClosable={false}
-               onCancel={()=>this.setState({visible:false})}
-             >
-               <AddForm
-                 getSubKey={this.getSubKey}
-                 onChange={this.onChange}
-                 loading={this.props.addBlackLoad}
-               />
-             </Modal>
-           </Card>:null
-       }
+     <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
+       <Card
+         bordered={false}
+         title={'本地黑名单库'}
+         >
+         <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.current}/>
+         <Table
+           bordered
+           pagination={false}
+           columns={this.state.columns}
+           dataSource={blackNameList}
+           loading={this.props.loading}
+         />
+         <Pagination
+           style={{ marginBottom: "50px" }}
+           showQuickJumper
+           defaultCurrent={1}
+           current={this.state.current}
+           total={total}
+           onChange={this.onChange}
+           showTotal={(total, range) => this.showTotal(total, range)}
+         />
+         <Modal
+           title={'新增'}
+           visible={this.state.visible}
+           onOk={this.addFormSubmit}
+           confirmLoading={this.props.addBlackLoad}
+           destroyOnClose={true}
+           maskClosable={false}
+           onCancel={()=>this.setState({visible:false})}
+         >
+         <AddForm
+           getSubKey={this.getSubKey}
+           onChange={this.onChange}
+         />
+         </Modal>
+       </Card>
       </PageHeaderWrapper>
     )
   }

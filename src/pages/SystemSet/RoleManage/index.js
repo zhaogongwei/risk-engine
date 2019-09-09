@@ -147,7 +147,14 @@ export default class RoleManage extends PureComponent {
     )
   }
   //添加、编辑事件
-  isShowEdit=(flag, type, record = {})=>{
+  isShowEdit = async(flag, type, record = {})=>{
+    const { dispatch, roleId } = this.props; 
+    await dispatch({
+      type: 'role/fetchInitData',
+      payload: {
+        roleId:record.roleId
+      }
+    })
     this.setState({
       updateVisible: !!flag,
       type,
