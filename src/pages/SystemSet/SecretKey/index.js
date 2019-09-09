@@ -44,6 +44,7 @@ export default class IndexComponent extends Component {
 			cancelButtonText: '取消'
 		})
 		if(confirmVal.value){
+			this.props.form.resetFields()
 			const { dispatch } =  this.props;
 			let res = await dispatch({
 				type: 'secret/createSecret',
@@ -91,7 +92,7 @@ export default class IndexComponent extends Component {
         xs: { span: 24, offset: 0 },
         sm: { span: 10, offset: 7 },
       },
-    };
+		};
     return (
 			<Card bordered={false}>
 				<Form>
