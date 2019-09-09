@@ -49,18 +49,17 @@ export default class FilterIpts extends Component {
     this.props.form.resetFields()
   }
   componentDidMount = async()=> {
+    this.props.getSubKey(this,'child')
   	await this.props.dispatch({
       type: 'varlist/getSelectLevel1',
       payload: {
       	
       }
     })
-    console.log(this.props.varlist.filterIpts)
     this.props.form.setFieldsValue({
       firstTypeId:Number(this.props.varlist.filterIpts.firstTypeId) || '',
       secondTypeId:Number(this.props.varlist.filterIpts.secondTypeId) || '',
     })
-    this.props.getSubKey(this,'child')
   }
  
   render() {
