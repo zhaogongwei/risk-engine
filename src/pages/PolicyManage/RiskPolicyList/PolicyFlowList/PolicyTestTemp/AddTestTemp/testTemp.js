@@ -40,6 +40,7 @@ export default class TestTemp extends Component {
           payload:{
             id:query['id']?query['id']:null,
             strategyId:query['strategyId'],
+            strategyFlowId:query['flowId'],
             inputVarList:formData,
             templateName:this.props.form.getFieldValue('templateName'),
           }
