@@ -40,6 +40,7 @@ export default class TestTemp extends Component {
           payload:{
             id:query['id']?query['id']:null,
             strategyId:query['strategyId'],
+            strategyFlowId:query['flowId'],
             inputVarList:formData,
             templateName:this.props.form.getFieldValue('templateName'),
           }
@@ -239,7 +240,7 @@ export default class TestTemp extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { query } = this.props.location;
-    const { type } = query;
+    const {strategyId,type,id} = query
     const { tempVarList,templateName,resultList } = this.props.testTemp;
     const formItemConfig = {
       labelCol:{span:8},
@@ -291,6 +292,7 @@ export default class TestTemp extends Component {
                                 const response = await this.props.dispatch({
                                   type: 'testTemp/checkTemplateName',
                                   payload: {
+                                    id:id,
                                     templateName:templateName
                                   }
                                 })
