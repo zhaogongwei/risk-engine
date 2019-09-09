@@ -132,7 +132,7 @@ export default class RoleManage extends PureComponent {
   }
   //右上角渲染
   renderTitleBtn = () => {
-    const {permission} = this.props;
+    const { permission } = this.props;
     return (
       <Fragment>
         {
@@ -141,20 +141,22 @@ export default class RoleManage extends PureComponent {
         }
         {
           permission.includes('re:merchantRole:export')?
-            <Button onClick={() => this.exportList()}><Icon type="export"/>导出列表</Button> : null
+          <Button onClick={() => this.exportList()}><Icon type="export"/>导出列表</Button> : null
         }
       </Fragment>
     )
   }
   //添加、编辑事件
   isShowEdit = async(flag, type, record = {})=>{
-    const { dispatch, roleId } = this.props; 
-    await dispatch({
-      type: 'role/fetchInitData',
-      payload: {
-        roleId:record.roleId
-      }
-    })
+    if(flag) {
+      const { dispatch, roleId } = this.props; 
+      await dispatch({
+        type: 'role/fetchInitData',
+        payload: {
+          roleId:record.roleId
+        }
+      })
+    }
     this.setState({
       updateVisible: !!flag,
       type,
@@ -162,7 +164,7 @@ export default class RoleManage extends PureComponent {
     })
   }
   //删除角色
-  deleteRole=async(roleId)=>{
+  deleteRole = async(roleId) => {
     const confirmVal = await Swal.fire({
       text: '确定要删除该角色吗？',
       type: 'warning',
@@ -218,7 +220,7 @@ export default class RoleManage extends PureComponent {
       pageSize: this.state.pageSize
     }
     const { dataList, menuTree } =  this.props.role;
-    const {permission} = this.props;
+    const { permission } = this.props;
     return (
      <PageHeaderWrapper renderBtn={this.renderTitleBtn}>
        {

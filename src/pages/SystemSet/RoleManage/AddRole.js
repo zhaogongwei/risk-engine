@@ -84,9 +84,6 @@ export default class IndexComponent extends Component {
     this.props.form.resetFields()
   }
   onExpand = expandedKeys => {
-    console.log('onExpand', expandedKeys);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
     this.setState({
       expandedKeys,
       autoExpandParent: false,
@@ -121,74 +118,54 @@ export default class IndexComponent extends Component {
     const { infoData: { menuTree, roleInfo }, activeList } = this.props.role;
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 }
-    }
-    // const tProps = {
-    //   treeData: menuTree,
-    //   onChange: this.onChange,
-    //   treeCheckable: true,
-    //   maxTagCount: 0,
-    //   dropdownStyle: { maxHeight: 600, overflow: 'auto' },
-    //   allowClear: true
-    // };
+      labelCol: { span: 5 },
+      wrapperCol: { span: 18 },
+    };
    
     return (
-      <div>
-        <Modal
+      <Modal
          title={this.props.type === 1 ? '新增角色' : '修改角色'}
+         bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
          visible={updateVisible}
          onOk={this.submitHandler}
          maskClosable={false}
          destroyOnClose={true}
          onCancel={() => isShowEdit(false)}
        >
-        <Form className="ant-advanced-search-form">
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="角色名称" {...formItemConfig}>
-                {getFieldDecorator('roleName',{
-                  initialValue: type == 2 ? roleInfo && roleInfo.roleName : null,
-                    rules:[{
-                      required:true,
-                      message: '请输入角色名称'
-                    }]
-                  })(
-                    <Input />
-                  )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="角色说明" {...formItemConfig}>
-                {getFieldDecorator('roleExplain',{
-                  initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
-                  rules:[{
-                    required:true,
-                    message: '请输入角色说明'
-                  }]
-                })(
-                  <TextArea rows={4}  style={{width:330}} placeholder="" />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="状态"  {...formItemConfig}>
-                {getFieldDecorator('status',{
-                  initialValue: type == 2 ? roleInfo && roleInfo.status : null,
-                  rules: [{ required: true, message: '请选择角色状态'}],
-                  })(
-                    <RadioGroup>
-                      <Radio value={0}>启用</Radio>
-                      <Radio value={1}>禁用</Radio>
-                    </RadioGroup>
-                  )}
-              </FormItem>
-            </Col>
-          </Row>
+        <Form>
+          <FormItem label="角色名称" {...formItemConfig}>
+            {getFieldDecorator('roleName',{
+              initialValue: type == 2 ? roleInfo && roleInfo.roleName : null,
+                rules:[{
+                  required:true,
+                  message: '请输入角色名称'
+                }]
+              })(
+                <Input />
+              )}
+          </FormItem>
+          <FormItem label="角色说明" {...formItemConfig}>
+            {getFieldDecorator('roleExplain',{
+              initialValue: type == 2 ? roleInfo && roleInfo.roleExplain : null,
+              rules:[{
+                required:true,
+                message: '请输入角色说明'
+              }]
+              })(
+                <TextArea rows={4} placeholder="" />
+              )}
+          </FormItem>
+          <FormItem label="状态"  {...formItemConfig}>
+            {getFieldDecorator('status',{
+              initialValue: type == 2 ? roleInfo && roleInfo.status : null,
+              rules: [{ required: true, message: '请选择角色状态'}],
+              })(
+                <RadioGroup>
+                  <Radio value={0}>启用</Radio>
+                  <Radio value={1}>禁用</Radio>
+                </RadioGroup>
+              )}
+          </FormItem>
           {
             type == 2 ? 
             <FormItem label="授权" {...formItemConfig}>
@@ -210,7 +187,6 @@ export default class IndexComponent extends Component {
           }
         </Form>
         </Modal>
-      </div>
     )
   }
 }
