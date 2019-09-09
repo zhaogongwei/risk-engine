@@ -42,14 +42,14 @@ export default class ThreeSideQuery extends Component {
       checkedList:checkedValues
     })
   }
-  formSubmit=()=>{
+  formSubmit=async()=>{
     const {query} = this.props.location;
     const {checkedList} = this.state;
     if(!checkedList.length){
       message.error('请勾选第三方选项!')
       return;
     }
-    this.props.dispatch({
+    const response = await this.props.dispatch({
       type: 'threeSide/saveThreeSideInfo',
       payload: {
         ruleType:'third',
@@ -57,6 +57,14 @@ export default class ThreeSideQuery extends Component {
         nodeId:query['id']
       }
     })
+    if(response&&response.status == 1){
+      message.success(response.statusDesc)
+        .then(()=>{
+          router.goBack()
+        })
+    }else{
+      message.error(response.statusDesc)
+    }
   }
   render() {
     const { getFieldDecorator } = this.props.form;

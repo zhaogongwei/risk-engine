@@ -15,12 +15,10 @@ import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
-import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import Swal from 'sweetalert2';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@permission
 @connect(({ policyFlowList, loading }) => ({
   policyFlowList,
   loading: loading.effects['policyFlowList/riskSubmit']
@@ -67,15 +65,11 @@ export default class PolicyFlowList extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => {
-          const { permission } =  this.props;
           const action = (
             <Menu>
-              {
-                permission.includes('re:merchanPolicyFLow:update')?
-                  <Menu.Item onClick={()=>this.goEditPage(record,0)}>
-                    <Icon type="edit"/>编辑
-                  </Menu.Item>:null
-              }
+              <Menu.Item onClick={()=>this.goEditPage(record,0)}>
+                <Icon type="edit"/>编辑
+              </Menu.Item>
               <Menu.Item onClick={()=>this.goPolicyTest(record)}>
                 <Icon type="delete"/>测试
               </Menu.Item>
@@ -217,11 +211,8 @@ export default class PolicyFlowList extends PureComponent {
   }
   render() {
     const {policyFlowList,formData} = this.props.policyFlowList
-    const { permission } =  this.props;
     return (
-     <PageHeaderWrapper  renderBtn={permission.includes('re:merchanPolicyFlow:add')?this.renderTitleBtn:null}>
-       {
-         permission.includes('re:merchanPolicyFlow:list')?
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card
            bordered={false}
            title ={'策略流列表'}
@@ -249,7 +240,7 @@ export default class PolicyFlowList extends PureComponent {
              onChange={this.onChange}
              showTotal={(total, range) => this.showTotal(total, range)}
            />
-         </Card>:null
+         </Card>
        }
       </PageHeaderWrapper>
     )

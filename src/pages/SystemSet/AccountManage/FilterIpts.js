@@ -10,12 +10,14 @@ import {
 } from 'antd';
 import { connect } from 'dva'
 import moment from 'moment';
+import permission from '@/utils/PermissionWrapper';
 import styles from '../FilterIpts.less'
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item
 
+@permission
 @connect(({ account }) => ({
   account
 }))
@@ -55,6 +57,7 @@ export default class FilterIpts extends Component {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    const {permission} = this.props
     return (
       <Form
         className="ant-advanced-search-form"
@@ -113,7 +116,10 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={1}>
-            <Button type="primary" onClick={this.formSubmit}>查询</Button>
+            {
+              permission.includes('re:merchantUser:list')?
+                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null
+            }
             <Button type="primary" onClick={this.reset}>清空</Button>
           </Col>
         </Row>

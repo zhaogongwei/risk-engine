@@ -44,12 +44,7 @@ export default {
     //评分模型节点信息保存
     *saveScoreInfo({payload,callback},{call,put}){
       let response = yield call(api.saveScoreInfo,payload)
-      if(response && response.status == 1){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
+      return response
     },
     //评分模型交集验证
     *verifyMixed({payload,callback},{call,put}){

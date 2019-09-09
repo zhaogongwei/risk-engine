@@ -13,10 +13,8 @@ import { connect } from 'dva'
 import { routerRedux } from 'dva/router';
 import router from 'umi/router';
 // 验证权限的组件
-import permission from '@/utils/PermissionWrapper';
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
-@permission
 @connect(({ policyTestTemp, loading }) => ({
   policyTestTemp,
   loading: loading.effects['policyTestTemp/fetchTestTempList']
@@ -152,39 +150,36 @@ export default class PolicyTestTemp extends PureComponent {
   render() {
     const {tempList,formData} = this.props.policyTestTemp;
     const {query} = this.props.location;
-    const { permission } =  this.props;
     return (
-     <PageHeaderWrapper  renderBtn={permission.includes('re:merchanTemp:add')?this.renderTitleBtn:null}>
-       {
-         permission.includes('re:merchanTemp:list')?
-           <Card
-             bordered={false}
-             title={'策略流测试模板'}
-           >
-             <FilterIpts
-               getSubKey={this.getSubKey}
-               change={this.onChange}
-               current={this.state.currentPage}
-               changeDefault={this.changeDefault}
-               query={query}
-             />
-             <Table
-               bordered
-               pagination={false}
-               columns={this.state.columns}
-               dataSource={tempList}
-               loading={this.props.loading}
-             />
-             <Pagination
-               style={{ marginBottom: "50px" }}
-               showQuickJumper
-               defaultCurrent={1}
-               current={this.state.current}
-               total={formData['total']}
-               onChange={this.onChange}
-               showTotal={(total, range) => this.showTotal(total, range)}
-             />
-           </Card>:null
+     <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+         <Card
+           bordered={false}
+           title={'策略流测试模板'}
+         >
+           <FilterIpts
+             getSubKey={this.getSubKey}
+             change={this.onChange}
+             current={this.state.currentPage}
+             changeDefault={this.changeDefault}
+             query={query}
+           />
+           <Table
+             bordered
+             pagination={false}
+             columns={this.state.columns}
+             dataSource={tempList}
+             loading={this.props.loading}
+           />
+           <Pagination
+             style={{ marginBottom: "50px" }}
+             showQuickJumper
+             defaultCurrent={1}
+             current={this.state.current}
+             total={formData['total']}
+             onChange={this.onChange}
+             showTotal={(total, range) => this.showTotal(total, range)}
+           />
+         </Card>
        }
       </PageHeaderWrapper>
     )

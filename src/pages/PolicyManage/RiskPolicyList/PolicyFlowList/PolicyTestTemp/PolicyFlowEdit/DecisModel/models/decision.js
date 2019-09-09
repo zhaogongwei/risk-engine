@@ -48,11 +48,6 @@ export default {
     //保存决策模型信息
     *savedecInfo({payload,callback}, { call, put }){
       let response = yield call(api.savedecInfo,payload)
-      if(response && response.status === 1){
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
-      }
       return response
     }
   },

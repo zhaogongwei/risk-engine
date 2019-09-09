@@ -352,6 +352,7 @@ export default class InputDeploy extends PureComponent {
             visible={this.state.visible}
             onOk={this.handleOk}
             destroyOnClose={true}
+            maskClosable={false}
             onCancel={()=>this.setState({visible:false})}
             width={1040}
           >

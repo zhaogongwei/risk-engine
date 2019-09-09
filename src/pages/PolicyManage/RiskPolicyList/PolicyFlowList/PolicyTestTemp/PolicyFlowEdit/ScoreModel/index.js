@@ -17,6 +17,7 @@ import { connect } from 'dva'
 import FilterIpts from './FilterIpts';
 //import AddForm from './AddForm';
 import AddForm from '@/components/VarListModal/AddForm'
+import router from 'umi/router';
 import EditForm from './editForm';
 import ScoreModelTable from '@/components/ScoreModelTable'
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
@@ -309,10 +310,10 @@ export default class ScoreModel extends PureComponent {
     const formData = this.child.getFormValue();
     const {scoreList} = this.props.scoreModel;
     const {query} = this.props.location;
-    this.child.props.form.validateFields((errors,value)=>{
+    this.child.props.form.validateFields(async(errors,value)=>{
       if(!errors){
         if(scoreList.length>0){
-          this.props.dispatch({
+          const response = await this.props.dispatch({
             type: 'scoreModel/saveScoreInfo',
             payload: {
               ...formData,
@@ -321,6 +322,14 @@ export default class ScoreModel extends PureComponent {
               nodeId:query['id']
             }
           })
+          if(response && response.status == 1){
+            message.success(response.statusDesc)
+              .then(()=>{
+                router.goBack()
+              })
+          }else{
+            message.error(response.statusDesc)
+          }
         }else{
           message.error('请选择变量!')
         }
@@ -362,7 +371,7 @@ export default class ScoreModel extends PureComponent {
                   <Button type="primary" loading={this.props.buttonLoading} onClick={this.handleSave}>保存并提交</Button>
                 </Col>
                 <Col>
-                  <Button>返回</Button>
+                  <Button onClick={()=>router.goBack()}>返回</Button>
                 </Col>
               </Row>
             </Col>

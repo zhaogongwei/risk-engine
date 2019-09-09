@@ -25,12 +25,6 @@ export default {
     //设置变量节点信息保存
     *saveVarInfo({payload,callback},{call,put}){
       let response = yield call(api.saveVarInfo,payload)
-      if(response&&response.status ===1){
-        message.success(response.statusDesc)
-        callback()
-      }else{
-        message.error(response.statusDesc)
-      }
       return response;
     },
   },

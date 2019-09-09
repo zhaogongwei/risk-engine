@@ -18,6 +18,7 @@ import { connect } from 'dva'
 import FilterIpts from './FilterIpts';
 import EditForm from './EditForm';
 import AddForm from '@/components/VarListModal/AddForm'
+import router from 'umi/router';
 import { findInArr,exportJudgment } from '@/utils/utils'
 import SelectableTable from '@/components/SelectTable'
 import { addListKey,deepCopy } from '@/utils/utils'
@@ -335,6 +336,12 @@ export default class DecisModel extends PureComponent {
             })
           })
       }
+    }else if(type==2){
+      //输出结果
+      this.setState({
+        visible:true,
+        inputType:type,
+      })
     }
   }
   //行列设置编辑弹框确定事件
@@ -364,7 +371,7 @@ export default class DecisModel extends PureComponent {
       }
   }
   //保存提交事件
-  handleSave = ()=>{
+  handleSave = async()=>{
     console.log(this.props.decision)
     console.log(this.props.decision.tableList)
     const formData = this.child.getFormValue();
@@ -387,7 +394,7 @@ export default class DecisModel extends PureComponent {
       tableColList.push(item.colVarInfo)
     })
     if(!count){
-      this.props.dispatch({
+     const response =  await this.props.dispatch({
         type: 'decision/savedecInfo',
         payload: {
           ...formData,
@@ -397,6 +404,14 @@ export default class DecisModel extends PureComponent {
           nodeId:query['id']
         }
       })
+      if(response && response.status === 1){
+        message.success(response.statusDesc)
+          .then(()=>{
+            router.goBack()
+          })
+      }else{
+        message.error(response.statusDesc)
+      }
     }
 
   }
@@ -472,7 +487,7 @@ export default class DecisModel extends PureComponent {
                    <Button type="primary" onClick={this.handleSave} loading={this.props.buttonLoading}>保存并提交</Button>
                  </Col>
                  <Col>
-                   <Button type="primary">返回</Button>
+                   <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
                  </Col>
                </Row>
              </Card>
