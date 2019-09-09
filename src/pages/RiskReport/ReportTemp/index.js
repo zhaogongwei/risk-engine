@@ -82,7 +82,7 @@ export default class VarList extends PureComponent {
               </Menu.Item> */}
                 <Menu.Item onClick={()=>this.goRiskReport()}>
                   <Icon type="unordered-list" />资产
-                </Menu.Item>:null
+                </Menu.Item>
             </Menu>
           )
           return (
