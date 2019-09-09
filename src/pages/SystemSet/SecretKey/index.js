@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import {
 	Card,
   Radio,
@@ -46,6 +45,7 @@ export default class IndexComponent extends Component {
 			cancelButtonText: '取消'
 		})
 		if(confirmVal.value){
+			this.props.form.resetFields()
 			const { dispatch } =  this.props;
 			let res = await dispatch({
 				type: 'secret/createSecret',

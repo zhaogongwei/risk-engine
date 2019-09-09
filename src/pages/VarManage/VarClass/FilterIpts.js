@@ -62,6 +62,9 @@ export default class FilterIpts extends Component {
       	parentId:value
       }
     })
+    this.props.form.setFieldsValue({
+      id:''
+    })
   }
 
     //编辑变量后清空数据

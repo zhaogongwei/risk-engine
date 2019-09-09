@@ -37,6 +37,9 @@ export default class FilterIpts extends Component {
       	parentId:value
       }
     })
+    this.props.form.setFieldsValue({
+      secondTypeId:''
+    })
   }
   //   获取表单信息
   getFormValue = () => {
