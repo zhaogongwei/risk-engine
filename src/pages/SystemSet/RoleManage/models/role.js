@@ -6,7 +6,7 @@ export default {
   state: {
     dataList: [],//角色列表
     queryConfig: {},
-    infoData: {},
+    infoData: {}
   },
 
   effects: {
@@ -59,6 +59,7 @@ export default {
     saveInitData(state, { payload }) {
       return {
         ...state,
+        activeList: payload.activeList,
         infoData: payload
       }
     },
@@ -67,6 +68,12 @@ export default {
         ...state,
         queryConfig: payload
       }
+    },
+    modifyMenuAuthorize(state, { payload }) {
+      return {
+        ...state,
+        activeList: payload
+      };
     }
   },
 };

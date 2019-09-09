@@ -215,7 +215,13 @@ export default class AddForm extends Component {
                         message: '请输入密码'
                       }]
                     })(
-                      <Input type="password"/>
+                      <Input type="password" onChange={()=>{
+                        if(this.props.form.getFieldValue('confirmPassword')){
+                          this.props.form.setFieldsValue({
+                            confirmPassword: ''
+                          })
+                        }
+                      }}/>
                     )}
                   </FormItem>
                 </Col>
