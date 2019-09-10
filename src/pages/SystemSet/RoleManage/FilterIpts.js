@@ -74,12 +74,13 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={1}>
-            {
-              permission.includes('re:merchantRole:list')?
-                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null
-            }
-            <Button type="primary" onClick={this.reset}>清空</Button>
+          <Col xxl={4} xl={6} lg={8} md={10}>
+            <FormItem>
+              {
+                permission.includes('re:merchantRole:list') ? <Button type="primary" onClick={this.formSubmit}>查询</Button> : null
+              }
+              <Button type="primary" onClick={this.reset}>清空</Button>
+            </FormItem>
           </Col>
         </Row>
       </Form>

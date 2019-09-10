@@ -15,8 +15,9 @@ import styles from '../FilterIpts.less'
 import { connect } from 'dva'
 const FormItem = Form.Item
 
-@connect(({ urldeploy }) => ({
-  urldeploy
+@connect(({ urldeploy, loading }) => ({
+  urldeploy,
+  loading: loading.models.urldeploy
 }))
 
 @Form.create()
@@ -90,6 +91,7 @@ export default class AddForm extends Component {
     return (
       <Modal
         title={this.props.type === 1 ? '新增接口' : '修改接口'}
+        confirmLoading={this.props.loading}
         visible={visible}
         onOk={this.submitHandler}
         onCancel={()=> addEditPage(false)}
