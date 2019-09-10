@@ -58,6 +58,8 @@ export default class TestTemp extends Component {
             //开始加载节点
             this.setState({
               loading:true,
+              completeFlag:response.data.completeFlag,
+              presentationId:response.data.presentationId,
             })
             this.queryResult = setInterval(()=>{
               this.queryTestResult(res.data.assetCode,query['flowId'])
@@ -84,6 +86,12 @@ export default class TestTemp extends Component {
         flowId:flowId
       }
     })
+    if(res&&res.status===1){
+      this.setState({
+        completeFlag:res.status.completeFlag,
+        presentationId:res.data.presentationId,
+      })
+    }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -124,6 +132,18 @@ export default class TestTemp extends Component {
   }
   componentWillUnmount(){
     this.queryResult&&clearInterval(this.queryResult)
+    this.props.dispatch({
+      type: 'testTemp/saveResultList',
+      payload:{
+        data:{
+          list:[]
+        },
+      }
+    })
+  }
+  //去报告预览
+  goPreview=()=>{
+    router.push(`/riskReport/reportList/mould/preview?id=${this.state.presentationId}`)
   }
   //根据变量的类型创建不同的formItem;
   createFormItem=(item,index)=>{
@@ -345,7 +365,7 @@ export default class TestTemp extends Component {
                   {
                     this.state.visible?
                       <Col span={18}>
-                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
+                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}} onClick={this.goPreview}>
                           风控报告
                         </p>
                       </Col>:null
