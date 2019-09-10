@@ -20,6 +20,7 @@ import styles from '../FilterIpts.less'
 import EditableTable from '@/components/EditableTable'
 import { addListKey,deepCopy } from '@/utils/utils'
 import { connect } from 'dva'
+import moment from 'moment'
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item
@@ -113,7 +114,7 @@ export default class EditVar extends PureComponent {
       disable:false,
       updateTime:'',
       updateTrueName:'',
-      defaultVal:'',
+      defaultVal:null,
       emDelFlag:true,
     };
   }
@@ -149,9 +150,20 @@ export default class EditVar extends PureComponent {
         })
         //设置缺省值和显示枚举flag
         this.setState({
-          defaultVal:data.defaultValue,
           isShow:data.enumFlag
         })
+        //时间和日期控件的默认值需要经过moment处理，没有值时，不能为''，只能为null
+        if(data.variableType==='time'||data.variableType==='date'){
+            if(data.defaultValue){
+              this.setState({
+                defaultVal:moment(data.defaultValue),
+              })
+            }
+        }else{
+          this.setState({
+            defaultVal:data.defaultValue,
+          })
+        }
         //设置不可更改,修改人，日期
         this.state.disable = true;
         this.state.updateTime = data.updateTime

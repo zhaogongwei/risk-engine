@@ -244,10 +244,10 @@ export default class InputDeploy extends PureComponent {
     tableList.map((item,index)=>{
       inputVarList.push(item['variableId'])
     })
-    this.props.form.validateFields((err,value)=>{
+    this.props.form.validateFields(async(err,value)=>{
       if(!err){
         if(tableList.length){
-          this.props.dispatch({
+          const res = await this.props.dispatch({
             type: 'policyList/saveInputVar',
             payload:{
               inputVarList:inputVarList,
@@ -255,6 +255,14 @@ export default class InputDeploy extends PureComponent {
               ...formData,
             }
           })
+          if(res&&res.status===1){
+            message.success(res.statusDesc)
+              .then(()=>{
+                router.goBack()
+              })
+          }else{
+            message.error(res.statusDesc)
+          }
         }else{
           message.error('请添加变量!')
         }

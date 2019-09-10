@@ -236,13 +236,13 @@ export default class LabelEdit extends PureComponent {
     const {query} = this.props.location;
     const {id,strategyId,type} = query;
     const formData = this.getFormValue()
-    this.props.form.validateFields((error,value)=>{
+    this.props.form.validateFields(async (error,value)=>{
       if(!error){
         if(tableList.length){
           if(!count){
             if(type==1){
               //新增标签
-              this.props.dispatch({
+              const res = this.props.dispatch({
                 type: 'risklabel/addRiskLabel',
                 payload: {
                   strategyId:strategyId,
@@ -250,9 +250,17 @@ export default class LabelEdit extends PureComponent {
                   ...formData,
                 }
               })
+              if(res&&res.status===1){
+                message.success(res.statusDesc)
+                  .then(()=>{
+                    router.goBack()
+                  })
+              }else{
+                message.error(res.statusDesc)
+              }
             }else{
               //编辑标签
-              this.props.dispatch({
+              const res = await this.props.dispatch({
                 type: 'risklabel/editRiskLabel',
                 payload: {
                   id:id,
@@ -261,6 +269,14 @@ export default class LabelEdit extends PureComponent {
                   ...formData,
                 }
               })
+              if(res&&res.status===1){
+                message.success(res.statusDesc)
+                  .then(()=>{
+                    router.goBack()
+                  })
+              }else{
+                message.error(res.statusDesc)
+              }
             }
           }
         }else{
@@ -320,7 +336,7 @@ export default class LabelEdit extends PureComponent {
                       },
                     ]
                   })(
-                    <Input />
+                    <Input maxLength={31}/>
                   )}
                 </FormItem>
               </Col>

@@ -57,7 +57,7 @@ export default class FilterIpts extends Component {
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
+        <Row className={styles.btmMargin}  gutter={24}>
           <Col
             xxl = { 4 }
             xl = { 6 }
@@ -66,9 +66,12 @@ export default class FilterIpts extends Component {
           >
             <FormItem label="模板名称" {...formItemConfig}>
               {getFieldDecorator('templateName',{
-                initialValue:''
+                initialValue:'',
+                rules:[
+                  {max:20,message:'最多输入20位!'}
+                ]
               })(
-                <Input />
+                <Input maxLength={21}/>
               )}
             </FormItem>
           </Col>
@@ -94,10 +97,10 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={2}>
+          <FormItem>
             <Button type="primary" onClick={this.formSubmit}>查询</Button>
             <Button type="primary" onClick={this.reset}>清空</Button>
-          </Col>
+          </FormItem>
         </Row>
       </Form>
     )

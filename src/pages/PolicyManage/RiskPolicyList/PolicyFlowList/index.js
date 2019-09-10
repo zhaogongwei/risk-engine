@@ -241,7 +241,6 @@ export default class PolicyFlowList extends PureComponent {
              showTotal={(total, range) => this.showTotal(total, range)}
            />
          </Card>
-       }
       </PageHeaderWrapper>
     )
   }

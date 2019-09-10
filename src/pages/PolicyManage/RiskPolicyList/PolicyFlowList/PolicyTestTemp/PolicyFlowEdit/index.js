@@ -14,6 +14,7 @@ import styles from './index.less';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddForm from './addForm';
+import router from 'umi/router';
 const FormItem = Form.Item
 GGEditor.setTrackable(false);
 @Form.create()
