@@ -34,6 +34,9 @@ const Status = [{
 @Form.create()
 
 export default class FilterIpts extends Component {
+  state={
+    presentationName:this.props.presentationName,
+  }
   //查询
   formSubmit = async (e) => {
     const formData = await this.getFormValue()
@@ -49,6 +52,9 @@ export default class FilterIpts extends Component {
   }
   //重置
   reset = () => {
+    this.setState({
+      presentationName:''
+    })
     this.props.form.resetFields()
   }
   componentDidMount () {
@@ -81,7 +87,9 @@ export default class FilterIpts extends Component {
           </Col>
           <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="报告名称" {...formItemConfig}>
-              {getFieldDecorator('presentationName')(
+              {getFieldDecorator('presentationName',{
+                initialValue:this.state.presentationName,
+              })(
                 <Input />
               )}
             </FormItem>
@@ -105,7 +113,7 @@ export default class FilterIpts extends Component {
               {getFieldDecorator('status')(
                 <Select>
                   {
-                    Status.map(item => <Option key={item.key} value={item.value}>{item.value}</Option>)
+                    Status.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>)
                   }
                 </Select>
               )}

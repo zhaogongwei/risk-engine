@@ -39,6 +39,8 @@ export default {
     },
     arfakeInfo:[
       {
+        id:'',
+        createBy:'',
         createTime:'',
         antiFraudResult:{
           idcardVerif:[],
@@ -70,7 +72,7 @@ export default {
     //大圣信用报告信息查询
     *queryDsCreditInfo({payload}, { call, put }){
       let response = yield call (api.queryDsCreditInfo,payload)
-      if(response && response.status === 1){
+      if(response && response.status === 1&&response.data.length>0){
         response.data.forEach((item,index)=>{
           item.createTime=item.createTime.slice(0,10);
           addListKey(item['threeMonkeyCredit']['creditRow1'])
@@ -101,7 +103,7 @@ export default {
     //大圣共债报告信息查询
     *queryDsDebtInfo({payload}, { call, put }){
       let response = yield call (api.queryDsDebtInfo,payload)
-      if(response && response.status === 1){
+      if(response && response.status === 1&&response.data.length>0){
         response.data.forEach((item,index)=>{
           item.createTime=item.createTime.slice(0,10);
           addListKey(item['creditDebtResult']['detail'])
@@ -133,7 +135,7 @@ export default {
     //安融个人反欺诈报告查询
     *queryArfakeInfo({payload}, { call, put }){
       let response = yield call (api.queryArfakeInfo,payload)
-      if(response && response.status === 1){
+      if(response && response.status === 1&&response.data.length>0){
         response.data.forEach((item,index)=>{
           addListKey(item.antiFraudResult.antiFraudList);
           addListKey(item.antiFraudResult.validSifa.anliInfoList);

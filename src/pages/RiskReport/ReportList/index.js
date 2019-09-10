@@ -138,7 +138,9 @@ export default class ReportList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    const {query} = this.props.location;
+    const {id,presentationName} = query;
+    this.change(1,10,id)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (currPage, pageSize) => {
@@ -149,11 +151,12 @@ export default class ReportList extends PureComponent {
     this.change(currPage,pageSize)
   }
   // 进入页面去请求页面数据
-  change = async (currPage = 1, pageSize = 10) => {
+  change = async (currPage = 1, pageSize = 10,id) => {
     await this.props.dispatch({
       type: 'reportList/listData',
       payload: {
         ...this.props.reportList.queryConfig,
+        templateId:id,
         currPage,
         pageSize
       }
@@ -203,11 +206,11 @@ export default class ReportList extends PureComponent {
   }
   //跳转三方数据查询
   goDataQuery = (record)=>{
-    router.push(`/riskReport/reportList/queryData?id=${record.id}&assetsCode=${record.assetsCode}`)
+    router.push(`/riskReport/reportList/list/queryData?id=${record.id}&assetsCode=${record.assetsCode}`)
   }
   //跳转报告模板
   goRiskReport = (id)=>{
-    router.push(`/riskReport/reportList/mould/preview?id=${id}`)
+    router.push(`/riskReport/reportList/list/check?id=${id}`)
   }
   //更新报告
   updateStatus=async (id)=>{
@@ -237,6 +240,8 @@ export default class ReportList extends PureComponent {
   render() {
     const { listData } = this.props.reportList;
     const {permission}=this.props;
+    const {query}=this.props.location;
+    const {id,presentationName} = query;
     return (
      <PageHeaderWrapper>
        {
@@ -245,7 +250,12 @@ export default class ReportList extends PureComponent {
              bordered={false}
              title={'风控报告列表'}
            >
-             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
+             <FilterIpts
+               getSubKey={this.getSubKey}
+               change={this.change}
+               pageSize={this.state.pageSize}
+               presentationName={presentationName}
+             />
              <Table
                bordered
                pagination={false}
@@ -263,7 +273,6 @@ export default class ReportList extends PureComponent {
                showTotal={(total, range) => this.showTotal(total, range)}
              />
            </Card>:null
-       }
        }
       </PageHeaderWrapper>
     )
