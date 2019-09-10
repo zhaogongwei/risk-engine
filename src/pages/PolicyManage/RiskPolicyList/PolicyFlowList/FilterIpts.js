@@ -25,14 +25,12 @@ export default class FilterIpts extends Component {
     const {query} = this.props.location;
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'policyFlowList/fetchFlowList',
+      type: 'policyFlowList/saveQueryData',
       payload: {
         ...formData,
-        strategyId:query['id'],
-        "currPage": 1,
-        "pageSize": 10
       }
     })
+    this.props.change(1)
 
   }
   //   获取表单信息

@@ -190,6 +190,6 @@ export default {
         ...state,
         pageList:payload.pageList,
       }
-    }
+    },
   },
 };

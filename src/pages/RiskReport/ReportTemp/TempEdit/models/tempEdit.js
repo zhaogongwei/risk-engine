@@ -36,11 +36,7 @@ export default {
     //风控报告模板保存
     *saveTemplate({payload}, { call, put }) {
       let response = yield call(api.saveTemplate,payload)
-      if(response && response.status === 1){
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
-      }
+      return response
     },
     //风控报告模板查询
     *queryTemplate({payload,callback},{call,put}){

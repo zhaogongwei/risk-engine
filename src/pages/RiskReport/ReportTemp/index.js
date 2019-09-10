@@ -122,7 +122,13 @@ export default class VarList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    this.props.dispatch({
+      type: 'template/setQueryData',
+      payload: {}
+    })
+    const {pageData} = this.props.template
+    const {current} = pageData
+    this.change(current)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -205,7 +211,8 @@ export default class VarList extends PureComponent {
     router.push(`/riskReport/reportList/list?id=${id}&presentationName=${presentationName}`)
   }
   render() {
-    const { templateList, total } = this.props.template
+    const { templateList, pageData } = this.props.template
+    const {current,total} = pageData
     const {permission} = this.props;
     return (
      <PageHeaderWrapper renderBtn={permission.includes('re:reportTemplate:add')?this.renderTitleBtn:null}>
@@ -227,7 +234,7 @@ export default class VarList extends PureComponent {
                style={{ marginBottom: "50px" }}
                showQuickJumper
                defaultCurrent={1}
-               current={this.state.current}
+               current={current}
                total={total}
                onChange={this.onChange}
                showTotal={(total, range) => this.showTotal(total, range)}

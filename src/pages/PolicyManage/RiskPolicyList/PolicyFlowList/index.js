@@ -99,6 +99,10 @@ export default class PolicyFlowList extends PureComponent {
     };
   }
   componentDidMount() {
+    this.props.dispatch({
+      type: 'policyFlowList/saveQueryData',
+      payload: {}
+    })
     this.change()
   }
   //  分页器改变页数的时候执行的方法
@@ -112,20 +116,12 @@ export default class PolicyFlowList extends PureComponent {
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
     const {query} = this.props.location;
-    let formList ;
-    if(this.child){
-      formList = this.child.getFormValue()
-    }else{
-      formList = {
-        remark:'',
-        version:''
-      }
-    }
+    const {queryData} = this.props.policyFlowList;
     this.setState({current:currPage})
     this.props.dispatch({
       type: 'policyFlowList/fetchFlowList',
       payload: {
-        ...formList,
+        ...queryData,
         strategyId:query['id'],
         currPage,
         pageSize
@@ -211,6 +207,7 @@ export default class PolicyFlowList extends PureComponent {
   }
   render() {
     const {policyFlowList,formData} = this.props.policyFlowList
+    const {current,total} = formData
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card
@@ -219,7 +216,7 @@ export default class PolicyFlowList extends PureComponent {
          >
            <FilterIpts
              getSubKey={this.getSubKey}
-             change={this.onChange}
+             change={this.change}
              current={this.state.currentPage}
              changeDefault={this.changeDefault}
              location={this.props.location}
@@ -235,8 +232,8 @@ export default class PolicyFlowList extends PureComponent {
              style={{ marginBottom: "50px" }}
              showQuickJumper
              defaultCurrent={1}
-             current={this.state.current}
-             total={formData['total']}
+             current={current}
+             total={total}
              onChange={this.onChange}
              showTotal={(total, range) => this.showTotal(total, range)}
            />

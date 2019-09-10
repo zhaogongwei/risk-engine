@@ -139,8 +139,14 @@ export default class ReportList extends PureComponent {
   }
   componentDidMount() {
     const {query} = this.props.location;
+    const {pageData} = this.props.reportList;
+    const {current} = pageData;
     const {id,presentationName} = query;
-    this.change(1,10,id)
+    this.props.dispatch({
+      type: 'reportList/setQueryConfig',
+      payload: {}
+    })
+    this.change(current,10,id)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (currPage, pageSize) => {
@@ -230,7 +236,11 @@ export default class ReportList extends PureComponent {
         }
       })
       if(res&&res.status===1){
-        this.change()
+        const {pageData } = this.props.reportList;
+        const {current} = pageData;
+        const {query} = this.props.location;
+        const {id,presentationName} = query;
+        this.change(current,10,id)
         message.success(res.statusDesc)
       }else{
         message.error(res.statusDesc)
@@ -238,7 +248,8 @@ export default class ReportList extends PureComponent {
     }
   }
   render() {
-    const { listData } = this.props.reportList;
+    const { listData,pageData } = this.props.reportList;
+    const {current,total} = pageData;
     const {permission}=this.props;
     const {query}=this.props.location;
     const {id,presentationName} = query;
@@ -260,15 +271,15 @@ export default class ReportList extends PureComponent {
                bordered
                pagination={false}
                columns={this.state.columns}
-               dataSource={listData.records}
+               dataSource={listData}
                loading={this.props.loading}
              />
              <Pagination
                style={{ marginBottom: "50px" }}
                showQuickJumper
                defaultCurrent={1}
-               current={this.state.currPage}
-               total={listData.total}
+               current={current}
+               total={total}
                onChange={this.onChange}
                showTotal={(total, range) => this.showTotal(total, range)}
              />

@@ -104,8 +104,10 @@ export default class RiskLabel extends PureComponent {
       type: 'risklabel/saveQueryData',
       payload:{}
     })
+    const {pageData} = this.props.risklabel
+    const {current} = pageData
     //查询风控标签列表
-    this.change()
+    this.change(current)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -185,7 +187,9 @@ export default class RiskLabel extends PureComponent {
         }
       })
       if(res&&res.status===1){
-        this.change()
+        const {pageData} = this.props.risklabel
+        const {current} = pageData
+        this.change(current)
         message.success(res.statusDesc)
       }else{
         message.error(res.statusDesc)
@@ -193,8 +197,10 @@ export default class RiskLabel extends PureComponent {
     }
   }
   render() {
+    console.log(this.props.risklabel.pageData)
     const {pageData,labelList} = this.props.risklabel;
-    const {columns,current} = this.state;
+    const {columns} = this.state;
+    const {current,total} = pageData
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card
@@ -218,7 +224,7 @@ export default class RiskLabel extends PureComponent {
              showQuickJumper
              defaultCurrent={1}
              current={current}
-             total={pageData['total']}
+             total={total}
              onChange={this.onChange}
              showTotal={(total, range) => this.showTotal(total, range)}
            />

@@ -24,14 +24,12 @@ export default class FilterIpts extends Component {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'policyTestTemp/fetchTestTempList',
+      type: 'policyTestTemp/saveQueryData',
       payload: {
-        ...this.props.query,
         ...formData,
-        "currPage": 1,
-        "pageSize": 10
       }
     })
+    this.props.change(1)
 
   }
   //   获取表单信息

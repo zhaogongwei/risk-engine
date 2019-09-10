@@ -242,7 +242,7 @@ export default class LabelEdit extends PureComponent {
           if(!count){
             if(type==1){
               //新增标签
-              const res = this.props.dispatch({
+              const res = await this.props.dispatch({
                 type: 'risklabel/addRiskLabel',
                 payload: {
                   strategyId:strategyId,

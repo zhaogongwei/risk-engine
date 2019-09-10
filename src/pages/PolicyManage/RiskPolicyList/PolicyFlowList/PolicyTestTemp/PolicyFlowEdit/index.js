@@ -14,7 +14,6 @@ import styles from './index.less';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddForm from './addForm';
-import router from 'umi/router';
 const FormItem = Form.Item
 GGEditor.setTrackable(false);
 @Form.create()
@@ -71,9 +70,9 @@ class FlowPage extends React.Component {
   //保存策略流数据
   submitData = async () => {
     const data = this.flow.myRef.graph.save();
-    const edgesList = data['edges'];
-    const nodesList = data['nodes'];
-    const nodefineEdges = edgesList.filter((item)=>!item['type'])
+    const edgesList = data['edges']?data['edges']:[];
+    const nodesList = data['nodes']?data['nodes']:[];
+    const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
     const formData = this.getFormValue();
     const {query} = this.props.location;
     const {flowId,strategyId,type} = query;
@@ -81,6 +80,10 @@ class FlowPage extends React.Component {
       if(error)return;
       if(!nodesList.length){
         message.error('请设置相关节点!')
+        return
+      }
+      if(!edgesList.length){
+        message.error('请设置连线!')
         return
       }
       if(edgesList.length&&nodefineEdges.length){
