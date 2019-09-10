@@ -1,6 +1,6 @@
 import * as api from '../services';
 import { addListKey } from '@/utils/utils';
-
+import {message} from 'antd';
 
 export default {
   namespace: 'reportList',
@@ -19,6 +19,9 @@ export default {
           type: 'saveListData',
           payload: response.data
         })
+        message.success(response.statusDesc)
+      }else{
+        message.error(response.statusDesc)
       }
     },
     //更新状态

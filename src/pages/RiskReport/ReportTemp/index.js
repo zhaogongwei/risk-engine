@@ -80,7 +80,7 @@ export default class VarList extends PureComponent {
                 })}>
                 <Icon type="delete"/>策略
               </Menu.Item> */}
-                <Menu.Item onClick={()=>this.goRiskReport()}>
+                <Menu.Item onClick={()=>this.goRiskReport(record.id,record.presentationName)}>
                   <Icon type="unordered-list" />资产
                 </Menu.Item>
             </Menu>
@@ -201,8 +201,8 @@ export default class VarList extends PureComponent {
     })
   }
   //去风控报告列表
-  goRiskReport = ()=>{
-    router.push(`/riskReport/reportList/list`)
+  goRiskReport = (id,presentationName)=>{
+    router.push(`/riskReport/reportList/list?id=${id}&presentationName=${presentationName}`)
   }
   render() {
     const { templateList, total } = this.props.template

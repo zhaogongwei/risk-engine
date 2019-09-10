@@ -71,6 +71,7 @@ export default {
   'menu.riskReport.mould': '风控报告模板',
   'menu.riskReport.edit': '风控报告模板编辑',
   'menu.riskReport.preview': '报告预览',
+  'menu.riskReport.check': '风控报告查看',
   'menu.riskReport.queryData': '三方数据查询',
   'menu.systemSet': '系统设置',
   'menu.systemSet.roleManage': '角色管理',

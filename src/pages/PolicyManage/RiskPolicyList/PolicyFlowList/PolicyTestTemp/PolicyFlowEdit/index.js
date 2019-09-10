@@ -135,7 +135,7 @@ class FlowPage extends React.Component {
                   <Col xxl={8} md={12}>
                     <FormItem label="" {...formItemConfig}>
                       {getFieldDecorator('remark',{
-                        initialValue:remark,
+                        initialValue:type*1?null:remark,
                         rules:[
                           {
                             required:true,
