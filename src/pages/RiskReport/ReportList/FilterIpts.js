@@ -77,7 +77,7 @@ export default class FilterIpts extends Component {
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  gutter={16}>
+        <Row className={styles.btmMargin} gutter={16}>
           <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="资产编号" {...formItemConfig}>
               {getFieldDecorator('assetsCode')(
