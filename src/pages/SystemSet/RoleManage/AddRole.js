@@ -20,8 +20,9 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { TreeNode } = Tree;
 
-@connect(({ role }) => ({
-  role
+@connect(({ role, loading }) => ({
+  role,
+  loading: loading.models.role
 }))
 
 @Form.create()
@@ -126,6 +127,7 @@ export default class IndexComponent extends Component {
       <Modal
          title={this.props.type === 1 ? '新增角色' : '修改角色'}
          bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
+         confirmLoading={this.props.loading}
          visible={updateVisible}
          onOk={this.submitHandler}
          maskClosable={false}

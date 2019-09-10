@@ -22,8 +22,9 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
 @permission
-@connect(({ secret }) => ({
-  secret
+@connect(({ secret, loading }) => ({
+  secret,
+  loading: loading.models.secret
 }))
 
 @Form.create()
