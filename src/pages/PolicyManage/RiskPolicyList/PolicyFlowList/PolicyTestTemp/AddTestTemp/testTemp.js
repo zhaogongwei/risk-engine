@@ -28,6 +28,7 @@ export default class TestTemp extends Component {
     visible:false,//控制风控报告显隐
     completeFlag:'N',
     loading:false,//节点加载状态
+    presentationId:'',//风控报告id
   }
   //保存并执行测试
   formSubmit = async (e) => {
@@ -88,7 +89,7 @@ export default class TestTemp extends Component {
     })
     if(res&&res.status===1){
       this.setState({
-        completeFlag:res.status.completeFlag,
+        completeFlag:res.data.completeFlag,
         presentationId:res.data.presentationId,
       })
     }
@@ -262,6 +263,7 @@ export default class TestTemp extends Component {
     const { query } = this.props.location;
     const {strategyId,type,id} = query
     const { tempVarList,templateName,resultList } = this.props.testTemp;
+    const { presentationId } = this.state;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:14},
@@ -363,7 +365,7 @@ export default class TestTemp extends Component {
                 </Row>
                 <Row type="flex" justify="center">
                   {
-                    this.state.visible?
+                    (this.state.visible&&presentationId)?
                       <Col span={18}>
                         <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}} onClick={this.goPreview}>
                           风控报告
