@@ -185,7 +185,7 @@ export default class AddForm extends Component {
                     validator: this.checkUserName
                   }]
                 })(
-                  <Input autocomplete="off"/>
+                  <Input autoComplete="off"/>
                 )}
               </FormItem>
             </Col>
