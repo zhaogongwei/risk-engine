@@ -62,6 +62,7 @@ export default class FilterIpts extends Component {
       firstTypeId:Number(this.props.varlist.filterIpts.firstTypeId) || '',
       secondTypeId:Number(this.props.varlist.filterIpts.secondTypeId) || '',
     })
+    this.selectchange(this.props.varlist.filterIpts.firstTypeId)
   }
  
   render() {

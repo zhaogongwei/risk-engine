@@ -170,7 +170,6 @@ export default class VarList extends PureComponent {
       })
     }
     this.change(this.props.varlist.current);
-    this.child.selectchange(this.props.varlist.filterIpts.firstTypeId)
   }
   //  分页器改变页数的时候执行的方法
   onChange = async(current) => {
