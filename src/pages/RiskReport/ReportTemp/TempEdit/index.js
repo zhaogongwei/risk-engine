@@ -326,7 +326,7 @@ export default class Index extends Component {
               type={1}
               number={this.state.number}
               getSubKey={this.getSubKey}
-              pageList={titleList[number]['variable']}
+              pageList={titleList[number]?titleList[number]['variable']:[]}
             />
           </Modal>
           <Row type="flex" gutter={16} align="middle" justify="center">
