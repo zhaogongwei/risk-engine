@@ -125,10 +125,11 @@ export default class FilterIpts extends Component {
             <FormItem>
               {
                 permission.includes('re:merchantUser:list')?
-                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null
+                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null 
               }
+              <Button type="primary" onClick={this.reset}>清空</Button>
             </FormItem>
-            <Button type="primary" onClick={this.reset}>清空</Button>
+            
           </Col>
         </Row>
       </Form>
