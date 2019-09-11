@@ -133,18 +133,16 @@ export default class UrlDeploy extends PureComponent {
       </Fragment>
     )
   }
-  addEditPage=(flag, type, record = {})=>{
+  addEditPage = async(flag, type, record = {})=>{
     if(type == 2) {
       const { dispatch } = this.props;
-      dispatch({
+      await dispatch({
         type: 'urldeploy/viewInfo',
         payload: {
           id: record.id
         }
       })
     }
-    
-
     this.setState({
       id: record.id,
       type,

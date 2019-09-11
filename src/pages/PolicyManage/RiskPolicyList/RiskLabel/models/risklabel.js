@@ -35,21 +35,11 @@ export default {
     //新增风控标签
     *addRiskLabel({payload}, { call, put }) {
       let response = yield call(api.addRiskLabel,payload)
-      if(response&&response.status===1){
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
-      }
       return response;
     },
     //编辑风控标签
     *editRiskLabel({payload}, { call, put }) {
       let response = yield call(api.editRiskLabel,payload)
-      if(response&&response.status===1){
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
-      }
       return response;
     },
     //删除风控标签

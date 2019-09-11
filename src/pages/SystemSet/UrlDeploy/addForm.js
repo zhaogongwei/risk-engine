@@ -15,8 +15,9 @@ import styles from '../FilterIpts.less'
 import { connect } from 'dva'
 const FormItem = Form.Item
 
-@connect(({ urldeploy }) => ({
-  urldeploy
+@connect(({ urldeploy, loading }) => ({
+  urldeploy,
+  loading: loading.models.urldeploy
 }))
 
 @Form.create()
@@ -90,56 +91,45 @@ export default class AddForm extends Component {
     return (
       <Modal
         title={this.props.type === 1 ? '新增接口' : '修改接口'}
+        confirmLoading={this.props.loading}
         visible={visible}
         onOk={this.submitHandler}
         onCancel={()=> addEditPage(false)}
       >
-        <Form className="ant-advanced-search-form">
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="接口名称" {...formItemConfig}>
-                {getFieldDecorator('name',{
-                  initialValue: this.props.type === 2 ? Detail.name : null,
-                  rules:[{
-                    required:true,
-                    message: '请输入接口名称'
-                  }]
-                })(
-                  <Input/>
-                  )}
-                </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="异步通知地址" {...formItemConfig}>
-                {getFieldDecorator('asyncNotifiAddress',{
-                  initialValue: this.props.type === 2 ? Detail.asyncNotifiAddress : null,
-                  rules:[{
-                    required:true,
-                    message: '请输入异步通知地址'
-                  }]
-                  })(
-                  <Input/>
-                  )}
-                </FormItem>
-            </Col>
-          </Row>
-          <Row className={styles.btmMargin}>
-            <Col xxl={20} md={12}>
-              <FormItem label="同步跳转地址" {...formItemConfig}>
-                {getFieldDecorator('syncJumpAddress',{
-                  initialValue: this.props.type === 2 ? Detail.syncJumpAddress : null,
-                  rules:[{
-                    required:true,
-                    message: '请输入同步跳转地址'
-                  }]
-                })(
-                  <Input/>
-                )}
-              </FormItem>
-            </Col>
-          </Row>
+        <Form>
+          <FormItem label="接口名称" {...formItemConfig}>
+            {getFieldDecorator('name',{
+              initialValue: this.props.type === 2 ? Detail.name : null,
+              rules:[{
+                required:true,
+                message: '请输入接口名称'
+              }]
+            })(
+              <Input/>
+            )}
+          </FormItem>
+          <FormItem label="异步通知地址" {...formItemConfig}>
+            {getFieldDecorator('asyncNotifiAddress',{
+              initialValue: this.props.type === 2 ? Detail.asyncNotifiAddress : null,
+              rules:[{
+                required:true,
+                message: '请输入异步通知地址'
+              }]
+            })(
+              <Input/>
+            )}
+          </FormItem>
+          <FormItem label="同步跳转地址" {...formItemConfig}>
+            {getFieldDecorator('syncJumpAddress',{
+              initialValue: this.props.type === 2 ? Detail.syncJumpAddress : null,
+              rules:[{
+                required:true,
+                message: '请输入同步跳转地址'
+              }]
+            })(
+                <Input/>
+            )}
+          </FormItem>
         </Form>
       </Modal>
     )

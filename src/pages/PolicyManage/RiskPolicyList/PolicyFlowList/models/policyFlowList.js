@@ -6,6 +6,7 @@ export default {
 
   state: {
     policyFlowList:[],//策略流列表
+    queryData:{},//查询信息
     formData:{
       size:10,
       current:1,
@@ -42,6 +43,13 @@ export default {
         policyFlowList:payload.data.records,
         formData:{...payload.data}
       }
-    }
+    },
+    //   保存查询数据
+    saveQueryData(state, { payload }) {
+      return {
+        ...state,
+        queryData: payload,
+      }
+    },
   },
 };

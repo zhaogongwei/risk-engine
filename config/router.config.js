@@ -266,9 +266,16 @@ export default [
           },
           //风控列表>三方数据查询
           {
-            path:'/riskReport/reportList/queryData',
+            path:'/riskReport/reportList/list/queryData',
             name:'queryData',
             component:'./RiskReport/ReportList/QueryData',
+            hideInMenu:true
+          },
+          //风控列表>查看
+          {
+            path:'/riskReport/reportList/list/check',
+            name:'check',
+            component:'./RiskReport/ReportList/RiskReport',
             hideInMenu:true
           },
           //风控报告模板

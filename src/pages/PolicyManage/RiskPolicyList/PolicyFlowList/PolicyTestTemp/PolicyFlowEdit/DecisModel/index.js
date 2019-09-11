@@ -20,7 +20,7 @@ import EditForm from './EditForm';
 import AddForm from '@/components/VarListModal/AddForm'
 import router from 'umi/router';
 import { findInArr,exportJudgment } from '@/utils/utils'
-import SelectableTable from '@/components/SelectTable'
+import SelectTable from '@/components/SelectTable'
 import { addListKey,deepCopy } from '@/utils/utils'
 
 @connect(({ decision,varList,loading}) => ({
@@ -444,7 +444,7 @@ export default class DecisModel extends PureComponent {
                  rowVar={this.state.rowVar}
                  colVar={this.state.colVar}
                />
-               <SelectableTable
+               <SelectTable
                  list={this.props.decision}
                  columns={tableCol}
                  setRow={this.setRow}
@@ -452,6 +452,7 @@ export default class DecisModel extends PureComponent {
                  tableList={tableList}
                  resultVarId={this.state.resultVarId}
                  handleModify={(form)=>this.handleModify(form)}
+                 loading={this.props.loading}
                />
                <Modal
                  title={this.state.type?'列变量设置':'行变量设置'}

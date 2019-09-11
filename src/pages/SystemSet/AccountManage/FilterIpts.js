@@ -54,51 +54,57 @@ export default class FilterIpts extends Component {
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
-      labelCol:{span:8},
-      wrapperCol:{span:16},
+      labelCol:{
+        xs: { span: 3 },
+        sm: { span: 7 }
+      },
+      wrapperCol:{
+        xs: { span: 21 },
+        sm: { span: 17 }
+      },
     }
-    const {permission} = this.props
+    const { permission } = this.props
     return (
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  type="flex" align="middle">
-          <Col xxl={4} md={6}>
+        <Row style={{ marginBottom: 20 }} gutter={16}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="用户名" {...formItemConfig}>
               {getFieldDecorator('userName')(
                 <Input />
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="姓名" {...formItemConfig}>
               {getFieldDecorator('trueName')(
                 <Input />
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="邮箱" {...formItemConfig}>
               {getFieldDecorator('email')(
                 <Input />
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="手机号码" {...formItemConfig}>
               {getFieldDecorator('mobile')(
                 <Input />
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="添加时间" {...formItemConfig}>
               {getFieldDecorator('createTime')(
                 <RangePicker style={{width:210}}/>
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="用户状态" {...formItemConfig}>
               {getFieldDecorator('status')(
                 <Select allowClear={true}>
@@ -108,19 +114,22 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <Col xxl={4} md={6}>
+          <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="角色" {...formItemConfig}>
               {getFieldDecorator('roleName')(
                 <Input />
               )}
             </FormItem>
           </Col>
-          <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={1}>
-            {
-              permission.includes('re:merchantUser:list')?
-                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null
-            }
-            <Button type="primary" onClick={this.reset}>清空</Button>
+          <Col xxl={4} xl={6} lg={8} md={10}>
+            <FormItem>
+              {
+                permission.includes('re:merchantUser:list')?
+                <Button type="primary" onClick={this.formSubmit}>查询</Button>:null 
+              }
+              <Button type="primary" onClick={this.reset}>清空</Button>
+            </FormItem>
+            
           </Col>
         </Row>
       </Form>

@@ -140,7 +140,7 @@ export default class RptTable extends Component {
                     }
                   ],
                 })(
-                  <Input placeholder="passenger name" onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
+                  <Input placeholder="请输入标题名称!" maxLength={21}onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
                 )}
               </FormItem>
             </Col>
@@ -170,7 +170,7 @@ export default class RptTable extends Component {
           <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
             <Col xxl={6} md={12}>
               <FormItem label="报告模板名称" {...formItemConfig} labelAlign="left">
-                {getFieldDecorator('name ',{
+                {getFieldDecorator('name',{
                   initialValue:this.props.presentationName,
                   rules:[
                     {
@@ -188,7 +188,7 @@ export default class RptTable extends Component {
                     }
                     ]
                   })(
-                    <Input />
+                    <Input placeholder="请输入报告模板名称!" maxLength={21}/>
                 )}
               </FormItem>
             </Col>

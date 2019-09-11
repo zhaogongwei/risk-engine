@@ -106,11 +106,6 @@ export default {
     //保存策略输入输出变量
     *saveInputVar({payload},{call,put}){
       let response = yield call(api.saveInputVar,payload)
-      if(response&&response.status===1){
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
-      }
       return response;
     },
     //查询输出模板变量
@@ -195,6 +190,6 @@ export default {
         ...state,
         pageList:payload.pageList,
       }
-    }
+    },
   },
 };

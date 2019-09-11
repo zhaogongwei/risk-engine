@@ -99,7 +99,7 @@ export default class FilterIpts extends Component {
                   {max:20,message:'最多输入20位!'}
                 ]
               })(
-                <Input />
+                <Input maxLength={21}/>
               )}
             </FormItem>
           </Col>
@@ -116,7 +116,7 @@ export default class FilterIpts extends Component {
                   {max:20,message:'最多输入20位!'}
                 ]
               })(
-                <Input />
+                <Input maxLength={21}/>
               )}
             </FormItem>
           </Col>

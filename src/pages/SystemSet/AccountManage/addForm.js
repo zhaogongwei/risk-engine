@@ -19,8 +19,9 @@ const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
-@connect(({ account }) => ({
-  account
+@connect(({ account, loading }) => ({
+  account,
+  loading: loading.models.account
 }))
 
 @Form.create()
@@ -109,11 +110,7 @@ export default class AddForm extends Component {
     this.props.form.resetFields()
   }
   async componentDidMount () {
-    const { dispatch } = this.props;
-    await dispatch({
-      type: 'account/initData',
-      payload: {}
-    })
+    
   }
 
   onChange = value => {
@@ -172,6 +169,7 @@ export default class AddForm extends Component {
     return (
       <Modal
         title={ type === 1 ? '新增账号': '修改账号' }
+        confirmLoading={this.props.loading}
         visible={modalVisible}
         onOk={this.submitHandler}
         onCancel={()=> addEdit(false)}
@@ -187,7 +185,7 @@ export default class AddForm extends Component {
                     validator: this.checkUserName
                   }]
                 })(
-                  <Input/>
+                  <Input autoComplete="off"/>
                 )}
               </FormItem>
             </Col>
@@ -215,7 +213,7 @@ export default class AddForm extends Component {
                         message: '请输入密码'
                       }]
                     })(
-                      <Input type="password" onChange={()=>{
+                      <Input type="password" autoComplete="new-password" onChange={()=>{
                         if(this.props.form.getFieldValue('confirmPassword')){
                           this.props.form.setFieldsValue({
                             confirmPassword: ''
@@ -252,7 +250,7 @@ export default class AddForm extends Component {
                     message: '请输入姓名'
                   }]
                 })(
-                  <Input/>
+                  <Input maxLength={15}/>
                 )}
               </FormItem>
             </Col>
@@ -285,7 +283,7 @@ export default class AddForm extends Component {
                     message: '请输入手机号码'
                   }]
                 })(
-                  <Input/>
+                  <Input maxLength={11}/>
                 )}
               </FormItem>
             </Col>

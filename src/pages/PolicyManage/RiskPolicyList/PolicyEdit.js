@@ -176,7 +176,7 @@ export default class PolicyEdit extends PureComponent {
                   },
                 ]
               })(
-                <Input />
+                <Input maxLength={15}/>
               )}
             </FormItem>
           </Col>
@@ -215,7 +215,7 @@ export default class PolicyEdit extends PureComponent {
                   },
                 ]
               })(
-                <Input />
+                <Input maxLength={16}/>
               )}
             </FormItem>
           </Col>
@@ -283,7 +283,7 @@ export default class PolicyEdit extends PureComponent {
                   }
                   ]
               })(
-                <Input />
+                <Input maxLength={16}/>
               )}
             </FormItem>
           </Col>

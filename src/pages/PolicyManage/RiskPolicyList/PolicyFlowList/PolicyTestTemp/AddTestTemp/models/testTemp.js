@@ -73,7 +73,7 @@ export default {
     saveResultList(state,{payload}){
       return {
         ...state,
-        resultList:[...state.resultList,...payload.data.list],
+        resultList:payload.data.list,
       }
     }
   },
