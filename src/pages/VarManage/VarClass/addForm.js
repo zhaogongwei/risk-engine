@@ -26,7 +26,8 @@ export default class AddForm extends Component {
     this.state = {
       loading:false,
       visible:false,
-      title:'添加一级分类'
+      title:'添加一级分类',
+      confirmLoadingFlag:false
     }
   }
   //显示弹窗
@@ -78,8 +79,9 @@ export default class AddForm extends Component {
 //        }
 //    })
 //  }
-
-
+    this.setState({
+      confirmLoadingFlag:true
+    })
 		if(this.props.type==1){//添加一级分类
 			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
@@ -96,7 +98,9 @@ export default class AddForm extends Component {
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
 		          })
-		          
+		          this.setState({
+                confirmLoadingFlag:false
+              })
 		          this.reset()
 		        }
 		      })
@@ -114,7 +118,10 @@ export default class AddForm extends Component {
 		        callback:()=>{
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
-		          })
+              })
+              this.setState({
+                confirmLoadingFlag:false
+              })
 		          this.props.changeDefault(1)
 		         this.props.resatSelect.classChangeGetSelect()
 		         this.props.change(1)
@@ -137,9 +144,10 @@ export default class AddForm extends Component {
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
               })
-              
+              this.setState({
+                confirmLoadingFlag:false
+              })
               this.props.resatSelect.getSelect()
-              //this.props.resatSelect.selectchange(this.props.varclass.filterIpts.parentId || '')
               this.props.change(this.props.current)
 		          this.reset()
 		        }
@@ -159,6 +167,9 @@ export default class AddForm extends Component {
 		        callback:()=>{
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
+              })
+              this.setState({
+                confirmLoadingFlag:false
               })
               this.props.resatSelect.selectchange(this.props.varclass.filterIpts.parentId || '')
 		          this.props.change(this.props.current)
@@ -208,6 +219,7 @@ export default class AddForm extends Component {
         visible={visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
+        confirmLoading={this.state.confirmLoadingFlag}
       >
         <Form
           className="ant-advanced-search-form"
