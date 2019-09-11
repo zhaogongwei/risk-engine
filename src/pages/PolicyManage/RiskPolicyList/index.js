@@ -25,7 +25,9 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 @permission
 @connect(({ policyList, loading }) => ({
   policyList,
-  loading: loading.effects['policyList/fetchPolicyList']
+  loading: loading.effects['policyList/fetchPolicyList'],
+  addLoading:loading.effects['policyList/addPolicy'],
+  updateLoading:loading.effects['policyList/editPolicy'],
 }))
 export default class RiskPolicyList extends PureComponent {
   constructor(props) {
@@ -136,8 +138,10 @@ export default class RiskPolicyList extends PureComponent {
       type: 'policyList/saveQueryData',
       payload:{}
     })
+    const {pageData} = this.props.policyList;
+    const {current} = pageData;
     //查询风控策略列表
-    this.change()
+    this.change(current)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -224,7 +228,9 @@ export default class RiskPolicyList extends PureComponent {
         this.setState({
           modalVisible: false
         })
-        this.change()
+        const {pageData} = this.props.policyList;
+        const {current} = pageData;
+        this.change(current)
         message.success('操作成功')
       }else message.error(res.statusDesc)
     } catch (err) {
@@ -233,6 +239,7 @@ export default class RiskPolicyList extends PureComponent {
   }
   render() {
     const {policyList,pageData} = this.props.policyList
+    const {current,total} = pageData;
     const {status,policyId} = this.state
     const { permission } =  this.props;
     return (
@@ -243,8 +250,11 @@ export default class RiskPolicyList extends PureComponent {
              bordered={false}
              title={'风控策略列表'}
            >
-             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}
-                         changeDefault={this.changeDefault}/>
+             <FilterIpts
+               getSubKey={this.getSubKey}
+               change={this.change}
+               pageSize={this.state.pageSize}
+               changeDefault={this.changeDefault}/>
              <Table
                bordered
                pagination={false}
@@ -256,8 +266,8 @@ export default class RiskPolicyList extends PureComponent {
                style={{ marginBottom: "50px" }}
                showQuickJumper
                defaultCurrent={1}
-               current={this.state.current}
-               total={pageData['total']}
+               current={current}
+               total={total}
                onChange={this.onChange}
                showTotal={(total, range) => this.showTotal(total, range)}
              />
@@ -270,6 +280,7 @@ export default class RiskPolicyList extends PureComponent {
                width={550}
                title={status ? '新增策略' : '编辑策略'}
                bodyStyle={{ maxHeight: 470, overflow: 'auto' }}
+               confirmLoading={status?this.props.addLoading:this.props.updateLoading}
              >
                <PolicyEdit
                  returnSubKey={this.getSubKey}

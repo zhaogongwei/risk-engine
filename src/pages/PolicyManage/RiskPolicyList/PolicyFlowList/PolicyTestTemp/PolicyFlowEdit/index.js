@@ -70,9 +70,9 @@ class FlowPage extends React.Component {
   //保存策略流数据
   submitData = async () => {
     const data = this.flow.myRef.graph.save();
-    const edgesList = data['edges'];
-    const nodesList = data['nodes'];
-    const nodefineEdges = edgesList.filter((item)=>!item['type'])
+    const edgesList = data['edges']?data['edges']:[];
+    const nodesList = data['nodes']?data['nodes']:[];
+    const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
     const formData = this.getFormValue();
     const {query} = this.props.location;
     const {flowId,strategyId,type} = query;
@@ -80,6 +80,10 @@ class FlowPage extends React.Component {
       if(error)return;
       if(!nodesList.length){
         message.error('请设置相关节点!')
+        return
+      }
+      if(!edgesList.length){
+        message.error('请设置连线!')
         return
       }
       if(edgesList.length&&nodefineEdges.length){
@@ -135,7 +139,7 @@ class FlowPage extends React.Component {
                   <Col xxl={8} md={12}>
                     <FormItem label="" {...formItemConfig}>
                       {getFieldDecorator('remark',{
-                        initialValue:remark,
+                        initialValue:type*1?null:remark,
                         rules:[
                           {
                             required:true,
@@ -157,11 +161,8 @@ class FlowPage extends React.Component {
                 <div>
                   <Row type="flex" justify="center" align="middle" gutter={16} style={{marginBottom:10}}>
                     <Col><Button type="primary" loading={this.props.submitLoading} onClick={this.submitData}>保存</Button></Col>
-                    <Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>
-                  </Row>
-                  <Row type="flex" justify="center" align="middle" gutter={16}>
+                    {/*<Col><Button onClick={()=>this.setState({visible:true})}>导入</Button></Col>*/}
                     <Col><Button onClick={()=>router.goBack()}>返回</Button></Col>
-                    <Col span={6}></Col>
                   </Row>
                 </div>
                 <FlowBird/>

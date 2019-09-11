@@ -9,24 +9,22 @@ export default {
     templateList: [],   //   列表
     total: 0,          //   总条数
     queryData: {},    //   检索条件
+    pageData:{
+      current:1,
+      total:0,
+      size:0
+    }
   },
 
   effects: {
     *templateList({ payload }, { call, put }) {
       const res = yield call(api.templateList, payload)
+      res.data.records=addListKey(res.data.records, res.data.current, res.data.size)
       if (res && res.status === 1) {
         yield put({
           type: 'saveTemplateList',
-          payload: addListKey(res.data.records, payload.currentPage, payload.pageSize),
-          total: res.data.total
+          payload: res,
         })
-      } else {
-        yield put({
-          type: 'saveTemplateList',
-          payload: [],
-          total: 0
-        })
-        message.error(res.statusDesc)
       }
     }
   },
@@ -35,8 +33,8 @@ export default {
     saveTemplateList(state, { payload, total }) {
       return {
         ...state,
-        templateList: payload,
-        total
+        templateList: payload.data.records,
+        pageData:{...payload.data}
       }
     },
     addData(state, {payload}) {

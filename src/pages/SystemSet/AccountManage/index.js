@@ -182,9 +182,15 @@ export default class AccountManage extends PureComponent {
   }
   //添加、编辑事件
   addEdit= async(flag, type, record = {}) => {
+    const { dispatch } = this.props;
+    if(flag) {
+      await dispatch({
+        type: 'account/initData',
+        payload: {}
+      })
+    }
     if(type == 2) {
-      const { dispatch } = this.props;
-      dispatch({
+      await dispatch({
         type: 'account/editAccount',
         payload: {
           id: record.id

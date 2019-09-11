@@ -9,6 +9,7 @@ export default {
     tempList: [],//测试模板列表
     userList:[],//用户列表
     tempObj:[],//测试模板集合
+    queryData:{},//查询参数
     formData:{
       size:10,
       current:1,
@@ -59,6 +60,13 @@ export default {
         ...state,
         userList:payload.data,
       }
-    }
+    },
+    //   保存查询数据
+    saveQueryData(state, { payload }) {
+      return {
+        ...state,
+        queryData: payload,
+      }
+    },
   },
 };

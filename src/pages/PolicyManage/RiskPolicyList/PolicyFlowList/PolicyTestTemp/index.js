@@ -73,7 +73,13 @@ export default class PolicyTestTemp extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change();
+    this.props.dispatch({
+      type: 'policyTestTemp/saveQueryData',
+      payload: {}
+    })
+    const {formData} = this.props.policyTestTemp;
+    const {current} = formData;
+    this.change(current);
     //请求用户列表
     this.props.dispatch({
       type: 'policyTestTemp/fetchUserList',
@@ -91,16 +97,11 @@ export default class PolicyTestTemp extends PureComponent {
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
     const {query} = this.props.location;
-    let formData ;
-    if(this.child){
-      formData = this.child.getFormValue()
-    }else{
-      formData = {}
-    }
+    const {queryData} = this.props.policyTestTemp;
     this.props.dispatch({
       type: 'policyTestTemp/fetchTestTempList',
       payload: {
-        ...formData,
+        ...queryData,
         ...query,
         currPage,
         pageSize
@@ -149,7 +150,7 @@ export default class PolicyTestTemp extends PureComponent {
   }
   render() {
     const {tempList,formData} = this.props.policyTestTemp;
-    const {query} = this.props.location;
+    const {current,total} = formData
     return (
      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
          <Card
@@ -158,10 +159,9 @@ export default class PolicyTestTemp extends PureComponent {
          >
            <FilterIpts
              getSubKey={this.getSubKey}
-             change={this.onChange}
+             change={this.change}
              current={this.state.currentPage}
              changeDefault={this.changeDefault}
-             query={query}
            />
            <Table
              bordered
@@ -174,8 +174,8 @@ export default class PolicyTestTemp extends PureComponent {
              style={{ marginBottom: "50px" }}
              showQuickJumper
              defaultCurrent={1}
-             current={this.state.current}
-             total={formData['total']}
+             current={current}
+             total={total}
              onChange={this.onChange}
              showTotal={(total, range) => this.showTotal(total, range)}
            />

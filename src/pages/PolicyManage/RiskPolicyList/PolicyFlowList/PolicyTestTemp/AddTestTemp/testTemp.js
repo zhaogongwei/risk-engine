@@ -40,6 +40,7 @@ export default class TestTemp extends Component {
           payload:{
             id:query['id']?query['id']:null,
             strategyId:query['strategyId'],
+            strategyFlowId:query['flowId'],
             inputVarList:formData,
             templateName:this.props.form.getFieldValue('templateName'),
           }
@@ -57,6 +58,8 @@ export default class TestTemp extends Component {
             //开始加载节点
             this.setState({
               loading:true,
+              completeFlag:response.data.completeFlag,
+              presentationId:response.data.presentationId,
             })
             this.queryResult = setInterval(()=>{
               this.queryTestResult(res.data.assetCode,query['flowId'])
@@ -83,6 +86,12 @@ export default class TestTemp extends Component {
         flowId:flowId
       }
     })
+    if(res&&res.status===1){
+      this.setState({
+        completeFlag:res.status.completeFlag,
+        presentationId:res.data.presentationId,
+      })
+    }
   }
   //   获取表单信息
   getFormValue = () => {
@@ -102,8 +111,9 @@ export default class TestTemp extends Component {
   }
   componentDidMount () {
     const {query} = this.props.location;
-    const {strategyId,type} = query
+    const {strategyId,type,id} = query
     if(type==1){
+      //新增
       this.props.dispatch({
         type: 'testTemp/fetchTestTempVarArray',
         payload:{
@@ -111,16 +121,29 @@ export default class TestTemp extends Component {
         }
       })
     }else{
+      //编辑
       this.props.dispatch({
         type: 'testTemp/fetchTestTempVarList',
         payload:{
-          testTemplateId:strategyId,
+          testTemplateId:id,
         }
       })
     }
   }
   componentWillUnmount(){
     this.queryResult&&clearInterval(this.queryResult)
+    this.props.dispatch({
+      type: 'testTemp/saveResultList',
+      payload:{
+        data:{
+          list:[]
+        },
+      }
+    })
+  }
+  //去报告预览
+  goPreview=()=>{
+    router.push(`/riskReport/reportList/mould/preview?id=${this.state.presentationId}`)
   }
   //根据变量的类型创建不同的formItem;
   createFormItem=(item,index)=>{
@@ -237,7 +260,7 @@ export default class TestTemp extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { query } = this.props.location;
-    const { type } = query;
+    const {strategyId,type,id} = query
     const { tempVarList,templateName,resultList } = this.props.testTemp;
     const formItemConfig = {
       labelCol:{span:8},
@@ -289,6 +312,7 @@ export default class TestTemp extends Component {
                                 const response = await this.props.dispatch({
                                   type: 'testTemp/checkTemplateName',
                                   payload: {
+                                    id:id,
                                     templateName:templateName
                                   }
                                 })
@@ -341,7 +365,7 @@ export default class TestTemp extends Component {
                   {
                     this.state.visible?
                       <Col span={18}>
-                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}}>
+                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}} onClick={this.goPreview}>
                           风控报告
                         </p>
                       </Col>:null

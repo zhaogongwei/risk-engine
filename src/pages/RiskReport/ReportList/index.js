@@ -138,7 +138,15 @@ export default class ReportList extends PureComponent {
     };
   }
   componentDidMount() {
-    this.change()
+    const {query} = this.props.location;
+    const {pageData} = this.props.reportList;
+    const {current} = pageData;
+    const {id,presentationName} = query;
+    this.props.dispatch({
+      type: 'reportList/setQueryConfig',
+      payload: {}
+    })
+    this.change(current,10,id)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (currPage, pageSize) => {
@@ -149,11 +157,12 @@ export default class ReportList extends PureComponent {
     this.change(currPage,pageSize)
   }
   // 进入页面去请求页面数据
-  change = async (currPage = 1, pageSize = 10) => {
+  change = async (currPage = 1, pageSize = 10,id) => {
     await this.props.dispatch({
       type: 'reportList/listData',
       payload: {
         ...this.props.reportList.queryConfig,
+        templateId:id,
         currPage,
         pageSize
       }
@@ -203,11 +212,11 @@ export default class ReportList extends PureComponent {
   }
   //跳转三方数据查询
   goDataQuery = (record)=>{
-    router.push(`/riskReport/reportList/queryData?id=${record.id}&assetsCode=${record.assetsCode}`)
+    router.push(`/riskReport/reportList/list/queryData?id=${record.id}&assetsCode=${record.assetsCode}`)
   }
   //跳转报告模板
   goRiskReport = (id)=>{
-    router.push(`/riskReport/reportList/mould/preview?id=${id}`)
+    router.push(`/riskReport/reportList/list/check?id=${id}`)
   }
   //更新报告
   updateStatus=async (id)=>{
@@ -227,7 +236,11 @@ export default class ReportList extends PureComponent {
         }
       })
       if(res&&res.status===1){
-        this.change()
+        const {pageData } = this.props.reportList;
+        const {current} = pageData;
+        const {query} = this.props.location;
+        const {id,presentationName} = query;
+        this.change(current,10,id)
         message.success(res.statusDesc)
       }else{
         message.error(res.statusDesc)
@@ -235,8 +248,11 @@ export default class ReportList extends PureComponent {
     }
   }
   render() {
-    const { listData } = this.props.reportList;
+    const { listData,pageData } = this.props.reportList;
+    const {current,total} = pageData;
     const {permission}=this.props;
+    const {query}=this.props.location;
+    const {id,presentationName} = query;
     return (
      <PageHeaderWrapper>
        {
@@ -245,25 +261,29 @@ export default class ReportList extends PureComponent {
              bordered={false}
              title={'风控报告列表'}
            >
-             <FilterIpts getSubKey={this.getSubKey} change={this.change} pageSize={this.state.pageSize}/>
+             <FilterIpts
+               getSubKey={this.getSubKey}
+               change={this.change}
+               pageSize={this.state.pageSize}
+               presentationName={presentationName}
+             />
              <Table
                bordered
                pagination={false}
                columns={this.state.columns}
-               dataSource={listData.records}
+               dataSource={listData}
                loading={this.props.loading}
              />
              <Pagination
                style={{ marginBottom: "50px" }}
                showQuickJumper
                defaultCurrent={1}
-               current={this.state.currPage}
-               total={listData.total}
+               current={current}
+               total={total}
                onChange={this.onChange}
                showTotal={(total, range) => this.showTotal(total, range)}
              />
            </Card>:null
-       }
        }
       </PageHeaderWrapper>
     )

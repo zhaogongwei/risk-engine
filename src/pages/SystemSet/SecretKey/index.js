@@ -14,6 +14,7 @@ import {
   message
 } from 'antd';
 import { connect } from 'dva'
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import permission from '@/utils/PermissionWrapper';
 const FormItem = Form.Item
 const { TextArea } = Input;
@@ -21,8 +22,9 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 
 @permission
-@connect(({ secret }) => ({
-  secret
+@connect(({ secret, loading }) => ({
+  secret,
+  loading: loading.models.secret
 }))
 
 @Form.create()

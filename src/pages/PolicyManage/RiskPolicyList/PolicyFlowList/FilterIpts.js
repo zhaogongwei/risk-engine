@@ -25,14 +25,12 @@ export default class FilterIpts extends Component {
     const {query} = this.props.location;
     const formData = this.getFormValue()
     this.props.dispatch({
-      type: 'policyFlowList/fetchFlowList',
+      type: 'policyFlowList/saveQueryData',
       payload: {
         ...formData,
-        strategyId:query['id'],
-        "currPage": 1,
-        "pageSize": 10
       }
     })
+    this.props.change(1)
 
   }
   //   获取表单信息
@@ -57,7 +55,7 @@ export default class FilterIpts extends Component {
       <Form
         className="ant-advanced-search-form"
       >
-        <Row className={styles.btmMargin}  gutter={24} type="flex" align="middle">
+        <Row className={styles.btmMargin}  gutter={24}>
           <Col
             xxl = { 4 }
             xl = { 6 }
@@ -73,7 +71,7 @@ export default class FilterIpts extends Component {
                   }
                 ]
               })(
-                <Input />
+                <Input maxLength={21}/>
               )}
             </FormItem>
           </Col>
@@ -92,14 +90,14 @@ export default class FilterIpts extends Component {
                   }
                 ]
               })(
-                <Input />
+                <Input maxLength={21}/>
               )}
             </FormItem>
           </Col>
-          <Col className={styles.registBtn} xxl={{ span: 4}} md={{ span: 6}} offset={2}>
+          <FormItem>
             <Button type="primary" onClick={this.formSubmit}>查询</Button>
             <Button type="primary" onClick={this.reset}>清空</Button>
-          </Col>
+          </FormItem>
         </Row>
       </Form>
     )

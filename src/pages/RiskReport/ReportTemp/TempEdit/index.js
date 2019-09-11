@@ -234,7 +234,7 @@ export default class Index extends Component {
         if(errors)count++;
       })
     })
-    this.rptable.props.form.validateFields((errors,value)=>{
+    this.rptable.props.form.validateFields(async(errors,value)=>{
       if(!errors){
         if(!count){
           let varStatus = true;//变量列表是否为空
@@ -248,14 +248,22 @@ export default class Index extends Component {
             }
           }
           if(varStatus){
-            this.props.dispatch({
+            const response = await this.props.dispatch({
               type: 'tempEdit/saveTemplate',
               payload: {
-                name :formData['name '],
+                name :formData['name'],
                 reportTemplate:titleList,
                 id:query['id']
               }
             })
+            if(response&&response.status === 1){
+              message.success(response.statusDesc)
+                .then(()=>{
+                  router.goBack()
+                })
+            }else{
+              message.error(response.statusDesc)
+            }
           }else{
             message.error('变量列表不能为空!')
           }

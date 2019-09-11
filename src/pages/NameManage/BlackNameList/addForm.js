@@ -26,8 +26,7 @@ export default class AddForm extends Component {
   constructor(props){
     super(props)
     this.state = {
-      value:[],
-      loading:true
+      value:[]
     }
   }
   //点击确定
@@ -53,12 +52,7 @@ export default class AddForm extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
-    this.props.getSubKey(this,'addForm');
-    setTimeout(()=>{
-      this.setState({
-        loading:false
-      })
-    },3000)
+    this.props.getSubKey(this,'addForm')
   }
   render() {
     const { getFieldDecorator } = this.props.form

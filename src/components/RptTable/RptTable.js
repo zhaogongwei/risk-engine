@@ -170,7 +170,7 @@ export default class RptTable extends Component {
           <Row style={{marginBottom:20}}  gutter={24} type="flex" align="middle">
             <Col xxl={6} md={12}>
               <FormItem label="报告模板名称" {...formItemConfig} labelAlign="left">
-                {getFieldDecorator('name ',{
+                {getFieldDecorator('name',{
                   initialValue:this.props.presentationName,
                   rules:[
                     {
