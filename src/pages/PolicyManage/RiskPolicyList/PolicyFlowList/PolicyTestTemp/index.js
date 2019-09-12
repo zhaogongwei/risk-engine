@@ -180,7 +180,6 @@ export default class PolicyTestTemp extends PureComponent {
              showTotal={(total, range) => this.showTotal(total, range)}
            />
          </Card>
-       }
       </PageHeaderWrapper>
     )
   }
