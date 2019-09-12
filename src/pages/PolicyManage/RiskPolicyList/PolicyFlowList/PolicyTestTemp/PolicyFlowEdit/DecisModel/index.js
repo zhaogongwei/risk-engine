@@ -94,6 +94,34 @@ export default class DecisModel extends PureComponent {
       })
     }
   }
+  componentWillUnmount(){
+    //离开页面时销毁数据
+    this.props.dispatch({
+      type: 'decision/makeTableCol',
+      payload: {
+        tableCol:[]
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableRow',
+      payload: {
+        tableRow:[]
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/saveColData',
+      payload: {
+        dataSource:[]
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/saveRowData',
+      payload: {
+        dataSource:[]
+      }
+    })
+
+  }
   //colList 还原函数
   restoreColList = (arr=[])=>{
     if(!arr.length)return;
@@ -325,6 +353,11 @@ export default class DecisModel extends PureComponent {
               inputType:type,
             })
           })
+      }else{
+        this.setState({
+          visible:true,
+          inputType:type,
+        })
       }
     }else if(type ===0){
       if(Object.keys(rowVar).length){
@@ -335,6 +368,11 @@ export default class DecisModel extends PureComponent {
               inputType:type,
             })
           })
+      }else{
+        this.setState({
+          visible:true,
+          inputType:type,
+        })
       }
     }else if(type==2){
       //输出结果

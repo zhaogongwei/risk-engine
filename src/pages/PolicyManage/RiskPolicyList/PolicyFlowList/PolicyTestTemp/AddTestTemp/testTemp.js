@@ -360,7 +360,11 @@ export default class TestTemp extends Component {
                         return (
                           <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
                             <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</Col>
-                            <Col>{item.resultValue}</Col>
+                            <Col>
+                              {item.resultName?item.resultName:''}
+                              <span style={{marginLeft:10,marginRight:10}}>{item.resultValue?':':''}</span>
+                              {item.resultValue?item.resultValue:''}
+                              </Col>
                           </Row>
                         )
                       })
