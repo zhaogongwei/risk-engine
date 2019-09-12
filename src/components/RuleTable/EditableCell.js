@@ -303,7 +303,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   {
                     record['enumList']&&record['enumList'].map((item,index)=>{
                       return (
-                        <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                        <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
                       )
                     })
                   }
