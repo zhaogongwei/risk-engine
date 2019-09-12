@@ -75,8 +75,8 @@ export default class SimpleRule extends PureComponent {
             id:'<'
           },
           {
-            name:'=',
-            id:'='
+            name:'==',
+            id:'=='
           },
           {
             name:'>=',

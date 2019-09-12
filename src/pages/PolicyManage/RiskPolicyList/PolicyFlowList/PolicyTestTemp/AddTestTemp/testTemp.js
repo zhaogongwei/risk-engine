@@ -79,8 +79,8 @@ export default class TestTemp extends Component {
       }
     })
   }
-  queryTestResult = (assetsCode,flowId)=>{
-    const res = this.props.dispatch({
+  queryTestResult = async(assetsCode,flowId)=>{
+    const res = await this.props.dispatch({
       type: 'testTemp/queryTestResult',
       payload:{
         assetsCode:assetsCode,
@@ -92,6 +92,15 @@ export default class TestTemp extends Component {
         completeFlag:res.data.completeFlag,
         presentationId:res.data.presentationId,
       })
+      if(res.data.completeFlag !== 'N'){
+        //循环结束
+        this.queryResult&&clearInterval(this.queryResult);
+        //显示风控报告按钮
+        this.setState({
+          visible:true,
+          loading:false,
+        })
+      }
     }
   }
   //   获取表单信息
@@ -367,7 +376,7 @@ export default class TestTemp extends Component {
                   {
                     (this.state.visible&&presentationId)?
                       <Col span={18}>
-                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}} onClick={this.goPreview}>
+                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px',cursor:'pointer'}} onClick={this.goPreview}>
                           风控报告
                         </p>
                       </Col>:null

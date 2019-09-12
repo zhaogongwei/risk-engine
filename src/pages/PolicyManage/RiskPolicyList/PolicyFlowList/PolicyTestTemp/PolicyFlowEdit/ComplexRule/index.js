@@ -73,8 +73,8 @@ export default class ComplexRule extends PureComponent {
             id:'<'
           },
           {
-            name:'=',
-            id:'='
+            name:'==',
+            id:'=='
           },
           {
             name:'>=',
@@ -91,8 +91,8 @@ export default class ComplexRule extends PureComponent {
         ],
         valueOth:[
           {
-            name:'=',
-            id:'='
+            name:'==',
+            id:'=='
           },
           {
             name:'!=',
