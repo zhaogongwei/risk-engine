@@ -28,6 +28,7 @@ export default class TestTemp extends Component {
     visible:false,//控制风控报告显隐
     completeFlag:'N',
     loading:false,//节点加载状态
+    presentationId:'',//风控报告id
   }
   //保存并执行测试
   formSubmit = async (e) => {
@@ -78,8 +79,8 @@ export default class TestTemp extends Component {
       }
     })
   }
-  queryTestResult = (assetsCode,flowId)=>{
-    const res = this.props.dispatch({
+  queryTestResult = async(assetsCode,flowId)=>{
+    const res = await this.props.dispatch({
       type: 'testTemp/queryTestResult',
       payload:{
         assetsCode:assetsCode,
@@ -88,9 +89,18 @@ export default class TestTemp extends Component {
     })
     if(res&&res.status===1){
       this.setState({
-        completeFlag:res.status.completeFlag,
+        completeFlag:res.data.completeFlag,
         presentationId:res.data.presentationId,
       })
+      if(res.data.completeFlag !== 'N'){
+        //循环结束
+        this.queryResult&&clearInterval(this.queryResult);
+        //显示风控报告按钮
+        this.setState({
+          visible:true,
+          loading:false,
+        })
+      }
     }
   }
   //   获取表单信息
@@ -262,6 +272,7 @@ export default class TestTemp extends Component {
     const { query } = this.props.location;
     const {strategyId,type,id} = query
     const { tempVarList,templateName,resultList } = this.props.testTemp;
+    const { presentationId } = this.state;
     const formItemConfig = {
       labelCol:{span:8},
       wrapperCol:{span:14},
@@ -349,7 +360,11 @@ export default class TestTemp extends Component {
                         return (
                           <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
                             <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</Col>
-                            <Col>{item.resultName}</Col>
+                            <Col>
+                              {item.resultName?item.resultName:''}
+                              <span style={{marginLeft:10,marginRight:10}}>{item.resultValue?':':''}</span>
+                              {item.resultValue?item.resultValue:''}
+                              </Col>
                           </Row>
                         )
                       })
@@ -363,9 +378,9 @@ export default class TestTemp extends Component {
                 </Row>
                 <Row type="flex" justify="center">
                   {
-                    this.state.visible?
+                    (this.state.visible&&presentationId)?
                       <Col span={18}>
-                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px'}} onClick={this.goPreview}>
+                        <p style={{backgroundColor:'#27304D',color:'#fff',fontSize:16,textAlign:'center',borderRadius:5,lineHeight:'40px',cursor:'pointer'}} onClick={this.goPreview}>
                           风控报告
                         </p>
                       </Col>:null

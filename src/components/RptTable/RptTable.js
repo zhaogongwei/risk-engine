@@ -140,7 +140,7 @@ export default class RptTable extends Component {
                     }
                   ],
                 })(
-                  <Input placeholder="passenger name" onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
+                  <Input placeholder="请输入标题名称!" maxLength={21}onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
                 )}
               </FormItem>
             </Col>
@@ -188,7 +188,7 @@ export default class RptTable extends Component {
                     }
                     ]
                   })(
-                    <Input />
+                    <Input placeholder="请输入报告模板名称!" maxLength={21}/>
                 )}
               </FormItem>
             </Col>

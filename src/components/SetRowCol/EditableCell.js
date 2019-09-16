@@ -268,7 +268,7 @@ export default class EditableCell extends PureComponent {
               this.form = form;
               return (
                 <FormItem style={{ margin: 0 }}>
-                  {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
+                  {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}${Math.random()}`, {
                     initialValue: record[dataIndex],
                     rules:[
                       {

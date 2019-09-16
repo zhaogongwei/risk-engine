@@ -71,10 +71,17 @@ export default class FilterIpts extends Component {
               )}
             </FormItem>
           </Col>
-          <FormItem>
-            <Button type="primary" onClick={this.formSubmit}>查询</Button>
-            <Button type="primary" onClick={this.reset}>清空</Button>
-          </FormItem>
+          <Col
+            xxl = { 4 }
+            xl = { 6 }
+            lg = { 8 }
+            md = { 10 }
+          >
+            <FormItem {...formItemConfig}>
+              <Button type="primary" onClick={this.formSubmit}>查询</Button>
+              <Button type="primary" onClick={this.reset}>清空</Button>
+            </FormItem>
+          </Col>
         </Row>
       </Form>
     )
