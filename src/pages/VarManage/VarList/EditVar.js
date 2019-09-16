@@ -201,6 +201,13 @@ export default class EditVar extends PureComponent {
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue();
+    console.log(formQueryData.defaultValue)
+    if(formQueryData.variableType=='date'){
+      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD')
+    }else if(formQueryData.variableType=='time'){
+      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD HH:mm:ss')
+    }
+    
     //formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
@@ -411,6 +418,7 @@ export default class EditVar extends PureComponent {
               </Col>
             </Row>
             <Row className={styles.btmMargin}  type="flex" align="middle">
+            {this.props.form.getFieldValue('variableType') == 'char'?
               <Col xxl={4} md={6}>
                 <FormItem label="是否枚举" {...formItemConfig}>
                   {getFieldDecorator('enumFlag',{
@@ -425,7 +433,8 @@ export default class EditVar extends PureComponent {
                     </Select>
                   )}
                 </FormItem>
-              </Col>
+              </Col>:null
+            }
               <Col xxl={3} md={4}>
               </Col>
               <Col xxl={4} md={6}>
@@ -445,7 +454,7 @@ export default class EditVar extends PureComponent {
                      
                     ]
                   })(
-                    <Input disabled={this.state.disable}/>
+                    <Input disabled={this.state.disable} />
                   )}
                 </FormItem>
               </Col>
@@ -454,7 +463,9 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      
+                      // {validator:(rule, val, cb) => {
+                        
+                      // }}
                     ]
                   })(
                     <Input disabled={this.state.disable}/>
@@ -484,7 +495,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 {
-                  this.props.form.getFieldValue('enumFlag') ==1?
+                  this.props.form.getFieldValue('enumFlag') ==1 && this.props.form.getFieldValue('variableType') == 'char'?
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
@@ -536,7 +547,7 @@ export default class EditVar extends PureComponent {
                    {getFieldDecorator('defaultValue',{
                      initialValue:this.state.defaultVal,
                    })(
-                    <TimePicker />
+                    <DatePicker showTime/>
                    )}
                    </FormItem>:null
                 }
