@@ -24,9 +24,6 @@ export default {
           type: 'saveListData',
           payload: response
         })
-        message.success(response.statusDesc)
-      }else{
-        message.error(response.statusDesc)
       }
     },
     //更新状态

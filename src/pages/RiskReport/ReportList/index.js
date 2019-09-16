@@ -23,7 +23,7 @@ import { findInArr,exportJudgment } from '@/utils/utils'
 @permission
 @connect(({ reportList, loading }) => ({
   reportList,
-  loading: loading.effects['reportList/riskSubmit']
+  loading: loading.effects['reportList/listData']
 }))
 export default class ReportList extends PureComponent {
   constructor(props) {
