@@ -124,6 +124,7 @@ export default class EditVar extends PureComponent {
       payload: {
       }
     })
+    
     const query={...this.props.location.query}
     if(query.type==2){
       //获取变量信息
@@ -201,6 +202,13 @@ export default class EditVar extends PureComponent {
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue();
+    console.log(formQueryData.defaultValue)
+    if(formQueryData.variableType=='date'){
+      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD')
+    }else if(formQueryData.variableType=='time'){
+      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD HH:mm:ss')
+    }
+    
     //formQueryData.enmuList = this.props.varList.dataSource;
     return formQueryData;
   }
@@ -319,6 +327,15 @@ export default class EditVar extends PureComponent {
       
     });
   }
+  checkNum=(rule, val, cb)=>{
+    let re = new RegExp("^[0-9]*$")
+    if(!re.test(val)){
+      cb('请输入数字')
+      return;
+    }
+    cb()
+    return;
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -411,6 +428,7 @@ export default class EditVar extends PureComponent {
               </Col>
             </Row>
             <Row className={styles.btmMargin}  type="flex" align="middle">
+            {this.props.form.getFieldValue('variableType') == 'char'?
               <Col xxl={4} md={6}>
                 <FormItem label="是否枚举" {...formItemConfig}>
                   {getFieldDecorator('enumFlag',{
@@ -425,9 +443,8 @@ export default class EditVar extends PureComponent {
                     </Select>
                   )}
                 </FormItem>
-              </Col>
-              <Col xxl={3} md={4}>
-              </Col>
+              </Col>:null
+            }
               <Col xxl={4} md={6}>
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
@@ -442,10 +459,11 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
-                     
+                     {max:true,message:'超过最大位数'},
+                     {validator:this.checkNum}
                     ]
                   })(
-                    <Input disabled={this.state.disable}/>
+                    <Input disabled={this.state.disable} />
                   )}
                 </FormItem>
               </Col>
@@ -454,7 +472,8 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      
+                      {max:true,message:'超过最大位数'},
+                      {validator:this.checkNum}
                     ]
                   })(
                     <Input disabled={this.state.disable}/>
@@ -484,7 +503,7 @@ export default class EditVar extends PureComponent {
             <Row className={styles.btmMargin}  type="flex" align="middle">
               <Col xxl={4} md={6}>
                 {
-                  this.props.form.getFieldValue('enumFlag') ==1?
+                  this.props.form.getFieldValue('enumFlag') ==1 && this.props.form.getFieldValue('variableType') == 'char'?
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
@@ -536,7 +555,7 @@ export default class EditVar extends PureComponent {
                    {getFieldDecorator('defaultValue',{
                      initialValue:this.state.defaultVal,
                    })(
-                    <TimePicker />
+                    <DatePicker showTime/>
                    )}
                    </FormItem>:null
                 }
@@ -564,7 +583,10 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
                   {getFieldDecorator('status',{
-                    initialValue:''
+                    initialValue:'',
+                    rules:[
+                      {required:true,message:'请选择变量状态'}
+                    ]
                   })(
                     <RadioGroup name="radiogroup">
                       <Radio value={1}>启用</Radio>
