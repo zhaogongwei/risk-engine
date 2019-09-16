@@ -191,18 +191,23 @@ export default class VarClass extends PureComponent {
       cancelButtonText: '取消'
     })
     if(confirmVal.value){
-    	this.props.dispatch({
+    	let res=this.props.dispatch({
 	      type: 'varclass/delVarClass',
 	      payload: {
 	      	typeId:record['id']
-	      },
-	      callback:()=>{
-	      	this.changeDefault(1)
-	        this.child.classChangeGetSelect()
-	        this.change(1)
-	        this.reset()
 	      }
-	    })
+      })
+      res.then(value => {
+        if(value.status=='1'){
+          this.changeDefault(1)
+          this.child.classChangeGetSelect()
+          this.change(1)
+          this.reset()
+        }else{
+          message.error(value.statusDesc||"操作失败")
+        }
+      })
+      
     }
   }
   render() {

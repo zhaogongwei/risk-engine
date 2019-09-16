@@ -54,6 +54,9 @@ export default class FilterIpts extends Component {
           data:[]
         }
       })
+      this.props.form.setFieldsValue({
+        id:''
+      })
       return false;
     }
   	this.props.dispatch({

@@ -53,7 +53,7 @@ export default {
     //删除变量
     *delVarClass({payload,callback},{call,put}){
       let response = yield call(api.delVarClass,payload)
-      callback()
+      return response;
     },
   },
 

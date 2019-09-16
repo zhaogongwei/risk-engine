@@ -284,7 +284,7 @@ export default class AddForm extends Component {
                   }
                   ]
                 })(
-                  <Input placeholder="数字大排列表上方"/>
+                  <Input type="number" placeholder="数字大排列表上方"/>
                 )}
               </FormItem>
             </Col>
