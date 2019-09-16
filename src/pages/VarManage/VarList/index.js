@@ -173,6 +173,12 @@ export default class VarList extends PureComponent {
     this.child && this.child.selectchange(this.props.varlist.filterIpts.firstTypeId)
 
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'varlist/clearfilterIpts',
+      payload: {}
+    })
+  }
   //  分页器改变页数的时候执行的方法
   onChange = async(current) => {
     await this.props.dispatch({

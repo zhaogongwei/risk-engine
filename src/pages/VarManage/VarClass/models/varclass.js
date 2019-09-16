@@ -53,7 +53,7 @@ export default {
     //删除变量
     *delVarClass({payload,callback},{call,put}){
       let response = yield call(api.delVarClass,payload)
-      callback()
+      return response;
     },
   },
 
@@ -89,6 +89,13 @@ export default {
     	 	...state,
     	  filterIpts:payload
     	}
-    }
+    },
+    //清空选择
+    clearfilterIpts(state,{payload}) {
+      return {
+        ...state,
+       filterIpts:{}
+     }
+   },
   },
 };
