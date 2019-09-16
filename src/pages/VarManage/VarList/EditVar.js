@@ -124,6 +124,7 @@ export default class EditVar extends PureComponent {
       payload: {
       }
     })
+    
     const query={...this.props.location.query}
     if(query.type==2){
       //获取变量信息
@@ -326,6 +327,15 @@ export default class EditVar extends PureComponent {
       
     });
   }
+  checkNum=(rule, val, cb)=>{
+    let re = new RegExp("^[0-9]*$")
+    if(!re.test(val)){
+      cb('请输入数字')
+      return;
+    }
+    cb()
+    return;
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemConfig = {
@@ -435,8 +445,6 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>:null
             }
-              <Col xxl={3} md={4}>
-              </Col>
               <Col xxl={4} md={6}>
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
@@ -451,7 +459,8 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
-                     
+                     {max:true,message:'超过最大位数'},
+                     {validator:this.checkNum}
                     ]
                   })(
                     <Input disabled={this.state.disable} />
@@ -463,9 +472,8 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      // {validator:(rule, val, cb) => {
-                        
-                      // }}
+                      {max:true,message:'超过最大位数'},
+                      {validator:this.checkNum}
                     ]
                   })(
                     <Input disabled={this.state.disable}/>
@@ -575,7 +583,10 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
                   {getFieldDecorator('status',{
-                    initialValue:''
+                    initialValue:'',
+                    rules:[
+                      {required:true,message:'请选择变量状态'}
+                    ]
                   })(
                     <RadioGroup name="radiogroup">
                       <Radio value={1}>启用</Radio>

@@ -77,6 +77,7 @@ export default class VarClass extends PureComponent {
       status:1,
       title:'添加一级分类',
       type:1,//1:添加一级分类；2：添加二级分类；3：编辑一级分类，4：编辑二级分类
+      tableKey:0
     };
   }
   componentDidMount() {
@@ -92,9 +93,8 @@ export default class VarClass extends PureComponent {
     this.change(current)
   }
   // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-  	console.log(111)
-  	this.props.dispatch({
+  change = async(currPage = 1, pageSize = 10) => {
+  	await this.props.dispatch({
       type: 'varclass/fetchVarClassList',
       payload: {
       	currPage:currPage,
@@ -102,6 +102,10 @@ export default class VarClass extends PureComponent {
       	firstTypeId:this.props.varclass.filterIpts.parentId || '',
       	secondTypeId:this.props.varclass.filterIpts.id || ''
       }
+    })
+    
+    this.setState({
+      tableKey:this.state.tableKey+1
     })
   	
   }
@@ -252,12 +256,14 @@ export default class VarClass extends PureComponent {
               <FilterIpts getSubKey={this.getSubKey} change={this.onChange} current={this.state.currentPage}
                           changeDefault={this.changeDefault}/>
               <Table
+                key={this.state.tableKey}
                 style={{ border: "1px solid #e8e8e8" }}
                 bordered={false}
                 columns={columns}
-                expandedRowRender={(record, index) => this.expandedRowRender(record, index)}
                 defaultExpandAllRows={true}
+                expandedRowRender={(record, index) => this.expandedRowRender(record, index)}
                 dataSource={this.props.varclass.varClassList}
+                loading={false}
                 pagination={false}
               />
               <Pagination

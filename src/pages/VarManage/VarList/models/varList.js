@@ -119,7 +119,7 @@ export default {
     saveEnumeration(state,{payload}) {
     	 return {
     	 	...state,
-         enumeration:payload
+         enumeration:addListKey(payload)
     	}
     },
     changeCurrent(state,{payload}) {
