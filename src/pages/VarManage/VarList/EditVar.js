@@ -290,9 +290,7 @@ export default class EditVar extends PureComponent {
               }) 
             }else{
               message.error(value.statusDesc || "提交失败").then(() => {
-                router.push({
-                  pathname:'/varManage/varlist',
-                })
+                return ;
               })
             }
           })
@@ -315,9 +313,7 @@ export default class EditVar extends PureComponent {
               })
             }else{
               message.error(value.statusDesc || "提交失败").then(() => {
-                router.push({
-                  pathname:'/varManage/varlist',
-                })
+                return ;
               })
             }
           })   

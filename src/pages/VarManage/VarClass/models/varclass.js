@@ -89,6 +89,13 @@ export default {
     	 	...state,
     	  filterIpts:payload
     	}
-    }
+    },
+    //清空选择
+    clearfilterIpts(state,{payload}) {
+      return {
+        ...state,
+       filterIpts:{}
+     }
+   },
   },
 };

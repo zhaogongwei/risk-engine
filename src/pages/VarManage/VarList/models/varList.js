@@ -128,6 +128,14 @@ export default {
         current:payload.current
      }
    },
+   //清空选择
+   clearfilterIpts(state,{payload}) {
+      return {
+        ...state,
+      filterIpts:{},
+      current:1
+      }
+    },
     //   枚举添加
     addData(state, { payload }) {
       return {

@@ -83,6 +83,12 @@ export default class VarClass extends PureComponent {
   componentDidMount() {
     this.change()
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'varclass/clearfilterIpts',
+      payload: {}
+    })
+  }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
     this.setState({
