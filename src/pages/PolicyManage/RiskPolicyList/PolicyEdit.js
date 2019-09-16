@@ -297,7 +297,13 @@ export default class PolicyEdit extends PureComponent {
           <Col xxl={22}>
             <FormItem label="变量状态" {...formItemConfig}>
               {getFieldDecorator('status',{
-                initialValue: status?'':policyInfo['status']
+                initialValue: status?'':policyInfo['status'],
+                rules:[
+                  {
+                    required:true,
+                    message:'变量状态不能为空!'
+                  }
+                ]
               })(
                 <RadioGroup name="status">
                   <Radio value={1}>启用</Radio>
