@@ -58,7 +58,7 @@ export async function delVarClass(params){
 }
 //校验变量分类名称唯一性
 export async function checkVarName(params){
-  return request(`${_baseApi}/variable/type/checkVariableExist`, {
+  return request(`${_baseApi}/variable/type/checkVariableTypeName`, {
     method: 'POST',
     body: {
       ...params
