@@ -12,7 +12,8 @@ import {
   Form,
   Popconfirm,
   Table,
-  Input
+  Input,
+  message,
 } from 'antd';
 import  './index.less'
 import { connect } from 'dva'
@@ -76,6 +77,11 @@ export default class RptTable extends Component {
     })
     if(confirmVal.value){
       const {titleList} = this.props;
+      //最后一个标题不能删除
+      if(titleList.length===1){
+        message.error('最后一个标题不能删除!')
+        return;
+      }
       titleList.splice(this.state.selectKey,1);
       this.props.setNumber(0)
       this.props.dispatch({
