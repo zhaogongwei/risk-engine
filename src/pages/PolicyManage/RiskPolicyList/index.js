@@ -49,11 +49,11 @@ export default class RiskPolicyList extends PureComponent {
         title: '策略代码',
         key:'strategyCode',
         dataIndex:'strategyCode'
-      },{
+      },/*{
         title: '策略说明',
         key:'remark',
         dataIndex:'remark'
-      },{
+      },*/{
         title: '输出报告',
         key:'templateName',
         dataIndex:'templateName'
