@@ -78,9 +78,12 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="变量名" {...formItemConfig}>
+            <FormItem label="变量名">
               {getFieldDecorator('variableName',{
-                initialValue:''
+                initialValue:'',
+                rules:[
+                  {max:20,message:'超过最大字数限制'},
+                ]
               })(
                 <Input />
               )}
@@ -115,7 +118,10 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="变量代码" {...formItemConfig}>
               {getFieldDecorator('variableCode',{
-                initialValue:''
+                initialValue:'',
+                rules:[
+                  {max:20,message:'超过最大字数限制'},
+                ]
               })(
                 <Input />
               )}

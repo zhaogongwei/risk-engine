@@ -81,7 +81,16 @@ export default {
         type: 'saveEnumeration',
         payload,
       });
-    }
+    },
+    //校验变量名称唯一性
+    *checkVarName({payload,callback},{call,put}){
+      let response = yield call(api.checkVarName,payload)
+      return response;
+    },
+    *checkVarCode({payload,callback},{call,put}){
+      let response = yield call(api.checkVarCode,payload)
+      return response;
+    },
   },
 
   reducers: {

@@ -74,10 +74,30 @@ export async function getStrategy(params){
   });
 }
 export async function getEnumeration(params){
-  return request(`${_api}/varList/getEnumeration`, {
+  return request(`${_baseApi}/varList/getEnumeration`, {
     method: 'POST',
     body: {
       ...params
     },
   });
 }
+
+//校验变量名唯一性
+export async function checkVarName(params){
+  return request(`${_baseApi}/variable/checkVariableName`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+//校验变量代码唯一性
+export async function checkVarCode(params){
+  return request(`${_baseApi}/variable/checkVariableCode`, {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
