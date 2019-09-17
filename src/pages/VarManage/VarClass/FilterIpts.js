@@ -112,7 +112,7 @@ export default class FilterIpts extends Component {
        
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="分类" {...formItemConfig}>
+            <FormItem label="分类">
               {getFieldDecorator('parentId',{
                 initialValue: this.props.varclass.filterIpts.parentId || ""
               })(
