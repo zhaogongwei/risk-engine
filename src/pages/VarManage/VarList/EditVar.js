@@ -338,6 +338,10 @@ export default class EditVar extends PureComponent {
       labelCol:{span:8},
       wrapperCol:{span:16},
     }
+    const enumConfig = {
+      labelCol:{span:3},
+      wrapperCol:{span:16},
+    }
     const query= {...this.props.location.query}
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
@@ -441,21 +445,27 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>:null
             }
+             {this.props.form.getFieldValue('variableType') != 'date'&&this.props.form.getFieldValue('variableType') != 'time'?
               <Col xxl={4} md={6}>
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
                     initialValue:'',
+                    rules:[
+                      {max:5,message:'超过最大位数'},
+                      {validator:this.checkNum}
+                     ]
                   })(
                     <Input />
                   )}
                 </FormItem>
-              </Col>
+              </Col>:null
+             }
               <Col xxl={4} md={6}>
                 <FormItem label="最小值" {...formItemConfig} >
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
-                     {max:true,message:'超过最大位数'},
+                     {max:5,message:'超过最大位数'},
                      {validator:this.checkNum}
                     ]
                   })(
@@ -468,7 +478,7 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      {max:true,message:'超过最大位数'},
+                      {max:5,message:'超过最大位数'},
                       {validator:this.checkNum}
                     ]
                   })(
@@ -480,11 +490,8 @@ export default class EditVar extends PureComponent {
             {
               this.state.isShow ?
                 <Row className={styles.btmMargin}  type="flex" align="top">
-                  <Col xxl={4} md={6}>
-                    <FormItem label="枚举值配置:" {...formItemConfig}>
-                    </FormItem>
-                  </Col>
-                  <Col xxl={8} md={12}>
+                  <Col xxl={10} md={14}>
+                    <FormItem label="枚举值配置:" {...enumConfig}>
                     <EditableTable
                       list={{ dataSource: this.props.varlist.enumeration }}
                       columns={this.columns}
@@ -492,6 +499,10 @@ export default class EditVar extends PureComponent {
                       handleDelete={this.handleDelete}
                       emDelFlag={this.state.emDelFlag}
                     />
+                    </FormItem>
+                  </Col>
+                  <Col xxl={8} md={12}>
+                    
                   </Col>
                 </Row> : null
             }

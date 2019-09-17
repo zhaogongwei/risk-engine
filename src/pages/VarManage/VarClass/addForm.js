@@ -246,7 +246,8 @@ export default class AddForm extends Component {
                   {
                     required:true,
                     message:'请输入名称'
-                  }
+                  },
+                  {max:6,message:'超过最大字数限制'},
                   ]
                 })(
                   <Input/>
@@ -264,7 +265,8 @@ export default class AddForm extends Component {
                     required:true,
                     message:'请输入描述'
                     
-                  }
+                  },
+                  {max:30,message:'超过最大字数限制'},
                   ]
                 })(
                   <Input/>
