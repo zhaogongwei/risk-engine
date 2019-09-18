@@ -21,6 +21,7 @@ export default {
       {
         title:'标题一',
         variable:[],//table数据
+        selectVar:[],
       }
     ],
     page:{

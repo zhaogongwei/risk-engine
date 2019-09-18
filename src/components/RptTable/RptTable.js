@@ -35,9 +35,8 @@ export default class RptTable extends Component {
       selectKey:0,//当前选中标题
     }
   }
-  changeHandler(value, record, type) {
-    console.log(value,record,type)
-    record[type]?record[type]['title']=value:''
+  changeHandler=(value, record, type) =>{
+      record[type]?record[type]['title']=value:''
   }
   //输入框值校验
   //   获取子组件数据的方法
@@ -54,11 +53,15 @@ export default class RptTable extends Component {
     this[key] = ref;
   }
   //添加子标题
-  addFormSubmit=async ()=>{
+  addFormSubmit=()=>{
     const title = this.child.submitHandler();
     const {titleList} = this.props;
-    console.log(title)
+    console.log(titleList)
     if(title && Object.keys(title).length){
+      if(titleList.length>=10){
+        message.error('最多只能添加10个子标题!')
+        return
+      }
       titleList.push({...title,variable:[]})
       this.setState({
         visible:false
@@ -111,6 +114,18 @@ export default class RptTable extends Component {
     let formQueryData = this.props.form.getFieldsValue()
     return formQueryData;
   }
+  //标题名称校验(在同一个报告中，标题唯一)
+  checkTitle=(title)=>{
+    const {titleList} = this.props.tempEdit;
+    let status = true;
+    for(let item of titleList){
+      if(item['title'].trim()===title.trim()){
+        status = false;
+        break;
+      }
+    }
+    return status
+  }
   render() {
     const {columns,dataSource,loading} = this.props;
     const {titleList} = this.props.tempEdit;
@@ -138,15 +153,15 @@ export default class RptTable extends Component {
                           cb('请输入内容!');
                           return;
                         }
-                        if(val.length>20){
-                          cb('最多输入20位!')
+                        if(val.length>8){
+                          cb('最多输入8位!')
                           return;
                         }
                       }
                     }
                   ],
                 })(
-                  <Input placeholder="请输入标题名称!" maxLength={21}onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
+                  <Input placeholder="请输入标题名称!" maxLength={9} onChange={(e) => this.changeHandler(e.target.value, titleList, index)} />
                 )}
               </FormItem>
             </Col>
@@ -186,15 +201,15 @@ export default class RptTable extends Component {
                           cb('报告模板名称内容不能为空!')
                           return
                         }
-                        if(val.length>20){
-                          cb('报告模板名称长度最多20位!')
+                        if(val.length>15){
+                          cb('报告模板名称长度最多15位!')
                           return
                         }
                       }
                     }
                     ]
                   })(
-                    <Input placeholder="请输入报告模板名称!" maxLength={21}/>
+                    <Input placeholder="请输入报告模板名称!" maxLength={16}/>
                 )}
               </FormItem>
             </Col>

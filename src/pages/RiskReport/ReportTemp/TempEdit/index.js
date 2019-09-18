@@ -182,7 +182,7 @@ export default class Index extends Component {
     const selectVar= titleList[key]['selectVar'];
     //对应表格的数据
     let checkList = titleList[key]['variable'];
-    if(selectVar.length>0){
+    if(selectVar&&selectVar.length>0){
       for(var i of selectVar){
         checkList.forEach((item,index)=>{
           if(item['key'] ===i){

@@ -76,6 +76,18 @@ export default class AddForm extends Component {
   componentDidMount () {
     this.props.getSubKey(this,'child')
   }
+  //标题名称校验(在同一个报告中，标题唯一)
+  checkTitle=(title)=>{
+    const {titleList} = this.props.tempEdit;
+    let status = true;
+    for(let item of titleList){
+      if(item['title'].trim()===title.trim()){
+        status = false;
+        break;
+      }
+    }
+    return status
+  }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
@@ -100,15 +112,21 @@ export default class AddForm extends Component {
                           cb('标题内容不能为空!')
                           return
                         }
-                        if(val.length>20){
-                          cb('标题长度最多20位!')
+                        if(val.length>8){
+                          cb('标题长度最多8位!')
                           return
+                        }
+                        let status = this.checkTitle(val);
+                        if(status){
+                          cb()
+                        }else{
+                          cb('标题名字已存在!')
                         }
                       }
                     }
                   ]
                 })(
-                  <Input/>
+                  <Input maxLength={9}/>
                 )}
               </FormItem>
             </Col>

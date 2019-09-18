@@ -239,6 +239,15 @@ export default class AddForm extends Component {
     })
     return varList
   }
+  subName=(name)=>{
+    let newName;
+    if(name&&name.length>10){
+      newName=name.substring(0,10)+'...'
+    }else{
+      newName=name
+    }
+    return newName;
+  }
   render() {
     const {visible,loading} = this.state;
     const { getFieldDecorator } = this.props.form
@@ -317,10 +326,10 @@ export default class AddForm extends Component {
                     this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Checkbox disabled={item.disabled} value={item}>{item.variableName}</Checkbox>
+                          <Checkbox disabled={item.disabled} value={item}>{this.subName(item.variableName)}</Checkbox>
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
-                        <Col span={8}>{item.variableName}</Col>
+                        <Col span={8}>{item.remark}</Col>
                       </Row>
                     }):<Empty />
                   }
@@ -330,7 +339,7 @@ export default class AddForm extends Component {
                     this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio value={item}>{item.variableName}</Radio >
+                          <Radio value={item}>{this.subName(item.variableName)}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark}</Col>
