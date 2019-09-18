@@ -58,6 +58,7 @@ export default class AddForm extends Component {
         pageSize:this.state.pageSize,
       }
     })
+    return res;
   }
   //展示页码
   showTotal = (total, range) => {
@@ -66,9 +67,16 @@ export default class AddForm extends Component {
   //  分页器改变页数的时候执行的方法
   onPageChange = (current) => {
     this.setState({
-      currPage:current
-    },()=>{
-      this.change(current)
+      currPage:current,
+      checkedList:[],
+    },async()=>{
+     const res =  await this.change(current)
+     const {checkAll} = this.state;
+      if(res&&res.status===1){
+       if(checkAll){
+         this.onCheckAllChange({target:{checked:true}})
+       }
+      }
     })
   }
   onChange = (checkedList) => {
