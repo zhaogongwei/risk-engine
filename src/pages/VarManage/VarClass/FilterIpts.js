@@ -42,6 +42,12 @@ export default class FilterIpts extends Component {
   //重置
   reset = () => {
     this.props.form.resetFields()
+    this.props.dispatch({
+      type: 'varclass/changeSecondSelect',
+      payload: {
+        data:[]
+      }
+    })
   }
   selectchange = value => {
     // 清空操作 不请求接口

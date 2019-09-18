@@ -31,6 +31,7 @@ export default class FilterIpts extends Component {
 		this.props.change(1)
   }
    selectchange = value => {
+
   	this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
@@ -49,6 +50,12 @@ export default class FilterIpts extends Component {
   //重置
   reset = () => {
     this.props.form.resetFields()
+    this.props.dispatch({
+      type: 'varlist/changeSecondSelect',
+      payload: {
+        data:[]
+      }
+    })
   }
   componentDidMount = async()=> {
     this.props.getSubKey(this,'child')
