@@ -36,7 +36,20 @@ export default class RptTable extends Component {
     }
   }
   changeHandler=(value, record, type) =>{
+    if(this.checkTitle(value)){
       record[type]?record[type]['title']=value:''
+    }else{
+      setTimeout(()=>{
+        record[type]?record[type]['title']='':''
+        this.props.form.setFields({
+          [`table-title-${type}`]:{
+            value: '',
+            errors: [new Error('标题已存在!')],
+          }
+        })
+      },0)
+    }
+
   }
   //输入框值校验
   //   获取子组件数据的方法
