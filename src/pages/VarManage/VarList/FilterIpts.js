@@ -31,6 +31,7 @@ export default class FilterIpts extends Component {
 		this.props.change(1)
   }
    selectchange = value => {
+
   	this.props.dispatch({
       type: 'varlist/getSelectLevel2',
       payload: {
@@ -49,6 +50,12 @@ export default class FilterIpts extends Component {
   //重置
   reset = () => {
     this.props.form.resetFields()
+    this.props.dispatch({
+      type: 'varlist/changeSecondSelect',
+      payload: {
+        data:[]
+      }
+    })
   }
   componentDidMount = async()=> {
     this.props.getSubKey(this,'child')
@@ -78,9 +85,12 @@ export default class FilterIpts extends Component {
       >
         <Row className={styles.btmMargin}  type="flex" align="middle">
           <Col xxl={4} md={6}>
-            <FormItem label="变量名" {...formItemConfig}>
+            <FormItem label="变量名">
               {getFieldDecorator('variableName',{
-                initialValue:''
+                initialValue:'',
+                rules:[
+                  {max:20,message:'超过最大字数限制'},
+                ]
               })(
                 <Input />
               )}
@@ -115,7 +125,10 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="变量代码" {...formItemConfig}>
               {getFieldDecorator('variableCode',{
-                initialValue:''
+                initialValue:'',
+                rules:[
+                  {max:20,message:'超过最大字数限制'},
+                ]
               })(
                 <Input />
               )}

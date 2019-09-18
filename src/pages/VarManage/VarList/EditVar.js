@@ -328,9 +328,64 @@ export default class EditVar extends PureComponent {
     if(!re.test(val)){
       cb('请输入数字')
       return;
+    }else if(val.length>5){
+      cb('超过最大字数限制')
+      return;
     }
     cb()
     return;
+  }
+  checkVarCode=async(rule, val, cb)=>{
+    let re = new RegExp("^(?!\d+$)[\da-zA-Z]+$");
+    if(val.length==0){
+      cb()
+      return;
+    }else if(!re.test(val)){
+      cb('请输入正确的变量代码')
+      return;
+    }else if(val.length>30){
+        cb('超过最大字数限制')
+        return;
+    }else{
+      let res=await this.props.dispatch({
+        type: 'varlist/checkVarCode',
+        payload: {
+          variableCode: val,
+          id:this.props.location.query.id || ''
+        }
+      })
+      if(res.status==1){
+        cb()
+        return;
+      }else{
+        cb(res.statusDesc)
+        return;
+      }
+    }
+  }
+  checkVarName=async(rule, val, cb)=>{
+    if(val.length==0){
+      cb()
+      return;
+    }else if(val.length>15){
+        cb('超过最大字数限制')
+        return;
+    }else{
+      let res=await this.props.dispatch({
+        type: 'varlist/checkVarName',
+        payload: {
+          variableName: val,
+          id:this.props.location.query.id || ''
+        }
+      })
+      if(res.status==1){
+        cb()
+        return;
+      }else{
+        cb(res.statusDesc)
+        return;
+      }
+    }
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -390,7 +445,8 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableName',{
                     initialValue:'',
                     rules:[
-                      {required:true,message:'请输入变量名'}
+                      {required:true,message:'请输入变量名称'},
+                      {validator:this.checkVarName}
                     ]
                   })(
                     <Input />
@@ -402,7 +458,8 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableCode',{
                     initialValue:'',
                     rules:[
-                      {required:true,message:'请输入变量代码'}
+                      {required:true,message:'请输入变量代码'},
+                      {validator:this.checkVarCode}
                     ]
                   })(
                     <Input disabled={this.state.disable}/>
@@ -445,13 +502,12 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>:null
             }
-             {this.props.form.getFieldValue('variableType') != 'date'&&this.props.form.getFieldValue('variableType') != 'time'?
+            {this.props.form.getFieldValue('variableType') != 'date'&&this.props.form.getFieldValue('variableType') != 'time'?
               <Col xxl={4} md={6}>
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
                     initialValue:'',
                     rules:[
-                      {max:5,message:'超过最大位数'},
                       {validator:this.checkNum}
                      ]
                   })(
@@ -459,34 +515,36 @@ export default class EditVar extends PureComponent {
                   )}
                 </FormItem>
               </Col>:null
-             }
+            }
+            {this.props.form.getFieldValue('variableType') == 'num'?
               <Col xxl={4} md={6}>
                 <FormItem label="最小值" {...formItemConfig} >
                   {getFieldDecorator('minValue',{
                     initialValue:'',
                     rules:[
-                     {max:5,message:'超过最大位数'},
                      {validator:this.checkNum}
                     ]
                   })(
                     <Input disabled={this.state.disable} />
                   )}
                 </FormItem>
-              </Col>
+              </Col>:null
+            }
+            {this.props.form.getFieldValue('variableType') == 'num'?
               <Col xxl={4} md={6}>
                 <FormItem label="最大值" {...formItemConfig} >
                   {getFieldDecorator('maxValue',{
                     initialValue:'',
                     rules:[
-                      {max:5,message:'超过最大位数'},
                       {validator:this.checkNum}
                     ]
                   })(
                     <Input disabled={this.state.disable}/>
                   )}
                 </FormItem>
-              </Col>
-            </Row>
+              </Col>:null
+            }
+            </Row>   
             {
               this.state.isShow ?
                 <Row className={styles.btmMargin}  type="flex" align="top">
@@ -529,6 +587,9 @@ export default class EditVar extends PureComponent {
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
+                    rules:[
+                      {max:10,message:'超过最大字数限制'},
+                    ]
                   })(
                     <Input />
                   )}

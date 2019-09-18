@@ -43,16 +43,21 @@ export default {
     //添加变量(一级/二级）
     *addVarClass({payload,callback},{call,put}){
       let response = yield call(api.addVarClass,payload)
-      callback()
+      return response;
     },
     //编辑变量(一级/二级)
     *editVarClass({payload,callback},{call,put}){
       let response = yield call(api.editVarClass,payload)
-      callback()
+      return response;
     },
     //删除变量
     *delVarClass({payload,callback},{call,put}){
       let response = yield call(api.delVarClass,payload)
+      return response;
+    },
+    //校验变量分类名称唯一性
+    *checkVarName({payload,callback},{call,put}){
+      let response = yield call(api.checkVarName,payload)
       return response;
     },
   },

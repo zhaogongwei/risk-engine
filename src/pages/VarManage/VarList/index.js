@@ -108,6 +108,7 @@ export default class VarList extends PureComponent {
         title:'更新时间',
         key:'updateTime',
         dataIndex:'updateTime',
+        sorter:true,
       },
       {
         title: '操作',
@@ -155,6 +156,9 @@ export default class VarList extends PureComponent {
       status:1,
       visible:false,
       policyList:[],
+      //时间排序标识
+      sorter:0,
+      loading:false
     };
   }
   componentDidMount = async()=> {
@@ -190,14 +194,21 @@ export default class VarList extends PureComponent {
     this.change(current)
   }
   // 进入页面去请求页面数据
-  change = (currPage = 1, pageSize = 10) => {
-    this.props.dispatch({
+  change = async(currPage = 1, pageSize = 10) => {
+    this.setState({
+      loading:true
+    })
+    await this.props.dispatch({
       type: 'varlist/fetchVarList',
       payload: {
       	...this.props.varlist.filterIpts,
       	currPage:currPage,
-      	pageSize:pageSize,
+        pageSize:pageSize,
+        creamTimeAsc:this.state.sorter
       }
+    })
+    this.setState({
+      loading:false
     })
   }
   //   获取子组件数据的方法
@@ -311,7 +322,18 @@ export default class VarList extends PureComponent {
       })
     }
   }
-
+  tableChange=async (pagination, filters, sorter)=>{
+    if(sorter.order=='ascend'){
+      await this.setState({
+        sorter:1
+      })
+    }else{
+      await this.setState({
+        sorter:0
+      })
+    }
+    this.change(this.props.varlist.current)
+  }
   render() {
     const { permission } =  this.props;
     return (
@@ -326,6 +348,8 @@ export default class VarList extends PureComponent {
                pagination={false}
                columns={this.state.columns}
                dataSource={this.props.varlist.varList}
+               onChange={this.tableChange}
+               loading={this.state.loading}
              />
              <Pagination
                style={{ marginBottom: "50px" }}

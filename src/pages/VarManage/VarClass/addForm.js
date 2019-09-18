@@ -36,146 +36,132 @@ export default class AddForm extends Component {
   }
   //点击确定
   handleOk = ()=>{
-//  if(!this.props.type){
-//    this.props.form.validateFields(['assetsTypeName','assetsTypeCode','status'],(err, values) => {
-//      if(!err){
-//          const formData = this.getFormValue()
-//          this.props.dispatch({
-//            type: 'assetDeploy/riskDeploy',
-//            payload: {
-//              ...formData,
-//              //id:this.props.id
-//            },
-//            callback:()=>{
-//              this.setState({visible:false},()=>{
-//                this.props.onChange(this.state.visible)
-//              })
-//              this.props.changeDefault()
-//              this.props.callback()
-//              this.reset()
-//            }
-//          })
-//      }
-//    })
-//  }else{
-//    this.props.form.validateFields(['assetsTypeName','assetsTypeCode','projectStatus'],(err, values) => {
-//        if(!err){
-//            const formData = this.getFormValue()
-//            this.props.dispatch({
-//              type: 'assetDeploy/riskAdd',
-//              payload: {
-//                ...formData,
-//                
-//              },
-//              callback:()=>{
-//                this.setState({visible:false},()=>{
-//                  this.props.onChange(this.state.visible);
-//                })
-//                this.props.changeDefault()
-//                this.props.callback()
-//                this.reset()
-//              }
-//            })
-//        }
-//    })
-//  }
-    this.setState({
-      confirmLoadingFlag:true
-    })
-		if(this.props.type==1){//添加一级分类
+    if(this.props.type==1){//添加一级分类
 			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
+          this.setState({
+            confirmLoadingFlag:true
+          })
 		      const formData = this.getFormValue()
-		      this.props.dispatch({
+		      let res=this.props.dispatch({
 		        type: 'varclass/addVarClass',
 		        payload: {
 		          ...formData,
-		        },
-		        callback:()=>{
-		        	this.props.changeDefault(1)
+		        }
+          })
+          res.then(val=>{
+            this.setState({
+              confirmLoadingFlag:false
+            })
+            if(val.status==1){
+              this.props.changeDefault(1)
 		          this.props.resatSelect.classChangeGetSelect()
 		          this.props.change(1)
 		          this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
 		          })
-		          this.setState({
-                confirmLoadingFlag:false
-              })
+		          
 		          this.reset()
-		        }
-		      })
+            }else{
+              message.error(value.statusDesc||"操作失败")
+            }
+          })
 		    }
   		})
-		}else if(this.props.type==2){ //添加二级分类
+    }else if(this.props.type==2){ //添加二级分类
 			this.props.form.validateFields(['remark','typeName','orderNum','parentId'],(err, values) => {
 	      if(!err){
+          this.setState({
+            confirmLoadingFlag:true
+          })
 		      const formData = this.getFormValue()
-		      this.props.dispatch({
+		      let res=this.props.dispatch({
 		        type: 'varclass/addVarClass',
 		        payload: {
 		          ...formData,
-		        },
-		        callback:()=>{
-		          this.setState({visible:false},()=>{
+		        }
+          })
+          res.then(val=>{
+            this.setState({
+              confirmLoadingFlag:false
+            })
+            if(val.status==1){
+              this.setState({visible:false},()=>{
 		            this.props.onChange(this.state.visible);
               })
-              this.setState({
-                confirmLoadingFlag:false
-              })
 		          this.props.changeDefault(1)
-		         this.props.resatSelect.classChangeGetSelect()
-		         this.props.change(1)
+		          this.props.resatSelect.classChangeGetSelect()
+		          this.props.change(1)
 		          this.reset()
-		        }
-		      })
+            }else{
+              message.error(value.statusDesc||"操作失败")
+            }
+          })
 		    }
   		})
 		}else if(this.props.type==3){//编辑一级分类
 			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
+          this.setState({
+            confirmLoadingFlag:true
+          })
 		      const formData = this.getFormValue(1)
-		      this.props.dispatch({
+		      let res=this.props.dispatch({
 		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
-		        },
-		        callback:()=>{
-		          this.setState({visible:false},()=>{
-		            this.props.onChange(this.state.visible);
-              })
-              this.setState({
-                confirmLoadingFlag:false
+		        }
+          })
+          res.then(val=>{
+            this.setState({
+              confirmLoadingFlag:false
+            })
+            if(val.status==1){
+              this.setState({visible:false},()=>{
+                this.props.onChange(this.state.visible);
               })
               this.props.resatSelect.getSelect()
               this.props.change(this.props.current)
-		          this.reset()
-		        }
-		      })
+              this.reset()
+            }else{
+              message.error(value.statusDesc||"操作失败")
+            }
+          })
+         
 		    }
   		})
 		}else if(this.props.type==4){//编辑二级分类
 			this.props.form.validateFields(['remark','typeName','orderNum'],(err, values) => {
 	      if(!err){
+          this.setState({
+            confirmLoadingFlag:true
+          })
 		      const formData = this.getFormValue()
-		      this.props.dispatch({
+		      let res=this.props.dispatch({
 		        type: 'varclass/editVarClass',
 		        payload: {
 		          ...formData,
 		          id:this.props.record['id']
 		        },
-		        callback:()=>{
-		          this.setState({visible:false},()=>{
-		            this.props.onChange(this.state.visible);
-              })
-              this.setState({
-                confirmLoadingFlag:false
+		          
+          })
+          res.then(val=>{
+            this.setState({
+              confirmLoadingFlag:false
+            })
+            if(val.status==1){
+              this.setState({visible:false},()=>{
+                this.props.onChange(this.state.visible);
               })
               this.props.resatSelect.selectchange(this.props.varclass.filterIpts.parentId || '')
-		          this.props.change(this.props.current)
-		          this.reset()
-		        }
-		      })
+              this.props.change(this.props.current)
+              this.reset()
+            }else{
+              message.error(value.statusDesc||"操作失败")
+            }
+          })
+          
 		    }
   		})
 		}
@@ -205,6 +191,28 @@ export default class AddForm extends Component {
     this.setState({
       visible:newProps.showState
     })
+  }
+  checkVarName=async(rule, value, cb)=>{
+    let id= (this.props.type === 3 || this.props.type ===4)?this.props.record['id']:'';
+    let res=await this.props.dispatch({
+      type: 'varclass/checkVarName',
+      payload: {
+        typeName:value,
+        id:id
+      },
+    })
+      if(value==""){
+        cb()
+      }else if(value.length>6){
+        cb('超过最大字数限制')
+        return;
+      }else if(res.status==1){
+        cb()
+        return;
+      }else{
+        cb(res.statusDesc)
+        return;
+      }
   }
   render() {
     const {visible,loading} = this.state;
@@ -247,7 +255,9 @@ export default class AddForm extends Component {
                     required:true,
                     message:'请输入名称'
                   },
-                  {max:6,message:'超过最大字数限制'},
+                  {
+                    validator:this.checkVarName
+                  }
                   ]
                 })(
                   <Input/>
@@ -262,9 +272,8 @@ export default class AddForm extends Component {
                   initialValue:(this.props.type === 3 || this.props.type ===4)?this.props.record['remark']:'',
                   rules:[
                   {
-                    required:true,
-                    message:'请输入描述'
-                    
+                    required:true,  
+                    message:'请输入名称'
                   },
                   {max:30,message:'超过最大字数限制'},
                   ]

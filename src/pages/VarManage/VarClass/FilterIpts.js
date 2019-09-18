@@ -42,6 +42,12 @@ export default class FilterIpts extends Component {
   //重置
   reset = () => {
     this.props.form.resetFields()
+    this.props.dispatch({
+      type: 'varclass/changeSecondSelect',
+      payload: {
+        data:[]
+      }
+    })
   }
   selectchange = value => {
     // 清空操作 不请求接口
@@ -114,7 +120,7 @@ export default class FilterIpts extends Component {
           <Col xxl={4} md={6}>
             <FormItem label="分类">
               {getFieldDecorator('parentId',{
-                initialValue: this.props.varclass.filterIpts.parentId || ""
+                initialValue: ""
               })(
                   <Select allowClear={true} onChange={this.selectchange}>
                   {this.props.varclass.selectItem.map((item,index)=> (
@@ -128,7 +134,7 @@ export default class FilterIpts extends Component {
           <Col xxl={3} md={4}>
             <FormItem>
               {getFieldDecorator('id',{
-                initialValue: this.props.varclass.filterIpts.id || ''
+                initialValue: ''
               })(
                 <Select allowClear={true}>
                  {this.props.varclass.secondSelectItem.map( (item,index) => (
