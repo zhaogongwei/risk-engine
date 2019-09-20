@@ -30,7 +30,7 @@ export default class Editable extends Component {
   constructor(props) {
     super(props);
     this.state={
-      selectedRowKeys: [],
+      selectedRowKeys:[],
       current:1,//当前页码
       tableList:[],
       pageList:[]

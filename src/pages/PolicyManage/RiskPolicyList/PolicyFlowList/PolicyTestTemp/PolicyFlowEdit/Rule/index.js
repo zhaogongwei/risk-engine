@@ -225,10 +225,10 @@ export default class SimpleRule extends PureComponent {
     window.location.reload();
   }
   //删除表格数据
-  handleDelete=(key)=>{
+  handleDelete=async(key)=>{
     const {ruleList} = this.props.rule
     const newDataSource = ruleList.filter(item => item.key !== key)
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'rule/ruleListHandle',
       payload: {
         ruleList:addListKey(newDataSource)

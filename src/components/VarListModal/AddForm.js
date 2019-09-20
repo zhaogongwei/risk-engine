@@ -122,6 +122,7 @@ export default class AddForm extends Component {
         checkedList.forEach((item,key)=>{
           item['variableId'] = item['id']
           item['varTypeStr'] = item['variableTypeStr']
+          item['soleKey'] = Math.random()
         })
         return checkedList
       }else{
@@ -135,6 +136,7 @@ export default class AddForm extends Component {
           records['enumFlag']=radioValue['enumFlag'];
           records['enumList']=radioValue['variableEnumList'];
           records['varTypeStr'] = radioValue['variableTypeStr']
+          records['soleKey'] = Math.random()
         }
         Object.assign(records,radioValue)
         console.log(records)

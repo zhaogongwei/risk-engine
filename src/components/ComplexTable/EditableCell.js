@@ -152,7 +152,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
                       initialValue: record[dataIndex]?record[dataIndex]:'',
                       rules:[
                         {

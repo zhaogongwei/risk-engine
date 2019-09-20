@@ -209,7 +209,8 @@ export default class Index extends Component {
             titleList:titleList
           }
         })
-        callback()
+        callback();
+        this.deleteSelectVar(key)
       }
     }else{
       message.error('删除失败,请勾选要删除的项目!');
@@ -221,6 +222,11 @@ export default class Index extends Component {
     console.log(index,list)
     const {titleList}= this.props.tempEdit;
     titleList[index]['selectVar']=list;
+  }
+  //删除对应table中选中得变量
+  deleteSelectVar=(index)=>{
+    const {titleList}= this.props.tempEdit;
+    titleList[index]['selectVar']=[];
   }
   //存储表格form
   handleModify = form => {
