@@ -294,6 +294,7 @@ export default class Index extends Component {
   }
   //去预览页面
   goPreview=(id)=>{
+    sessionStorage.setItem('reportPreview-url',`${location.pathname}${location.search}`)
     router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
   render() {
@@ -357,7 +358,7 @@ export default class Index extends Component {
                 </Col>
             }
             <Col col={8}>
-              <Button type="primary" onClick={()=>router.goBack()}>取消</Button>
+              <Button type="primary" onClick={()=>router.push('/riskReport/reportList/mould')}>取消</Button>
             </Col>
           </Row>
         </Card>

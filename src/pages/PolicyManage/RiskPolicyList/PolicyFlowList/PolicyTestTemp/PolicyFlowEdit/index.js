@@ -83,6 +83,7 @@ class FlowPage extends React.Component {
   //保存策略流数据
   submitData = async () => {
     const data = this.flow.myRef.graph.save();
+    console.log(data)
     const edgesList = data['edges']?data['edges']:[];
     const nodesList = data['nodes']?data['nodes']:[];
     const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
@@ -103,7 +104,7 @@ class FlowPage extends React.Component {
         message.error('请设置连线的相关属性!')
         return
       }
-        const res = await this.props.dispatch({
+        /*const res = await this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {
             strategyId:strategyId,
@@ -111,7 +112,7 @@ class FlowPage extends React.Component {
             remark:formData['remark'],
             flowId:type==='1'?null:flowId,
           }
-        })
+        })*/
     })
   }
   save=()=>{
