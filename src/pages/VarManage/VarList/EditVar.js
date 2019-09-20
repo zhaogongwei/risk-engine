@@ -51,7 +51,7 @@ export default class EditVar extends PureComponent {
         title: '枚举值展示',
         dataIndex: 'enumShow',
         key:'enumShow',
-        max:200,
+        max:20,
         nonRequired: true,
         editable: true,
       },
@@ -116,6 +116,7 @@ export default class EditVar extends PureComponent {
       updateTrueName:'',
       defaultVal:null,
       emDelFlag:true,
+      varData:{}
     };
   }
   componentDidMount = async () => {
@@ -139,19 +140,27 @@ export default class EditVar extends PureComponent {
         //设置input值
         await this.props.form.setFieldsValue({
           firstTypeId:Number(data.firstTypeId),
-          enumFlag: data.enumFlag,
-          maxValue: data.maxValue,
-          minValue: data.minValue,
           remark: data.remark,
           status: data.status,
           variableCode: data.variableCode,
-          variableLength: data.variableLength,
           variableName: data.variableName,
           variableType: data.variableType
         })
         //设置缺省值和显示枚举flag
         this.setState({
-          isShow:data.enumFlag
+          isShow:data.enumFlag,
+          varData:{
+            firstTypeId:Number(data.firstTypeId),
+            enumFlag: data.enumFlag,
+            maxValue: data.maxValue,
+            minValue: data.minValue,
+            remark: data.remark,
+            status: data.status,
+            variableCode: data.variableCode,
+            variableLength: data.variableLength,
+            variableName: data.variableName,
+            variableType: data.variableType
+          }
         })
         //时间和日期控件的默认值需要经过moment处理，没有值时，不能为''，只能为null
         if(data.variableType==='time'||data.variableType==='date'){
@@ -198,6 +207,12 @@ export default class EditVar extends PureComponent {
         })
       }
     }
+  }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'varlist/clearfilterIpts',
+      payload: {}
+    })
   }
   //   获取表单信息
   getFormValue = () => {
@@ -325,7 +340,10 @@ export default class EditVar extends PureComponent {
   }
   checkNum=(rule, val, cb)=>{
     let re = new RegExp("^[0-9]*$")
-    if(!re.test(val)){
+    if(val.length==0){
+      cb()
+      return;
+    }else if(!re.test(val)){
       cb('请输入数字')
       return;
     }else if(val.length>5){
@@ -398,6 +416,7 @@ export default class EditVar extends PureComponent {
       wrapperCol:{span:16},
     }
     const query= {...this.props.location.query}
+    console.log(query.type==2 )
     return (
       <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
         <Card
@@ -489,7 +508,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="是否枚举" {...formItemConfig}>
                   {getFieldDecorator('enumFlag',{
-                    initialValue:'',
+                    initialValue:query.type==2 && this.state.varData.enumFlag!==undefined ?this.state.varData.enumFlag:'',
                     rules:[
                       {required:true,message:'请选择是否枚举'}
                     ]
@@ -506,7 +525,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="长度" {...formItemConfig}>
                   {getFieldDecorator('variableLength',{
-                    initialValue:'',
+                    initialValue:query.type==2 && this.state.varData.variableLength!==undefined ?this.state.varData.variableLength:'',
                     rules:[
                       {validator:this.checkNum}
                      ]
@@ -520,8 +539,9 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="最小值" {...formItemConfig} >
                   {getFieldDecorator('minValue',{
-                    initialValue:'',
+                    initialValue:query.type==2 && this.state.varData.minValue!==undefined ?this.state.varData.minValue:'',
                     rules:[
+                      {required:true,message:'请输入最小值'},
                      {validator:this.checkNum}
                     ]
                   })(
@@ -534,8 +554,9 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="最大值" {...formItemConfig} >
                   {getFieldDecorator('maxValue',{
-                    initialValue:'',
+                    initialValue:query.type==2 && this.state.varData.maxValue!==undefined ? this.state.varData.maxValue:'',
                     rules:[
+                      {required:true,message:'请输入最大值'},
                       {validator:this.checkNum}
                     ]
                   })(
