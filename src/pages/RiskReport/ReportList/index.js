@@ -137,12 +137,12 @@ export default class ReportList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const {query} = this.props.location;
     const {pageData} = this.props.reportList;
     const {current} = pageData;
     const {id,presentationName} = query;
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'reportList/setQueryConfig',
       payload: {}
     })
@@ -216,6 +216,7 @@ export default class ReportList extends PureComponent {
   }
   //跳转报告模板
   goRiskReport = (id)=>{
+    sessionStorage.setItem('reportList-url',`${location.pathname}${location.search}`)
     router.push(`/riskReport/reportList/list/check?id=${id}`)
   }
   //更新报告

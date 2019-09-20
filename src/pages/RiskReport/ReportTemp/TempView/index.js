@@ -55,6 +55,7 @@ export default  class Index extends  PureComponent{
        <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
      </div>;
      const {titleList} = this.props.preView;
+     const forwordUrl = sessionStorage.getItem('reportPreview-url')
     return(
       <PageHeaderWrapper >
         {
@@ -86,7 +87,7 @@ export default  class Index extends  PureComponent{
         }
         <Row type="flex" justify="center">
           <Col>
-            <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
+            <Button type="primary" onClick={()=>router.push(forwordUrl)}>返回</Button>
           </Col>
         </Row>
       </PageHeaderWrapper>

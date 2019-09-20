@@ -100,7 +100,7 @@ export default class RiskLabel extends PureComponent {
   }
   async componentDidMount() {
     //保存查询条件
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'risklabel/saveQueryData',
       payload:{}
     })

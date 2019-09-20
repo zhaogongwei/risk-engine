@@ -24,7 +24,7 @@ export default class FilterIpts extends Component {
     this.props.changeDefault(1)
     const {query} = this.props.location;
     const formData = this.getFormValue()
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'policyFlowList/saveQueryData',
       payload: {
         ...formData,

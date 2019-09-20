@@ -72,8 +72,8 @@ export default class PolicyTestTemp extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
-    this.props.dispatch({
+  async componentDidMount() {
+    await this.props.dispatch({
       type: 'policyTestTemp/saveQueryData',
       payload: {}
     })

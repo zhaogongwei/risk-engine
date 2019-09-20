@@ -109,6 +109,7 @@ export default class EditableCell extends PureComponent {
         ref={node => (this.input = node)}
         onPressEnter={this.save}
         onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+        maxLength={21}
       />;
     }else if(this.props.record['varType']==='char'){
       if(this.props.record['enumFlag']){
@@ -129,6 +130,7 @@ export default class EditableCell extends PureComponent {
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+          maxLength={21}
         />;
       }
     }
@@ -227,6 +229,7 @@ export default class EditableCell extends PureComponent {
                   required:true,
                   validator: (rule, value, callback) => {
                     if (!value) callback('输入内容不能为空!')
+                    if (value.length>20) callback('输入内容最多20位!')
                   }
                 }
               ]

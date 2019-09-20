@@ -178,7 +178,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if(type === 'select'){
         return(
           <FormItem style={{ margin: 0 }}>
-            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+            {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
               initialValue: record[dataIndex]?record[dataIndex]:'',
               rules:[
                 {
@@ -213,7 +213,7 @@ const EditableFormRow = Form.create()(EditableRow);
       }else if(type === 'input' && isFocus){
         return(
           <FormItem style={{ margin: 0 }}>
-            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+            {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
               initialValue: record[dataIndex]?record[dataIndex]:'',
               rules:[
                 {
@@ -238,7 +238,7 @@ const EditableFormRow = Form.create()(EditableRow);
         if(record['varType']==='num'){
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue: record[dataIndex]?record[dataIndex]:'',
                 rules:[
                   {
@@ -255,6 +255,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                  maxLength={4}
                 />
               )}
             </FormItem>
@@ -262,13 +263,14 @@ const EditableFormRow = Form.create()(EditableRow);
         }else if(record['varType']==='char'&&!record['enumFlag']){
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue: record[dataIndex]?record[dataIndex]:'',
                 rules:[
                   {
                     required:true,
                     validator: (rule, value, callback) => {
                       if (!value) callback('输入内容不能为空!')
+                      if (value.length>20) callback('输入内容最多20位!')
                     }
                   }
                 ]
@@ -277,6 +279,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                  maxLength={21}
                 />
               )}
             </FormItem>
@@ -284,7 +287,7 @@ const EditableFormRow = Form.create()(EditableRow);
         }else if(record['enumFlag']){
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue: record[dataIndex]?record[dataIndex]:'',
                 rules:[
                   {
@@ -315,7 +318,7 @@ const EditableFormRow = Form.create()(EditableRow);
           const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue: initData,
                 rules:[
                   {
@@ -337,7 +340,7 @@ const EditableFormRow = Form.create()(EditableRow);
           const initData = record[dataIndex]?moment(record[dataIndex]):null
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue: initData,
                 rules:[
                   {
@@ -358,7 +361,7 @@ const EditableFormRow = Form.create()(EditableRow);
         }else{
           return(
             <FormItem style={{ margin: 0 }}>
-              {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+              {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
                 initialValue:record[dataIndex],
                 rules:[
                   {
@@ -382,13 +385,14 @@ const EditableFormRow = Form.create()(EditableRow);
       }else{
         return(
           <FormItem style={{ margin: 0 }}>
-            {getFieldDecorator(`dataIndex${record['key']}${cols}`, {
+            {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}`, {
               initialValue:record[dataIndex],
               rules:[
                 {
                   required:true,
                   validator: (rule, value, callback) => {
                     if (!value) callback('输入内容不能为空!')
+                    if (value.length>20) callback('输入内容最多20位!')
                   }
                 }
               ]
@@ -397,6 +401,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 ref={node => (this.input = node)}
                 onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                maxLength={21}
               />
             )}
           </FormItem>

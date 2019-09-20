@@ -50,8 +50,8 @@ export default class ScoreModel extends PureComponent {
         key:'varCode'
       },{
         title: '类型',
-        key:'varType',
-        dataIndex:'varType'
+        key:'varTypeStr',
+        dataIndex:'varTypeStr'
       },
         {
           title: '操作',
@@ -116,6 +116,14 @@ export default class ScoreModel extends PureComponent {
         },
       })
     }
+  }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'scoreModel/scoreListHandle',
+      payload: {
+        scoreList:[]
+      }
+    })
   }
   //   获取子组件数据的方法
   getSubKey = (ref,key) => {

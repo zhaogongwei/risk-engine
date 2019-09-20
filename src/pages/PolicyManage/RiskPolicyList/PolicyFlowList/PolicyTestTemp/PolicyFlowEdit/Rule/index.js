@@ -187,6 +187,9 @@ export default class SimpleRule extends PureComponent {
    }
 
   }
+  componentWillUnmount(){
+    
+  }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
     this.setState({

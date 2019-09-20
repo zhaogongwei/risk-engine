@@ -255,6 +255,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                  maxLength={4}
                 />
               )}
             </FormItem>
@@ -269,6 +270,7 @@ const EditableFormRow = Form.create()(EditableRow);
                     required:true,
                     validator: (rule, value, callback) => {
                       if (!value) callback('输入内容不能为空!')
+                      if (value.length>20) callback('输入内容最多20位!')
                     }
                   }
                 ]
@@ -277,6 +279,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                  maxLength={21}
                 />
               )}
             </FormItem>
@@ -389,6 +392,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   required:true,
                   validator: (rule, value, callback) => {
                     if (!value) callback('输入内容不能为空!')
+                    if (value.length>20) callback('输入内容最多20位!')
                   }
                 }
               ]
@@ -397,6 +401,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 ref={node => (this.input = node)}
                 onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
+                maxLength={21}
               />
             )}
           </FormItem>

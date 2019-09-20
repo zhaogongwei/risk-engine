@@ -98,8 +98,8 @@ export default class PolicyFlowList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
-    this.props.dispatch({
+  async componentDidMount() {
+    await this.props.dispatch({
       type: 'policyFlowList/saveQueryData',
       payload: {}
     })
@@ -182,7 +182,7 @@ export default class PolicyFlowList extends PureComponent {
   //启用/禁用
   isForbid=async(record)=>{
     const confirmVal = await Swal.fire({
-      text: record.status===1?"是否确认禁用该策略？":"是否确认启用该策略？",
+      text: record.status===1?"禁用策略后符合该策略标签的资产可能无法进行风控！是否确认禁用该策略？":"启用该版本后其他版本将自动禁用,是否确认启用该策略？",
       type: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

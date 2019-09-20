@@ -50,6 +50,19 @@ class FlowPage extends React.Component {
       this.flow.myRef.graph.read(data)
     }
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'editorFlow/initPolicyData',
+      payload: {
+        data:{
+          nodeJson: {},//策略流编辑的数据
+          updateTrueName:'',
+          updateTime:'',
+          remark:'',
+        },
+      }
+    })
+  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;

@@ -15,7 +15,7 @@ export default {
       const response = yield call(api.queryGreyList, payload)
       yield put({
         type: 'saveGreyNameList',
-        payload: addListKey(response.data.records, payload.currentPage, payload.pageSize),
+        payload: addListKey(response.data.records, response.data.current, response.data.size),
         total: response.data.total
       });
     },

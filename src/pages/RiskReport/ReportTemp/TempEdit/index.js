@@ -20,6 +20,7 @@ import { connect } from 'dva'
 import router from 'umi/router';
 // 验证权限的组件
 import { findInArr,exportJudgment,addListKey,deepCopy } from '@/utils/utils'
+import Swal from 'sweetalert2';
 import error from '../../../Exception/models/error';
 const Option = Select.Option;
 const FormItem = Form.Item
@@ -176,30 +177,40 @@ export default class Index extends Component {
     this.props.form.resetFields()
   }
   //删除对应表格变量
-  deleteVar=(key,list,callback)=>{
+  deleteVar=async(key,list,callback)=>{
     console.log(key,list)
     const {titleList}= this.props.tempEdit;
     const selectVar= titleList[key]['selectVar'];
     //对应表格的数据
     let checkList = titleList[key]['variable'];
     if(selectVar&&selectVar.length>0){
-      for(var i of selectVar){
-        checkList.forEach((item,index)=>{
-          if(item['key'] ===i){
-            checkList.splice(index,1)
+      const confirmVal = await Swal.fire({
+        text: '确定要删除选中的变量吗？',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+      if(confirmVal.value){
+        for(var i of selectVar){
+          checkList.forEach((item,index)=>{
+            if(item['key'] ===i){
+              checkList.splice(index,1)
+            }
+          })
+        }
+        addListKey(titleList[key]['variable'])
+        /*console.log(newlist)
+        reportList.splice(this.state.number,1,{key:this.state.number,title:reportList[this.state.number]['title'],checkList:newlist})*/
+        this.props.dispatch({
+          type: 'tempEdit/titleListHandle',
+          payload: {
+            titleList:titleList
           }
         })
+        callback()
       }
-      addListKey(titleList[key]['variable'])
-      /*console.log(newlist)
-      reportList.splice(this.state.number,1,{key:this.state.number,title:reportList[this.state.number]['title'],checkList:newlist})*/
-      this.props.dispatch({
-        type: 'tempEdit/titleListHandle',
-        payload: {
-          titleList:titleList
-        }
-      })
-      callback()
     }else{
       message.error('删除失败,请勾选要删除的项目!');
     }

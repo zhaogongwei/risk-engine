@@ -117,7 +117,14 @@ export default class setVar extends PureComponent {
       }
     })
   }
-
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'setVar/varListHandle',
+      payload: {
+        varList:[]
+      }
+    })
+  }
   //   获取子组件数据的方法
   getSubKey = (ref,key) => {
     this[key]=ref;
