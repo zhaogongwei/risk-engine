@@ -142,7 +142,8 @@ export default {
       return {
         ...state,
       filterIpts:{},
-      current:1
+      current:1,
+      enumeration:[]
       }
     },
     //   枚举添加
