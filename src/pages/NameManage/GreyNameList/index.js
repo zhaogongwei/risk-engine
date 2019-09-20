@@ -81,7 +81,7 @@ export default class GreyNameList extends PureComponent {
                   </Menu.Item>:null
               }
               {
-                permission.includes('re:grey:inblack')?
+                permission.includes('re:grey:inBlack')?
                   <Menu.Item onClick={ () => this.handleInBlack(record.id) }>
                     <Icon type="minus-circle" />拉黑
                   </Menu.Item>:null

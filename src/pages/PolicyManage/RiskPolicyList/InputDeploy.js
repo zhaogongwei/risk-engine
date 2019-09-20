@@ -115,6 +115,19 @@ export default class InputDeploy extends PureComponent {
       this.pagination(10,1,addListKey(res.data.inputVarList))
     }
   }
+  async componentWillUnmount(){
+    //清空列表数据
+    await this.props.dispatch({
+      type: 'policyList/InitTableList',
+      payload: {
+        data:{
+          inputVarList:[],
+          templateId:''
+        }
+      }
+    })
+    this.pagination(10,1,addListKey([]))
+  }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
     this.setState({
