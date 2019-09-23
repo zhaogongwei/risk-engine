@@ -145,6 +145,7 @@ export default class SimpleRule extends PureComponent {
       countResult:{},//计数结果
       searchText: '',
       ruleData: [],  //   简单规则form数据
+      resultQueryData:{},//输出结果查询参数
     };
   }
  async componentDidMount () {
@@ -220,17 +221,33 @@ export default class SimpleRule extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      number:record?record['key']:''
+      number:record?record['key']:'',
+      resultQueryData:{}
     },()=>{
     })
   }
   //输出结果
   outResult=(type)=>{
-    this.setState({
-      visible:true,
-      status:0,
-      isCount:type
-    })
+    if(type){
+      this.setState({
+        visible:true,
+        status:0,
+        isCount:type,
+        resultQueryData:{}
+      })
+    }else{
+      this.setState({
+        visible:true,
+        status:0,
+        isCount:type,
+        resultQueryData:{
+          types:['char'],
+          outFlag:1,
+          enumFlag:0,
+        }
+      })
+    }
+
   }
   //  刷新页面
   reload = () => {
@@ -321,13 +338,18 @@ export default class SimpleRule extends PureComponent {
             })
           }else{
             //输出结果
-            this.child.props.form.resetFields(['resultVarId'])
-            this.setState({
-              resultVarId:{
-                resultVarId:records['varId'],
-                resultVarValue:records['varName'],
-              },
-            })
+            //规则输出变量只能是字符串且未设置枚举值
+            if(!records['enumFlag']&&records['varType']=='char'){
+              this.child.props.form.resetFields(['resultVarId'])
+              this.setState({
+                resultVarId:{
+                  resultVarId:records['varId'],
+                  resultVarValue:records['varName'],
+                },
+              })
+            }else{
+              message.error('规则输出变量只能是字符串且未设置枚举值!')
+            }
           }
         }
       })
@@ -406,9 +428,11 @@ export default class SimpleRule extends PureComponent {
   }
   render() {
     const { permission } = this.props
+    const { resultQueryData } = this.state
     const { query } = this.props.location
     const {title} = query
     const queryData = {
+      ...resultQueryData,
       strategyId:query['strategyId']
     }
     const formItemConfig = {
@@ -461,7 +485,7 @@ export default class SimpleRule extends PureComponent {
               type={this.state.type}
               number={this.state.number}
               getSubKey={this.getSubKey}
-              queryData={query}
+              queryData={queryData}
             />
           </Modal>
         </Card>

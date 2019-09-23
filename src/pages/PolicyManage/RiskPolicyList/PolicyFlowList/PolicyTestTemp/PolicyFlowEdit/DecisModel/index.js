@@ -46,6 +46,7 @@ export default class DecisModel extends PureComponent {
       colVar:{},//列变量
       show:false,//行列设置弹框显隐控制
       decFormList:[],//可编辑table form 集合
+      resultQueryData:{},//输出结果查询参数
     };
   }
   async componentDidMount() {
@@ -351,12 +352,18 @@ export default class DecisModel extends PureComponent {
             this.setState({
               visible:true,
               inputType:type,
+              resultQueryData:{
+                types:['num']
+              },//输出结果查询参数
             })
           })
       }else{
         this.setState({
           visible:true,
           inputType:type,
+          resultQueryData:{
+            types:['num']
+          },//输出结果查询参数
         })
       }
     }else if(type ===0){
@@ -366,12 +373,18 @@ export default class DecisModel extends PureComponent {
             this.setState({
               visible:true,
               inputType:type,
+              resultQueryData:{
+                types:['num']
+              },//输出结果查询参数
             })
           })
       }else{
         this.setState({
           visible:true,
           inputType:type,
+          resultQueryData:{
+            types:['num']
+          },//输出结果查询参数
         })
       }
     }else if(type==2){
@@ -379,6 +392,9 @@ export default class DecisModel extends PureComponent {
       this.setState({
         visible:true,
         inputType:type,
+        resultQueryData:{
+          types:['char']
+        },//输出结果查询参数
       })
     }
   }
@@ -465,8 +481,10 @@ export default class DecisModel extends PureComponent {
     console.log(this.props.decision)
     const { permission } = this.props
     const { query } = this.props.location
+    const { resultQueryData } = this.state
     const { title } = query
     const queryData = {
+      ...resultQueryData,
       strategyId:query['strategyId']
     }
     const {colList,rowList,tableCol,tableRow,tableList} = this.props.decision;
@@ -511,6 +529,8 @@ export default class DecisModel extends PureComponent {
                </Modal>
                <Modal
                  title={'选择变量'}
+                 destroyOnClose={true}
+                 maskClosable={false}
                  visible={this.state.visible}
                  onOk={this.handleOk}
                  onCancel={()=>this.setState({visible:false})}
