@@ -60,8 +60,8 @@ export default class InputDeploy extends PureComponent {
         },
         {
           title: '添加时间',
-          dataIndex: 'createTime',
-          key:'createTime'
+          dataIndex: 'updateTime',
+          key:'updateTime'
         }
       ],
       checkedData: [],
@@ -115,9 +115,9 @@ export default class InputDeploy extends PureComponent {
       this.pagination(10,1,addListKey(res.data.inputVarList))
     }
   }
-  async componentWillUnmount(){
+  componentWillUnmount(){
     //清空列表数据
-    await this.props.dispatch({
+   this.props.dispatch({
       type: 'policyList/InitTableList',
       payload: {
         data:{
@@ -137,7 +137,6 @@ export default class InputDeploy extends PureComponent {
     this.pagination(10,current,this.props.policyList.tableList)
   }
   onSelectChange = (selectedRowKeys,selectedRows) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys,selectedRows);
     this.setState({
       selectedRowKeys:selectedRowKeys,
       selectedRows:selectedRows
@@ -186,12 +185,12 @@ export default class InputDeploy extends PureComponent {
     })
   }
   //删除表格数据
-  deleteList=async ()=>{
+  deleteList= async()=>{
     const {query} = this.props.location;
     const {selectedRowKeys,selectedRows} = this.state;
-    const {tableList} = this.props.policyList;
+    const {tableList,templateId} = this.props.policyList;
     let list = []
-    if(!selectedRowKeys.length){
+    if(!selectedRows.length){
       message.error('删除失败,请勾选要删除的项目!');
     }else{
       const confirmVal = await Swal.fire({
@@ -219,15 +218,19 @@ export default class InputDeploy extends PureComponent {
           if(res.data&&res.data.length>0){
             message.error('选中的变量已应用到策略,不能删除!')
           }else{
-            for(var key of selectedRowKeys){
+            for(var arr of selectedRows){
               tableList.forEach((item,index)=>{
-                if(item['key']===key){
+                if(item['id']===arr['id']){
                   tableList.splice(index,1)
                 }
               })
             }
-            this.setState({ selectedRowKeys: [],selectedRows:[] });
-            this.pagination(10,1,addListKey(tableList));
+            this.props.dispatch({
+              type: 'policyList/saveTableList',
+              payload: addListKey(tableList)
+            })
+            this.setState({ selectedRowKeys:[],selectedRows:[]});
+            this.pagination(10,1,tableList);
             message.success('删除成功!')
           }
         }
@@ -249,7 +252,6 @@ export default class InputDeploy extends PureComponent {
   }
   //保存提交
   formSubmit=()=>{
-    console.log(this.props.policyList)
     const {tableList} = this.props.policyList;
     const {query} = this.props.location;
     const formData = this.getFormValue();
@@ -295,7 +297,9 @@ export default class InputDeploy extends PureComponent {
     }
     const {selectedRowKeys,selectedRows,columns,current } = this.state;
     const rowSelection = {
-      onChange: (selectedRowKeys,selectedRows)=>this.onSelectChange(selectedRowKeys,selectedRows),
+      selectedRowKeys,
+      selectedRows,
+      onChange: this.onSelectChange,
     };
     const {mouldList,pageList,tableList,templateId} = this.props.policyList
     return (

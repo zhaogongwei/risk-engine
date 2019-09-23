@@ -49,14 +49,16 @@ export default class LabelEdit extends PureComponent {
           key:'variableName',
           editable:true,
           type:'input',
-          isFocus:true
+          isFocus:true,
+          cols:1,
         },
         {
           title: '值',
           key:'variableValue',
           dataIndex:'variableValue',
           editable:true,
-          type:'more'
+          type:'more',
+          cols:2,
         },
         {
           title: '操作',
@@ -203,7 +205,7 @@ export default class LabelEdit extends PureComponent {
           message.error('不能添加相同的变量!')
           return;
         }
-        if(tableList.length>20){
+        if(tableList.length>=20){
           message.error('最多可配置20个标签')
           return;
         }
@@ -315,8 +317,8 @@ export default class LabelEdit extends PureComponent {
                           if (!val) {
                             cb('请输入正确内容！')
                             return;
-                          }else if(val.length>30){
-                            cb('最多输入30位！')
+                          }else if(val.length>15){
+                            cb('最多输入15位！')
                             return;
                           }
                           if(type ==0)return;
@@ -336,7 +338,7 @@ export default class LabelEdit extends PureComponent {
                       },
                     ]
                   })(
-                    <Input maxLength={31}/>
+                    <Input maxLength={16}/>
                   )}
                 </FormItem>
               </Col>
@@ -397,7 +399,7 @@ export default class LabelEdit extends PureComponent {
               {
                 type==1?null:
                   <Col style={{color:'#FF0000'}} push={7}>
-                    最近操作时间：{labelInfo['createTime']} 操作人：  {labelInfo['updateTrueName']}
+                    最近操作时间：{labelInfo['updateTime']} 操作人：  {labelInfo['updateTrueName']}
                   </Col>
               }
             </Row>

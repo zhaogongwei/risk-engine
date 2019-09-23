@@ -39,13 +39,10 @@ export default {
     *queryItemInfo({payload},{call,put}){
       let response = yield call(api.importPolicyFlow,payload)
       if(response&&response.status ===1){
-        message.success(response.statusDesc)
         yield put({
           type: 'initPolicyData',
           payload:response,
         });
-      }else{
-        message.error(response.statusDesc)
       }
       return response
     },

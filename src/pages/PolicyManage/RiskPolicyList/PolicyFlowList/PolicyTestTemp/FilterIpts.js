@@ -23,7 +23,7 @@ export default class FilterIpts extends Component {
   formSubmit = async (e) => {
     this.props.changeDefault(1)
     const formData = this.getFormValue()
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'policyTestTemp/saveQueryData',
       payload: {
         ...formData,

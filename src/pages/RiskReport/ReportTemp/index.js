@@ -121,8 +121,8 @@ export default class VarList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
-    this.props.dispatch({
+  async componentDidMount() {
+   await this.props.dispatch({
       type: 'template/setQueryData',
       payload: {}
     })
@@ -198,6 +198,7 @@ export default class VarList extends PureComponent {
   }
   //去报告预览
   goPreview=(id)=>{
+    sessionStorage.setItem('reportPreview-url',`${location.pathname}${location.search}`)
     router.push(`/riskReport/reportList/mould/preview?id=${id}`)
   }
   //去风控策略列表

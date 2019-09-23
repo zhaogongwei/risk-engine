@@ -122,6 +122,7 @@ const EditableFormRow = Form.create()(EditableRow);
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
+          maxLength={21}
         />;
       }
     };
@@ -151,7 +152,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}`, {
+                    {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
                       initialValue: record[dataIndex]?record[dataIndex]:'',
                       rules:[
                         {

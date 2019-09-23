@@ -50,6 +50,19 @@ class FlowPage extends React.Component {
       this.flow.myRef.graph.read(data)
     }
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'editorFlow/initPolicyData',
+      payload: {
+        data:{
+          nodeJson: {},//策略流编辑的数据
+          updateTrueName:'',
+          updateTime:'',
+          remark:'',
+        },
+      }
+    })
+  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -70,6 +83,7 @@ class FlowPage extends React.Component {
   //保存策略流数据
   submitData = async () => {
     const data = this.flow.myRef.graph.save();
+    console.log(data)
     const edgesList = data['edges']?data['edges']:[];
     const nodesList = data['nodes']?data['nodes']:[];
     const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
@@ -90,7 +104,7 @@ class FlowPage extends React.Component {
         message.error('请设置连线的相关属性!')
         return
       }
-        const res = await this.props.dispatch({
+        /*const res = await this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {
             strategyId:strategyId,
@@ -98,7 +112,7 @@ class FlowPage extends React.Component {
             remark:formData['remark'],
             flowId:type==='1'?null:flowId,
           }
-        })
+        })*/
     })
   }
   save=()=>{

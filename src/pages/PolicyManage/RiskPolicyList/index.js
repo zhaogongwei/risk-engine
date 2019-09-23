@@ -122,7 +122,7 @@ export default class RiskPolicyList extends PureComponent {
       policyId: '',   //   策略id
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     //查询策略类型
     this.props.dispatch({
       type: 'policyList/fetchPolicyTypeList',
@@ -134,7 +134,7 @@ export default class RiskPolicyList extends PureComponent {
       payload:{}
     })
     //保存查询条件
-    this.props.dispatch({
+    await this.props.dispatch({
       type: 'policyList/saveQueryData',
       payload:{}
     })

@@ -17,7 +17,7 @@ export default {
       if (response && response.status === 1) {
         yield put({
           type: 'saveBlackNameList',
-          payload: addListKey(response.data.records, payload.currentPage, payload.pageSize),
+          payload: addListKey(response.data.records, response.data.current, response.data.size),
           total: response.data.total
         })
       } else {

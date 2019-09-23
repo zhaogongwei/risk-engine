@@ -121,7 +121,8 @@ export default class AddForm extends Component {
         //多选
         checkedList.forEach((item,key)=>{
           item['variableId'] = item['id']
-          item['createTime'] = item['updateTime']
+          item['varTypeStr'] = item['variableTypeStr']
+          item['soleKey'] = Math.random()
         })
         return checkedList
       }else{
@@ -134,6 +135,8 @@ export default class AddForm extends Component {
           records['varType']=radioValue['variableType'];
           records['enumFlag']=radioValue['enumFlag'];
           records['enumList']=radioValue['variableEnumList'];
+          records['varTypeStr'] = radioValue['variableTypeStr']
+          records['soleKey'] = Math.random()
         }
         Object.assign(records,radioValue)
         console.log(records)
@@ -162,6 +165,13 @@ export default class AddForm extends Component {
   //重置
   reset = () => {
     this.props.form.resetFields()
+    //清除二级分类内容
+    this.props.dispatch({
+      type: 'varList/twoClassHandle',
+      payload: {
+        data:[]
+      }
+    })
   }
  async componentWillMount(){
     const {queryData} = this.props;
@@ -275,7 +285,7 @@ export default class AddForm extends Component {
                 {getFieldDecorator('firstTypeId',{
                 })(
                     <Select
-                      allowClear={true}
+                      allowClear={false}
                       onChange={this.oneClassHandle}
                       placeholder="一级分类"
                     >
@@ -295,7 +305,7 @@ export default class AddForm extends Component {
                 {getFieldDecorator('secondTypeId',{
                 })(
                   <Select
-                    allowClear={true}
+                    allowClear={false}
                     placeholder="二级分类"
                   >
                     {
@@ -347,7 +357,7 @@ export default class AddForm extends Component {
                     this.duplicateRemoval(varList, pageList).length > 0 ? this.duplicateRemoval(varList, pageList).map((item, index) => {
                       return  <Row type="flex" align="middle" key={index}>
                         <Col span={8}>
-                          <Radio value={item}>{this.subName(item.variableName)}</Radio >
+                          <Radio disabled={item.disabled} value={item}>{this.subName(item.variableName)}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
                         <Col span={8}>{item.remark?item.remark:'---'}</Col>
