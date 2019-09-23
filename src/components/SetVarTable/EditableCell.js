@@ -190,7 +190,7 @@ const EditableFormRow = Form.create()(EditableRow);
               ]
             })(
               <Select
-                style={{width:'100%'}}
+                style={{width:70}}
                 onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e, record, dataIndex)}
               >

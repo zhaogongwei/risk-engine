@@ -124,7 +124,7 @@ export default class SimpleRule extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => (
-          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
+          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}>
             <Button type="primary">删除</Button>
           </Popconfirm>
         ),
@@ -188,7 +188,19 @@ export default class SimpleRule extends PureComponent {
 
   }
   componentWillUnmount(){
-    
+    this.props.dispatch({
+      type: 'rule/InitruleListHandle',
+      payload: {
+        data:{
+          variables:[],
+          countVarId:'',
+          countVarValue:'',
+          resultVarId:'',
+          resultVarValue:'',
+          ruleCondition:'',
+        }
+      }
+    })
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {
@@ -395,6 +407,7 @@ export default class SimpleRule extends PureComponent {
   render() {
     const { permission } = this.props
     const { query } = this.props.location
+    const {title} = query
     const queryData = {
       strategyId:query['strategyId']
     }
@@ -406,7 +419,7 @@ export default class SimpleRule extends PureComponent {
       <PageHeaderWrapper >
         <Card
           bordered={false}
-          title={'硬规则'}
+          title={title}
         >
           <FilterIpts
             getSubKey={this.getSubKey}

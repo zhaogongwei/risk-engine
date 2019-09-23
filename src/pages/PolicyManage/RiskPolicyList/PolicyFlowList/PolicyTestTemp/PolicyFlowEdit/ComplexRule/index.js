@@ -129,7 +129,7 @@ export default class ComplexRule extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => (
-          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
+          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="确认" cancelText="取消">
             <Button type="primary">删除</Button>
           </Popconfirm>
         ),
@@ -189,6 +189,21 @@ export default class ComplexRule extends PureComponent {
         },
       })
     }
+  }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'complex/InitComplexListHandle',
+      payload: {
+        data:{
+          variables:[],
+          countVarId:'',//计数结果id
+          countVarValue:'',//计数结果
+          resultVarId:'',//输出结果id
+          resultVarValue:'',//输出结果
+          ruleCondition:'',//规则条件
+        }
+      }
+    })
   }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
@@ -375,6 +390,7 @@ export default class ComplexRule extends PureComponent {
   render() {
     const { permission } = this.props
     const { query } = this.props.location
+    const {title} = query
     const queryData = {
       strategyId:query['strategyId']
     }
@@ -386,7 +402,7 @@ export default class ComplexRule extends PureComponent {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={'复杂规则'}
+          title={title}
         >
           <FilterIpts
             getSubKey={this.getSubKey}

@@ -72,7 +72,7 @@ export default class setVar extends PureComponent {
         key:'action',
         width:300,
         render: (record) => (
-          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
+          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}>
             <Button type="primary">删除</Button>
           </Popconfirm>
         ),
@@ -223,6 +223,7 @@ export default class setVar extends PureComponent {
   render() {
     const { permission } = this.props
     const { query } = this.props.location;
+    const { title } = query;
     const queryData = {
       strategyId:query['strategyId']
     }
@@ -235,7 +236,7 @@ export default class setVar extends PureComponent {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={'设置变量'}
+          title={title}
         >
           <SetVarTable
             bordered

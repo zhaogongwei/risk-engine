@@ -93,6 +93,7 @@ export default class EditableCell extends PureComponent {
   getInput = () => {
     if (this.props.type === 'select') {
       return <Select
+        style={{width:70}}
         onPressEnter={this.save}
         onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
       >
@@ -114,6 +115,7 @@ export default class EditableCell extends PureComponent {
     }else if(this.props.record['varType']==='char'){
       if(this.props.record['enumFlag']){
         return <Select
+          style={{width:'100%'}}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
         >

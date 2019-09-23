@@ -84,6 +84,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.type === 'select') {
         if(this.props.record['varType']==='num'){
           return <Select
+            style={{width:70}}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >
@@ -97,6 +98,7 @@ const EditableFormRow = Form.create()(EditableRow);
           </Select>;
         }else{
           return <Select
+            style={{width:70}}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >

@@ -87,13 +87,23 @@ class FlowPage extends React.Component {
     const edgesList = data['edges']?data['edges']:[];
     const nodesList = data['nodes']?data['nodes']:[];
     const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
+    const nodeStart = nodesList.length?nodesList.filter((item)=>item['type']=='start'):[]
     const formData = this.getFormValue();
     const {query} = this.props.location;
     const {flowId,strategyId,type} = query;
+    console.log('nodeStart',nodeStart)
     this.props.form.validateFields(['remark'],async (error,value)=>{
       if(error)return;
       if(!nodesList.length){
         message.error('请设置相关节点!')
+        return
+      }
+      if(!nodeStart.length){
+        message.error('请设置开始节点!')
+        return
+      }
+      if(nodeStart.length>1){
+        message.error('开始节点只能设置一个!')
         return
       }
       if(!edgesList.length){
@@ -104,7 +114,7 @@ class FlowPage extends React.Component {
         message.error('请设置连线的相关属性!')
         return
       }
-        /*const res = await this.props.dispatch({
+        const res = await this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {
             strategyId:strategyId,
@@ -112,7 +122,7 @@ class FlowPage extends React.Component {
             remark:formData['remark'],
             flowId:type==='1'?null:flowId,
           }
-        })*/
+        })
     })
   }
   save=()=>{

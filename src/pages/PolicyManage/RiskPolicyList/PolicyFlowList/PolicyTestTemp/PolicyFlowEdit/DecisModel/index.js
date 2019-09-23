@@ -465,6 +465,7 @@ export default class DecisModel extends PureComponent {
     console.log(this.props.decision)
     const { permission } = this.props
     const { query } = this.props.location
+    const { title } = query
     const queryData = {
       strategyId:query['strategyId']
     }
@@ -473,7 +474,7 @@ export default class DecisModel extends PureComponent {
            <PageHeaderWrapper>
              <Card
                 bordered={false}
-                title={'决策模型'}
+                title={title}
              >
                <FilterIpts
                  getSubKey={this.getSubKey}

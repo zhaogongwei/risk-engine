@@ -59,7 +59,7 @@ export default class ScoreModel extends PureComponent {
           render: (record) => {
             return <div style={{display:'flex',justifyContent:'center'}}>
                       <Button type="primary" style={{marginRight:20}} onClick={()=>this.handledit(record)}>编辑</Button>
-                      <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDeleteLeft(record.key)}  okText="Yes" cancelText="No">
+                      <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDeleteLeft(record.key)}>
                         <Button type="primary">删除</Button>
                       </Popconfirm>
                     </div>
@@ -346,6 +346,7 @@ export default class ScoreModel extends PureComponent {
   }
   render() {
     const {query} = this.props.location;
+    const {title} = query;
     const queryData = {
       strategyId:query['strategyId']
     }
@@ -353,7 +354,7 @@ export default class ScoreModel extends PureComponent {
       <PageHeaderWrapper >
         <Card
           bordered={false}
-          title={'评分模型'}
+          title={title}
         >
           <FilterIpts
             getSubKey={this.getSubKey}
