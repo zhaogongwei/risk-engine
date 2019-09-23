@@ -430,7 +430,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="变量分类" {...formItemConfig}>
                   {getFieldDecorator('firstTypeId',{
-                    initialValue:'请选择一级分类',
+                    initialValue:'',
                     rules:[
                       {required:true, message:'请选择一级分类'}
                     ]
@@ -444,9 +444,9 @@ export default class EditVar extends PureComponent {
                 </FormItem>
               </Col>
               <Col xxl={3} md={4}>
-                <FormItem label="" >
+                <FormItem>
                   {getFieldDecorator('parentId',{
-                    initialValue:'请选择二级分类',
+                    initialValue:'',
                     rules:[
                       {required:true,message:'请选择二级分类'}
                     ]
@@ -493,7 +493,7 @@ export default class EditVar extends PureComponent {
                       {required:true,message:'请选择变量类型'}
                     ]
                   })(
-                    <Select allowClear={true} disabled={this.state.disable} disabled={this.state.disable}>
+                    <Select allowClear={true} disabled={this.state.disable}>
                       <Option value={'num'}>数字</Option>
                       <Option value={'char'}>字符</Option>
                       <Option value={'date'}>日期</Option>
@@ -527,7 +527,18 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableLength',{
                     initialValue:query.type==2 && this.state.varData.variableLength!==undefined ?this.state.varData.variableLength:'',
                     rules:[
-                      {validator:this.checkNum}
+                      {validator:(rule, val, cb)=>{
+                        let re = new RegExp("^[0-9]*$")
+                        if(!re.test(val)){
+                          cb('请输入数字')
+                          return;
+                        }else if(val.length>5){
+                          cb('超过最大字数限制')
+                          return;
+                        }
+                        cb()
+                        return;
+                      }}
                      ]
                   })(
                     <Input />
@@ -567,7 +578,7 @@ export default class EditVar extends PureComponent {
             }
             </Row>   
             {
-              this.state.isShow ?
+              this.state.isShow && this.props.form.getFieldValue('variableType') == 'char'?
                 <Row className={styles.btmMargin}  type="flex" align="top">
                   <Col xxl={10} md={14}>
                     <FormItem label="枚举值配置:" {...enumConfig}>
