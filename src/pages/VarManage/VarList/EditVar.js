@@ -114,7 +114,7 @@ export default class EditVar extends PureComponent {
       disable:false,
       updateTime:'',
       updateTrueName:'',
-      defaultVal:null,
+      defaultVal:'',
       emDelFlag:true,
       varData:{}
     };
@@ -241,11 +241,11 @@ export default class EditVar extends PureComponent {
   //枚举添加
   handleAdd = () => {
     if(this.state.emDelFlag){
-      let enumeration = this.props.varlist.enumeration
+      let {enumeration} = this.props.varlist
       //   要添加表格的对象
       const newData = {
-        enumValue: ``,
-        enumShow: ``
+        enumValue:'',
+        enumShow:''
       }
       enumeration.push(newData)
       //   调用models中的方法改变dataSource渲染页面
@@ -417,8 +417,10 @@ export default class EditVar extends PureComponent {
     }
     const query= {...this.props.location.query}
     console.log(query.type==2 )
+    console.log(this.props.varlist.enumeration )
+    const {enumeration} = this.props.varlist
     return (
-      <PageHeaderWrapper  renderBtn={this.renderTitleBtn}>
+      <PageHeaderWrapper>
         <Card
           bordered={false}
           title={query.type ===1?'新增变量':'编辑变量'}
@@ -609,10 +611,10 @@ export default class EditVar extends PureComponent {
                     initialValue:this.state.defaultVal,
                   })(
                       <Select allowClear={true} >
-                        {this.props.varlist.enumeration.map( (item,index) => (
+                        {enumeration&&enumeration.map( (item,index) => (
                           <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
                         ))}
-                      </Select> 
+                      </Select>
                   )}
                   </FormItem>:null
 
@@ -629,7 +631,7 @@ export default class EditVar extends PureComponent {
                     <Input />
                   )}
                   </FormItem>:null
-                    
+
                 }
                 {
                   this.props.form.getFieldValue('variableType') == 'num' && this.props.form.getFieldValue('enumFlag') !=1?
@@ -640,7 +642,7 @@ export default class EditVar extends PureComponent {
                     <InputNumber />
                   )}
                   </FormItem>:null
-                  
+
                 }
                 {
                   this.props.form.getFieldValue('variableType') == 'date' && this.props.form.getFieldValue('enumFlag') !=1?
@@ -662,9 +664,6 @@ export default class EditVar extends PureComponent {
                    )}
                    </FormItem>:null
                 }
-                
-              
-                
               </Col>
             </Row>
             <Row className={styles.btmMargin}  type="flex" align="top">

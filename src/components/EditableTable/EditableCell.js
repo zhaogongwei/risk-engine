@@ -105,7 +105,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(`dataIndex${Math.random()}`, {
+                    {getFieldDecorator(`${dataIndex}${Math.random()}`, {
                       rules: [{
                         required: !isRequired ? true : false,
                         message: `请填写正确的格式.`,

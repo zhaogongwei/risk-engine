@@ -240,6 +240,7 @@ export default class ComplexRule extends PureComponent {
         status:0,
         isCount:type,
         resultQueryData:{
+          outFlag:1,
           types:['num']
         },//输出结果查询参数
       })

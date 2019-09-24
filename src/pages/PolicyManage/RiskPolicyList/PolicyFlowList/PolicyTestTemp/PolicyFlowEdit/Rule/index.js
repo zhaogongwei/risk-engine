@@ -221,6 +221,7 @@ export default class SimpleRule extends PureComponent {
         status:0,
         isCount:type,
         resultQueryData:{
+          outFlag:1,
           types:['num']
         }
       })

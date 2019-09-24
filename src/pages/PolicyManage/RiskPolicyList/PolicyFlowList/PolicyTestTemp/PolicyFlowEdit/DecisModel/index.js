@@ -338,6 +338,7 @@ export default class DecisModel extends PureComponent {
               visible:true,
               inputType:type,
               resultQueryData:{
+                outFlag:1,
                 types:['num']
               },//输出结果查询参数
             })
@@ -347,6 +348,7 @@ export default class DecisModel extends PureComponent {
           visible:true,
           inputType:type,
           resultQueryData:{
+            outFlag:1,
             types:['num']
           },//输出结果查询参数
         })
@@ -359,6 +361,7 @@ export default class DecisModel extends PureComponent {
               visible:true,
               inputType:type,
               resultQueryData:{
+                outFlag:1,
                 types:['num']
               },//输出结果查询参数
             })
@@ -368,6 +371,7 @@ export default class DecisModel extends PureComponent {
           visible:true,
           inputType:type,
           resultQueryData:{
+            outFlag:1,
             types:['num']
           },//输出结果查询参数
         })
@@ -378,6 +382,7 @@ export default class DecisModel extends PureComponent {
         visible:true,
         inputType:type,
         resultQueryData:{
+          outFlag:1,
           types:['char']
         },//输出结果查询参数
       })
