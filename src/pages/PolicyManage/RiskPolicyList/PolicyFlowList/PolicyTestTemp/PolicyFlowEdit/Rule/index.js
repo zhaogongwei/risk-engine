@@ -149,24 +149,7 @@ export default class SimpleRule extends PureComponent {
     };
   }
  async componentDidMount () {
-    console.log(this.props.editorFlow.selectId,'selectId')
-    console.log(this.props.editorFlow.editorData,'editorData')
     const {query} = this.props.location;
-    //请求变量列表
-    this.props.dispatch({
-      type: 'rule/queryVarList',
-      payload: {
-        strategyId:query['strategyId']
-      }
-    })
-    //请求一级变量分类
-    this.props.dispatch({
-      type: 'rule/queryOneClassList',
-      payload: {
-        firstTypeId:0,
-        secondTypeId:'',
-      }
-    })
     //查询节点信息
     const res = await this.props.dispatch({
       type: 'rule/queryRuleInfo',
@@ -185,6 +168,9 @@ export default class SimpleRule extends PureComponent {
           countVarValue:res.data.countVarValue,
         },
       })
+     if(res.data.ruleCondition === 'count'){
+       this.child.changeHandle('count')
+     }
    }
 
   }
@@ -233,7 +219,9 @@ export default class SimpleRule extends PureComponent {
         visible:true,
         status:0,
         isCount:type,
-        resultQueryData:{}
+        resultQueryData:{
+          types:['num']
+        }
       })
     }else{
       this.setState({

@@ -43,6 +43,7 @@ export default class FilterIpts extends Component {
         visible:true,
       })
     }else{
+      //计数结果隐藏前先清空数据
       this.setState({
         visible:false,
       })
@@ -101,7 +102,7 @@ export default class FilterIpts extends Component {
             </FormItem>
           </Col>
           {
-            (visible||formData['ruleCondition']==='count')?
+            visible?
               <Col xxl={4} md={6}>
                 <FormItem label="计数结果" {...formItemConfig}>
                   {getFieldDecorator('countVarId',{
