@@ -168,6 +168,7 @@ export default class SimpleRule extends PureComponent {
           countVarValue:res.data.countVarValue,
         },
       })
+     //控制计数结果的显隐
      if(res.data.ruleCondition === 'count'){
        this.child.changeHandle('count')
      }

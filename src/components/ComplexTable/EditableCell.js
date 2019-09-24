@@ -116,7 +116,7 @@ const EditableFormRow = Form.create()(EditableRow);
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          onClick={(e)=>{this.reset(`${dataIndex}${record['key']}${cols}`);this.props.selectVar()}}
+          onClick={(e)=>{this.reset(`${dataIndex}${record['key']}${cols}${record['soleKey']}`);this.props.selectVar()}}
           readOnly
         />;
       }else{

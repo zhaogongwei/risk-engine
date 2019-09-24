@@ -312,8 +312,8 @@ export default class DecisModel extends PureComponent {
         })
       }else if(this.state.inputType === 2){
         //设置输出结果
-        if(records['varType']!=='char' || !records['enumFlag']){
-          message.error('此处选择弹框中只展示有枚举值的字符类型变量!')
+        if(records['varType']!=='char'){
+          message.error('此处选择弹框中只展示字符类型变量!')
           return
         }
         this.setState({
