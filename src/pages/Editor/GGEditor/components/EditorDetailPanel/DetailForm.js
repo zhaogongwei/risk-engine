@@ -102,6 +102,7 @@ class DetailForm extends React.Component {
       });
     }
     console.log(e)
+    console.log(item)
   }
   renderNodeDetail = () => {
     const { form } = this.props;

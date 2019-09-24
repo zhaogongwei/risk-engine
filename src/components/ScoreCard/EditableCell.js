@@ -93,6 +93,7 @@ const EditableFormRow = Form.create()(EditableRow);
     getInput = () => {
       if (this.props.type === 'select') {
         return <Select
+                style={{width:70}}
                 onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
               >
@@ -114,6 +115,7 @@ const EditableFormRow = Form.create()(EditableRow);
       }else if(this.props.varObjRow['varType']==='char'){
         if(this.props.varObjRow['enumFlag']){
           return <Select
+            style={{width:'100%'}}
             onPressEnter={this.save}
             onChange={(e) => this.changeHandler(e, this.props.record, this.props.dataIndex)}
           >

@@ -41,6 +41,16 @@ export default class ThreeSideQuery extends Component {
       })
     }
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'threeSide/checkedListHandle',
+      payload: {
+        data:{
+          thirds:[]
+        }
+      }
+    })
+  }
   onChange=(checkedValues)=>{
     console.log('checked = ', checkedValues);
     this.setState({
@@ -74,6 +84,8 @@ export default class ThreeSideQuery extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { thirds } = this.props.threeSide;
+    const { query } = this.props.location;
+    const { title } = query;
     const { checkedList } = this.state;
     const formItemConfig = {
       labelCol:{span:8},
@@ -84,7 +96,7 @@ export default class ThreeSideQuery extends Component {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={'三方查询'}
+          title={title}
           style={{height:800}}
         >
           <Form.Item>

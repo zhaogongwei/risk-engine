@@ -13,7 +13,8 @@ import {
   Pagination,
   Empty
 } from 'antd';
-import { addListKey,deepCopy } from '@/utils/utils'
+import moment from 'moment';
+import { addListKey,deepCopy,getTimeDistance } from '@/utils/utils'
 import { connect } from 'dva'
 const FormItem = Form.Item
 const RadioGroup = Radio.Group;
@@ -123,6 +124,7 @@ export default class AddForm extends Component {
           item['variableId'] = item['id']
           item['varTypeStr'] = item['variableTypeStr']
           item['soleKey'] = Math.random()
+          item['inputCreateTime'] = moment().format('YYYY-MM-DD HH:mm:ss')
         })
         return checkedList
       }else{
@@ -137,6 +139,7 @@ export default class AddForm extends Component {
           records['enumList']=radioValue['variableEnumList'];
           records['varTypeStr'] = radioValue['variableTypeStr']
           records['soleKey'] = Math.random()
+          records['inputCreateTime'] = moment().format('YYYY-MM-DD HH:mm:ss')
         }
         Object.assign(records,radioValue)
         console.log(records)

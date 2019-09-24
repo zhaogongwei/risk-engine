@@ -60,8 +60,8 @@ export default class InputDeploy extends PureComponent {
         },
         {
           title: '添加时间',
-          dataIndex: 'updateTime',
-          key:'updateTime'
+          dataIndex: 'inputCreateTime',
+          key:'inputCreateTime'
         }
       ],
       checkedData: [],
@@ -257,7 +257,10 @@ export default class InputDeploy extends PureComponent {
     const formData = this.getFormValue();
     let inputVarList=[];
     tableList.map((item,index)=>{
-      inputVarList.push(item['variableId'])
+      inputVarList.push({
+        id:item['variableId'],
+        inputCreateTime:item['inputCreateTime'],
+      })
     })
     this.props.form.validateFields(async(err,value)=>{
       if(!err){

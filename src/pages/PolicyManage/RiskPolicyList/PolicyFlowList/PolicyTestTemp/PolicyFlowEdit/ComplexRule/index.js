@@ -129,7 +129,7 @@ export default class ComplexRule extends PureComponent {
         title: '操作',
         key:'action',
         render: (record) => (
-          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
+          <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="确认" cancelText="取消">
             <Button type="primary">删除</Button>
           </Popconfirm>
         ),
@@ -151,6 +151,7 @@ export default class ComplexRule extends PureComponent {
       countResult:{},//计数结果
       submiting:true,//提交状态，
       complexData: [],  //   复杂规则form数据
+      resultQueryData:{},//输出结果查询参数
     };
   }
   async componentDidMount() {
@@ -190,6 +191,21 @@ export default class ComplexRule extends PureComponent {
       })
     }
   }
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'complex/InitComplexListHandle',
+      payload: {
+        data:{
+          variables:[],
+          countVarId:'',//计数结果id
+          countVarValue:'',//计数结果
+          resultVarId:'',//输出结果id
+          resultVarValue:'',//输出结果
+          ruleCondition:'',//规则条件
+        }
+      }
+    })
+  }
   //   获取子组件数据的方法
   getSubKey=(ref,key)=>{
     this[key] = ref;
@@ -223,17 +239,32 @@ export default class ComplexRule extends PureComponent {
       status:1,
       visible:true,
       mold:mold,
-      number:record?record['key']:''
+      number:record?record['key']:'',
+      resultQueryData:{},//输出结果查询参数
     },()=>{
     })
   }
   //输出结果
   outResult=(type)=>{
-    this.setState({
-      visible:true,
-      status:0,
-      isCount:type,
-    })
+    if(type){
+      this.setState({
+        visible:true,
+        status:0,
+        isCount:type,
+        resultQueryData:{},//输出结果查询参数
+      })
+    }else{
+      this.setState({
+        visible:true,
+        status:0,
+        isCount:type,
+        resultQueryData:{
+          types:['char'],
+          outFlag:1,
+          enumFlag:0,
+        }
+      })
+    }
   }
   //  刷新页面
   reload = () => {
@@ -353,13 +384,18 @@ export default class ComplexRule extends PureComponent {
             })
           }else{
             //输出结果
-            this.child.props.form.resetFields(['resultVarId'])
-            this.setState({
-              resultVarId:{
-                resultVarId:records['varId'],
-                resultVarValue:records['varName'],
-              },
-            })
+            //复杂规则输出变量只能是字符串且未设置枚举值
+            if(!records['enumFlag']&&records['varType']=='char'){
+              this.child.props.form.resetFields(['resultVarId'])
+              this.setState({
+                resultVarId:{
+                  resultVarId:records['varId'],
+                  resultVarValue:records['varName'],
+                },
+              })
+            }else{
+              message.error('规则输出变量只能是字符串且未设置枚举值!')
+            }
           }
         }
       })
@@ -375,7 +411,10 @@ export default class ComplexRule extends PureComponent {
   render() {
     const { permission } = this.props
     const { query } = this.props.location
+    const { resultQueryData } = this.state
+    const {title} = query
     const queryData = {
+      ...resultQueryData,
       strategyId:query['strategyId']
     }
     const formItemConfig = {
@@ -386,7 +425,7 @@ export default class ComplexRule extends PureComponent {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={'复杂规则'}
+          title={title}
         >
           <FilterIpts
             getSubKey={this.getSubKey}

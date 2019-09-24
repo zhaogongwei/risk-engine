@@ -12,7 +12,8 @@ const change =async props => {
   const { getSelected, save } = props.propsAPI;
   const { strategyId,flowId,type,remark } = props
   const id = getSelected()[0].id
-  const selectedItem = getSelected()[0].getModel()
+  const selectedItem = getSelected()[0].getModel();
+  const nodeTitle = selectedItem['label'];
   const data = save();
   const edges = data['edges'];
   if(!edges){
@@ -46,17 +47,17 @@ const change =async props => {
     })
   }
   if (id && selectedItem.type === 'simple'&&res.status===1) {
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }else if(id && selectedItem.type === 'complex'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }else if(id && selectedItem.type === 'score'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }else if(id && selectedItem.type === 'setVar'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }else if(id && selectedItem.type === 'decision'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }else if(id && selectedItem.type === 'third'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}&strategyId=${strategyId}`)
+    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
   }
 }
 

@@ -59,7 +59,7 @@ export default class ScoreModel extends PureComponent {
           render: (record) => {
             return <div style={{display:'flex',justifyContent:'center'}}>
                       <Button type="primary" style={{marginRight:20}} onClick={()=>this.handledit(record)}>编辑</Button>
-                      <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDeleteLeft(record.key)}  okText="Yes" cancelText="No">
+                      <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDeleteLeft(record.key)}>
                         <Button type="primary">删除</Button>
                       </Popconfirm>
                     </div>
@@ -82,6 +82,7 @@ export default class ScoreModel extends PureComponent {
       editShow:false,//编辑弹框显隐状态
       resultVarId:{},//输出结果
       varObjRow:{},//每行的变量对象
+      resultQueryData:{},//输出结果查询参数
     };
   }
   async componentDidMount() {
@@ -135,7 +136,8 @@ export default class ScoreModel extends PureComponent {
     this.setState({
       status:1,
       visible:true,
-      number:record?record['key']:''
+      number:record?record['key']:'',
+      resultQueryData:{},//输出结果查询参数
     })
   }
   //输出结果
@@ -143,6 +145,10 @@ export default class ScoreModel extends PureComponent {
     this.setState({
       visible:true,
       status:0,
+      resultQueryData:{
+        outFlag:1,
+        types:['num']
+      },//输出结果查询参数
     })
   }
   //  刷新页面
@@ -346,14 +352,18 @@ export default class ScoreModel extends PureComponent {
   }
   render() {
     const {query} = this.props.location;
+    const {scoreList} = this.props.scoreModel;
+    const {status,resultQueryData} = this.state;
+    const {title} = query;
     const queryData = {
+      ...resultQueryData,
       strategyId:query['strategyId']
     }
     return (
       <PageHeaderWrapper >
         <Card
           bordered={false}
-          title={'评分模型'}
+          title={title}
         >
           <FilterIpts
             getSubKey={this.getSubKey}
@@ -389,6 +399,7 @@ export default class ScoreModel extends PureComponent {
             visible={this.state.visible}
             onOk={this.addFormSubmit}
             destroyOnClose={true}
+            maskClosable={false}
             onCancel={this.handleCancel}
             width={1040}
           >
@@ -397,7 +408,7 @@ export default class ScoreModel extends PureComponent {
               number={this.state.number}
               getSubKey={this.getSubKey}
               queryData={queryData}
-              pageList={this.props.scoreModel.scoreList}
+              pageList={status?scoreList:[]}
             />
           </Modal>
           <Modal
