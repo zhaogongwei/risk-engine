@@ -51,21 +51,6 @@ export default class DecisModel extends PureComponent {
   }
   async componentDidMount() {
     const {query} = this.props.location;
-    //请求变量列表
-    this.props.dispatch({
-      type: 'varList/queryVarList',
-      payload: {
-        strategyId:query['strategyId']
-      }
-    })
-    //请求一级变量分类
-    this.props.dispatch({
-      type: 'varList/queryOneClassList',
-      payload: {
-        firstTypeId:0,
-        secondTypeId:'',
-      }
-    })
     //查询节点信息
     const res = await this.props.dispatch({
       type: 'decision/querydecInfo',

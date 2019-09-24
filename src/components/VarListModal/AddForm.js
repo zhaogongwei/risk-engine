@@ -45,8 +45,9 @@ export default class AddForm extends Component {
     }
   }
   //变量列表查询
-  formSubmit=()=>{
-    this.change(1)
+  formSubmit=async()=>{
+    await this.change(1)
+    await this.changeCurrent(1)
   }
   change = async (page)=>{
     const {queryData} = this.props;
@@ -268,6 +269,12 @@ export default class AddForm extends Component {
       newName=name
     }
     return newName;
+  }
+  //页码复位
+  changeCurrent=(page)=>{
+    this.setState({
+      currPage:page,
+    })
   }
   render() {
     const {visible,loading} = this.state;

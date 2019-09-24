@@ -89,6 +89,12 @@ export default {
         formData:{...payload.data}
       }
     },
+    setFormData(state,{payload}){
+      return {
+        ...state,
+        formData:payload
+      }
+    },
     //弹框规则列表处理
     ruleListHandle(state,{payload}){
       return {

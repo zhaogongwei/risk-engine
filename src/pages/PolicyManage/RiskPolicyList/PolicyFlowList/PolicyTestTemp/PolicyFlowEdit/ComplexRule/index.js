@@ -156,21 +156,6 @@ export default class ComplexRule extends PureComponent {
   }
   async componentDidMount() {
     const {query} = this.props.location;
-    //请求变量列表
-    this.props.dispatch({
-      type: 'varList/queryVarList',
-      payload: {
-        strategyId:query['strategyId']
-      }
-    })
-    //请求一级变量分类
-    this.props.dispatch({
-      type: 'varList/queryOneClassList',
-      payload: {
-        firstTypeId:0,
-        secondTypeId:'',
-      }
-    })
     //查询节点信息
     const res = await this.props.dispatch({
       type: 'complex/queryComplexInfo',
@@ -189,6 +174,9 @@ export default class ComplexRule extends PureComponent {
           countVarValue:res.data.countVarValue,
         },
       })
+      if(res.data.ruleCondition === 'count'){
+        this.child.changeHandle('count')
+      }
     }
   }
   componentWillUnmount(){
@@ -251,7 +239,9 @@ export default class ComplexRule extends PureComponent {
         visible:true,
         status:0,
         isCount:type,
-        resultQueryData:{},//输出结果查询参数
+        resultQueryData:{
+          types:['num']
+        },//输出结果查询参数
       })
     }else{
       this.setState({
