@@ -32,16 +32,18 @@ class FlowPage extends React.Component {
       updateTrueName:'',//操作人
       remark:'',//备注
       mold:0,//0:编辑 1：新增
+      flowId:''
     }
   }
   async componentDidMount(){
     const {query} = this.props.location;
-    //如果是新增页面就不请求数据；
-    if(query['type']==='1')return;
+    const {type} = query
+    const {addFlowId} = this.props.editorFlow;
+    if(!addFlowId&&type*1==1)return;
     const res = await this.props.dispatch({
       type: 'editorFlow/queryItemInfo',
       payload: {
-        flowId:query['flowId'],
+        flowId:query['flowId']?query['flowId']:addFlowId,
       }
     })
     if(res&&res.status===1){
@@ -91,6 +93,7 @@ class FlowPage extends React.Component {
     const formData = this.getFormValue();
     const {query} = this.props.location;
     const {flowId,strategyId,type} = query;
+    const {addFlowId} = this.props.editorFlow;
     console.log('nodeStart',nodeStart)
     this.props.form.validateFields(['remark'],async (error,value)=>{
       if(error)return;
@@ -123,6 +126,12 @@ class FlowPage extends React.Component {
             flowId:type==='1'?null:flowId,
           }
         })
+      if(res&&res.status===1){
+        this.props.dispatch({
+          type: 'editorFlow/saveFlowId',
+          payload:res.data.flowId,
+        })
+      }
     })
   }
   save=()=>{
@@ -163,7 +172,7 @@ class FlowPage extends React.Component {
                   <Col xxl={8} md={12}>
                     <FormItem label="" {...formItemConfig}>
                       {getFieldDecorator('remark',{
-                        initialValue:type*1?null:remark,
+                        initialValue:remark,
                         rules:[
                           {
                             required:true,

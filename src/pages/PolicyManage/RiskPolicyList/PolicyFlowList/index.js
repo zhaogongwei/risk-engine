@@ -19,8 +19,9 @@ import FilterIpts from './FilterIpts';
 import Swal from 'sweetalert2';
 import { findInArr,exportJudgment } from '@/utils/utils'
 
-@connect(({ policyFlowList, loading }) => ({
+@connect(({ policyFlowList, loading,editorFlow }) => ({
   policyFlowList,
+  editorFlow,
   loading: loading.effects['policyFlowList/fetchFlowList']
 }))
 export default class PolicyFlowList extends PureComponent {
@@ -154,6 +155,11 @@ export default class PolicyFlowList extends PureComponent {
   }
   //去新增策略流页面
   goAddPage=async (strategyId,type)=>{
+    //清空flowId,新增策略流页面
+    this.props.dispatch({
+      type: 'editorFlow/saveFlowId',
+      payload:''
+    })
     router.push(`/policyManage/riskpolicylist/policyFlow/edit?strategyId=${strategyId}&type=${type}`)
   }
   //  刷新页面

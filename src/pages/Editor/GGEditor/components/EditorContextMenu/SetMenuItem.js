@@ -41,6 +41,12 @@ const change =async props => {
           flowId:type==='1'?null:flowId,
         }
       })
+    if(res&&res.status===1){
+      props.dispatch({
+        type:'editorFlow/saveFlowId',
+        payload:res.data.flowId
+      })
+    }
     props.dispatch({
       type:'editorFlow/saveId',
       payload:id

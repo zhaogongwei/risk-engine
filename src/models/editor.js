@@ -7,6 +7,7 @@ export default {
 
   state: {
     selectId:'',//当前选中节点的id
+    addFlowId:'',//新增页面策略流id
     selectItem:{},//当前选中的节点信息
     nodeType:'',//节点类型
     policyObj:{
@@ -57,6 +58,12 @@ export default {
           ...payload.data,
         }
       };
+    },
+    saveFlowId(state,{payload}){
+      return {
+        ...state,
+        addFlowId:payload,
+      }
     },
     saveEditorData(state, { payload }) {
       return {
