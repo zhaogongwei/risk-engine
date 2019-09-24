@@ -340,7 +340,7 @@ export default class EditVar extends PureComponent {
   }
   checkNum=(rule, val, cb)=>{
     let re = new RegExp("^[0-9]*$")
-    if(val.length==0){
+    if(val.length==0 || val==null ){
       cb()
       return;
     }else if(!re.test(val)){
@@ -355,7 +355,7 @@ export default class EditVar extends PureComponent {
   }
   checkVarCode=async(rule, val, cb)=>{
     let re = new RegExp("^(?!\d+$)[\da-zA-Z]+$");
-    if(val.length==0){
+    if(val.length==0 || val==null ){
       cb()
       return;
     }else if(!re.test(val)){
@@ -382,7 +382,7 @@ export default class EditVar extends PureComponent {
     }
   }
   checkVarName=async(rule, val, cb)=>{
-    if(val.length==0){
+    if(val.length==0 || val==null ){
       cb()
       return;
     }else if(val.length>15){
@@ -529,7 +529,7 @@ export default class EditVar extends PureComponent {
                     rules:[
                       {validator:(rule, val, cb)=>{
                         let re = new RegExp("^[0-9]*$")
-                        if(val.length==0){
+                        if(val==''|| val==null ){
                           cb()
                           return;
                         }else if(!re.test(val)){
