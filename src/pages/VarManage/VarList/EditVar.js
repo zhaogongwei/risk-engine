@@ -529,7 +529,10 @@ export default class EditVar extends PureComponent {
                     rules:[
                       {validator:(rule, val, cb)=>{
                         let re = new RegExp("^[0-9]*$")
-                        if(!re.test(val)){
+                        if(val.length==0){
+                          cb()
+                          return;
+                        }else if(!re.test(val)){
                           cb('请输入数字')
                           return;
                         }else if(val.length>5){
