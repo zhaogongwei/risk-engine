@@ -117,6 +117,20 @@ class FlowPage extends React.Component {
         message.error('请设置连线的相关属性!')
         return
       }
+      let nodeNameList = []
+      for(let item of nodesList){
+        nodeNameList.push(item['label'])
+      }
+      let repeatName =[];
+      for(let name of nodeNameList){
+       if(nodeNameList.indexOf(name) !== nodeNameList.lastIndexOf(name)){
+         repeatName.push(name)
+       }
+      }
+      if(repeatName.length){
+        message.error('有重复的节点标题,请修改!')
+        return
+      }
         const res = await this.props.dispatch({
           type: 'editorFlow/savePolicyData',
           payload: {

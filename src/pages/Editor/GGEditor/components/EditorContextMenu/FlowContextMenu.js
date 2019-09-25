@@ -29,9 +29,9 @@ const FlowContextMenu = (props) => {
         <MenuItem command="delete" />
       </MultiMenu>
       <CanvasMenu>
-        <MenuItem command="undo" />
-        <MenuItem command="redo" />
-        <MenuItem command="pasteHere" icon="paste" text="Paste Here" />
+        <MenuItem command="undo" text="回退"/>
+        <MenuItem command="redo" text="撤销"/>
+        <MenuItem command="pasteHere" icon="paste" text="粘贴在这里" />
       </CanvasMenu>
     </ContextMenu>
   );

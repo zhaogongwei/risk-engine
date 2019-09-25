@@ -105,9 +105,8 @@ class DetailForm extends React.Component {
     console.log(item)
   }
   renderNodeDetail = () => {
-    const { form } = this.props;
+    const { form,propsAPI} = this.props;
     const { label, jump, title } = this.item.getModel();
-
     return (
       <Fragment>
         <Item label="Label" {...inlineFormItemLayout}>
@@ -116,10 +115,25 @@ class DetailForm extends React.Component {
           rules:[
             {
               max:10,
-              message:'最多输入10位!'
+              validator:async(rule,val,cb)=>{
+                if(!val){
+                  cb('输入内容不能为空!')
+                  return
+                }
+                if(val.length>10){
+                  cb('输入内容最多10位!')
+                  return
+                }
+                let nodeData = propsAPI.save()?propsAPI.save()['nodes']:[]
+                let nameList = nodeData.filter((item)=>item['label']===val)
+                if(nameList.length>1){
+                  cb('节点标题已经存在,请重新取值!')
+                  return
+                }
+              }
             }
           ]
-        })(<Input onBlur={this.handleSubmit} />)}
+        })(<Input onBlur={this.handleSubmit} maxLength={11}/>)}
         </Item>
       </Fragment>
     );
