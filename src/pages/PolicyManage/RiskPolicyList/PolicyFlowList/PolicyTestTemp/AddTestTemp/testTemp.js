@@ -176,7 +176,12 @@ export default class TestTemp extends Component {
               rules:[
                 {
                   required:true,
-                  message:'输入内容不能为空!',
+                  validator: async(rule, value, callback) => {
+                    if (!value) {
+                      callback('输入内容不能为空!')
+                      return
+                    }
+                  }
                 }
               ]
             })(
@@ -202,11 +207,20 @@ export default class TestTemp extends Component {
               rules:[
                 {
                   required:true,
-                  message:'输入内容不能为空!',
+                  validator: async(rule, value, callback) => {
+                    if (!value) {
+                      callback('输入内容不能为空!')
+                      return
+                    }
+                    if (value.length>20) {
+                      callback('输入内容最多20位!')
+                      return
+                    }
+                  }
                 }
               ]
             })(
-              <Input/>
+              <Input maxLength={21}/>
             )}
           </FormItem>
         )
@@ -219,12 +233,21 @@ export default class TestTemp extends Component {
             rules:[
               {
                 required:true,
-                message:'输入内容不能为空!',
-                pattern:/^\d{1,3}$/,
+                validator:async (rule, value, callback) => {
+                  const reg = /^\d{1,10}$/;
+                  if (!value) {
+                    callback('输入内容不能为空!')
+                    return
+                  }
+                  if(!reg.test(value)){
+                    callback(`最多只能输入20位的数字!`)
+                    return;
+                  }
+                }
               }
             ]
           })(
-            <Input/>
+            <Input maxLength={21}/>
           )}
         </FormItem>
       )
@@ -237,7 +260,12 @@ export default class TestTemp extends Component {
             rules:[
               {
                 required:true,
-                message:'输入内容不能为空!',
+                validator: async(rule, value, callback) => {
+                  if (!value) {
+                    callback('输入内容不能为空!')
+                    return
+                  }
+                }
               }
             ]
           })(
@@ -256,7 +284,12 @@ export default class TestTemp extends Component {
             rules:[
               {
                 required:true,
-                message:'输入内容不能为空!',
+                validator: async(rule, value, callback) => {
+                  if (!value) {
+                    callback('输入内容不能为空!')
+                    return
+                  }
+                }
               }
             ]
           })(
