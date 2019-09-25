@@ -174,8 +174,8 @@ const EditableFormRow = Form.create()(EditableRow);
     };
     createFormItem = ()=>{
       const { getFieldDecorator } = this.props.form;
-      const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus,noRequired,max} = this.props;
-
+      const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus,noRequired,max,dataSource,only} = this.props;
+      console.log('dataSource',dataSource)
       if(type === 'select'){
         return(
           <FormItem style={{ margin: 0 }}>
@@ -253,6 +253,13 @@ const EditableFormRow = Form.create()(EditableRow);
                           return;
                         }
                       }
+                      if(only){
+                        let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
+                        if(ruleCode.length>1){
+                          callback('该值已存在,请重新填写!')
+                          return
+                        }
+                      }
                     }
                   },
                 ]
@@ -275,8 +282,21 @@ const EditableFormRow = Form.create()(EditableRow);
                   {
                     required:noRequired?false:true,
                     validator: (rule, value, callback) => {
-                      if (!value&&!noRequired) callback('输入内容不能为空!')
-                      if (value.length>max) callback(`输入内容最多${max}位!`)
+                      if (!value&&!noRequired) {
+                        callback('输入内容不能为空!')
+                        return
+                      }
+                      if (value.length>max) {
+                        callback(`输入内容最多${max}位!`)
+                        return
+                      }
+                      if(only){
+                        let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
+                        if(ruleCode.length>1){
+                          callback('该值已存在,请重新填写!')
+                          return
+                        }
+                      }
                     }
                   }
                 ]
@@ -401,7 +421,17 @@ const EditableFormRow = Form.create()(EditableRow);
                       callback('输入内容不能为空!')
                       return;
                     }
-                    if (value.length>max) callback(`输入内容最多${max}位!`)
+                    if (value.length>max) {
+                      callback(`输入内容最多${max}位!`)
+                      return
+                    }
+                    if(only){
+                      let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
+                      if(ruleCode.length>1){
+                        callback('该值已存在,请重新填写!')
+                        return
+                      }
+                    }
                   }
                 }
               ]

@@ -124,6 +124,7 @@ export default class ComplexRule extends PureComponent {
         editable:true,
         cols:6,
         noRequired:true,
+        only:true,
         type:'input',
         max:10,
       },
