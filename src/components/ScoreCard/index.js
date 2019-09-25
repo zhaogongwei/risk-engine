@@ -48,7 +48,7 @@ export default class ScoreCard extends PureComponent {
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
-          isRequired: col.nonRequired,
+          noRequired: col.nonRequired,
           pattern:col.pattern,
           max:col.max,
           type:col.type,

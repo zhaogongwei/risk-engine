@@ -59,6 +59,8 @@ export default class LabelEdit extends PureComponent {
           editable:true,
           type:'more',
           cols:2,
+          max:20,
+          pattern:/^\d{1,20}$/
         },
         {
           title: '操作',

@@ -91,6 +91,7 @@ export default class EditableCell extends PureComponent {
     record[type]=moment(date).format(dateFormat)
   }
   getInput = () => {
+    const { type,dataIndex,cols,record,value,pattern ,max,isFocus} = this.props;
     if (this.props.type === 'select') {
       return <Select
         style={{width:70}}
@@ -110,7 +111,7 @@ export default class EditableCell extends PureComponent {
         ref={node => (this.input = node)}
         onPressEnter={this.save}
         onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-        maxLength={21}
+        maxLength={max?max+1:''}
       />;
     }else if(this.props.record['varType']==='char'){
       if(this.props.record['enumFlag']){
@@ -132,7 +133,7 @@ export default class EditableCell extends PureComponent {
           ref={node => (this.input = node)}
           onPressEnter={this.save}
           onChange={(e) => this.changeHandler(e.target.value, this.props.record, this.props.dataIndex)}
-          maxLength={21}
+          maxLength={max?max+1:''}
         />;
       }
     }
@@ -254,7 +255,7 @@ export default class EditableCell extends PureComponent {
       dataIndex,
       cols,
       title,
-      isRequired,
+      noRequired,
       pattern,
       record,
       max,
@@ -273,14 +274,21 @@ export default class EditableCell extends PureComponent {
               this.form = form;
               return (
                 <FormItem style={{ margin: 0 }}>
-                  {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}${Math.random()}`, {
+                  {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['id']}${record['soleKey']}`, {
                     initialValue: record[dataIndex],
                     rules:[
                       {
-                        required:true,
+                        required:noRequired?false:true,
                         validator: (rule, value, callback) => {
-                          if (!value) callback('输入内容不能为空!')
-                          if (value.length>20) callback('输入内容最多20位!')
+                          const reg = pattern;
+                          if(pattern){
+                            if(!reg.test(value)){
+                              callback(`最多只能输入${max}位的数字!`)
+                              return;
+                            }
+                          }
+                          if (!value&&!noRequired) callback('输入内容不能为空!')
+                          if (value.length>max) callback(`输入内容最多${max}位!`)
                         }
                       }
                     ]

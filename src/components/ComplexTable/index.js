@@ -45,7 +45,7 @@ export default class RuleTable extends PureComponent {
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
-          isRequired: col.nonRequired,
+          noRequired: col.noRequired,
           pattern:col.pattern,
           max:col.max,
           isFocus:col.isFocus,

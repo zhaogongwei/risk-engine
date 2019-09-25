@@ -110,7 +110,8 @@ export default class SimpleRule extends PureComponent {
         editable:true,
         type:'more',
         cols:4,
-        pattern:/^\d{1,3}$/
+        pattern:/^\d{1,20}$/,
+        max:20,
       },
       {
         title: '命中标记',
@@ -119,6 +120,8 @@ export default class SimpleRule extends PureComponent {
         editable:true,
         type:'input',
         cols:5,
+        noRequired:true,
+        max:10
       },
       {
         title: '操作',

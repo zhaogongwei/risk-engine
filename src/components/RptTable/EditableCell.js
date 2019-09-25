@@ -95,7 +95,7 @@ const EditableFormRow = Form.create()(EditableRow);
         editable,
         dataIndex,
         title,
-        isRequired,
+        noRequired,
         pattern,
         record,
         max,
@@ -116,8 +116,16 @@ const EditableFormRow = Form.create()(EditableRow);
                       rules: [{
                         required: true,
                         message: `请填写正确的格式.`,
-                        pattern:pattern?pattern:'',
-                        max:max?max:''
+                        validator: (rule, value, callback) => {
+                          const reg = pattern;
+                          if (!value&&!noRequired) callback('输入内容不能为空!')
+                          if(pattern){
+                            if(!reg.test(value)){
+                              callback(`最多只能输入${max}位的数字!`)
+                              return;
+                            }
+                          }
+                        }
                       }],
                       initialValue: record[dataIndex]?record[dataIndex]:record['key'],
                     })(

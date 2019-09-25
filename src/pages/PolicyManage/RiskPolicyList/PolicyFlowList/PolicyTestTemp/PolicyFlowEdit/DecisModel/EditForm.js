@@ -63,7 +63,9 @@ export default class EditForm extends Component {
           editable:true,
           cols:2,
           key:'lowerValue',
-          type:'input'
+          type:'input',
+          max:6,
+          pattern:/^\d{1,6}$/
         },{
           title: '上限条件',
           dataIndex: 'highCondition',
@@ -87,7 +89,9 @@ export default class EditForm extends Component {
           editable:true,
           cols:4,
           key:'highValue',
-          type:'input'
+          type:'input',
+          max:6,
+          pattern:/^\d{1,6}$/
         },
         {
           title: '操作',

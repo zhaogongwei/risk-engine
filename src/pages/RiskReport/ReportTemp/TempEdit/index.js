@@ -63,6 +63,7 @@ export default class Index extends Component {
         dataIndex:'orderNum',
         editable:true,
         pattern:/^\d{1,10}$/,
+        max:10
       }
       ],
       checkedData: [],

@@ -174,7 +174,7 @@ const EditableFormRow = Form.create()(EditableRow);
     };
     createFormItem = ()=>{
       const { getFieldDecorator } = this.props.form;
-      const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus} = this.props;
+      const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus,max,noRequired} = this.props;
       if(type === 'select'){
         return(
           <FormItem style={{ margin: 0 }}>
@@ -242,11 +242,10 @@ const EditableFormRow = Form.create()(EditableRow);
                 initialValue: record[dataIndex]?record[dataIndex]:'',
                 rules:[
                   {
-                    pattern:pattern,
-                    required:true,
+                    required:noRequired?false:true,
                     validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
-                      if (value.length>20) callback('输入内容最多20位!')
+                      if (!value&&!noRequired) callback('输入内容不能为空!')
+                      if (value.length>max) callback(`输入内容最多${max}位!`)
                     }
                   }
                 ]
@@ -255,7 +254,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
-                  maxLength={21}
+                  maxLength={max?max+1:''}
                 />
               )}
             </FormItem>
@@ -267,10 +266,10 @@ const EditableFormRow = Form.create()(EditableRow);
                 initialValue: record[dataIndex]?record[dataIndex]:'',
                 rules:[
                   {
-                    required:true,
+                    required:noRequired?false:true,
                     validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
-                      if (value.length>20) callback('输入内容最多20位!')
+                      if (!value&&!noRequired) callback('输入内容不能为空!')
+                      if (value.length>max) callback(`输入内容最多${max}位!`)
                     }
                   }
                 ]
@@ -279,7 +278,7 @@ const EditableFormRow = Form.create()(EditableRow);
                   ref={node => (this.input = node)}
                   onPressEnter={this.save}
                   onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
-                  maxLength={21}
+                  maxLength={max?max+1:''}
                 />
               )}
             </FormItem>
@@ -389,10 +388,10 @@ const EditableFormRow = Form.create()(EditableRow);
               initialValue:record[dataIndex],
               rules:[
                 {
-                  required:true,
+                  required:noRequired?false:true,
                   validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
-                    if (value.length>20) callback('输入内容最多20位!')
+                    if (!value&&!noRequired) callback('输入内容不能为空!')
+                    if (value.length>max) callback(`输入内容最多${max}位!`)
                   }
                 }
               ]
@@ -401,7 +400,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 ref={node => (this.input = node)}
                 onPressEnter={this.save}
                 onChange={(e) => this.changeHandler(e.target.value, record, dataIndex)}
-                maxLength={21}
+                maxLength={max?max+1:''}
               />
             )}
           </FormItem>

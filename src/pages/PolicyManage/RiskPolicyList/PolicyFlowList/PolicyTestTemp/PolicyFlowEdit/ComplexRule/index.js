@@ -123,7 +123,9 @@ export default class ComplexRule extends PureComponent {
         dataIndex:'ruleCode',
         editable:true,
         cols:6,
-        type:'input'
+        noRequired:true,
+        type:'input',
+        max:10,
       },
       {
         title: '操作',

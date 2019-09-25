@@ -65,7 +65,7 @@ export default class setVar extends PureComponent {
         width:300,
         cols:3,
         type:'more',
-        pattern:/^\d{1,3}$/,
+        max:10,
       },
       {
         title: '操作',

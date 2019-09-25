@@ -115,7 +115,7 @@ export default class Editable extends Component {
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
-          isRequired: col.nonRequired,
+          noRequired: col.noRequired,
           pattern:col.pattern,
           max:col.max,
           handleModify:(form)=>this.props.handleModify(form)
