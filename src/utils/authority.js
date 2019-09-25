@@ -26,22 +26,22 @@ export function setAuthority(authority) {
 
 //存储用户名
 export function setUserName(authority) {
-  return sessionStorage.setItem('risk-engine-username', authority);
+  return localStorage.setItem('risk-engine-username', authority);
 }
 export function getUserName() {
-  return sessionStorage.getItem('risk-engine-username');
+  return localStorage.getItem('risk-engine-username');
 }
 export function deleteUserName() {
-  return sessionStorage.removeItem('risk-engine-username');
+  return localStorage.removeItem('risk-engine-username');
 }
 
 //存储用户ID
 export function setUserId(authority) {
-  return sessionStorage.setItem('A-EMS-userId', authority);
+  return localStorage.setItem('A-EMS-userId', authority);
 }
 export function getUserId() {
-  return sessionStorage.getItem('A-EMS-userId');
+  return localStorage.getItem('A-EMS-userId');
 }
 export function deleteUserId() {
-  return sessionStorage.removeItem('A-EMS-userId');
+  return localStorage.removeItem('A-EMS-userId');
 }
