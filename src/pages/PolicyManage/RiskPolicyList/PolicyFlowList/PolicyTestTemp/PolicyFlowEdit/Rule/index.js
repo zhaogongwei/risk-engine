@@ -355,7 +355,7 @@ export default class SimpleRule extends PureComponent {
           ref={node => {
             this.searchInput = node;
           }}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={'搜索变量'}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
@@ -368,10 +368,10 @@ export default class SimpleRule extends PureComponent {
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
-          Search
+          搜索
         </Button>
         <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-          Reset
+          重置
         </Button>
       </div>
     ),
