@@ -383,6 +383,7 @@ export default class DecisModel extends PureComponent {
         inputType:type,
         resultQueryData:{
           outFlag:1,
+          enumFlag:0,
           types:['char']
         },//输出结果查询参数
       })
