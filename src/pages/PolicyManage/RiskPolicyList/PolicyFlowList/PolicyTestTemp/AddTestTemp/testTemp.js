@@ -107,10 +107,15 @@ export default class TestTemp extends Component {
   getFormValue = () => {
     let formList=[]
     let formQueryData = this.props.form.getFieldsValue();
+    console.log('formQueryData',formQueryData)
     for(let i in formQueryData){
       let obj = {};
       obj['variableCode']=i;
-      obj['variableValue']=formQueryData[i];
+      if(typeof formQueryData[i] === 'object'){
+        obj['variableValue']=moment(formQueryData[i]).format('YYYY-MM-DD HH:mm:ss');
+      }else{
+        obj['variableValue']=formQueryData[i];
+      }
       formList.push(obj)
     }
     return formList;
@@ -159,7 +164,7 @@ export default class TestTemp extends Component {
   createFormItem=(item,index)=>{
     const { getFieldDecorator } = this.props.form;
     const formItemConfig = {
-      labelCol:{span:8},
+      labelCol:{span:12},
       wrapperCol:{span:14},
     }
     if(item.variableType==='char'){

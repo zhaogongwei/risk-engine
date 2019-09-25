@@ -7,6 +7,7 @@ export default {
 
   state: {
     listData:[],
+    templateId:'',//模板id
     queryConfig: {},//查询参数
     pageData:{
       current:1,
@@ -58,6 +59,12 @@ export default {
         ...state
       };
     },
+    setTemplateId(state,{payload}){
+      return {
+        ...state,
+        templateId:payload
+      }
+    }
   },
 };
 

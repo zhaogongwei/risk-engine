@@ -146,7 +146,11 @@ export default class ReportList extends PureComponent {
       type: 'reportList/setQueryConfig',
       payload: {}
     })
-    this.change(current,10,id)
+    await this.props.dispatch({
+      type: 'reportList/setTemplateId',
+      payload: id
+    })
+    this.change(current,10)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (currPage, pageSize) => {
@@ -158,11 +162,12 @@ export default class ReportList extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = async (currPage = 1, pageSize = 10,id) => {
+    const{templateId} = this.props.reportList;
     await this.props.dispatch({
       type: 'reportList/listData',
       payload: {
         ...this.props.reportList.queryConfig,
-        templateId:id,
+        templateId:templateId,
         currPage,
         pageSize
       }

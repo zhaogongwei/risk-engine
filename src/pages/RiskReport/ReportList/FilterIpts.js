@@ -35,7 +35,6 @@ const Status = [{
 
 export default class FilterIpts extends Component {
   state={
-    presentationName:this.props.presentationName,
   }
   //查询
   formSubmit = async (e) => {
@@ -52,13 +51,24 @@ export default class FilterIpts extends Component {
   }
   //重置
   reset = () => {
-    this.setState({
-      presentationName:''
+    this.props.form.setFields({
+      presentationName:{
+        value:''
+      }
+    })
+    this.props.dispatch({
+      type: 'reportList/setTemplateId',
+      payload: ''
     })
     this.props.form.resetFields()
   }
   componentDidMount () {
     this.props.getSubKey(this,'child')
+    this.props.form.setFields({
+      presentationName:{
+        value:this.props.presentationName
+      }
+    })
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -88,7 +98,6 @@ export default class FilterIpts extends Component {
           <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="报告名称" {...formItemConfig}>
               {getFieldDecorator('presentationName',{
-                initialValue:this.state.presentationName,
               })(
                 <Input />
               )}
