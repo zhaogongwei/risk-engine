@@ -175,13 +175,6 @@ export default class TestTemp extends Component {
               initialValue: item.variableValue?item.variableValue:'',
               rules:[
                 {
-                  required:true,
-                  validator: async(rule, value, callback) => {
-                    if (!value) {
-                      callback('输入内容不能为空!')
-                      return
-                    }
-                  }
                 }
               ]
             })(
@@ -208,10 +201,6 @@ export default class TestTemp extends Component {
                 {
                   required:true,
                   validator: async(rule, value, callback) => {
-                    if (!value) {
-                      callback('输入内容不能为空!')
-                      return
-                    }
                     if (value.length>20) {
                       callback('输入内容最多20位!')
                       return
@@ -234,11 +223,7 @@ export default class TestTemp extends Component {
               {
                 required:true,
                 validator:async (rule, value, callback) => {
-                  const reg = /^\d{1,10}$/;
-                  if (!value) {
-                    callback('输入内容不能为空!')
-                    return
-                  }
+                  const reg = /^\d{0,20}$/;
                   if(!reg.test(value)){
                     callback(`最多只能输入20位的数字!`)
                     return;
@@ -259,13 +244,6 @@ export default class TestTemp extends Component {
             initialValue: initData,
             rules:[
               {
-                required:true,
-                validator: async(rule, value, callback) => {
-                  if (!value) {
-                    callback('输入内容不能为空!')
-                    return
-                  }
-                }
               }
             ]
           })(
@@ -283,13 +261,7 @@ export default class TestTemp extends Component {
             initialValue: initData,
             rules:[
               {
-                required:true,
-                validator: async(rule, value, callback) => {
-                  if (!value) {
-                    callback('输入内容不能为空!')
-                    return
-                  }
-                }
+
               }
             ]
           })(

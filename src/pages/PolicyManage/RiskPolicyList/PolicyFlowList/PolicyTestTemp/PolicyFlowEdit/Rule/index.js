@@ -121,6 +121,7 @@ export default class SimpleRule extends PureComponent {
         type:'input',
         cols:5,
         noRequired:true,
+        only:true,
         max:10
       },
       {
