@@ -172,8 +172,8 @@ const EditableFormRow = Form.create()(EditableRow);
                             }
                             if(only){
                               let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
-                              console.log('ruleCode',ruleCode)
-                              if(ruleCode.length>1){
+                              let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
+                              if(onlyruleCode.length>1){
                                 callback('该值已存在,请重新填写!')
                                 return
                               }

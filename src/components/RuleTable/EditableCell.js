@@ -175,7 +175,6 @@ const EditableFormRow = Form.create()(EditableRow);
     createFormItem = ()=>{
       const { getFieldDecorator } = this.props.form;
       const { type,dataIndex,cols,record,value,valueOther,pattern ,isFocus,noRequired,max,dataSource,only} = this.props;
-      console.log('dataSource',dataSource)
       if(type === 'select'){
         return(
           <FormItem style={{ margin: 0 }}>
@@ -255,7 +254,8 @@ const EditableFormRow = Form.create()(EditableRow);
                       }
                       if(only){
                         let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
-                        if(ruleCode.length>1){
+                        let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
+                        if(onlyruleCode.length>1){
                           callback('该值已存在,请重新填写!')
                           return
                         }
@@ -292,7 +292,8 @@ const EditableFormRow = Form.create()(EditableRow);
                       }
                       if(only){
                         let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
-                        if(ruleCode.length>1){
+                        let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
+                        if(onlyruleCode.length>1){
                           callback('该值已存在,请重新填写!')
                           return
                         }
@@ -427,7 +428,8 @@ const EditableFormRow = Form.create()(EditableRow);
                     }
                     if(only){
                       let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
-                      if(ruleCode.length>1){
+                      let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
+                      if(onlyruleCode.length>1){
                         callback('该值已存在,请重新填写!')
                         return
                       }
