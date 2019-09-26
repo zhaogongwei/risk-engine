@@ -8,6 +8,10 @@ export default {
   state: {
     //子标题列表
     titleList:[],
+    reportTemplateDto:{
+      id:'',
+      assetsCode:''
+    },
   },
 
   effects: {
@@ -29,6 +33,7 @@ export default {
       return{
         ...state,
         presentationName:payload.data.presentationName,
+        reportTemplateDto:payload.data[0]['reportTemplateDto'],
         titleList:payload.data[0]['reportTemplateDto']['reportTemplate'],
       }
     },

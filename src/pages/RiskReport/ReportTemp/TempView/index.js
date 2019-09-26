@@ -52,7 +52,7 @@ export default  class Index extends  PureComponent{
   render(){
     const titleWrapper=
      <div>
-       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
+       <span>模板预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
      </div>;
      const {titleList} = this.props.preView;
      const forwordUrl = sessionStorage.getItem('reportPreview-url')

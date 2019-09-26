@@ -51,12 +51,12 @@ export default  class Index extends  PureComponent{
     })
   }
   render(){
+    const {titleList,reportTemplateDto} = this.props.riskReport;
+    const forwordUrl=sessionStorage.getItem('reportList-url')
     const titleWrapper=
      <div>
-       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
+       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>{`资产编号${reportTemplateDto['assetsCode']}`}</span>
      </div>;
-     const {titleList} = this.props.riskReport;
-     const forwordUrl=sessionStorage.getItem('reportList-url')
     return(
       <PageHeaderWrapper >
         {
@@ -65,7 +65,7 @@ export default  class Index extends  PureComponent{
               <Card
                 bordered={false}
                 title={titleWrapper}
-                extra={'报告编号'}
+                extra={`报告编号${reportTemplateDto['id']}`}
                 headStyle={{fontSize:14}}
               >
               </Card>
