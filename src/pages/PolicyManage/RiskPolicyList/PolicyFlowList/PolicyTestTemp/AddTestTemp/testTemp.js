@@ -158,7 +158,7 @@ export default class TestTemp extends Component {
   }
   //去报告预览
   goPreview=()=>{
-    router.push(`/riskReport/reportList/mould/preview?id=${this.state.presentationId}`)
+    router.push(`/riskReport/reportList/list/check?id=${this.state.presentationId}`)
   }
   //根据变量的类型创建不同的formItem;
   createFormItem=(item,index)=>{
