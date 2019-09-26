@@ -111,7 +111,7 @@ export default class TestTemp extends Component {
     for(let i in formQueryData){
       let obj = {};
       obj['variableCode']=i;
-      if(typeof formQueryData[i] === 'object'){
+      if(formQueryData[i]&&typeof formQueryData[i] === 'object'){
         obj['variableValue']=moment(formQueryData[i]).format('YYYY-MM-DD HH:mm:ss');
       }else{
         obj['variableValue']=formQueryData[i];
@@ -199,7 +199,6 @@ export default class TestTemp extends Component {
               initialValue: item.variableValue?item.variableValue:'',
               rules:[
                 {
-                  required:true,
                   validator: async(rule, value, callback) => {
                     if (value.length>20) {
                       callback('输入内容最多20位!')
@@ -221,7 +220,6 @@ export default class TestTemp extends Component {
             initialValue: item.variableValue?item.variableValue:'',
             rules:[
               {
-                required:true,
                 validator:async (rule, value, callback) => {
                   const reg = /^\d{0,20}$/;
                   if(!reg.test(value)){
