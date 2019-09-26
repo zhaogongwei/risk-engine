@@ -52,7 +52,6 @@ export default  class Index extends  PureComponent{
   }
   render(){
     const {titleList,reportTemplateDto} = this.props.riskReport;
-    const forwordUrl=sessionStorage.getItem('reportList-url')
     const titleWrapper=
      <div>
        <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>{`资产编号${reportTemplateDto['assetsCode']}`}</span>
@@ -88,7 +87,7 @@ export default  class Index extends  PureComponent{
         }
         <Row type="flex" justify="center">
           <Col>
-            <Button type="primary" onClick={()=>router.push(forwordUrl)}>返回</Button>
+            <Button type="primary" onClick={()=>router.goBack()}>返回</Button>
           </Col>
         </Row>
       </PageHeaderWrapper>

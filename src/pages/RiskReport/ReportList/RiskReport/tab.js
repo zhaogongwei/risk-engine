@@ -19,6 +19,9 @@ export default  class Tab extends  PureComponent{
     super(props)
   }
   componentDidMount(){}
+  changeHash(idName){
+    document.querySelector(idName).scrollIntoView(true)
+  }
   render(){
     const {tabList,handleTab,selectKey}=this.props;
     return(
@@ -29,7 +32,7 @@ export default  class Tab extends  PureComponent{
               tabList&&tabList.map((item,index)=>{
                 return (
                   <Col key={index}>
-                    <a href={`#list${index}`} className={`tabItem ${selectKey===index?"active":null}`} onClick={()=>handleTab(index)}>
+                    <a className={`tabItem ${selectKey===index?"active":null}`} onClick={()=>{handleTab(index);this.changeHash(`#list${index}`)}}>
                       {item['title']}
                     </a>
                   </Col>

@@ -221,7 +221,6 @@ export default class ReportList extends PureComponent {
   }
   //跳转报告模板
   goRiskReport = (id)=>{
-    sessionStorage.setItem('reportList-url',`${location.pathname}${location.search}`)
     router.push(`/riskReport/reportList/list/check?id=${id}`)
   }
   //更新报告
