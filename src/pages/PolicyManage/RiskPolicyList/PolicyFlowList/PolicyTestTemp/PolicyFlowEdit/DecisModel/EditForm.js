@@ -231,7 +231,7 @@ export default class EditForm extends Component {
         id:item['id']?item['id']:null,
         dataIndex:item['id']?`index_${item['id']}`:`index_${index+1}`,
         editable:true,
-        width:100,
+        width:150,
         colVarInfo:{...item,indexKey:item['id']?`index_${item['id']}`:`index_${index+1}`},
       }
     })
@@ -245,7 +245,7 @@ export default class EditForm extends Component {
             col:0,
             title:'',
             dataIndex:'index_0',
-            width:100,
+            width:150,
           }, ...newCol],
       },
     })

@@ -165,8 +165,8 @@ export default class DecisModel extends PureComponent {
         id:item['id'],
         colVarInfo:item,
         dataIndex:item['indexKey'],
+        width:150,
         editable:true,
-        width:100
       })
     })
     this.props.dispatch({
@@ -177,7 +177,8 @@ export default class DecisModel extends PureComponent {
             key:0,
             col:0,
             title:'',
-            dataIndex:'index_0'
+            dataIndex:'index_0',
+            width:150,
           }, ...dataSource],
       }
     })

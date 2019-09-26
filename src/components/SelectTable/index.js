@@ -79,6 +79,7 @@ export default class SelectableTable extends PureComponent {
           </Col>
         </Row>
         <Table
+          className={"fixedWidthTable"}
           components={components}
           rowClassName={() => 'editable-row'}
           bordered={false}
@@ -86,7 +87,7 @@ export default class SelectableTable extends PureComponent {
           dataSource={tableRow}
           columns={columns}
           loading={loading}
-          scroll={{ x: 450}}
+          scroll={{ x:1500}}
         />
       </div>
     );
