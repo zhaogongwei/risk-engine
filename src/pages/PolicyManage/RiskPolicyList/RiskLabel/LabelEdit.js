@@ -400,8 +400,8 @@ export default class LabelEdit extends PureComponent {
               </Col>
               {
                 type==1?null:
-                  <Col style={{color:'#FF0000'}} push={7}>
-                    最近操作时间：{labelInfo['updateTime']} 操作人：  {labelInfo['updateTrueName']}
+                  <Col style={{color:'#FF0000',textAlign:'right'}}xxl={12} md={8}>
+                    最近操作时间：{labelInfo['updateTime']} 操作人：{labelInfo['updateTrueName']}
                   </Col>
               }
             </Row>
