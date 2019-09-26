@@ -120,8 +120,8 @@ class DetailForm extends React.Component {
                   cb('输入内容不能为空!')
                   return
                 }
-                if(val.length>10){
-                  cb('输入内容最多10位!')
+                if(val.length>15){
+                  cb('输入内容最多15位!')
                   return
                 }
                 let nodeData = propsAPI.save()?propsAPI.save()['nodes']:[]
@@ -133,7 +133,7 @@ class DetailForm extends React.Component {
               }
             }
           ]
-        })(<Input onBlur={this.handleSubmit} maxLength={11}/>)}
+        })(<Input onBlur={this.handleSubmit} maxLength={16}/>)}
         </Item>
       </Fragment>
     );

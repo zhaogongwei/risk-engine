@@ -86,6 +86,7 @@ export default class SelectableTable extends PureComponent {
           dataSource={tableRow}
           columns={columns}
           loading={loading}
+          scroll={{ x: 450}}
         />
       </div>
     );

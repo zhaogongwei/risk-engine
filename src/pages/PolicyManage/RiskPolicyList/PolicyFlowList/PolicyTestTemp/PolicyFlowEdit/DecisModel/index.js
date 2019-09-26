@@ -165,7 +165,8 @@ export default class DecisModel extends PureComponent {
         id:item['id'],
         colVarInfo:item,
         dataIndex:item['indexKey'],
-        editable:true
+        editable:true,
+        width:100
       })
     })
     this.props.dispatch({
@@ -383,6 +384,7 @@ export default class DecisModel extends PureComponent {
         inputType:type,
         resultQueryData:{
           outFlag:1,
+          enumFlag:1,
           types:['char']
         },//输出结果查询参数
       })
