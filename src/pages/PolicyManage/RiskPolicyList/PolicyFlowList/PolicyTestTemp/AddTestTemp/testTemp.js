@@ -173,10 +173,6 @@ export default class TestTemp extends Component {
           <FormItem label={item.variableName} {...formItemConfig} key={index}>
             {getFieldDecorator(item.variableCode, {
               initialValue: item.variableValue?item.variableValue:'',
-              rules:[
-                {
-                }
-              ]
             })(
               <Select
                 style={{width:'100%'}}
@@ -240,10 +236,6 @@ export default class TestTemp extends Component {
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
             initialValue: initData,
-            rules:[
-              {
-              }
-            ]
           })(
             <DatePicker
               style={{width:'100%'}}
@@ -257,11 +249,6 @@ export default class TestTemp extends Component {
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
             initialValue: initData,
-            rules:[
-              {
-
-              }
-            ]
           })(
             <DatePicker
               showTime
