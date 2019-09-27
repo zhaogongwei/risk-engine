@@ -163,12 +163,14 @@ export default class EditVar extends PureComponent {
           }
         })
         //时间和日期控件的默认值需要经过moment处理，没有值时，不能为''，只能为null
-        if(data.variableType==='time'||data.variableType==='date'){
-            if(data.defaultValue){
-              this.setState({
-                defaultVal:moment(data.defaultValue),
-              })
-            }
+        if(data.variableType==='time'&&data.variableType){
+          this.setState({
+            defaultVal:moment(data.defaultValue,'HH:mm:ss'),
+          })
+        }else if(data.variableType==='date'&&data.variableType){
+          this.setState({
+            defaultVal:moment(data.defaultValue,'YYYY-MM-DD'),
+          })
         }else{
           this.setState({
             defaultVal:data.defaultValue,
@@ -256,6 +258,20 @@ export default class EditVar extends PureComponent {
     }else{
       message.error('已绑定应用策略')
     }
+  }
+  //枚举值保存
+  enumListSave=(obj)=>{
+    let {enumeration} = this.props.varlist
+    enumeration.length&&enumeration.map((item,index)=>{
+      if(item['key']===obj['key']){
+        enumeration.splice(obj['key']-1,1,obj)
+        this.props.dispatch({
+          type: 'varlist/addData',
+          payload: enumeration
+        })
+      }
+    })
+
   }
   //   枚举删除表格
   handleDelete = (key) => {
@@ -416,8 +432,6 @@ export default class EditVar extends PureComponent {
       wrapperCol:{span:16},
     }
     const query= {...this.props.location.query}
-    console.log(query.type==2 )
-    console.log(this.props.varlist.enumeration )
     const {enumeration} = this.props.varlist
     return (
       <PageHeaderWrapper>
@@ -593,6 +607,7 @@ export default class EditVar extends PureComponent {
                       handleAdd={this.handleAdd}
                       handleDelete={this.handleDelete}
                       emDelFlag={this.state.emDelFlag}
+                      enumListSave={(list)=>this.enumListSave(list)}
                     />
                     </FormItem>
                   </Col>
@@ -611,9 +626,10 @@ export default class EditVar extends PureComponent {
                     initialValue:this.state.defaultVal,
                   })(
                       <Select allowClear={true} >
-                        {enumeration&&enumeration.map( (item,index) => (
-                          <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
-                        ))}
+                        {enumeration.length>0&&enumeration.map( (item,index) =>
+                          (
+                            <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                          ))}
                       </Select>
                   )}
                   </FormItem>:null
@@ -660,7 +676,7 @@ export default class EditVar extends PureComponent {
                    {getFieldDecorator('defaultValue',{
                      initialValue:this.state.defaultVal,
                    })(
-                    <DatePicker showTime/>
+                    <TimePicker/>
                    )}
                    </FormItem>:null
                 }
