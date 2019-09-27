@@ -15,8 +15,9 @@ import router from 'umi/router';
 // 验证权限的组件
 import FilterIpts from './FilterIpts';
 import { findInArr,exportJudgment } from '@/utils/utils'
-@connect(({ policyTestTemp, loading }) => ({
+@connect(({ policyTestTemp, loading,testTemp }) => ({
   policyTestTemp,
+  testTemp,
   loading: loading.effects['policyTestTemp/fetchTestTempList']
 }))
 export default class PolicyTestTemp extends PureComponent {
@@ -142,10 +143,18 @@ export default class PolicyTestTemp extends PureComponent {
   }
   //跳转到测试
   goTest = (strategyId,flowId,id='',type) =>{
+    this.props.dispatch({
+      type: 'testTemp/saveTestTemplateId',
+      payload:'',
+    })
     router.push(`/policyManage/riskpolicylist/policyFlow/test/add?strategyId=${strategyId}&flowId=${flowId}&id=${id}&type=${type}`)
   }
   //跳转到新增页面
   goAddTest = (strategyId,flowId,type) =>{
+    this.props.dispatch({
+      type: 'testTemp/saveTestTemplateId',
+      payload:'',
+    })
     router.push(`/policyManage/riskpolicylist/policyFlow/test/add?strategyId=${strategyId}&flowId=${flowId}&type=${type}`)
   }
   render() {

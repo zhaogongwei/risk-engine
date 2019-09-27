@@ -8,6 +8,7 @@ import {
   Form,
   Card,
   DatePicker,
+  TimePicker,
   message,
   Spin
 } from 'antd';
@@ -15,6 +16,7 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import moment from 'moment'
 import { connect } from 'dva'
 import router from 'umi/router';
+import styles from './testTemp.less';
 const Option = Select.Option;
 const FormItem = Form.Item
 @connect(({testTemp,loading})=>({
@@ -34,12 +36,13 @@ export default class TestTemp extends Component {
   formSubmit = async (e) => {
     this.props.form.validateFields(async(error,value)=>{
       if(!error){
+        const {testTemplateId} = this.props.testTemp;
         const {query} = this.props.location;
         const formData = this.getFormValue();
         const res =  await this.props.dispatch({
           type: 'testTemp/saveTest',
           payload:{
-            id:query['id']?query['id']:null,
+            id:query['id']?query['id']:testTemplateId,
             strategyId:query['strategyId'],
             strategyFlowId:query['flowId'],
             inputVarList:formData,
@@ -48,6 +51,10 @@ export default class TestTemp extends Component {
         })
         if(res&&res.status===1){
           message.success(res.statusDesc)
+          await this.props.dispatch({
+            type: 'testTemp/saveTestTemplateId',
+            payload:res.data.id,
+          })
           const response =  await this.props.dispatch({
             type: 'testTemp/queryTestResult',
             payload:{
@@ -105,14 +112,16 @@ export default class TestTemp extends Component {
   }
   //   获取表单信息
   getFormValue = () => {
+    const { tempVarList} = this.props.testTemp;
     let formList=[]
     let formQueryData = this.props.form.getFieldsValue();
-    console.log('formQueryData',formQueryData)
     for(let i in formQueryData){
       let obj = {};
       obj['variableCode']=i;
-      if(formQueryData[i]&&typeof formQueryData[i] === 'object'){
-        obj['variableValue']=moment(formQueryData[i]).format('YYYY-MM-DD HH:mm:ss');
+      if(this.returnType(tempVarList,i)=='date'&&formQueryData[i]){
+        obj['variableValue']=moment(formQueryData[i]).format('YYYY-MM-DD');
+      }else if(this.returnType(tempVarList,i)=='time'&&formQueryData[i]){
+        obj['variableValue']=moment(formQueryData[i]).format('HH:mm:ss');
       }else{
         obj['variableValue']=formQueryData[i];
       }
@@ -125,16 +134,27 @@ export default class TestTemp extends Component {
     this.props.form.resetFields()
   }
   componentDidMount () {
+    const {testTemplateId} = this.props.testTemp;
     const {query} = this.props.location;
     const {strategyId,type,id} = query
     if(type==1){
-      //新增
-      this.props.dispatch({
-        type: 'testTemp/fetchTestTempVarArray',
-        payload:{
-          strategyId:strategyId,
-        }
-      })
+      //保存之后，跳转到报告预览再返回
+      if(testTemplateId){
+        this.props.dispatch({
+          type: 'testTemp/fetchTestTempVarList',
+          payload:{
+            testTemplateId:testTemplateId,
+          }
+        })
+      }else{
+        //新增
+        this.props.dispatch({
+          type: 'testTemp/fetchTestTempVarArray',
+          payload:{
+            strategyId:strategyId,
+          }
+        })
+      }
     }else{
       //编辑
       this.props.dispatch({
@@ -231,33 +251,44 @@ export default class TestTemp extends Component {
         </FormItem>
       )
     }else if(item.variableType==='date'){
-      const initData = item.variableValue?moment(item.variableValue):null
+      const initData = item.variableValue?moment(item.variableValue,'YYYY-MM-DD'):null
       return (
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
             initialValue: initData,
           })(
             <DatePicker
+              format={'YYYY-MM-DD'}
               style={{width:'100%'}}
             />
           )}
         </FormItem>
       )
     }else if(item.variableType==='time'){
-      const initData = item.variableValue?moment(item.variableValue):null
+      const initData = item.variableValue?moment(item.variableValue,'HH:mm:ss'):null
       return (
         <FormItem label={item.variableName} {...formItemConfig} key={index}>
           {getFieldDecorator(item.variableCode, {
             initialValue: initData,
           })(
-            <DatePicker
-              showTime
+            <TimePicker
+              format={'HH:mm:ss'}
               style={{width:'100%'}}
             />
           )}
         </FormItem>
       )
     }
+  }
+  returnType=(arr=[],target)=>{
+    if(!arr.length)return;
+    let types='';
+    arr.map((item,index)=>{
+      if(item['variableCode']==target){
+        types=item['variableType']
+      }
+    })
+    return types;
   }
   createFormInput=(item)=>{
 
@@ -266,7 +297,7 @@ export default class TestTemp extends Component {
     const { getFieldDecorator } = this.props.form;
     const { query } = this.props.location;
     const {strategyId,type,id} = query
-    const { tempVarList,templateName,resultList } = this.props.testTemp;
+    const { tempVarList,templateName,resultList,testTemplateId } = this.props.testTemp;
     const { presentationId } = this.state;
     const formItemConfig = {
       labelCol:{span:8},
@@ -276,7 +307,7 @@ export default class TestTemp extends Component {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={type==1?'新增测试模板':'编辑测试模板'}
+          title={type==1&&!testTemplateId?'新增测试模板':'编辑测试模板'}
         >
             <Row type="flex" align="top"  gutter={16}>
               <Col span={16} style={{marginRight:10}}>
@@ -349,13 +380,13 @@ export default class TestTemp extends Component {
               <Col span={6} style={{backgroundColor:'#F2F2F2',minHeight:600}}>
                 <Row style={{textAlign:'center',lineHeight:'60px',fontSize:20}}>测试结果</Row>
                 <Row type="flex" justify="center">
-                  <Col span={18}>
+                  <Col span={20}>
                     {
                       resultList&&resultList.map((item,index)=>{
                         return (
                           <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
                             <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</Col>
-                            <Col>
+                            <Col className={styles['ant-over-flow']}>
                               {item.resultName?item.resultName:''}
                               <span style={{marginLeft:10,marginRight:10}}>{item.resultValue?':':''}</span>
                               {item.resultValue?item.resultValue:''}

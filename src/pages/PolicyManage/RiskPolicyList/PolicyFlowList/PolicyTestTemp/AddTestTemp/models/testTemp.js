@@ -9,6 +9,7 @@ export default {
     tempVarList: [],//测试模板变量列表信息
     templateName:'',//测试模板信息
     resultList:[],//查询结果列表
+    testTemplateId:'',//测试模板id
   },
 
   effects: {
@@ -74,6 +75,12 @@ export default {
       return {
         ...state,
         resultList:payload.data.list,
+      }
+    },
+    saveTestTemplateId(state,{payload}){
+      return {
+        ...state,
+        testTemplateId:payload,
       }
     }
   },
