@@ -10,10 +10,10 @@ const FlowDetailPanel = () => {
   return (
     <DetailPanel className={styles.detailPanel}>
       <NodePanel>
-        <DetailForm type="node" />
+        <DetailForm type="node" text="节点"/>
       </NodePanel>
       <EdgePanel>
-        <DetailForm type="edge" />
+        <DetailForm type="edge" text="连线"/>
       </EdgePanel>
       <GroupPanel>
         <DetailForm type="group" />
@@ -22,7 +22,7 @@ const FlowDetailPanel = () => {
         <Card type="inner" size="small" title="Multi Select" bordered={false} />
       </MultiPanel>
       <CanvasPanel>
-        <Card type="inner" size="small" title="Canvas" bordered={false} />
+        <Card type="inner" size="small" title="画布" bordered={false} />
       </CanvasPanel>
     </DetailPanel>
   );

@@ -10,7 +10,7 @@ const FlowContextMenu = (props) => {
   return (
     <ContextMenu className={styles.contextMenu}>
       <NodeMenu>
-        <MenuItem command="copy" text="复制" />
+        {/*<MenuItem command="copy" text="复制" />*/}
         {(nodeType !=='start'&&nodeType !=='end')&&<SetMenuItem command="copy" text="编辑" type={type} remark={remark}  strategyId={strategyId} flowId={flowId}/>}
         <MenuItem command="delete" text="删除"/>
       </NodeMenu>
@@ -31,7 +31,7 @@ const FlowContextMenu = (props) => {
       <CanvasMenu>
         <MenuItem command="undo" text="回退"/>
         <MenuItem command="redo" text="撤销"/>
-        <MenuItem command="pasteHere" icon="paste" text="粘贴在这里" />
+        {/*<MenuItem command="pasteHere" icon="paste" text="粘贴在这里" />*/}
       </CanvasMenu>
     </ContextMenu>
   );

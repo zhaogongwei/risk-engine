@@ -11,7 +11,7 @@ const MindDetailPanel = () => {
         <DetailForm type="node" />
       </NodePanel>
       <CanvasPanel>
-        <Card type="inner" size="small" title="Canvas" bordered={false} />
+        <Card type="inner" size="small" title="画布" bordered={false} />
       </CanvasPanel>
     </DetailPanel>
   );

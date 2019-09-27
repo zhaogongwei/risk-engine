@@ -109,7 +109,7 @@ class DetailForm extends React.Component {
     const { label, jump, title } = this.item.getModel();
     return (
       <Fragment>
-        <Item label="Label" {...inlineFormItemLayout}>
+        <Item label="标题" {...inlineFormItemLayout}>
           {form.getFieldDecorator('label', {
           initialValue: label,
           rules:[
@@ -145,12 +145,12 @@ class DetailForm extends React.Component {
 
     return (
       <Fragment>
-        <Item label="Label" {...inlineFormItemLayout}>
+        <Item label="标题" {...inlineFormItemLayout}>
           {form.getFieldDecorator('label', {
             initialValue: label,
           })(<Input onBlur={this.handleSubmit} />)}
         </Item>
-        <Item label="type" {...inlineFormItemLayout}>
+        <Item label="属性" {...inlineFormItemLayout}>
           {form.getFieldDecorator('type', {
             initialValue: type,
           })(this.renderEdgeShapeSelect())}
@@ -173,13 +173,13 @@ class DetailForm extends React.Component {
   };
 
   render() {
-    const { type } = this.props;
+    const { type,text } = this.props;
 
     if (!this.item) {
       return null;
     }
     return (
-      <Card type="inner" size="small" title={upperFirst(type)} bordered={false}>
+      <Card type="inner" size="small" title={text || upperFirst(type)} bordered={false}>
         <Form onSubmit={this.handleSubmit}>
           {type === 'node' && this.renderNodeDetail()}
           {type === 'edge' && this.renderEdgeDetail()}
