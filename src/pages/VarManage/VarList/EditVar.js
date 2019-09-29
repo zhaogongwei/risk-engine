@@ -116,7 +116,7 @@ export default class EditVar extends PureComponent {
       disable:false,
       updateTime:'',
       updateTrueName:'',
-      defaultVal:'',
+      defaultVal:null,
       emDelFlag:true,
       varData:{}
     };
@@ -221,11 +221,10 @@ export default class EditVar extends PureComponent {
   //   获取表单信息
   getFormValue = () => {
     let formQueryData = this.props.form.getFieldsValue();
-    console.log(formQueryData.defaultValue)
     if(formQueryData.variableType=='date'){
       formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD')
     }else if(formQueryData.variableType=='time'){
-      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('YYYY-MM-DD HH:mm:ss')
+      formQueryData.defaultValue=formQueryData.defaultValue==null?"":moment(formQueryData.defaultValue).format('HH:mm:ss')
     }
     
     //formQueryData.enmuList = this.props.varList.dataSource;
