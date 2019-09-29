@@ -45,7 +45,8 @@ export default class EditVar extends PureComponent {
         editable: true,
         max:20,
         nonRequired: true,
-        key:'enumValue'
+        key:'enumValue',
+        only:true,
       },
       {
         title: '枚举值展示',
@@ -54,6 +55,7 @@ export default class EditVar extends PureComponent {
         max:20,
         nonRequired: true,
         editable: true,
+        only:true,
       },
       {
         title: '操作',
@@ -437,7 +439,7 @@ export default class EditVar extends PureComponent {
       <PageHeaderWrapper>
         <Card
           bordered={false}
-          title={query.type ===1?'新增变量':'编辑变量'}
+          title={query.type *1===1?'新增变量':'编辑变量'}
         >
           <Form
             className="ant-advanced-search-form"
@@ -628,7 +630,7 @@ export default class EditVar extends PureComponent {
                       <Select allowClear={true} >
                         {enumeration.length>0&&enumeration.map( (item,index) =>
                           (
-                            <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                            <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
                           ))}
                       </Select>
                   )}
@@ -715,14 +717,14 @@ export default class EditVar extends PureComponent {
               </Col>
               <Col style={{color:'#FF0000'}} push={10}>
                 {
-                  query.type===1?null:`最近操作时间：${this.state.updateTime} 操作人：  ${this.state.updateTrueName}`
+                  query.type*1===1?null:`最近操作时间：${this.state.updateTime} 操作人：  ${this.state.updateTrueName}`
                 }
               </Col>
             </Row>
             <Row>
               <Col xxl={8} md={12}  style={{color:'#FF0000'}}>
                 {
-                  query.type ===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
+                  query.type *1===1?null:'编辑变量可能会导致决策引擎失效,请谨慎操作!!'
                 }
               </Col>
             </Row>

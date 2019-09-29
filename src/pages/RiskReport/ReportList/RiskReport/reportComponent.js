@@ -33,7 +33,7 @@ export default class ReportComponent extends Component{
     const titleStyle_2={
       background:'#F6F6F6'
     }
-    const {list}=this.props;
+    const {list,reportInfo}=this.props;
     return (
       <div style={{paddingLeft:10,paddingRight:10}}>
         {
@@ -42,7 +42,7 @@ export default class ReportComponent extends Component{
               <div id={`list${index}`} key={index} style={{paddingTop:20}}>
                 <div className={'titleWrapper'} style={{marginTop:25,marginBottom:30,}}>
                   <span style={{fontSize:24,color:"#333"}}>{item['title']}</span>
-                  <span style={{fontSize:14,color:"#333",marginLeft:20}}>{item['createTime']?`生成日期${item['createTime']}`:null}</span>
+                  <span style={{fontSize:14,color:"#333",marginLeft:20}}>{index===0?reportInfo['createTime']?`生成日期${reportInfo['createTime']}`:null:null}</span>
                 </div>
                 <div className={'rptCont'}>
                   <Row type="flex">

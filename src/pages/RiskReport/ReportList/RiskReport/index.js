@@ -41,6 +41,21 @@ export default  class Index extends  PureComponent{
       }
     })
   }
+  //清空数据
+  componentWillUnmount(){
+    this.props.dispatch({
+      type: 'riskReport/InittitleListHandle',
+      payload: {
+        data:[
+          {
+            reportTemplateDto:{
+              reportTemplate:[]
+            }
+          }
+        ]
+      }
+    })
+  }
   //返回
   goBack=()=>{
   }
@@ -51,7 +66,7 @@ export default  class Index extends  PureComponent{
     })
   }
   render(){
-    const {titleList,reportTemplateDto} = this.props.riskReport;
+    const {titleList,reportTemplateDto,reportInfo} = this.props.riskReport;
     const titleWrapper=
      <div>
        <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>{`资产编号${reportTemplateDto['assetsCode']}`}</span>
@@ -79,6 +94,7 @@ export default  class Index extends  PureComponent{
                 <Col>
                   <ReportComponent
                     list={titleList}
+                    reportInfo={reportInfo}
                   />
                 </Col>
               </Row>

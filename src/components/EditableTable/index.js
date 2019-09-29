@@ -49,6 +49,7 @@ export default class EditableTable extends PureComponent {
           pattern:col.pattern,
           max:col.max,
           dataSource:dataSource,
+          only:col.only,
           enumListSave:(list)=>this.props.enumListSave(list)
         })
       };

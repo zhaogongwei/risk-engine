@@ -123,7 +123,7 @@ const EditableFormRow = Form.create()(EditableRow);
             {
               this.props.varObjRow['enumList']&&this.props.varObjRow['enumList'].map((item,index)=>{
                 return (
-                  <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                  <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
                 )
               })
             }

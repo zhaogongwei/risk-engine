@@ -123,7 +123,7 @@ export default class EditableCell extends PureComponent {
           {
             this.props.record['enumList']&&this.props.record['enumList'].map((item,index)=>{
               return (
-                <Option value={item.enumValue} key={index}>{item.enumValue}</Option>
+                <Option value={item.enumValue} key={index}>{item.enumShow}</Option>
               )
             })
           }

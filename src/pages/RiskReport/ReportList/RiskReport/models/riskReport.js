@@ -8,6 +8,7 @@ export default {
   state: {
     //子标题列表
     titleList:[],
+    reportInfo:{},//报告信息
     reportTemplateDto:{
       id:'',
       assetsCode:''
@@ -32,6 +33,7 @@ export default {
     InittitleListHandle(state,{payload}){
       return{
         ...state,
+        reportInfo:payload.data[0],
         presentationName:payload.data.presentationName,
         reportTemplateDto:payload.data[0]['reportTemplateDto'],
         titleList:payload.data[0]['reportTemplateDto']['reportTemplate'],

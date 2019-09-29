@@ -4,7 +4,8 @@ import {
   Form,
   Popconfirm,
   Table,
-  Input
+  Input,
+  message,
 } from 'antd';
 import { connect } from 'dva'
 const FormItem = Form.Item;
@@ -58,7 +59,20 @@ const EditableFormRow = Form.create()(EditableRow);
     }
   
     changeHandler(value, record, type) {
-      record[type] = value
+      const {dataSource,only} = this.props;
+      if(dataSource&&dataSource.length>0){
+        if(only){
+          dataSource.forEach((item,index)=>{
+            if(item['key']!==record['key'] && item[type]===value){
+              value=''
+              record[type] = ''
+              message.error('该值已存在,不能重复添加!',1)
+            }else{
+              record[type] = value
+            }
+          })
+        }
+      }
     }
   
     save = () => {
@@ -119,7 +133,7 @@ const EditableFormRow = Form.create()(EditableRow);
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
-                        onBlur={()=>this.props.enumListSave(record)}
+                        onBlur={()=>this.props.enumListSave?this.props.enumListSave(record):null}
                       />
                     )}
                   </FormItem>
