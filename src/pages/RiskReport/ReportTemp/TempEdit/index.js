@@ -63,7 +63,7 @@ export default class Index extends Component {
         dataIndex:'orderNum',
         editable:true,
         pattern:/^\d{1,10}$/,
-        max:10
+        max:10,
       }
       ],
       checkedData: [],
@@ -266,6 +266,13 @@ export default class Index extends Component {
             }
           }
           if(varStatus){
+            for(let arr of titleList){
+              for(let item of arr['variable']){
+                if(!item['orderNum']&&item['orderNum']!=0){
+                  item['orderNum'] = item['key']
+                }
+              }
+            }
             const response = await this.props.dispatch({
               type: 'tempEdit/saveTemplate',
               payload: {
