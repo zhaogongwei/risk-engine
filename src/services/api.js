@@ -11,6 +11,13 @@ export async function accountLogin(params) {
     body: params,
   });
 }
+//登出接口
+export async function loginOut(params) {
+  return request(_baseApi + '/system/logout', {
+    method: 'POST',
+    body: params,
+  });
+}
 //   登录以后   根据旧密码修改新密码
 export async function changePassword(params) {
   return request(`${_baseApi}/user/password/modifyByOld`, {
