@@ -52,9 +52,9 @@ export default  class Index extends  PureComponent{
   render(){
     const titleWrapper=
      <div>
-       <span>模板预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号</span>
+       <span>模板预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>资产编号 180630304040333</span>
      </div>;
-     const {titleList} = this.props.preView;
+     const {titleList,reportInfo} = this.props.preView;
     return(
       <PageHeaderWrapper >
         {
@@ -63,7 +63,7 @@ export default  class Index extends  PureComponent{
               <Card
                 bordered={false}
                 title={titleWrapper}
-                extra={'报告编号'}
+                extra={`报告编号${reportInfo['idFormat']}`}
                 headStyle={{fontSize:14}}
               >
               </Card>

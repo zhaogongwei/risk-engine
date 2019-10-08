@@ -8,6 +8,7 @@ export default {
   state: {
     //子标题列表
     titleList:[],
+    reportInfo:{}
   },
 
   effects: {
@@ -28,6 +29,7 @@ export default {
     InittitleListHandle(state,{payload}){
       return{
         ...state,
+        reportInfo:payload.data,
         presentationName:payload.data.presentationName,
         titleList:payload.data.reportTemplate,
       }

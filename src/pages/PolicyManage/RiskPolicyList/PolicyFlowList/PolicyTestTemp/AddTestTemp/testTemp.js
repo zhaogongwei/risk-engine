@@ -349,7 +349,7 @@ export default class TestTemp extends Component {
                                 const response = await this.props.dispatch({
                                   type: 'testTemp/checkTemplateName',
                                   payload: {
-                                    id:id,
+                                    id:id?id:testTemplateId,
                                     templateName:templateName
                                   }
                                 })

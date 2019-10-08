@@ -79,7 +79,7 @@ export default  class Index extends  PureComponent{
               <Card
                 bordered={false}
                 title={titleWrapper}
-                extra={`报告编号${reportTemplateDto['id']}`}
+                extra={`报告编号${reportInfo['idFormat']}`}
                 headStyle={{fontSize:14}}
               >
               </Card>
