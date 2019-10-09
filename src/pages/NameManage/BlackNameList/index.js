@@ -111,7 +111,11 @@ export default class BlackNameList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    await this.props.dispatch({
+      type: 'blackName/saveQueryData',
+      payload: {}
+    })
     this.change()
   }
   //  分页器改变页数的时候执行的方法

@@ -114,7 +114,11 @@ export default class GreyNameList extends PureComponent {
       status:1
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    await this.props.dispatch({
+      type: 'greyName/saveQueryData',
+      payload: {}
+    })
     this.change()
   }
   //  分页器改变页数的时候执行的方法
