@@ -28,6 +28,8 @@ class FlowWrapper extends React.Component{
     this.apiAction('undo')
   }
   onChange=(e)=>{
+    const {propsAPI } = this.props;
+    const { getSelected, executeCommand, update } = propsAPI;
     if(e.item && e.model){
       //console.log(e,'e')
       const Nodetype = e.model.type;
@@ -47,11 +49,19 @@ class FlowWrapper extends React.Component{
       const node = type === 'edge'?e.item.getSource():''
       const outEdges = node?node.getOutEdges():''
       const inEdges = node?node.getInEdges():''
-      //console.log(node,'node')
+      console.log(e.item,'node')
       const nodeType = node['model']?node['model']['type']:'';
       /*console.log(nodeType,'nodeType')
       console.log(outEdges,'outEdges')
       console.log(inEdges,'inEdges')*/
+      if( e.item.type ==='edge'){
+        executeCommand(() => {
+          update(e.item, {
+            label:'是',
+            type:'Y'
+          });
+        });
+      }
       if(nodeType=='simple'||nodeType=='complex'){
         if(outEdges.length>2){
           message.error('该节点最多只能输出两条线!')
