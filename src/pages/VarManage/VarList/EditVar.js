@@ -310,7 +310,11 @@ export default class EditVar extends PureComponent {
       if (!err) {
         let data=this.getFormValue()
         const query={...this.props.location.query}
-        if((this.props.varlist.enumeration.legnth>0 && data.enumFlag == 1 && data.variableType == 'char') || data.enumFlag != 1){
+        if((this.props.varlist.enumeration.legnth==0 && data.enumFlag == 1 && data.variableType == 'char')){
+          message.error('请配置枚举项').then(() => {
+            return ;
+          })
+        }else{
           if(query.type==2){
             //编辑变量
             const updateVarRes=this.props.dispatch({
@@ -358,10 +362,6 @@ export default class EditVar extends PureComponent {
               }
             })   
           }
-        }else{
-          message.error('请配置枚举项').then(() => {
-            return ;
-          })
         }
         
       }
@@ -538,7 +538,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="是否枚举" {...formItemConfig}>
                   {getFieldDecorator('enumFlag',{
-                    initialValue:query.type==2 && this.state.varData.enumFlag!==undefined ?this.state.varData.enumFlag:'',
+                    initialValue:query.type==2 && this.state.varData.enumFlag!==undefined ?this.state.varData.enumFlag:0,
                     rules:[
                       {required:true,message:'请选择是否枚举'}
                     ]
