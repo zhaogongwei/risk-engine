@@ -35,22 +35,43 @@ export default class UrlDeploy extends PureComponent {
       {
         title: '序号',
         dataIndex: 'key',
-        key:'key'
+        key:'key',
       },
       {
         title: '接口名称',
         dataIndex: 'name',
-        key:'name'
+        key:'name',
+        render:(record)=>{
+          if(record.length>30){
+            return <div style={{width:200,wordWrap:"break-word",margin:'auto'}}>{record}</div>
+          }else{
+            return <div>{record}</div>
+          }
+        }
       },
       {
         title: '异步通知地址',
         dataIndex: 'asyncNotifiAddress',
-        key:'asyncNotifiAddress'
+        key:'asyncNotifiAddress',
+        render:(record)=>{
+          if(record.length>30){
+            return <div style={{width:200,wordWrap:"break-word",margin:'auto'}}>{record}</div>
+          }else{
+            return <div>{record}</div>
+          }
+        }
       },
       {
         title: '同步跳转地址',
         key:'syncJumpAddress',
-        dataIndex:'syncJumpAddress'
+        dataIndex:'syncJumpAddress',
+        render:(record)=>{
+          if(record.length>30){
+            return <div style={{width:200,wordWrap:"break-word",margin:'auto'}}>{record}</div>
+          }else{
+            return <div>{record}</div>
+          }
+        }
       },
       {
         title: '操作',

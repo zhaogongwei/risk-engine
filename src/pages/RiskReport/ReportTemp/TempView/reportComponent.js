@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import {
   Row,
   Col,
@@ -42,7 +43,7 @@ export default class ReportComponent extends Component{
               <div id={`list${index}`} key={index} style={{paddingTop:20}}>
                 <div className={'titleWrapper'} style={{marginTop:25,marginBottom:30,}}>
                   <span style={{fontSize:24,color:"#333"}}>{item['title']}</span>
-                  <span style={{fontSize:14,color:"#333",marginLeft:20}}>{item['createTime']?`生成日期${item['createTime']}`:null}</span>
+                  <span style={{fontSize:14,color:"#333",marginLeft:20}}>{index===0?`生成日期${moment().format('YYYY-MM-DD HH:mm:ss')}`:null}</span>
                 </div>
                 <div className={'rptCont'}>
                   <Row type="flex">
@@ -52,7 +53,7 @@ export default class ReportComponent extends Component{
                           return <Col span={4} key={num}>
                             <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['variableName']?con['variableName']:'-----'}</p>
                             <div className={'conStyle'}>
-                              <Tooltip title={con['value']}>
+                              <Tooltip title={con['variableValue']}>
                                 <span>{con['variableValue']?con['variableValue']:'-----'}</span>
                               </Tooltip>
                             </div>

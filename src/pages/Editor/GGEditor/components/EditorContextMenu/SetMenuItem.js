@@ -9,62 +9,28 @@ import { connect } from 'dva'
 
 const change =async props => {
   console.log('props',props)
-  const { getSelected, save } = props.propsAPI;
-  const { strategyId,flowId,type,remark } = props
+  const { getSelected, save, } = props.propsAPI;
+  const { strategyId,flowId,type,remark,submitData } = props
   const id = getSelected()[0].id
   const selectedItem = getSelected()[0].getModel();
   const nodeTitle = selectedItem['label'];
-  const data = save();
-  const edges = data['edges'];
-  if(!edges){
-    message.error('请先连线!')
-    return;
-  }
-  const nodefineEdges = edges.filter((item)=>!item['type'])
-  console.log(selectedItem)
-  console.log(nodefineEdges)
   //点击编辑时进行节点保存
-  console.log(data)
-  if(!remark['remark']){
-    message.error('备注不能为空!')
-    return;
-  }else if(nodefineEdges.length){
-    message.error('edges属性没有设置!')
-    return;
-  }else{
-    var res = await props.dispatch({
-        type:'editorFlow/savePolicyData',
-        payload:{
-          strategyId:strategyId,
-          nodeJson:JSON.stringify(data),
-          remark:remark['remark'],
-          flowId:type==='1'?null:flowId,
-        }
-      })
-    if(res&&res.status===1){
-      props.dispatch({
-        type:'editorFlow/saveFlowId',
-        payload:res.data.flowId
-      })
-    }
-    props.dispatch({
-      type:'editorFlow/saveId',
-      payload:id
+  submitData()
+    .then(res=>{
+      if (id && selectedItem.type === 'simple'&&res.status === 1) {
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }else if(id && selectedItem.type === 'complex'&&res.status === 1){
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }else if(id && selectedItem.type === 'score'&&res.status === 1){
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }else if(id && selectedItem.type === 'setVar'&&res.status === 1){
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }else if(id && selectedItem.type === 'decision'&&res.status === 1){
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }else if(id && selectedItem.type === 'third'&&res.status === 1){
+        router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
+      }
     })
-  }
-  if (id && selectedItem.type === 'simple'&&res.status===1) {
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setRule?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }else if(id && selectedItem.type === 'complex'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/complex?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }else if(id && selectedItem.type === 'score'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/scoreModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }else if(id && selectedItem.type === 'setVar'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/setVar?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }else if(id && selectedItem.type === 'decision'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/decModel?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }else if(id && selectedItem.type === 'third'&&res.status===1){
-    router.push(`/policyManage/riskpolicylist/policyFlow/edit/threeSide?id=${id}&strategyId=${strategyId}&title=${nodeTitle}`)
-  }
 }
 
 const SetMenuItem = props => {

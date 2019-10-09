@@ -384,13 +384,17 @@ export default class TestTemp extends Component {
                     {
                       resultList&&resultList.map((item,index)=>{
                         return (
-                          <Row type="flex" align="bottom" style={{marginBottom:20}} key={index}>
-                            <Col style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</Col>
-                            <Col className={styles['ant-over-flow']}>
-                              {item.resultName?item.resultName:''}
-                              <span style={{marginLeft:10,marginRight:10}}>{item.resultValue?':':''}</span>
-                              {item.resultValue?item.resultValue:''}
-                              </Col>
+                          <Row type="flex" align="bottom"  style={{marginBottom:20}} key={index}>
+                            <Col span={10}>
+                              <div style={{ width:100,lineHeight:'40px',textAlign:'center',backgroundColor:'#27304D',color:'#fff',fontSize:16,marginRight:20,borderRadius:5}}>{item.nodeTypeName}</div>
+                            </Col>
+                            <Col span={10}>
+                              <div className={styles['ant-over-flow']}>
+                                {item.resultName?item.resultName:''}
+                                <span style={{marginLeft:10,marginRight:10}}>{item.resultValue?':':''}</span>
+                                {item.resultValue?item.resultValue:''}
+                              </div>
+                            </Col>
                           </Row>
                         )
                       })

@@ -371,7 +371,7 @@ export default class EditVar extends PureComponent {
     return;
   }
   checkVarCode=async(rule, val, cb)=>{
-    let re = new RegExp("[a-zA-Z]+| [\da-zA-Z]+");
+    let re = /^(?!\d+$)[\da-zA-Z]+$/;
     if(val.length==0 || val==null ){
       cb()
       return;

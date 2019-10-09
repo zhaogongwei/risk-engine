@@ -52,7 +52,7 @@ export default class ReportComponent extends Component{
                           return <Col span={4} key={num}>
                             <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['variableName']?con['variableName']:'-----'}</p>
                             <div className={'conStyle'}>
-                              <Tooltip title={con['value']}>
+                              <Tooltip title={con['variableValue']}>
                                 <span>{con['variableValue']?con['variableValue']:'-----'}</span>
                               </Tooltip>
                             </div>

@@ -83,7 +83,7 @@ class FlowPage extends React.Component {
     return formQueryData;
   }
   //保存策略流数据
-  submitData = async () => {
+  submitData =()=> new Promise ((resolve, reject)=>{
     let data = this.flow.myRef.graph.save();
     let nodeData = this.flow.myRef.graph.getNodes();
     let edgesList = data['edges']?data['edges']:[];
@@ -94,64 +94,62 @@ class FlowPage extends React.Component {
     let {query} = this.props.location;
     let {flowId,strategyId,type} = query;
     let {addFlowId} = this.props.editorFlow;
-    console.log('nodeStart',nodeStart)
-    console.log('nodesList',nodesList)
-    this.props.form.validateFields(['remark'],async (error,value)=>{
-      if(error)return;
-      if(!nodesList.length){
+    this.props.form.validateFields(['remark'],async (error,value)=> {
+      if (error) return;
+      if (!nodesList.length) {
         message.error('请设置相关节点!')
         return
       }
-      if(!nodeStart.length){
+      if (!nodeStart.length) {
         message.error('请设置开始节点!')
         return
       }
-      if(nodeStart.length>1){
+      if (nodeStart.length > 1) {
         message.error('开始节点只能设置一个!')
         return
       }
-      if(!edgesList.length){
+      if (nodesList.length > 1 && !edgesList.length) {
         message.error('请设置连线!')
         return
       }
-      if(edgesList.length&&nodefineEdges.length){
+      if (edgesList.length && nodefineEdges.length) {
         message.error('请设置连线的相关属性!')
         return
       }
       let nodeNameList = []
-      for(let item of nodesList){
+      for (let item of nodesList) {
         nodeNameList.push(item['label'])
       }
-      let repeatName =[];
-      for(let name of nodeNameList){
-       if(nodeNameList.indexOf(name) !== nodeNameList.lastIndexOf(name)){
-         repeatName.push(name)
-       }
+      let repeatName = [];
+      for (let name of nodeNameList) {
+        if (nodeNameList.indexOf(name) !== nodeNameList.lastIndexOf(name)) {
+          repeatName.push(name)
+        }
       }
-      if(repeatName.length){
+      if (repeatName.length) {
         message.error('有重复的节点标题,请修改!')
         return
       }
       let nodeInEdges;
       let nodeItem;
-      for(let item of nodeData){
-        if(item.getInEdges().length>1){
+      for (let item of nodeData) {
+        if (item.getInEdges().length > 1) {
           nodeInEdges = item.getInEdges();
           nodeItem = item;
-          break
+          break;
         }
       }
-      if(nodeInEdges&&nodeInEdges.length>1){
-        this.flow.myRef.graph.update(nodeItem,{
+      if (nodeInEdges && nodeInEdges.length > 1) {
+        this.flow.myRef.graph.update(nodeItem, {
           style: {
             fill: 'red'
           }
         })
         message.error('所有节点只有一个上级节点!')
         return;
-      }else{
-        for(let item of nodeData){
-          this.flow.myRef.graph.update(item,{
+      } else {
+        for (let item of nodeData) {
+          this.flow.myRef.graph.update(item, {
             style: {
               fill: 'white'
             }
@@ -161,20 +159,21 @@ class FlowPage extends React.Component {
       const res = await this.props.dispatch({
         type: 'editorFlow/savePolicyData',
         payload: {
-          strategyId:strategyId,
-          nodeJson:JSON.stringify(data),
-          remark:formData['remark'],
-          flowId:(type*1==1&&!addFlowId)?null:(flowId?flowId:addFlowId),
+          strategyId: strategyId,
+          nodeJson: JSON.stringify(data),
+          remark: formData['remark'],
+          flowId: (type * 1 == 1 && !addFlowId) ? null : (flowId ? flowId : addFlowId),
         }
       })
-      if(res&&res.status===1){
+      if (res && res.status === 1) {
         this.props.dispatch({
           type: 'editorFlow/saveFlowId',
-          payload:res.data.flowId,
+          payload: res.data.flowId,
         })
       }
+      resolve(res)
     })
-  }
+  })
   save=()=>{
     console.log(JSON.stringify({nodeJson:JSON.stringify(this.props.editorFlow.editorData)}))
   }
@@ -228,7 +227,7 @@ class FlowPage extends React.Component {
                   </Col>
                 </Form>
                 <FlowWrapper getSubKey={this.getSubKey}/>
-                <p style={{color:'#FF0000',textAlign:'right'}}>{updateTime?`最近操作时间:${updateTime}`:null} {updateTrueName?`操作人:${updateTrueName}`:null}</p>
+                <p style={{color:'#FF0000',textAlign:'right',paddingRight:'15%'}}>{updateTime?`最近操作时间:${updateTime}`:null} {updateTrueName?`操作人:${updateTrueName}`:null}</p>
               </Col>
               <Col span={4} className={styles.editorSidebar}>
                 <FlowDetailPanel />
@@ -244,7 +243,7 @@ class FlowPage extends React.Component {
               </Col>
             </Row>
             <FlowBird />
-            <FlowContextMenu  nodeType={nodeType} type={type} remark={this.getFormValue()}  flowId={flowId} strategyId={strategyId}/>
+            <FlowContextMenu  nodeType={nodeType} type={type} submitData={this.submitData} remark={this.getFormValue()}  flowId={flowId} strategyId={strategyId}/>
           </GGEditor>
           <Modal
             width="360px"
