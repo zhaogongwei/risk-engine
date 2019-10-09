@@ -84,17 +84,18 @@ class FlowPage extends React.Component {
   }
   //保存策略流数据
   submitData = async () => {
-    const data = this.flow.myRef.graph.save();
-    console.log(data)
-    const edgesList = data['edges']?data['edges']:[];
-    const nodesList = data['nodes']?data['nodes']:[];
-    const nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
-    const nodeStart = nodesList.length?nodesList.filter((item)=>item['type']=='start'):[]
-    const formData = this.getFormValue();
-    const {query} = this.props.location;
-    const {flowId,strategyId,type} = query;
-    const {addFlowId} = this.props.editorFlow;
+    let data = this.flow.myRef.graph.save();
+    let nodeData = this.flow.myRef.graph.getNodes();
+    let edgesList = data['edges']?data['edges']:[];
+    let nodesList = data['nodes']?data['nodes']:[];
+    let nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
+    let nodeStart = nodesList.length?nodesList.filter((item)=>item['type']=='start'):[]
+    let formData = this.getFormValue();
+    let {query} = this.props.location;
+    let {flowId,strategyId,type} = query;
+    let {addFlowId} = this.props.editorFlow;
     console.log('nodeStart',nodeStart)
+    console.log('nodesList',nodesList)
     this.props.form.validateFields(['remark'],async (error,value)=>{
       if(error)return;
       if(!nodesList.length){
@@ -131,15 +132,41 @@ class FlowPage extends React.Component {
         message.error('有重复的节点标题,请修改!')
         return
       }
-        const res = await this.props.dispatch({
-          type: 'editorFlow/savePolicyData',
-          payload: {
-            strategyId:strategyId,
-            nodeJson:JSON.stringify(data),
-            remark:formData['remark'],
-            flowId:type==='1'?null:flowId,
+      let nodeInEdges;
+      let nodeItem;
+      for(let item of nodeData){
+        if(item.getInEdges().length>1){
+          nodeInEdges = item.getInEdges();
+          nodeItem = item;
+          break
+        }
+      }
+      if(nodeInEdges&&nodeInEdges.length>1){
+        this.flow.myRef.graph.update(nodeItem,{
+          style: {
+            fill: 'red'
           }
         })
+        message.error('所有节点只有一个上级节点!')
+        return;
+      }else{
+        for(let item of nodeData){
+          this.flow.myRef.graph.update(item,{
+            style: {
+              fill: 'white'
+            }
+          })
+        }
+      }
+      const res = await this.props.dispatch({
+        type: 'editorFlow/savePolicyData',
+        payload: {
+          strategyId:strategyId,
+          nodeJson:JSON.stringify(data),
+          remark:formData['remark'],
+          flowId:(type*1==1&&!addFlowId)?null:(flowId?flowId:addFlowId),
+        }
+      })
       if(res&&res.status===1){
         this.props.dispatch({
           type: 'editorFlow/saveFlowId',

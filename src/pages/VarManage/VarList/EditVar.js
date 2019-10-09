@@ -371,15 +371,15 @@ export default class EditVar extends PureComponent {
     return;
   }
   checkVarCode=async(rule, val, cb)=>{
-    let re = new RegExp("^(?!\d+$)[\da-zA-Z]+$");
+    let re = new RegExp("[a-zA-Z]+| [\da-zA-Z]+");
     if(val.length==0 || val==null ){
       cb()
       return;
     }else if(!re.test(val)){
-      cb('请输入正确的变量代码')
+      cb('请输入正确的变量代码!')
       return;
     }else if(val.length>30){
-        cb('超过最大字数限制')
+        cb('最多输入30位!')
         return;
     }else{
       let res=await this.props.dispatch({
@@ -498,7 +498,7 @@ export default class EditVar extends PureComponent {
                       {validator:this.checkVarCode}
                     ]
                   })(
-                    <Input disabled={this.state.disable}/>
+                    <Input disabled={this.state.disable} maxLength={31}/>
                   )}
                 </FormItem>
               </Col>
