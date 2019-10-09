@@ -279,6 +279,13 @@ export default class EditVar extends PureComponent {
     const { enumeration } = this.props.varlist
     //   调用models的方法去删除dataSource中的数据
     if(this.state.emDelFlag){
+      if(enumeration[key-1].enumValue == this.props.form.getFieldValue('defaultValue')){
+        this.props.form.setFieldsValue({
+          defaultValue:'',
+
+        })
+      }
+      
       const newData = enumeration.filter(item => item.key !== key)
       this.props.dispatch({
         type: 'varlist/addData',
@@ -303,52 +310,58 @@ export default class EditVar extends PureComponent {
       if (!err) {
         let data=this.getFormValue()
         const query={...this.props.location.query}
-        if(query.type==2){
-          //编辑变量
-          const updateVarRes=this.props.dispatch({
-            type: 'varlist/updateVariable',
-            payload: {
-              ...data,
-              id:query.id ,
-              enumList:this.props.varlist.enumeration
-            }
-          })
-          updateVarRes.then((value)=>{
-            if(value.status==1){
-              message.success('提交成功').then(() => {
-                router.push({
-                  pathname:'/varManage/varlist',
+        if((this.props.varlist.enumeration.legnth>0 && data.enumFlag == 1 && data.variableType == 'char') || data.enumFlag != 1){
+          if(query.type==2){
+            //编辑变量
+            const updateVarRes=this.props.dispatch({
+              type: 'varlist/updateVariable',
+              payload: {
+                ...data,
+                id:query.id ,
+                enumList:this.props.varlist.enumeration
+              }
+            })
+            updateVarRes.then((value)=>{
+              if(value.status==1){
+                message.success('提交成功').then(() => {
+                  router.push({
+                    pathname:'/varManage/varlist',
+                  })
+                }) 
+              }else{
+                message.error(value.statusDesc || "提交失败").then(() => {
+                  return ;
                 })
-              }) 
-            }else{
-              message.error(value.statusDesc || "提交失败").then(() => {
-                return ;
-              })
-            }
-          })
-          
+              }
+            })
+            
+          }else{
+          //添加变量
+            const addVarRes=this.props.dispatch({
+              type: 'varlist/addVar',
+              payload: {
+                ...data,
+                enumList:this.props.varlist.enumeration
+              }
+            })
+            addVarRes.then((value)=>{
+              if(value.status==1){
+                message.success('提交成功').then(() => {
+                  router.push({
+                    pathname:'/varManage/varlist',
+                  })
+                })
+              }else{
+                message.error(value.statusDesc || "提交失败").then(() => {
+                  return ;
+                })
+              }
+            })   
+          }
         }else{
-        //添加变量
-          const addVarRes=this.props.dispatch({
-            type: 'varlist/addVar',
-            payload: {
-              ...data,
-              enumList:this.props.varlist.enumeration
-            }
+          message.error('请配置枚举项').then(() => {
+            return ;
           })
-          addVarRes.then((value)=>{
-            if(value.status==1){
-              message.success('提交成功').then(() => {
-                router.push({
-                  pathname:'/varManage/varlist',
-                })
-              })
-            }else{
-              message.error(value.statusDesc || "提交失败").then(() => {
-                return ;
-              })
-            }
-          })   
         }
         
       }
