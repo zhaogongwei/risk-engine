@@ -405,7 +405,7 @@ export default  class Arfake extends  PureComponent{
             <span>{currentArfakeInfo['createTime']}</span>
           </Col>
           <Col>
-            <span>操作人:{currentArfakeInfo['createBy']}</span>
+            <span>操作人:{currentArfakeInfo['createByName']}</span>
             <span style={{display:'inline-block',width:10}}></span>
             <Button type="primary" onClick={this.updateRiskInfo} style={{backgroundColor:'#AEAEAE',borderColor:'#AEAEAE'}}>更新数据</Button>
           </Col>

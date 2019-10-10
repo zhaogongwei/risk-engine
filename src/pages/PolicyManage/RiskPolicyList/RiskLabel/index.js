@@ -119,9 +119,11 @@ export default class RiskLabel extends PureComponent {
   }
   // 进入页面去请求页面数据
   change = (currPage = 1, pageSize = 10) => {
+    const {query} = this.props.location;
     this.props.dispatch({
       type: 'risklabel/fetchRiskLabelList',
       payload: {
+        ...query,
         ...this.props.risklabel.queryData,
         currPage,
         pageSize
