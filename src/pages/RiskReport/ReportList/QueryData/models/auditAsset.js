@@ -74,7 +74,6 @@ export default {
       let response = yield call (api.queryDsCreditInfo,payload)
       if(response && response.status === 1&&response.data.length>0){
         response.data.forEach((item,index)=>{
-          item.createTime=item.createTime.slice(0,10);
           addListKey(item['threeMonkeyCredit']['creditRow1'])
           addListKey(item['threeMonkeyCredit']['creditRow2'])
           addListKey(item['threeMonkeyCredit']['creditRow3'])
@@ -105,7 +104,6 @@ export default {
       let response = yield call (api.queryDsDebtInfo,payload)
       if(response && response.status === 1&&response.data.length>0){
         response.data.forEach((item,index)=>{
-          item.createTime=item.createTime.slice(0,10);
           addListKey(item['creditDebtResult']['detail'])
           item['creditDebtResult'].debtInfo = [
               {
@@ -141,7 +139,6 @@ export default {
           addListKey(item.antiFraudResult.validSifa.anliInfoList);
           addListKey(item.antiFraudResult.validSifa.shiXinInfoList);
           addListKey(item.antiFraudResult.validSifa.zhiXingInfoList);
-          item.createTime=item.createTime.slice(0,10)
           item.antiFraudResult.idcardVerif=[
             {
               validIdentity:item.antiFraudResult.validIdentity,

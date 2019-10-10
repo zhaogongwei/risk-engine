@@ -50,17 +50,24 @@ class FlowWrapper extends React.Component{
       const outEdges = node?node.getOutEdges():''
       const inEdges = node?node.getInEdges():''
       console.log(e.item,'node')
+      console.log(node,'node1')
       const nodeType = node['model']?node['model']['type']:'';
       /*console.log(nodeType,'nodeType')
       console.log(outEdges,'outEdges')
       console.log(inEdges,'inEdges')*/
       if( e.item.type ==='edge'){
-        executeCommand(() => {
-          update(e.item, {
-            label:'是',
-            type:'Y'
+        //连线的终点必须是节点
+        if(e.item.target.id&&e.item.target.type==='node'){
+          executeCommand(() => {
+            update(e.item, {
+              label:'是',
+              type:'Y'
+            });
           });
-        });
+        }else{
+          message.error('连线的终点不能为空!')
+          this.handleAddItem()
+        }
       }
       if(nodeType=='simple'||nodeType=='complex'){
         if(outEdges.length>2){

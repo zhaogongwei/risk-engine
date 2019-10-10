@@ -59,6 +59,9 @@ const EditableFormRow = Form.create()(EditableRow);
     }
   
     changeHandler(value, record, type) {
+      record[type] = value
+    }
+    validateFields(value, record, type){
       const {dataSource,only} = this.props;
       if(dataSource&&dataSource.length>0){
         if(only){
@@ -73,8 +76,8 @@ const EditableFormRow = Form.create()(EditableRow);
           })
         }
       }
+      this.props.enumListSave?this.props.enumListSave(record):null
     }
-  
     save = () => {
       const { record, handleSave } = this.props;
       this.props.form.validateFields((error, values) => {
@@ -133,7 +136,8 @@ const EditableFormRow = Form.create()(EditableRow);
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
-                        onBlur={()=>this.props.enumListSave?this.props.enumListSave(record):null}
+                        //onBlur={(e)=>this.props.enumListSave?this.props.enumListSave(record):null}
+                        onBlur={(e)=>this.validateFields(e.target.value, this.props.record, dataIndex)}
                       />
                     )}
                   </FormItem>

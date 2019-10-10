@@ -94,6 +94,7 @@ class FlowPage extends React.Component {
     let {query} = this.props.location;
     let {flowId,strategyId,type} = query;
     let {addFlowId} = this.props.editorFlow;
+    console.log('data',data)
     this.props.form.validateFields(['remark'],async (error,value)=> {
       if (error) return;
       if (!nodesList.length) {
@@ -106,6 +107,10 @@ class FlowPage extends React.Component {
       }
       if (nodeStart.length > 1) {
         message.error('开始节点只能设置一个!')
+        return
+      }
+      if(nodesList.length===1&&nodeStart.length===1){
+        message.error('不能只设置一个开始节点!')
         return
       }
       if (nodesList.length > 1 && !edgesList.length) {
