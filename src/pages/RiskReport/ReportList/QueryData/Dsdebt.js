@@ -199,7 +199,7 @@ export default  class Dsdebt extends  PureComponent{
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{currentDebtInfo['id']}</span>
+            <span>{currentDebtInfo['idFormat']}</span>
           </Col>
           <Col>
             <span>报告时间</span>

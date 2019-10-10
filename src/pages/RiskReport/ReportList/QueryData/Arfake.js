@@ -397,7 +397,7 @@ export default  class Arfake extends  PureComponent{
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{currentArfakeInfo['id']}</span>
+            <span>{currentArfakeInfo['idFormat']}</span>
           </Col>
           <Col>
             <span>报告时间</span>

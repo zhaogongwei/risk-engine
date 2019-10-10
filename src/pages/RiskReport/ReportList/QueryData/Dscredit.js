@@ -374,7 +374,7 @@ export default  class Dscredit extends  PureComponent{
           <Col>
             <span>报告编号</span>
             <span style={{display:'inline-block',width:10}}></span>
-            <span>{currentCreditInfo['id']}</span>
+            <span>{currentCreditInfo['idFormat']}</span>
           </Col>
           <Col>
             <span>报告时间</span>

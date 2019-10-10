@@ -86,6 +86,7 @@ class FlowPage extends React.Component {
   submitData =()=> new Promise ((resolve, reject)=>{
     let data = this.flow.myRef.graph.save();
     let nodeData = this.flow.myRef.graph.getNodes();
+    let edgeData = this.flow.myRef.graph.getEdges();
     let edgesList = data['edges']?data['edges']:[];
     let nodesList = data['nodes']?data['nodes']:[];
     let nodefineEdges = edgesList.length?edgesList.filter((item)=>!item['type']):[]
@@ -95,6 +96,8 @@ class FlowPage extends React.Component {
     let {flowId,strategyId,type} = query;
     let {addFlowId} = this.props.editorFlow;
     console.log('data',data)
+    console.log('flow',this.flow)
+    console.log('edgeData',edgeData)
     this.props.form.validateFields(['remark'],async (error,value)=> {
       if (error) return;
       if (!nodesList.length) {
@@ -144,6 +147,7 @@ class FlowPage extends React.Component {
           break;
         }
       }
+      console.log('nodeInEdges',nodeInEdges)
       if (nodeInEdges && nodeInEdges.length > 1) {
         this.flow.myRef.graph.update(nodeItem, {
           style: {
@@ -153,10 +157,35 @@ class FlowPage extends React.Component {
         message.error('所有节点只有一个上级节点!')
         return;
       } else {
+        debugger
         for (let item of nodeData) {
           this.flow.myRef.graph.update(item, {
             style: {
               fill: 'white'
+            }
+          })
+        }
+      }
+      let edgeItem;
+      for(let item of edgeData){
+        if(!item['target']['id']&&item['target']['type']!=='node'){
+          edgeItem = item;
+          break;
+        }
+      }
+      if(edgeItem){
+        this.flow.myRef.graph.update(edgeItem, {
+          style: {
+            stroke: 'red'
+          }
+        })
+        message.error('连线的终点不能为空!')
+        return;
+      }else{
+        for (let item of edgeData) {
+          this.flow.myRef.graph.update(item, {
+            style: {
+              stroke: '#ACACAC'
             }
           })
         }
