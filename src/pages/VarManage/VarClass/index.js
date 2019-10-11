@@ -31,12 +31,17 @@ export default class VarClass extends PureComponent {
     super(props);
     this.state = {
       columns:[
-        { title: '序号', dataIndex: 'key', key: 'key',width:'30%' },
-        { title: '分类名称', dataIndex: 'typeName', key: 'typeName',width:'9%'},
-        { title: '分类描述', dataIndex: 'remark',key: 'remark',width:'48%',},
+        { title: '序号', dataIndex: 'key', key: 'key',width:'23%',className:'left',
+        render:(record)=>{
+          return <p style={{margin:0,marginLeft:60}}>{record}</p>
+        }
+        },
+        { title: '分类名称', dataIndex: 'typeName', key: 'typeName',width:'25%',className:'left'},
+        { title: '分类描述', dataIndex: 'remark',key: 'remark',width:'25%',className:'left'},
         {
           title: 'Action',
-          width:100,
+          width:'25%',
+          className:'left',
           render: (record) => {
             const {permission} = this.props
             const action = (
@@ -212,14 +217,16 @@ export default class VarClass extends PureComponent {
   }
   render() {
     const columns = [
-      { title: '序号', dataIndex: 'key', key: 'key',width:'24%' },
-      { title: '分类名称', dataIndex: 'typeName', key: 'typeName', width:'19%'},
-      { title: '分类描述', key: 'remark', width:'36%',
+      { title: '序号', dataIndex: 'key', key: 'key',width:'23%',className:'left' },
+      { title: '分类名称', dataIndex: 'typeName', key: 'typeName', width:'25%',className:'left'},
+      { title: '分类描述', key: 'remark', width:'25%',className:'left',
         render:(record)=>(<a onClick={()=>router.push({pathname:'/varManage/varlist',query:{parentId:record.id}})}>{record.remark}</a>),
       },
       {
         title: '操作',
         key: 'action',
+        width:'25%',
+        className:'left',
         render: (record) => {
           const {permission} = this.props
           const action = (
@@ -271,7 +278,7 @@ export default class VarClass extends PureComponent {
                 style={{ border: "1px solid #e8e8e8" }}
                 bordered={false}
                 columns={columns}
-                defaultExpandAllRows={false}
+                defaultExpandAllRows={true}
                 expandedRowRender={(record, index) => this.expandedRowRender(record, index)}
                 dataSource={this.props.varclass.varClassList}
                 loading={false}

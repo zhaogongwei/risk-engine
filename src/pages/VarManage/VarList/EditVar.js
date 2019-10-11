@@ -700,12 +700,23 @@ export default class EditVar extends PureComponent {
               <Col xxl={8} md={12}>
                 <FormItem label="变量说明" labelCol={{span:4}} wrapperCol={{span:20}}>
                   {getFieldDecorator('remark',{
-                    initialValue:''
+                    initialValue:'',
+                    rules:[
+                      {
+                        validator:(rule,val,cal)=>{
+                          if(val.length>120){
+                            cal('最多只能输入120位!')
+                            return
+                          }
+                        }
+                      }
+                    ]
                   })(
                     <TextArea
                       style={{ minHeight: 32 }}
                       placeholder="请输入你的阶段性工作目标"
                       rows={5}
+                      maxLength={121}
                     />
                   )}
                 </FormItem>

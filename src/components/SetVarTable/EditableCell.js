@@ -244,7 +244,14 @@ const EditableFormRow = Form.create()(EditableRow);
                   {
                     required:noRequired?false:true,
                     validator: (rule, value, callback) => {
+                      const reg = pattern;
                       if (!value&&!noRequired) callback('输入内容不能为空!')
+                      if(pattern){
+                        if(!reg.test(value)){
+                          callback(`只能输入数字!`)
+                          return;
+                        }
+                      }
                       if (value.length>max) callback(`输入内容最多${max}位!`)
                     }
                   }

@@ -26,6 +26,20 @@ const Status = [{
   value: '异常'
 }]
 
+const verify = [
+  {
+    key:1,
+    value:'自动审核拒绝'
+  },
+  {
+    key:2,
+    value:'自动审核通过'
+  },
+  {
+    key:3,
+    value:'待人工审核'
+  },
+]
 @permission
 @connect(({ reportList }) => ({
   reportList
@@ -106,7 +120,11 @@ export default class FilterIpts extends Component {
           <Col xxl={4} xl={6} lg={8} md={10}>
             <FormItem label="审核结果" {...formItemConfig}>
               {getFieldDecorator('approvalResult')(
-                <Input />
+                <Select>
+                  {
+                    verify.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>)
+                  }
+                </Select>
               )}
             </FormItem>
           </Col>

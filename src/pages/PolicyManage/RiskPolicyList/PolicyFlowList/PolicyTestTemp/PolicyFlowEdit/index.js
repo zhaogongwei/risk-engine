@@ -149,22 +149,8 @@ class FlowPage extends React.Component {
       }
       console.log('nodeInEdges',nodeInEdges)
       if (nodeInEdges && nodeInEdges.length > 1) {
-        this.flow.myRef.graph.update(nodeItem, {
-          style: {
-            fill: 'red'
-          }
-        })
         message.error('所有节点只有一个上级节点!')
         return;
-      } else {
-        debugger
-        for (let item of nodeData) {
-          this.flow.myRef.graph.update(item, {
-            style: {
-              fill: 'white'
-            }
-          })
-        }
       }
       let edgeItem;
       for(let item of edgeData){
@@ -174,21 +160,8 @@ class FlowPage extends React.Component {
         }
       }
       if(edgeItem){
-        this.flow.myRef.graph.update(edgeItem, {
-          style: {
-            stroke: 'red'
-          }
-        })
         message.error('连线的终点不能为空!')
         return;
-      }else{
-        for (let item of edgeData) {
-          this.flow.myRef.graph.update(item, {
-            style: {
-              stroke: '#ACACAC'
-            }
-          })
-        }
       }
       const res = await this.props.dispatch({
         type: 'editorFlow/savePolicyData',

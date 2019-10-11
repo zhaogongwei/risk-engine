@@ -357,7 +357,7 @@ export default class AddForm extends Component {
                           <Checkbox disabled={item.disabled} value={item}>{this.subName(item.variableName)}</Checkbox>
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
-                        <Col span={8}>{item.remark?item.remark:'---'}</Col>
+                        <Col span={8}>{item.remark?this.subName(item.remark):'---'}</Col>
                       </Row>
                     }):<Empty />
                   }
@@ -370,7 +370,7 @@ export default class AddForm extends Component {
                           <Radio disabled={item.disabled} value={item}>{this.subName(item.variableName)}</Radio >
                         </Col>
                         <Col span={8}>{item.variableTypeStr}</Col>
-                        <Col span={8}>{item.remark?item.remark:'---'}</Col>
+                        <Col span={8}>{item.remark?this.subName(item.remark):'---'}</Col>
                       </Row>
                     }):<Empty />
                   }
