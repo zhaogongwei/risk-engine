@@ -306,6 +306,7 @@ export default class EditVar extends PureComponent {
   }
   formSubmit = async()=>{
     //提交
+    console.log(0)
     this.props.form.validateFields(err => {
       if (!err) {
         let data=this.getFormValue()
@@ -410,6 +411,8 @@ export default class EditVar extends PureComponent {
         return;
       }
     }
+    cb()
+    return;
   }
   checkVarName=async(rule, val, cb)=>{
     if(val.length==0 || val==null ){
@@ -434,6 +437,8 @@ export default class EditVar extends PureComponent {
         return;
       }
     }
+    cb()
+    return;
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -708,6 +713,8 @@ export default class EditVar extends PureComponent {
                             cal('最多只能输入120位!')
                             return
                           }
+                          cal()
+                          return
                         }
                       }
                     ]
