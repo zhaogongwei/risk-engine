@@ -278,7 +278,7 @@ export default class VarClass extends PureComponent {
                 style={{ border: "1px solid #e8e8e8" }}
                 bordered={false}
                 columns={columns}
-                defaultExpandAllRows={true}
+                defaultExpandAllRows={false}
                 expandedRowRender={(record, index) => this.expandedRowRender(record, index)}
                 dataSource={this.props.varclass.varClassList}
                 loading={false}

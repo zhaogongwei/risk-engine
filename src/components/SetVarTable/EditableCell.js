@@ -248,7 +248,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       if (!value&&!noRequired) callback('输入内容不能为空!')
                       if(pattern){
                         if(!reg.test(value)){
-                          callback(`只能输入数字!`)
+                          callback(`最多只能输入50位的数字!`)
                           return;
                         }
                       }
