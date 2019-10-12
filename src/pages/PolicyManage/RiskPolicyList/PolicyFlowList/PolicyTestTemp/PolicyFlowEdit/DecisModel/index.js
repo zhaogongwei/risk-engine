@@ -195,6 +195,7 @@ export default class DecisModel extends PureComponent {
         row:index+1,
         rowVarInfo:item['rowVarInfo'],
         resultVarMap:item['resultVarMap'],
+        soleKey:Math.random(),
         ...item['resultVarMap']
       })
     })
@@ -330,7 +331,7 @@ export default class DecisModel extends PureComponent {
   }
   //弹框唤起事件
   openDialog=(type)=>{
-    const {rowVar, colVar} = this.state;
+    const {rowVar, colVar,resultVarId} = this.state;
     if(type===1){
       //列变量
       if(Object.keys(colVar).length){
@@ -379,16 +380,21 @@ export default class DecisModel extends PureComponent {
         })
       }
     }else if(type==2){
-      //输出结果
-      this.setState({
-        visible:true,
-        inputType:type,
-        resultQueryData:{
-          outFlag:1,
-          enumFlag:1,
-          types:['char']
-        },//输出结果查询参数
-      })
+      if(Object.keys(resultVarId).length){
+        message.warning('重新选择输出变量后，请重新选择输出变量的值!')
+          .then(()=>{
+            //输出结果
+            this.setState({
+              visible:true,
+              inputType:type,
+              resultQueryData:{
+                outFlag:1,
+                enumFlag:1,
+                types:['char']
+              },//输出结果查询参数
+            })
+          })
+      }
     }
   }
   //行列设置编辑弹框确定事件

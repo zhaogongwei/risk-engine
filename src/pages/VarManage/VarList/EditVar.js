@@ -590,9 +590,8 @@ export default class EditVar extends PureComponent {
                     initialValue:query.type==2 && this.state.varData.variableLength!==undefined ?this.state.varData.variableLength:'',
                     rules:[
                       {
-                        required:true,
                         validator:async (rule, val, cb)=>{
-                        let re = /^[0-9]$/
+                        let re = /^\d+$/
                         if(val==''|| val==null ){
                           cb('输入内容不能为空!')
                           return;

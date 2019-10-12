@@ -114,6 +114,12 @@ const EditableFormRow = Form.create()(EditableRow);
       console.log(record,dataIndex,cols)
       console.log('tableList',tableList)
       console.log('enumList',enumList)
+      let enumValueList = [];
+      enumList&&enumList.map((item,index)=>{
+        enumValueList.push(item['enumValue'])
+      })
+      let status = enumValueList.find(item=>item==record[dataIndex])
+      console.log('enumValueList',enumValueList)
       return (
         <td ref={node => (this.cell = node)}>
           {editable ? (
@@ -123,11 +129,11 @@ const EditableFormRow = Form.create()(EditableRow);
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
                     {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
-                      initialValue: record[dataIndex],
+                      initialValue: status?record[dataIndex]?record[dataIndex]:'':'',
                       rules:[
                         {
                           required:true,
-                          validator: (rule, value, callback) => {
+                          validator: async(rule, value, callback) => {
                             if (!value) callback('输入内容不能为空!')
                           }
                         }

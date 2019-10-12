@@ -6,12 +6,13 @@ import {
   Table,
   Select,
   Input,
-  DatePicker
+  DatePicker,
+  TimePicker
 } from 'antd';
 import { connect } from 'dva'
 import moment from 'moment'
 const dateFormat = 'YYYY-MM-DD'
-const dateFormatTime = 'YYYY-MM-DD HH:mm:ss'
+const dateFormatTime = 'HH:mm:ss'
 const FormItem = Form.Item;
 const Option = Select.Option;
 const EditableContext = React.createContext();
@@ -342,7 +343,7 @@ const EditableFormRow = Form.create()(EditableRow);
             </FormItem>
           )
         }else if(record['varType'] ==='date'){
-          const initData = record[dataIndex]?moment(record[dataIndex]):null
+          const initData = record[dataIndex]?moment(record[dataIndex],'YYYY-MM-DD'):null
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
@@ -357,6 +358,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 ]
               })(
                 <DatePicker
+                  format={'YYYY-MM-DD'}
                   style={{width:'100%'}}
                   onChange={(date)=>this.onDateChange(date,record,dataIndex)}
                 />
@@ -364,7 +366,7 @@ const EditableFormRow = Form.create()(EditableRow);
             </FormItem>
           )
         }else if(record['varType'] ==='time'){
-          const initData = record[dataIndex]?moment(record[dataIndex]):null
+          const initData = record[dataIndex]?moment(record[dataIndex],'HH:mm:ss'):null
           return(
             <FormItem style={{ margin: 0 }}>
               {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
@@ -378,8 +380,8 @@ const EditableFormRow = Form.create()(EditableRow);
                   }
                 ]
               })(
-                <DatePicker
-                  showTime
+                <TimePicker
+                  format={'HH:mm:ss'}
                   style={{width:'100%'}}
                   onChange={(date)=>this.onTimeChange(date,record,dataIndex)}/>
               )}
