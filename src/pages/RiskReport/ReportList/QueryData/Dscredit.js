@@ -298,7 +298,7 @@ export default  class Dscredit extends  PureComponent{
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      return <a>{this.props.auditAsset.creditInfoList[current-1]['createTime']}</a>
+      return <a>{this.props.auditAsset.creditInfoList[current-1]['createTime'].slice(0,10)}</a>
     }
     return originalElement;
   }

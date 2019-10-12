@@ -44,7 +44,7 @@ export default class EditVar extends PureComponent {
         dataIndex: 'enumValue',
         editable: true,
         max:20,
-        nonRequired: true,
+        nonRequired: false,
         key:'enumValue',
         only:true,
       },
@@ -53,7 +53,7 @@ export default class EditVar extends PureComponent {
         dataIndex: 'enumShow',
         key:'enumShow',
         max:20,
-        nonRequired: true,
+        nonRequired: false,
         editable: true,
         only:true,
       },
@@ -112,13 +112,14 @@ export default class EditVar extends PureComponent {
       current:1,
       id:'',
       status:1,
-      isShow:0,
+      isShow:0,//枚举值显示
       disable:false,
       updateTime:'',
       updateTrueName:'',
       defaultVal:null,
-      emDelFlag:true,
-      varData:{}
+      emDelFlag:true,//枚举值是否应用到策略
+      varData:{},
+      varForm:[]
     };
   }
   componentDidMount = async () => {
@@ -182,6 +183,10 @@ export default class EditVar extends PureComponent {
         this.state.disable = true;
         this.state.updateTime = data.updateTime
         this.state.updateTrueName = data.updateTrueName
+        //给每个枚举值添加特殊标识
+        data.variableEnumList&&data.variableEnumList.forEach((item,index)=>{
+          item['soleKey']=Math.random()
+        })
         //获取枚举列表
         this.props.dispatch({
           type: 'varlist/saveEnumeration',
@@ -248,7 +253,8 @@ export default class EditVar extends PureComponent {
       //   要添加表格的对象
       const newData = {
         enumValue:'',
-        enumShow:''
+        enumShow:'',
+        soleKey:Math.random(),
       }
       enumeration.push(newData)
       //   调用models中的方法改变dataSource渲染页面
@@ -299,79 +305,103 @@ export default class EditVar extends PureComponent {
   handleChange = (val) => {
     this.setState({
       isShow: val
+    },()=>{
+      if(!val){
+        this.props.dispatch({
+          type: 'varlist/saveEnumeration',
+          payload:[]
+        })
+      }
     })
+  }
+  //变量类型选择
+  handleVarType = (val)=>{
+    if(val !== 'char'){
+      this.handleChange(0)
+      //清空枚举值
+      this.props.dispatch({
+        type: 'varlist/saveEnumeration',
+        payload: []
+      })
+    }
   }
   goBack=()=>{
     router.goBack()
   }
-  formSubmit = async()=>{
+  formSubmit = ()=>{
+    let count=0;
+    this.state.varForm.map(item => {
+      item.validateFieldsAndScroll((errors,value)=>{
+        if(errors)count++;
+      })
+    })
     //提交
-    this.props.form.validateFields(err => {
+    this.props.form.validateFields((err,value) => {
       if (!err) {
-        let data=this.getFormValue()
-        const query={...this.props.location.query}
-        if((this.props.varlist.enumeration.legnth==0 && data.enumFlag == 1 && data.variableType == 'char')){
-          message.error('请配置枚举项').then(() => {
-            return ;
-          })
-        }else{
-          if(query.type==2){
-            //编辑变量
-            const updateVarRes=this.props.dispatch({
-              type: 'varlist/updateVariable',
-              payload: {
-                ...data,
-                id:query.id ,
-                enumList:this.props.varlist.enumeration
-              }
+        if(!count){
+          let data=this.getFormValue()
+          const query={...this.props.location.query}
+          if((this.props.varlist.enumeration.legnth==0 && data.enumFlag == 1 && data.variableType == 'char')){
+            message.error('请配置枚举项').then(() => {
+              return ;
             })
-            updateVarRes.then((value)=>{
-              if(value.status==1){
-                message.success('提交成功').then(() => {
-                  router.push({
-                    pathname:'/varManage/varlist',
-                  })
-                }) 
-              }else{
-                message.error(value.statusDesc || "提交失败").then(() => {
-                  return ;
-                })
-              }
-            })
-            
           }else{
-          //添加变量
-            const addVarRes=this.props.dispatch({
-              type: 'varlist/addVar',
-              payload: {
-                ...data,
-                enumList:this.props.varlist.enumeration
-              }
-            })
-            addVarRes.then((value)=>{
-              if(value.status==1){
-                message.success('提交成功').then(() => {
-                  router.push({
-                    pathname:'/varManage/varlist',
+            if(query.type==2){
+              //编辑变量
+              const updateVarRes=this.props.dispatch({
+                type: 'varlist/updateVariable',
+                payload: {
+                  ...data,
+                  id:query.id ,
+                  enumList:this.props.varlist.enumeration
+                }
+              })
+              updateVarRes.then((value)=>{
+                if(value.status==1){
+                  message.success('提交成功').then(() => {
+                    router.push({
+                      pathname:'/varManage/varlist',
+                    })
                   })
-                })
-              }else{
-                message.error(value.statusDesc || "提交失败").then(() => {
-                  return ;
-                })
-              }
-            })   
+                }else{
+                  message.error(value.statusDesc || "提交失败").then(() => {
+                    return ;
+                  })
+                }
+              })
+
+            }else{
+              //添加变量
+              const addVarRes=this.props.dispatch({
+                type: 'varlist/addVar',
+                payload: {
+                  ...data,
+                  enumList:this.props.varlist.enumeration
+                }
+              })
+              addVarRes.then((value)=>{
+                if(value.status==1){
+                  message.success('提交成功').then(() => {
+                    router.push({
+                      pathname:'/varManage/varlist',
+                    })
+                  })
+                }else{
+                  message.error(value.statusDesc || "提交失败").then(() => {
+                    return ;
+                  })
+                }
+              })
+            }
           }
         }
-        
       }
-      
     });
   }
-  checkNum=(rule, val, cb)=>{
+  checkNum=async(rule, val, cb)=>{
     let re = new RegExp("^[0-9]*$")
     if(val.length==0 || val==null ){
-      cb()
+      cb('输入内容不能为空!')
       return;
     }else if(!re.test(val)){
       cb('请输入数字')
@@ -380,8 +410,6 @@ export default class EditVar extends PureComponent {
       cb('超过最大字数限制')
       return;
     }
-    cb()
-    return;
   }
   checkVarCode=async(rule, val, cb)=>{
     let re = /^(?!\d+$)[\da-zA-Z]+$/;
@@ -403,8 +431,6 @@ export default class EditVar extends PureComponent {
         }
       })
       if(res.status==1){
-        cb()
-        return;
       }else{
         cb(res.statusDesc)
         return;
@@ -427,13 +453,19 @@ export default class EditVar extends PureComponent {
         }
       })
       if(res.status==1){
-        cb()
-        return;
       }else{
         cb(res.statusDesc)
         return;
       }
     }
+  }
+  //  将每个cell的form保存起来
+  handleModify = form => {
+    let arr = this.state.varForm;
+    arr.push(form)
+    this.setState({
+      varForm: arr
+    })
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -523,7 +555,7 @@ export default class EditVar extends PureComponent {
                       {required:true,message:'请选择变量类型'}
                     ]
                   })(
-                    <Select allowClear={true} disabled={this.state.disable}>
+                    <Select allowClear={true} disabled={this.state.disable} onChange={(val)=>this.handleVarType(val)}>
                       <Option value={'num'}>数字</Option>
                       <Option value={'char'}>字符</Option>
                       <Option value={'date'}>日期</Option>
@@ -557,10 +589,12 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('variableLength',{
                     initialValue:query.type==2 && this.state.varData.variableLength!==undefined ?this.state.varData.variableLength:'',
                     rules:[
-                      {validator:(rule, val, cb)=>{
-                        let re = new RegExp("^[0-9]*$")
+                      {
+                        required:true,
+                        validator:async (rule, val, cb)=>{
+                        let re = /^[0-9]$/
                         if(val==''|| val==null ){
-                          cb()
+                          cb('输入内容不能为空!')
                           return;
                         }else if(!re.test(val)){
                           cb('请输入数字')
@@ -569,12 +603,10 @@ export default class EditVar extends PureComponent {
                           cb('超过最大字数限制')
                           return;
                         }
-                        cb()
-                        return;
                       }}
                      ]
                   })(
-                    <Input />
+                    <Input maxLength={6}/>
                   )}
                 </FormItem>
               </Col>:null
@@ -622,6 +654,7 @@ export default class EditVar extends PureComponent {
                       handleDelete={this.handleDelete}
                       emDelFlag={this.state.emDelFlag}
                       enumListSave={(list)=>this.enumListSave(list)}
+                      handleModify={(form) => this.handleModify(form)}
                     />
                     </FormItem>
                   </Col>
@@ -703,7 +736,7 @@ export default class EditVar extends PureComponent {
                     initialValue:'',
                     rules:[
                       {
-                        validator:(rule,val,cal)=>{
+                        validator:async(rule,val,cal)=>{
                           if(val.length>120){
                             cal('最多只能输入120位!')
                             return

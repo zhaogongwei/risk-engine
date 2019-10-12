@@ -211,7 +211,8 @@ export default class Index extends Component {
           }
         })
         callback();
-        this.deleteSelectVar(key)
+        this.deleteSelectVar(key);
+        message.success('删除成功!')
       }
     }else{
       message.error('删除失败,请勾选要删除的项目!');

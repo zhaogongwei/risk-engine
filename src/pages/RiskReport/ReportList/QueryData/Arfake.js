@@ -240,7 +240,7 @@ export default  class Arfake extends  PureComponent{
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
       if(this.props.auditAsset.arfakeInfo.length){
-        return <a>{this.props.auditAsset.arfakeInfo[current-1]['createTime']}</a>
+        return <a>{this.props.auditAsset.arfakeInfo[current-1]['createTime'].slice(0,10)}</a>
       }else{
         return null
       }

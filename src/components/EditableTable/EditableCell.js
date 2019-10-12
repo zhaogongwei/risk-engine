@@ -33,6 +33,7 @@ const EditableFormRow = Form.create()(EditableRow);
       if (this.props.editable) {
         document.addEventListener('click', this.handleClickOutside, true);
       }
+      if (this.props.handleModify) this.props.handleModify(this.props.form)
     }
   
     componentWillUnmount() {
@@ -62,13 +63,18 @@ const EditableFormRow = Form.create()(EditableRow);
       record[type] = value
     }
     validateFields(value, record, type){
-      const {dataSource,only} = this.props;
+      const {dataSource,only,dataIndex} = this.props;
       if(dataSource&&dataSource.length>0){
         if(only){
           dataSource.forEach((item,index)=>{
             if(item['key']!==record['key'] && item[type]===value){
               value=''
               record[type] = ''
+              this.props.form.setFields({
+                [`${dataIndex}${record['soleKey']}`]:{
+                  value:'',
+                }
+              })
               message.error('该值已存在,不能重复添加!',1)
             }else{
               record[type] = value
@@ -109,6 +115,7 @@ const EditableFormRow = Form.create()(EditableRow);
         pattern,
         record,
         max,
+        emDelFlag,
         index,
         handleSave,
         ...restProps
@@ -122,16 +129,24 @@ const EditableFormRow = Form.create()(EditableRow);
                 this.form = form;
                 return (
                   <FormItem style={{ margin: 0 }}>
-                    {getFieldDecorator(`${dataIndex}${Math.random()}`, {
-                      rules: [{
-                        required: !isRequired ? true : false,
-                        message: `请填写正确的格式.`,
-                        pattern:pattern?pattern:'',
-                        max:max?max:''
-                      }],
+                    {getFieldDecorator(`${dataIndex}${record['soleKey']}`, {
+                      rules: [
+                        {
+                          required: !isRequired ? true : false,
+                          pattern:pattern?pattern:'',
+                          max:max?max:'',
+                          validator:async(rule,val,cb)=>{
+                            if(!val){
+                              cb('输入内容不能为空!')
+                              return;
+                            }
+                          }
+                        }
+                      ],
                       initialValue: record[dataIndex]?record[dataIndex]:'',
                     })(
                       <Input
+                        disabled={!emDelFlag}
                         maxLength={max?max:''}
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
