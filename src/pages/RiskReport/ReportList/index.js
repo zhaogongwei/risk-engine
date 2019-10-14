@@ -66,6 +66,12 @@ export default class ReportList extends PureComponent {
           if(record - 0 == 2){
             return '自动审核通过';
           }
+          if(record -0 == 3){
+            return '待人工审核';
+          }
+          if(record - 0 == 4){
+            return '异常';
+          }
         }
       },
       {

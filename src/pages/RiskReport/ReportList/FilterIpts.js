@@ -39,6 +39,10 @@ const verify = [
     key:3,
     value:'待人工审核'
   },
+  {
+    key:4,
+    value:'异常'
+  },
 ]
 @permission
 @connect(({ reportList }) => ({

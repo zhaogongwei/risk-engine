@@ -137,14 +137,17 @@ export default class VarList extends PureComponent {
               }
             </Menu>
           )
-          return (
-            <Dropdown overlay={action}>
-              <a className="ant-dropdown-link" href="#">
-                操作<Icon type="down"/>
-              </a>
-            </Dropdown>
-          )
-
+          if(record['defaultFlag']===1){
+            return
+          }else{
+            return (
+              <Dropdown overlay={action}>
+                <a className="ant-dropdown-link" href="#">
+                  操作<Icon type="down"/>
+                </a>
+              </Dropdown>
+            )
+          }
         }
       }],
       checkedData: [],
