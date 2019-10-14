@@ -201,9 +201,9 @@ export default class AddForm extends Component {
         id:id
       },
     })
-      if(value==""){
-        cb()
-      }else if(value.length>6){
+      if(!value){
+        cb('请输入内容!')
+      }else if(value.length>10){
         cb('超过最大字数限制')
         return;
       }else if(res.status==1){
@@ -253,14 +253,11 @@ export default class AddForm extends Component {
                   rules:[
                   {
                     required:true,
-                    message:'请输入名称'
-                  },
-                  {
                     validator:this.checkVarName
-                  }
+                  },
                   ]
                 })(
-                  <Input/>
+                  <Input maxLength={11}/>
                 )}
               </FormItem>
             </Col>
@@ -273,12 +270,12 @@ export default class AddForm extends Component {
                   rules:[
                   {
                     required:true,  
-                    message:'请输入名称'
+                    message:'请输入内容'
                   },
                   {max:30,message:'超过最大字数限制'},
                   ]
                 })(
-                  <Input/>
+                  <Input maxLength={31}/>
                 )}
               </FormItem>
             </Col>
@@ -291,11 +288,25 @@ export default class AddForm extends Component {
                   rules:[
                   {
                     required:true,
-                    message:'请输入排序'
-                  }
+                    validator:async(rule,val,cb)=>{
+                      const reg = /^\d+$/
+                      if(!val){
+                        cb('输入内容不能为空!')
+                        return;
+                      }
+                      if(!reg.test(val)){
+                        cb('只能输入数字类型');
+                        return;
+                      }
+                      if(val.length>10){
+                        cb(`最多输入10位!`)
+                        return;
+                      }
+                    }
+                  },
                   ]
                 })(
-                  <Input type="number" placeholder="数字大排列表上方"/>
+                  <Input  maxLength={11} placeholder="数字大排列表上方"/>
                 )}
               </FormItem>
             </Col>
