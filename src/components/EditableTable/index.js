@@ -51,6 +51,7 @@ export default class EditableTable extends PureComponent {
           dataSource:dataSource,
           only:col.only,
           emDelFlag:this.props.emDelFlag,
+          message:col.message,
           enumListSave:(list)=>this.props.enumListSave(list),
           handleModify:(form) => this.props.handleModify(form)
         })

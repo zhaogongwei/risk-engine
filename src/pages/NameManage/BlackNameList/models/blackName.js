@@ -8,6 +8,11 @@ export default {
     blackNameList: [],  //黑名单列表
     total: 0,   //   总条数
     queryData: {},   //  检索条件
+    pageData:{
+      current:1,
+      size:10,
+      total:0,
+    }
   },
 
   effects: {
@@ -44,7 +49,8 @@ export default {
       return {
         ...state,
         blackNameList: payload,
-        total
+        total,
+        pageData:{...payload.data}
       };
     },
     saveTempObj(state, { payload }) {

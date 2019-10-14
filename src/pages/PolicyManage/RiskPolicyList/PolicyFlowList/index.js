@@ -100,11 +100,13 @@ export default class PolicyFlowList extends PureComponent {
     };
   }
   async componentDidMount() {
+    const {formData} = this.props.policyFlowList;
+    const {current} = formData
     await this.props.dispatch({
       type: 'policyFlowList/saveQueryData',
       payload: {}
     })
-    this.change()
+    this.change(current)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {

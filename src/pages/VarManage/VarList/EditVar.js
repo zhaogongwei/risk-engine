@@ -47,6 +47,8 @@ export default class EditVar extends PureComponent {
         nonRequired: true,
         key:'enumValue',
         only:true,
+        pattern:/^\d{1,20}$/,
+        message:'只能输入数字类型!'
       },
       {
         title: '枚举值展示',
@@ -592,13 +594,10 @@ export default class EditVar extends PureComponent {
                       {
                         validator:async (rule, val, cb)=>{
                         let re = /^\d+$/
-                        if(val==''|| val==null ){
-                          cb('输入内容不能为空!')
-                          return;
-                        }else if(!re.test(val)){
+                        if(val&&!re.test(val)){
                           cb('请输入数字')
                           return;
-                        }else if(val.length>5){
+                        }else if(val&&val.length>5){
                           cb('超过最大字数限制')
                           return;
                         }
@@ -736,7 +735,7 @@ export default class EditVar extends PureComponent {
                     rules:[
                       {
                         validator:async(rule,val,cal)=>{
-                          if(val.length>120){
+                          if(val&&val.length>120){
                             cal('最多只能输入120位!')
                             return
                           }

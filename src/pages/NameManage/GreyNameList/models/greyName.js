@@ -7,6 +7,11 @@ export default {
     greyNameList: [],//灰名单列表
     queryData: {},   //   查询参数
     total: 0,     //   总条数
+    pageData:{
+      current:1,
+      size:10,
+      total:0,
+    }
   },
 
   effects: {
@@ -42,7 +47,8 @@ export default {
       return {
         ...state,
         greyNameList: payload,
-        total
+        total,
+        pageData:{...payload.data}
       };
     },
     saveTempObj(state, { payload }) {

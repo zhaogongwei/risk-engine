@@ -112,11 +112,13 @@ export default class BlackNameList extends PureComponent {
     };
   }
   async componentDidMount() {
+    const {pageData} = this.props.blackName;
+    const {current} = pageData;
     await this.props.dispatch({
       type: 'blackName/saveQueryData',
       payload: {}
     })
-    this.change()
+    this.change(current)
   }
   //  分页器改变页数的时候执行的方法
   onChange = (current) => {

@@ -67,7 +67,16 @@ const EditableFormRow = Form.create()(EditableRow);
       if(dataSource&&dataSource.length>0){
         if(only){
           dataSource.forEach((item,index)=>{
-            if(item['key']!==record['key'] && item[type]===value){
+            if(item['key']!==record['key'] && item[type]===value && value!==''){
+              value=''
+              record[type] = ''
+              this.props.form.setFields({
+                [`${dataIndex}${record['soleKey']}`]:{
+                  value:'',
+                }
+              })
+              message.error('该值已存在,不能重复添加!',1)
+            }else if(item['key']===record['key']&&item['enumValue']===item['enumShow']&&value!==''){
               value=''
               record[type] = ''
               this.props.form.setFields({
@@ -116,6 +125,7 @@ const EditableFormRow = Form.create()(EditableRow);
         record,
         max,
         emDelFlag,
+        message,
         index,
         handleSave,
         ...restProps
@@ -140,6 +150,16 @@ const EditableFormRow = Form.create()(EditableRow);
                               cb('输入内容不能为空!')
                               return;
                             }
+                            if(pattern){
+                              if(!pattern.test(val)){
+                                cb(message)
+                                return
+                              }
+                            }
+                            if(val.length>max){
+                              cb(`最多输入${max}位!`)
+                              return
+                            }
                           }
                         }
                       ],
@@ -147,7 +167,7 @@ const EditableFormRow = Form.create()(EditableRow);
                     })(
                       <Input
                         disabled={!emDelFlag}
-                        maxLength={max?max:''}
+                        maxLength={max?max+1:''}
                         ref={node => (this.input = node)}
                         onPressEnter={this.save}
                         onChange={(e) => this.changeHandler(e.target.value, this.props.record, dataIndex)}
