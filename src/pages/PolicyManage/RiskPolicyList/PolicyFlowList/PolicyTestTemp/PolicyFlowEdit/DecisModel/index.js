@@ -394,6 +394,17 @@ export default class DecisModel extends PureComponent {
               },//输出结果查询参数
             })
           })
+      }else{
+        //输出结果
+        this.setState({
+          visible:true,
+          inputType:type,
+          resultQueryData:{
+            outFlag:1,
+            enumFlag:1,
+            types:['char']
+          },//输出结果查询参数
+        })
       }
     }
   }
