@@ -116,7 +116,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       rules: [{
                         required: true,
                         message: `请填写正确的格式.`,
-                        validator: (rule, value, callback) => {
+                        validator: async(rule, value, callback) => {
                           const reg = pattern;
                           if (!value&&!noRequired) callback('输入内容不能为空!')
                           if(pattern){

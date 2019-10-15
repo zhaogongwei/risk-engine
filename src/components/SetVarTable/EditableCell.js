@@ -184,8 +184,8 @@ const EditableFormRow = Form.create()(EditableRow);
               rules:[
                 {
                   required:true,
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
+                  validator: async (rule, value, callback) => {
+                    if (!value&&value!==0) callback('输入内容不能为空!')
                   }
                 }
               ]
@@ -219,8 +219,8 @@ const EditableFormRow = Form.create()(EditableRow);
               rules:[
                 {
                   required:true,
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
+                  validator: async (rule, value, callback) => {
+                    if (!value&&value!==0) callback('输入内容不能为空!')
                   }
                 }
               ]
@@ -244,7 +244,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required:noRequired?false:true,
-                    validator: (rule, value, callback) => {
+                    validator: async(rule, value, callback) => {
                       const reg = pattern;
                       if (!value&&!noRequired) callback('输入内容不能为空!')
                       if(pattern){
@@ -275,7 +275,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required:noRequired?false:true,
-                    validator: (rule, value, callback) => {
+                    validator: async(rule, value, callback) => {
                       if (!value&&!noRequired) callback('输入内容不能为空!')
                       if (value.length>max) callback(`输入内容最多${max}位!`)
                     }
@@ -299,8 +299,8 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required:true,
-                    validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
+                    validator: async(rule, value, callback) => {
+                      if (!value&&value!==0) callback('输入内容不能为空!')
                     }
                   }
                 ]
@@ -330,8 +330,8 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required: true,
-                    validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
+                    validator: async (rule, value, callback) => {
+                      if (!value&&value!==0) callback('输入内容不能为空!')
                     }
                   }
                 ]
@@ -353,8 +353,8 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required: true,
-                    validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
+                    validator: async(rule, value, callback) => {
+                      if (!value&&value!==0) callback('输入内容不能为空!')
                     }
                   }
                 ]
@@ -374,8 +374,8 @@ const EditableFormRow = Form.create()(EditableRow);
                 rules:[
                   {
                     required: true,
-                    validator: (rule, value, callback) => {
-                      if (!value) callback('输入内容不能为空!')
+                    validator: async (rule, value, callback) => {
+                      if (!value&&value!==0) callback('输入内容不能为空!')
                     }
                   }
                 ]
@@ -398,7 +398,7 @@ const EditableFormRow = Form.create()(EditableRow);
               rules:[
                 {
                   required:noRequired?false:true,
-                  validator: (rule, value, callback) => {
+                  validator: async(rule, value, callback) => {
                     if (!value&&!noRequired) callback('输入内容不能为空!')
                     if (value.length>max) callback(`输入内容最多${max}位!`)
                   }

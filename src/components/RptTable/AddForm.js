@@ -108,7 +108,7 @@ export default class AddForm extends Component {
                     {
                       required:true,
                       validator:async(rule, val, cb)=>{
-                        if(!val){
+                        if(!val&&val!==0){
                           cb('标题内容不能为空!')
                           return
                         }

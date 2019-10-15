@@ -116,7 +116,7 @@ class DetailForm extends React.Component {
             {
               max:10,
               validator:async(rule,val,cb)=>{
-                if(!val){
+                if(!val&&val!==0){
                   cb('输入内容不能为空!')
                   return
                 }

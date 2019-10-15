@@ -161,7 +161,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       rules:[
                         {
                           required:noRequired?false:true,
-                          validator: (rule, value, callback) => {
+                          validator: async(rule, value, callback) => {
                             if (!value&&!noRequired) {
                               callback('输入内容不能为空!')
                               return;

@@ -149,8 +149,8 @@ export default class EditableCell extends PureComponent {
             rules:[
               {
                 required:true,
-                validator: (rule, value, callback) => {
-                  if (!value) callback('输入内容不能为空!')
+                validator: async(rule, value, callback) => {
+                  if (!value&&value!==0) callback('输入内容不能为空!')
                 }
               }
             ]
@@ -178,8 +178,8 @@ export default class EditableCell extends PureComponent {
             rules:[
               {
                 required:true,
-                validator: (rule, value, callback) => {
-                  if (!value) callback('输入内容不能为空!')
+                validator: async(rule, value, callback) => {
+                  if (!value&&value!==0) callback('输入内容不能为空!')
                 }
               }
             ]
@@ -201,8 +201,8 @@ export default class EditableCell extends PureComponent {
               rules:[
                 {
                   required:true,
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
+                  validator: async (rule, value, callback) => {
+                    if (!value&&value!==0) callback('输入内容不能为空!')
                   }
                 }
               ]
@@ -230,8 +230,8 @@ export default class EditableCell extends PureComponent {
               rules:[
                 {
                   required:true,
-                  validator: (rule, value, callback) => {
-                    if (!value) callback('输入内容不能为空!')
+                  validator: async (rule, value, callback) => {
+                    if (!value&&value!==0) callback('输入内容不能为空!')
                     if (value.length>20) callback('输入内容最多20位!')
                   }
                 }
@@ -279,7 +279,7 @@ export default class EditableCell extends PureComponent {
                     rules:[
                       {
                         required:noRequired?false:true,
-                        validator: (rule, value, callback) => {
+                        validator: async(rule, value, callback) => {
                           const reg = pattern;
                           if(pattern){
                             if(!reg.test(value)){

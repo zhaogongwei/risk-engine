@@ -290,7 +290,7 @@ export default class AddForm extends Component {
                     required:true,
                     validator:async(rule,val,cb)=>{
                       const reg = /^\d+$/
-                      if(!val){
+                      if(!val&&val!==0){
                         cb('输入内容不能为空!')
                         return;
                       }

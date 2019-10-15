@@ -149,7 +149,7 @@ export default class PolicyEdit extends PureComponent {
                   {
                     required:true,
                     validator: async (rule, val, cb) => {
-                      if (!val) {
+                      if (!val&&val!==0) {
                         cb('请输入正确内容！')
                         return;
                       }else if(val.length>15){

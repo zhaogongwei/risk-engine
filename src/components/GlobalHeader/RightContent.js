@@ -299,7 +299,7 @@ export default class GlobalHeaderRight extends PureComponent {
               {getFieldDecorator('password', {
                 rules: [{
                   required: true,
-                  validator: (rule, value, cb) => {
+                  validator: async(rule, value, cb) => {
                     if (!value) {
                       this.setState({
                         passwordStatus: 'error'
@@ -344,7 +344,7 @@ export default class GlobalHeaderRight extends PureComponent {
               {getFieldDecorator('newPassword2', {
                 rules: [{
                   required: true,
-                  validator: (rule, value, cb) => {
+                  validator:async (rule, value, cb) => {
                     if (!value) {
                       this.setState({
                         newPassword2status: 'error'

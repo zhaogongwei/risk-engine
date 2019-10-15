@@ -162,7 +162,7 @@ export default class RptTable extends Component {
                     {
                       required:true,
                       validator:async (rule,val,cb)=>{
-                        if(!val){
+                        if(!val&&val!==0){
                           cb('请输入内容!');
                           return;
                         }
@@ -210,7 +210,7 @@ export default class RptTable extends Component {
                     {
                       required:true,
                       validator:async(rule, val, cb)=>{
-                        if(!val){
+                        if(!val&&val!==0){
                           cb('报告模板名称内容不能为空!')
                           return
                         }
