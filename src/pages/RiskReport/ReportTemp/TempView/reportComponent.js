@@ -8,7 +8,15 @@ import {
 } from 'antd';
 import './report.less'
 export default class ReportComponent extends Component{
-
+  subName=(name)=>{
+    let newName;
+    if(name&&name.length>20){
+      newName=name.substring(0,20)+'...'
+    }else{
+      newName=name
+    }
+    return newName;
+  }
   render(){
     if(this.props.list&&this.props.list.length){
       for(let item of this.props.list){
@@ -53,9 +61,13 @@ export default class ReportComponent extends Component{
                           return <Col span={4} key={num}>
                             <p className={'titleStyle'} style={index>0?titleStyle_2:titleStyle_1}>{con['variableName']?con['variableName']:'-----'}</p>
                             <div className={'conStyle'}>
-                              <Tooltip title={con['variableValue']}>
-                                <span>{con['variableValue']?con['variableValue']:'-----'}</span>
-                              </Tooltip>
+                              {
+                                con['variableValue']&&con['variableValue'].length>20?
+                                  <Tooltip title={con['variableValue']}>
+                                    <span>{con['variableValue']?this.subName(con['variableValue']):'-----'}</span>
+                                  </Tooltip>:
+                                  <span>{con['variableValue']?con['variableValue']:'-----'}</span>
+                              }
                             </div>
                           </Col>
                         })
