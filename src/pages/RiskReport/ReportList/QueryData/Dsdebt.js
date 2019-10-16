@@ -121,7 +121,7 @@ export default  class Dsdebt extends  PureComponent{
   }
   itemRender=(current, type, originalElement)=>{
     if(type === 'page'){
-      return <a>{this.props.auditAsset.debtInfoList[current-1]['createTime'].slice(0,10)}</a>
+      return <a>{this.props.auditAsset.debtInfoList[current-1]['createTime']?this.props.auditAsset.debtInfoList[current-1]['createTime'].slice(0,10):null}</a>
     }
     return originalElement;
   }
