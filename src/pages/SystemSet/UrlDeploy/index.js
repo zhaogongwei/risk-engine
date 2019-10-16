@@ -42,7 +42,7 @@ export default class UrlDeploy extends PureComponent {
         dataIndex: 'name',
         key:'name',
         render:(record)=>{
-          if(record.length>30){
+          if(record&&record.length>30){
             return <div style={{width:200,wordWrap:"break-word",margin:'auto'}}>{record}</div>
           }else{
             return <div>{record}</div>

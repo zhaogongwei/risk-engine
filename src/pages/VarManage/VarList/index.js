@@ -96,7 +96,14 @@ export default class VarList extends PureComponent {
       {
         title: '枚举值',
         key:'variableEnumStr',
-        dataIndex:'variableEnumStr'
+        dataIndex:'variableEnumStr',
+        render:(record)=>{
+          if(record&&record.length>30){
+            return <div style={{width:200,wordWrap:"break-word",margin:'auto'}}>{record}</div>
+          }else{
+            return <div style={{width:200,margin:'auto'}}>{record}</div>
+          }
+        }
       },
       {
         title:'状态',
