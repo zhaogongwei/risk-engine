@@ -45,7 +45,7 @@ export default class AddForm extends Component {
             message.success(res.statusDesc)
             addEditPage(false);
             change()
-          }
+          }else message.error(res.statusDesc)
         }
         if(type == 2) {
           let res = await dispatch({
@@ -59,7 +59,7 @@ export default class AddForm extends Component {
             message.success(res.statusDesc)
             addEditPage(false)
             change(currPage, pageSize)
-          }
+          }else message.error(res.statusDesc)
         }
       }
     })
