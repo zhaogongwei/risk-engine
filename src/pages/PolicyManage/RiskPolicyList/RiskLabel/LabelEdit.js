@@ -66,7 +66,7 @@ export default class LabelEdit extends PureComponent {
           title: '操作',
           key:'action',
           render: (record) => (
-            <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="Yes" cancelText="No">
+            <Popconfirm title="是否确认删除本行?" onConfirm={()=>this.handleDelete(record.key)}  okText="确定" cancelText="取消">
               <Button type="primary">删除</Button>
             </Popconfirm>
           ),

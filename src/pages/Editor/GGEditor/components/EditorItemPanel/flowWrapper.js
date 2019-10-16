@@ -55,29 +55,41 @@ class FlowWrapper extends React.Component{
       /*console.log(nodeType,'nodeType')
       console.log(outEdges,'outEdges')
       console.log(inEdges,'inEdges')*/
-      if( e.item.type ==='edge'){
-        //连线的终点必须是节点
-        if(e.item.target.id&&e.item.target.type==='node'){
-          executeCommand(() => {
-            update(e.item, {
-              label:'是',
-              type:'Y'
-            });
-          });
-        }else{
-          message.error('连线的终点不能为空!')
-          this.handleAddItem()
-        }
-      }
       if(nodeType=='simple'||nodeType=='complex'){
         if(outEdges.length>2){
           message.error('该节点最多只能输出两条线!')
           this.handleAddItem()
+        }else if( e.item.type ==='edge'){
+          //连线的终点必须是节点
+          if(e.item.target.id&&e.item.target.type==='node'){
+            executeCommand(() => {
+              update(e.item, {
+                label:'是',
+                type:'Y'
+              });
+            });
+          }else{
+            message.error('连线的终点不能为空!')
+            this.handleAddItem()
+          }
         }
       }else{
         if(outEdges.length>1){
           message.error('该节点最多只能输出一条线!')
           this.handleAddItem()
+        }else if( e.item.type ==='edge'){
+          //连线的终点必须是节点
+          if(e.item.target.id&&e.item.target.type==='node'){
+            executeCommand(() => {
+              update(e.item, {
+                label:'是',
+                type:'Y'
+              });
+            });
+          }else{
+            message.error('连线的终点不能为空!')
+            this.handleAddItem()
+          }
         }
       }
 
