@@ -120,6 +120,7 @@ const EditableFormRow = Form.create()(EditableRow);
       })
       let status = enumValueList.find(item=>item==record[dataIndex])
       console.log('enumValueList',enumValueList)
+      console.log('status',status)
       return (
         <td ref={node => (this.cell = node)}>
           {editable ? (
@@ -129,7 +130,7 @@ const EditableFormRow = Form.create()(EditableRow);
                 return (
                   <FormItem style={{ margin: 0,display:'flex',justifyContent:'center' }} {...formItemConfig}>
                     {getFieldDecorator(`${dataIndex}${record['key']}${cols}${record['soleKey']}`, {
-                      initialValue: status?record[dataIndex]?record[dataIndex]:'':'',
+                      initialValue:record[dataIndex]?record[dataIndex]:'',
                       rules:[
                         {
                           required:true,

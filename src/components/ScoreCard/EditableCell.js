@@ -170,8 +170,14 @@ const EditableFormRow = Form.create()(EditableRow);
                         {
                           required:noRequired?false:true,
                           validator: async(rule, value, callback) => {
-                            if (!value&&value!==0) callback('输入内容不能为空!')
-                            if (value.length>max) callback(`输入内容最多${max}位!`)
+                            if (!value&&value!==0){
+                              callback('输入内容不能为空!')
+                              return;
+                            }
+                            if (value&&value.length>max){
+                              callback(`输入内容最多${max}位!`)
+                              return;
+                            }
                           }
                         }
                       ]

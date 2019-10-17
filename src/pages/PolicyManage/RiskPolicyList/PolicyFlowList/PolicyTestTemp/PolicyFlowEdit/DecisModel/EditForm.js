@@ -136,6 +136,7 @@ export default class EditForm extends Component {
         id:lastColVarId+1,
         variableName:this.props.colVar['colVarValue'],
         variableId:this.props.colVar['colVarId'],
+        soleKey:Math.random(),
       };
       this.props.dispatch({
         type: 'decision/saveColData',
@@ -156,6 +157,7 @@ export default class EditForm extends Component {
         indexKey:lastRowVarId+1,
         variableName:this.props.rowVar['rowVarValue'],
         variableId:this.props.rowVar['rowVarId'],
+        soleKey:Math.random(),
       };
       this.props.dispatch({
         type: 'decision/saveRowData',
@@ -209,6 +211,7 @@ export default class EditForm extends Component {
         ...rowObj['resultVarMap'],
         index_0:this.createRowColTitle(item),
         rowVarInfo:item,
+        soleKey:Math.random(),
       }
     })
     this.props.dispatch({

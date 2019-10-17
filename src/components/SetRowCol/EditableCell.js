@@ -287,8 +287,14 @@ export default class EditableCell extends PureComponent {
                               return;
                             }
                           }
-                          if (!value&&!noRequired) callback('输入内容不能为空!')
-                          if (value.length>max) callback(`输入内容最多${max}位!`)
+                          if (!value&&!noRequired){
+                            callback('输入内容不能为空!')
+                            return;
+                          }
+                          if (value&&value.length>max){
+                            callback(`输入内容最多${max}位!`)
+                            return;
+                          }
                         }
                       }
                     ]

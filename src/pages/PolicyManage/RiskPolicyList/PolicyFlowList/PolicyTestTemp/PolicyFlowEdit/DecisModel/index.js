@@ -121,6 +121,7 @@ export default class DecisModel extends PureComponent {
         variableName:item['variableName'],
         id:item['id'],
         variableId:item['variableId'],
+        soleKey:Math.random(),
       })
     })
     this.props.dispatch({
@@ -144,6 +145,7 @@ export default class DecisModel extends PureComponent {
         id:item['rowVarInfo']['id'],
         indexKey:item['rowVarInfo']['id'],
         variableId:item['rowVarInfo']['variableId'],
+        soleKey:Math.random(),
       })
     })
     this.props.dispatch({
@@ -278,12 +280,7 @@ export default class DecisModel extends PureComponent {
               item['variableName']=records['varName']
               item['variableId']=records['varId']
             })
-            this.props.dispatch({
-              type: 'decision/makeTableRow',
-              payload: {
-                tableRow: [],
-              }
-            })
+            this.makeRow()
           }
         })
       }else if(this.state.inputType === 1){
@@ -305,12 +302,7 @@ export default class DecisModel extends PureComponent {
               item['variableName']=records['varName']
               item['variableId']=records['varId']
             })
-            this.props.dispatch({
-              type: 'decision/makeTableCol',
-              payload: {
-                tableCol: [],
-              }
-            })
+            this.makeCol()
           }
         })
       }else if(this.state.inputType === 2){
@@ -319,6 +311,26 @@ export default class DecisModel extends PureComponent {
           message.error('此处选择弹框中只展示字符类型变量!')
           return
         }
+        const { rowList} = this.props.decision;
+        console.log('tableCol',tableCol)
+        //循环生成行数据
+        const newRow = rowList.dataSource.map((item,index)=>{
+          return {
+            key:index+1,
+            row:index+1,
+            editable:true,
+            index_0:this.createRowColTitle(item),
+            rowVarInfo:item,
+            resultVarMap:{},
+            soleKey:Math.random(),
+          }
+        })
+        this.props.dispatch({
+          type: 'decision/makeTableRow',
+          payload: {
+            tableRow: newRow,
+          }
+        })
         this.setState({
           resultVarId:{
             resultVarId:records['varId'],
@@ -328,6 +340,105 @@ export default class DecisModel extends PureComponent {
         })
       }
     })
+  }
+  //生成行
+  makeRow=()=>{
+    const { rowList,colList,tableCol,tableRow} = this.props.decision;
+    console.log('tableCol',tableCol)
+    //循环生成行数据
+    const newRow = rowList.dataSource.map((item,index)=>{
+      //从tableRow 里通过id找到对应的值，把值赋给新创的变量
+      let selectObj = tableRow.find((value,index)=>item['id']===value['rowVarInfo']['id']);
+      let rowObj = selectObj?selectObj:{resultVarMap:{}}
+      console.log('keys',selectObj)
+      return {
+        key:index+1,
+        row:index+1,
+        editable:true,
+        resultVarMap:rowObj['resultVarMap'],
+        ...rowObj['resultVarMap'],
+        index_0:this.createRowColTitle(item),
+        rowVarInfo:item,
+        soleKey:Math.random(),
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableRow',
+      payload: {
+        tableRow: newRow,
+      }
+    })
+
+  }
+  //生成列
+  makeCol=()=>{
+    const { rowList,colList,tableCol,tableRow} = this.props.decision;
+    //循环生成columns 以id生成对应的dataIndex（id没有的话，就以key值生成相应的dataIndex）
+    const newCol= colList.dataSource.map((item,index)=>{
+      return {
+        title:this.createRowColTitle(item),
+        key:index+1,
+        col:index+1,
+        id:item['id']?item['id']:null,
+        dataIndex:item['id']?`index_${item['id']}`:`index_${index+1}`,
+        editable:true,
+        width:150,
+        colVarInfo:{...item,indexKey:item['id']?`index_${item['id']}`:`index_${index+1}`},
+      }
+    })
+    //   要添加表格的对象
+    const res = this.props.dispatch({
+      type: 'decision/makeTableCol',
+      payload: {
+        tableCol: [
+          {
+            key:0,
+            col:0,
+            title:'',
+            dataIndex:'index_0',
+            width:150,
+          }, ...newCol],
+      },
+    })
+    //columns变化后 tableRow中的resultVarMap也需要变化(resultVarMap是存储对应dataIndex的值)
+    //重新生成tableRow中的 resultVarMap
+    console.log('res',colList)
+    //根据新的rowlist生成tableRow中新的resultMap 和对应dataIndex的值
+    let varValue={}
+    const newRow = rowList.dataSource.map((item,num)=>{
+      //重新生成tableRow中的 resultVarMap
+      newCol.length&&newCol.map((item,index)=>{
+        console.log(index)
+        //对应列(dataIndex)的值
+        let currentDataIndex = tableRow[num]?tableRow[num]['resultVarMap'][`${item['dataIndex']}`]:'';
+        varValue = {...varValue,...{[`${item['dataIndex']}`]:currentDataIndex}};
+        varValue['resultVarMap']=Object.assign({...varValue['resultVarMap']},{[`${item['dataIndex']}`]:currentDataIndex})
+      })
+      return {
+        index_0:this.createRowColTitle(item),
+        key:num+1,
+        row:num+1,
+        editable:true,
+        rowVarInfo:item,
+        ...varValue,
+      }
+    })
+    this.props.dispatch({
+      type: 'decision/makeTableRow',
+      payload: {
+        tableRow: newRow,
+      }
+    })
+  }
+  //行列title生成函数
+  //根据上下限条件和上下限值生成相应的title对象
+  createRowColTitle=(item)=>{
+    let title;
+    const {variableName,lowerCondition,lowerValue,highCondition,highValue} = item;
+    let newlowerCondition = `${lowerCondition==='>'?'<':'<='}`;
+    title=`${lowerValue}${newlowerCondition}${variableName}${highCondition}${highValue}`;
+    return title;
+
   }
   //弹框唤起事件
   openDialog=(type)=>{

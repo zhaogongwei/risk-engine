@@ -246,7 +246,10 @@ const EditableFormRow = Form.create()(EditableRow);
                     required:noRequired?false:true,
                     validator: async(rule, value, callback) => {
                       const reg = pattern;
-                      if (!value&&!noRequired) callback('输入内容不能为空!')
+                      if (!value&&!noRequired){
+                        callback('输入内容不能为空!')
+                        return;
+                      }
                       if(pattern){
                         if(!reg.test(value)){
                           callback(`最多只能输入${max}位的数字!`)
@@ -256,7 +259,7 @@ const EditableFormRow = Form.create()(EditableRow);
                       if(only){
                         let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
                         let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
-                        if(onlyruleCode.length>1){
+                        if(onlyruleCode&&onlyruleCode.length>1){
                           callback('该值已存在,请重新填写!')
                           return
                         }
@@ -287,14 +290,14 @@ const EditableFormRow = Form.create()(EditableRow);
                         callback('输入内容不能为空!')
                         return
                       }
-                      if (value.length>max) {
+                      if (value&&value.length>max) {
                         callback(`输入内容最多${max}位!`)
                         return
                       }
                       if(only){
                         let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
                         let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
-                        if(onlyruleCode.length>1){
+                        if(onlyruleCode&&onlyruleCode.length>1){
                           callback('该值已存在,请重新填写!')
                           return
                         }
@@ -424,14 +427,14 @@ const EditableFormRow = Form.create()(EditableRow);
                       callback('输入内容不能为空!')
                       return;
                     }
-                    if (value.length>max) {
+                    if (value&&value.length>max) {
                       callback(`输入内容最多${max}位!`)
                       return
                     }
                     if(only){
                       let ruleCode = dataSource.filter((item)=>item['ruleCode']===value)
                       let onlyruleCode = ruleCode.filter((item)=>item['ruleCode']!=='')
-                      if(onlyruleCode.length>1){
+                      if(onlyruleCode&&onlyruleCode.length>1){
                         callback('该值已存在,请重新填写!')
                         return
                       }
