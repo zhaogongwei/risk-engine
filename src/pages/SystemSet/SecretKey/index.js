@@ -125,13 +125,24 @@ export default class IndexComponent extends Component {
                     <TextArea rows={4}/>
                   )}
                 </FormItem>
+                <FormItem label="merchantId" {...formItemLayout}>
+                  {getFieldDecorator('merchant_id',{
+                    initialValue: infoData.merchant_id,
+                    rules:[{
+                      required: false,
+                      message: '请输入pubKey'
+                    }]
+                  })(
+                    <TextArea rows={4}/>
+                  )}
+                </FormItem>
                 <FormItem {...submitFormLayout}>
-                    {
-                      permission.includes('re:merchantRSA:add')?
-                      <Button type="primary" htmlType="submit" onClick={this.submitHandler}>
-                        生成新秘钥
-                      </Button>:null
-                    }
+                  {
+                    permission.includes('re:merchantRSA:add')?
+                    <Button type="primary" htmlType="submit" onClick={this.submitHandler}>
+                      生成新秘钥
+                    </Button>:null
+                  }
                 </FormItem>
               </Form>
             </Card>:null

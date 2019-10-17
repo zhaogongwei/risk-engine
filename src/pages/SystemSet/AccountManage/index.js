@@ -47,8 +47,7 @@ export default class AccountManage extends PureComponent {
         title: '邮箱',
         key:'email',
         dataIndex:'email'
-      },
-      {
+      },{
         title: '手机号码',
         key:'mobile',
         dataIndex:'mobile'
