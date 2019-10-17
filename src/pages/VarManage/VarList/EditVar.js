@@ -669,6 +669,12 @@ export default class EditVar extends PureComponent {
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
+                    rules:[
+                      {
+                        required:true,
+                        message:'请输入缺省值'
+                      }
+                    ]
                   })(
                       <Select allowClear={true} >
                         {enumeration.length>0&&enumeration.map( (item,index) =>
@@ -686,10 +692,23 @@ export default class EditVar extends PureComponent {
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
                     rules:[
-                      {max:10,message:'超过最大字数限制'},
+                      {
+                        required:true,
+                        max:10,
+                        validator:async(rule, val, cb)=>{
+                          if(!val&&val!==0){
+                            cb('输入内容不能为空!')
+                            return;
+                          }
+                          if(val&&val.length>10){
+                            cb('超过最大字数限制!')
+                            return;
+                          }
+                        }
+                      },
                     ]
                   })(
-                    <Input />
+                    <Input maxLength={11}/>
                   )}
                   </FormItem>:null
 
@@ -699,6 +718,12 @@ export default class EditVar extends PureComponent {
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
+                    rules:[
+                      {
+                        required:true,
+                        message:'请输入缺省值'
+                      }
+                    ]
                   })(
                     <InputNumber />
                   )}
@@ -710,6 +735,12 @@ export default class EditVar extends PureComponent {
                   <FormItem label="缺省值" {...formItemConfig}>
                   {getFieldDecorator('defaultValue',{
                     initialValue:this.state.defaultVal,
+                    rules:[
+                      {
+                        required:true,
+                        message:'请输入缺省值'
+                      }
+                    ]
                   })(
                     <DatePicker />
                   )}
@@ -720,6 +751,12 @@ export default class EditVar extends PureComponent {
                    <FormItem label="缺省值" {...formItemConfig}>
                    {getFieldDecorator('defaultValue',{
                      initialValue:this.state.defaultVal,
+                     rules:[
+                       {
+                         required:true,
+                         message:'请输入缺省值'
+                       }
+                     ]
                    })(
                     <TimePicker/>
                    )}
