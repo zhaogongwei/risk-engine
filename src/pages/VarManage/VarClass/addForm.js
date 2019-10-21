@@ -298,15 +298,15 @@ export default class AddForm extends Component {
                         cb('只能输入数字类型');
                         return;
                       }
-                      if(val.length>10){
-                        cb(`最多输入10位!`)
+                      if(val.length>6){
+                        cb(`最多输入6位!`)
                         return;
                       }
                     }
                   },
                   ]
                 })(
-                  <Input  maxLength={11} placeholder="数字大排列表上方"/>
+                  <Input  maxLength={6} placeholder="数字大排列表上方"/>
                 )}
               </FormItem>
             </Col>

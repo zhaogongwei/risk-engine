@@ -258,9 +258,9 @@ export default class PolicyEdit extends PureComponent {
                   {
                     required:true,
                     validator: async (rule, val, cb) => {
-                      const reg = /^\d{1,15}$/;
+                      const reg = /^\d{1,6}$/;
                       if(!reg.test(val)){
-                        cb('最多只能输入15位的数字!')
+                        cb('最多只能输入6位的数字!')
                         return;
                       }
                       if(!status){
@@ -283,7 +283,7 @@ export default class PolicyEdit extends PureComponent {
                   }
                   ]
               })(
-                <Input maxLength={16}/>
+                <Input maxLength={6}/>
               )}
             </FormItem>
           </Col>
