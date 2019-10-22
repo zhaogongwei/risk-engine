@@ -244,13 +244,13 @@ export default class AddForm extends Component {
   }
   //   将已经选择的变量禁止重新选择一遍
   duplicateRemoval(varList = [], pageList = []) {
-    varList.forEach((n)=>{
+    varList.length && varList.forEach((n)=>{
       let aaa = []
       n.disabled = false
       pageList.forEach(( m ) => {
-        var tt=n.id.toString()
-        var kk=m.id.toString()
-        if(tt.indexOf(kk)!=-1){
+        const tt=n.id.toString()
+        const kk=m.id.toString()
+        if(tt === kk){
           n.disabled = true
           aaa.push(n)
         } else {
