@@ -225,12 +225,12 @@ export default class InputDeploy extends PureComponent {
                 }
               })
             }
+            this.setState({ selectedRowKeys:[],selectedRows:[]});
+            this.pagination(10,1,tableList);
             this.props.dispatch({
               type: 'policyList/saveTableList',
               payload: addListKey(tableList)
             })
-            this.setState({ selectedRowKeys:[],selectedRows:[]});
-            this.pagination(10,1,tableList);
             message.success('删除成功!')
           }
         }
