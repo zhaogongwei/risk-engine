@@ -69,7 +69,7 @@ export default  class Index extends  PureComponent{
     const {titleList,reportTemplateDto,reportInfo} = this.props.riskReport;
     const titleWrapper=
      <div>
-       <span>报告预览&nbsp;&nbsp;&nbsp;&nbsp;</span><span>{`资产编号${reportTemplateDto['assetsCode']}`}</span>
+      <span>资产编号&emsp;{`${reportTemplateDto['assetsCode']}`}</span>
      </div>;
     return(
       <PageHeaderWrapper >

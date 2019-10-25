@@ -794,7 +794,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
                   {getFieldDecorator('status',{
-                    initialValue:'',
+                    initialValue: 0,
                     rules:[
                       {required:true,message:'请选择变量状态'}
                     ]

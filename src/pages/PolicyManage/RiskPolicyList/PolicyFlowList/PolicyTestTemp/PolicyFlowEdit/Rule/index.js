@@ -285,9 +285,7 @@ export default class SimpleRule extends PureComponent {
             })
             if(res&&res.status===1){
               message.success(res.statusDesc)
-                .then(()=>{
-                  router.goBack()
-                })
+              router.goBack()
 
             }else{
               message.error(res.statusDesc)
