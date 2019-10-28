@@ -97,6 +97,21 @@ export default class PolicyEdit extends PureComponent {
       }
     })
   })
+
+  // 过滤id，校验用户是否禁用，如果禁用，选择框置空
+  normalizeAll = (value) => {
+    const { userList } =this.props.policyList
+    let count = 0
+    userList.length > 0 && userList.map((item) => {
+      if (item.id == value) {
+        count = count + 1
+      }
+    })
+    if (count > 0) {
+      return value
+    }else return null
+}
+
   componentWillUnmount(){
     this.props.dispatch({
       type: 'policyList/savePolicyInfo',
@@ -224,17 +239,22 @@ export default class PolicyEdit extends PureComponent {
           <Col xxl={22}>
             <FormItem label="策略负责人" {...formItemConfig}>
               {getFieldDecorator('dutyId',{
-                initialValue:status?'':policyInfo['dutyId'],
-                rules:[
-                  {
-                    required:true,
-                    message:'策略负责人不能为空!'
-                  }
-                  ]
+                rules:[{
+                  required:true,
+                  message:'策略负责人不能为空!'
+                }],
+                initialValue: status ? '' : this.normalizeAll(policyInfo.dutyId)
               })(
-                <Select allowClear={true}>
+                <Select allowClear={true}
+                showSearch
+                optionFilterProp="children"
+                allowClear={true}
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                style={{ width: '100%' }}
+                allowClear={true}
+                >
                   {
-                    userList&&userList.map((item,index)=>{
+                    userList && userList.map((item,index)=>{
                       return (
                         <Option value={item.id} key={index}>{item.trueName}</Option>
                       )
