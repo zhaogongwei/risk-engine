@@ -74,9 +74,7 @@ export default class ThreeSideQuery extends Component {
     })
     if(response&&response.status == 1){
       message.success(response.statusDesc)
-        .then(()=>{
-          router.goBack()
-        })
+      router.goBack()
     }else{
       message.error(response.statusDesc)
     }

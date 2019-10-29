@@ -68,13 +68,13 @@ export default class SelectableTable extends PureComponent {
              输出变量设置
           </Col>
           <Col>
-            <Button onClick={this.props.setRow} type="primary" style={{marginLeft:10,marginRight:10}}>
-              设置行
+            <Button onClick={this.props.setCol} type="primary" style={{marginLeft:10,marginRight:10}}>
+              设置列
             </Button>
           </Col>
           <Col>
-            <Button onClick={this.props.setCol} type="primary">
-              设置列
+            <Button onClick={this.props.setRow} type="primary">
+              设置行
             </Button>
           </Col>
         </Row>

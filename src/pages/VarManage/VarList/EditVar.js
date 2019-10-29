@@ -26,7 +26,7 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item
 const { TextArea } = Input;
 @connect(
-  ({varlist}) => ({varlist})
+  ({varlist, loading}) => ({varlist, submitLoading: loading.effects['varlist/updateVariable'] || loading.effects['varlist/addVar']})
 )
 @Form.create()
 export default class EditVar extends PureComponent {
@@ -794,7 +794,7 @@ export default class EditVar extends PureComponent {
               <Col xxl={4} md={6}>
                 <FormItem label="变量状态" {...formItemConfig}>
                   {getFieldDecorator('status',{
-                    initialValue:'',
+                    initialValue: 1,
                     rules:[
                       {required:true,message:'请选择变量状态'}
                     ]
@@ -821,7 +821,7 @@ export default class EditVar extends PureComponent {
             </Row>
             <Row type="flex" justify="center">
               <Col>
-                <Button type="primary" onClick={this.formSubmit}>保存并提交</Button>
+                <Button type="primary" onClick={this.formSubmit} loading={this.props.submitLoading}>保存并提交</Button>
                 <Button type="primary" onClick={this.goBack}>返回</Button>
               </Col>
             </Row>
