@@ -100,15 +100,19 @@ export default class RptTable extends Component {
       }
       titleList.splice(this.state.selectKey,1);
       this.props.setNumber(0)
-      this.props.dispatch({
+      await this.props.dispatch({
         type: 'tempEdit/titleListHandle',
         payload: {
           titleList:titleList
         }
       })
-      this.setState({
+      await this.setState({
         selectKey:0
       })
+      // 删除子标题后，设置“标题”输入框的值
+      this.props.form.setFieldsValue({
+        'table-title-0':titleList[0].title
+      });
     }
   }
   componentDidMount(){
