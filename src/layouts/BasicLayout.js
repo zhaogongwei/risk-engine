@@ -175,9 +175,9 @@ class BasicLayout extends React.Component {
     const currRouterData = this.matchParamsPath(pathname);
 
     if (!currRouterData) {
-      return '风控引擎系统';
+      return '天极智能风控引擎';
     }
-    return `${currRouterData.title} - 风控引擎系统`;
+    return `${currRouterData.title} - 天极智能风控引擎`;
   };
   getLayoutStyle = () => {
     const { isMobile } = this.state;
