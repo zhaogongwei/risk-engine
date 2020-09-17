@@ -60,7 +60,7 @@
     "memoize-one": "^5.0.0",
     "moment": "^2.24.0",
     "netlify-lambda": "^1.4.3",
-    "node-forge": "^0.8.5",
+    "node-forge": "^0.10.0",
     "numeral": "^2.0.6",
     "nzh": "^1.0.4",
     "omit.js": "^1.0.0",
